@@ -11,12 +11,19 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
-        :root { --primary: #1d4379; --bg-gray: #F9FAFB; font-family: 'Montserrat', sans-serif; }
+        
+        :root { 
+            --primary: #1d4379; 
+            --secondary: #22c55e; 
+            --bg-gray: #F9FAFB; 
+        }
+
+        /* Force la police Montserrat sur TOUT le document */
+        * { font-family: 'Montserrat', sans-serif !important; }
         
         body { 
             background-color: var(--bg-gray); 
-            /* On augmente la marge pour ne pas cacher le contenu sous les 2 boutons empilés */
-            padding-bottom: 180px; 
+            padding-bottom: 200px; /* Plus d'espace pour les 2 gros boutons empilés */
             -webkit-tap-highlight-color: transparent; 
         }
         
@@ -25,13 +32,11 @@
         .hero-shape { border-bottom-left-radius: 2.5rem; border-bottom-right-radius: 2.5rem; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         
-        /* Animation Menu */
         #mobile-menu { transition: transform 0.3s ease-in-out; }
         .menu-open { transform: translateX(0) !important; }
         .menu-closed { transform: translateX(-100%); }
 
-        /* Ombre pour la barre d'action */
-        .nav-shadow { box-shadow: 0 -10px 30px -5px rgba(0, 0, 0, 0.15); }
+        .nav-shadow { box-shadow: 0 -10px 30px -5px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -47,20 +52,20 @@
             </div>
             <nav class="space-y-6 flex-1">
                 <a href="index.html" class="flex items-center gap-3 text-[#1d4379] font-bold text-lg">
-                    <i data-lucide="home" class="w-5 h-5"></i> Accueil
+                    <i data-lucide="home" class="w-5 h-5"></i> ACCUEIL
                 </a>
                 <a href="profile.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
-                    <i data-lucide="user-circle" class="w-5 h-5"></i> Mon Profil
+                    <i data-lucide="user-circle" class="w-5 h-5"></i> MON PROFIL
                 </a>
                 <a href="add-car.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
-                    <i data-lucide="plus-square" class="w-5 h-5"></i> Ajoute ta voiture
+                    <i data-lucide="plus-square" class="w-5 h-5"></i> AJOUTE TA VOITURE
                 </a>
                 <a href="become-driver.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
-                    <i data-lucide="user-plus" class="w-5 h-5"></i> Deviens chauffeur
+                    <i data-lucide="user-plus" class="w-5 h-5"></i> DEVIENS CHAUFFEUR
                 </a>
             </nav>
             <div class="mt-auto">
-                <a href="login.html" class="block w-full text-center py-3 rounded-xl bg-gray-50 text-gray-600 font-bold text-sm">
+                <a href="login.html" class="block w-full text-center py-3 rounded-xl bg-gray-50 text-gray-600 font-bold text-sm uppercase">
                     Connexion / Inscription
                 </a>
             </div>
@@ -79,17 +84,17 @@
         </div>
     </header>
 
-    <div class="fixed bottom-0 w-full z-[55] px-4 pb-8 pt-4 bg-gradient-to-t from-white via-white/95 to-transparent">
+    <div class="fixed bottom-0 w-full z-[55] px-6 pb-8 pt-4 bg-gradient-to-t from-white via-white/95 to-transparent">
         <div class="max-w-md mx-auto flex flex-col gap-3">
             
-            <a href="add-car.html" class="flex items-center justify-center gap-3 bg-[#1d4379] text-white py-4 rounded-2xl font-extrabold shadow-2xl active:scale-95 transition-all nav-shadow">
-                <i data-lucide="plus-square" class="w-6 h-6"></i>
-                <span class="text-xs uppercase tracking-wider">Ajoute ta voiture</span>
+            <a href="add-car.html" class="flex items-center justify-center gap-3 bg-[#1d4379] text-white py-4 px-4 rounded-2xl font-extrabold shadow-2xl active:scale-95 transition-all text-center uppercase tracking-wider text-sm">
+                <i data-lucide="plus-square" class="w-5 h-5"></i>
+                AJOUTE TA VOITURE
             </a>
             
-            <a href="become-driver.html" class="flex items-center justify-center gap-3 bg-white text-[#1d4379] border-2 border-[#1d4379] py-4 rounded-2xl font-extrabold shadow-xl active:scale-95 transition-all">
-                <i data-lucide="user-plus" class="w-6 h-6"></i>
-                <span class="text-xs uppercase tracking-wider">Deviens chauffeur</span>
+            <a href="become-driver.html" class="flex items-center justify-center gap-3 bg-green-500 text-white py-4 px-4 rounded-2xl font-extrabold shadow-xl active:scale-95 transition-all text-center uppercase tracking-wider text-sm">
+                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                DEVIENS CHAUFFEUR
             </a>
 
         </div>
@@ -97,10 +102,10 @@
 
     <div class="hero-gradient hero-shape pt-24 pb-12 px-5 text-white relative">
         <div class="max-w-md mx-auto relative z-10">
-            <h1 class="text-3xl font-extrabold mb-2 text-center">Où allez-vous ?</h1>
+            <h1 class="text-3xl font-extrabold mb-4 text-center uppercase tracking-tight">Où allez-vous ?</h1>
             <div class="relative text-gray-800">
-                <i data-lucide="map-pin" class="absolute left-3 top-3.5 h-5 w-5 text-gray-400 z-10"></i>
-                <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-10 pr-10 py-3.5 bg-white border-0 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 font-bold shadow-lg appearance-none">
+                <i data-lucide="map-pin" class="absolute left-4 top-3.5 h-5 w-5 text-gray-400 z-10"></i>
+                <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-12 pr-10 py-4 bg-white border-0 text-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 font-bold shadow-lg appearance-none uppercase text-sm">
                     <option value="all">Toutes les îles</option>
                     <option value="Santiago">Santiago</option>
                     <option value="Sal">Sal</option>
@@ -108,11 +113,108 @@
                     <option value="BoaVista">Boa Vista</option>
                     <option value="Fogo">Fogo</option>
                 </select>
-                <i data-lucide="chevron-down" class="absolute right-3 top-3.5 h-5 w-5 text-gray-400 pointer-events-none z-10"></i>
+                <i data-lucide="chevron-down" class="absolute right-4 top-4 h-5 w-5 text-gray-400 pointer-events-none z-10"></i>
             </div>
         </div>
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
-        
-        <div class="flex gap-2 overflow
+        <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
+            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-[10px] font-extrabold shadow-lg whitespace-nowrap active:scale-95 transition-transform uppercase">Tout</button>
+            <button onclick="toggleDriver()" id="btn-driver" class="bg-white text-gray-600 px-4 py-2.5 rounded-full text-[10px] font-extrabold border border-gray-100 shadow-sm whitespace-nowrap flex items-center gap-2 uppercase">
+                <i data-lucide="user-check" class="w-4 h-4"></i> Chauffeur
+            </button>
+            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-[10px] font-extrabold border border-gray-100 shadow-sm whitespace-nowrap uppercase">Citadines</button>
+            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-[10px] font-extrabold border border-gray-100 shadow-sm whitespace-nowrap uppercase">4x4</button>
+            <button onclick="filterCat('utilitaire')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-[10px] font-extrabold border border-gray-100 shadow-sm whitespace-nowrap uppercase">Van</button>
+        </div>
+
+        <div id="vehicle-grid" class="grid grid-cols-1 gap-5">
+            <div class="text-center py-20 text-gray-400 flex flex-col items-center uppercase text-xs font-bold">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-[#1d4379] mb-3"></i>
+                Recherche...
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('menu-closed');
+            menu.classList.toggle('menu-open');
+        }
+
+        const supabase = window.supabase.createClient('https://enuiuuwnjzvpfvpklmjw.supabase.co', 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-');
+
+        let allVehicles = [];
+        let driverFilter = false;
+        let currentCat = 'all';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                const btn = document.getElementById('auth-link');
+                btn.href = "profile.html";
+                btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>`;
+                lucide.createIcons();
+            }
+            fetchVehicles();
+        });
+
+        async function fetchVehicles() {
+            const island = document.getElementById('island-select').value;
+            let query = supabase.from('vehicles').select('*').eq('is_active', true);
+            if(island !== 'all') query = query.eq('island', island);
+            const { data } = await query;
+            allVehicles = data || [];
+            applyFilters();
+        }
+
+        window.filterCat = (cat) => {
+            currentCat = cat;
+            const btns = document.querySelectorAll('main button[onclick^="filterCat"]');
+            btns.forEach(b => b.className = "bg-white text-gray-600 px-5 py-2.5 rounded-full text-[10px] font-extrabold border border-gray-100 shadow-sm whitespace-nowrap active:scale-95 transition-transform uppercase");
+            event.target.className = "bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-[10px] font-extrabold shadow-lg whitespace-nowrap active:scale-95 transition-transform uppercase";
+            applyFilters();
+        }
+
+        window.toggleDriver = () => {
+            driverFilter = !driverFilter;
+            const btn = document.getElementById('btn-driver');
+            btn.classList.toggle('bg-blue-600'); btn.classList.toggle('text-white');
+            applyFilters();
+        }
+
+        function applyFilters() {
+            let filtered = allVehicles;
+            if (currentCat !== 'all') filtered = filtered.filter(v => v.category === currentCat);
+            if (driverFilter) filtered = filtered.filter(v => v.with_driver);
+            renderVehicles(filtered);
+        }
+
+        function renderVehicles(cars) {
+            const grid = document.getElementById('vehicle-grid');
+            if(cars.length === 0) {
+                grid.innerHTML = `<div class="text-center py-20 text-gray-400 font-extrabold uppercase text-xs">Aucun véhicule disponible</div>`;
+                return;
+            }
+            grid.innerHTML = cars.map(car => `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 mb-2 cursor-pointer transition-transform active:scale-[0.98]" onclick="window.location.href='car-detail.html?id=${car.id}'">
+                    <div class="relative h-48 bg-gray-100">
+                        <img src="${car.images_url?.[0]}" class="w-full h-full object-cover">
+                        <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-sm font-bold uppercase">${car.price_per_day} CVE/J</div>
+                        ${car.with_driver ? `<div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1.5 rounded-xl text-[10px] font-extrabold flex items-center gap-1 shadow-lg uppercase tracking-wider"><i data-lucide="user-check" class="w-3 h-3"></i> AVEC CHAUFFEUR</div>` : ''}
+                    </div>
+                    <div class="p-5 flex justify-between items-center">
+                        <div><h3 class="font-extrabold text-gray-900 uppercase text-base">${car.make} ${car.model}</h3><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">${car.island} • ${car.transmission}</p></div>
+                        <div class="bg-gray-50 p-2.5 rounded-full text-gray-300"><i data-lucide="chevron-right" class="w-5 h-5"></i></div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
