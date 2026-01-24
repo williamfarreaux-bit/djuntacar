@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DjuntaCar 🇨🇻</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+        }
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            color: #1e293b;
+        }
+        header {
+            padding: 20px;
+            background: white;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .search-container {
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 10;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            box-sizing: border-box;
+        }
+        #car-list {
+            padding: 15px;
+            display: grid;
+            gap: 15px;
+        }
+        .car-card {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .car-info h3 { margin: 0 0 10px 0; }
+        .car-specs { font-size: 0.9em; color: #64748b; margin-bottom: 15px; }
+        .btn-reserve {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .loading { text-align: center; padding: 50px; color: #64748b; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>DjuntaCar 🇨🇻</h1>
+</header>
+
+<div class="search-container">
+    <input type="text" placeholder="Onde é que queres ir? (Praia, Santiago...)">
+</div>
+
+<div id="car-list">
+    <div class="loading">Chargement des véhicules...</div>
+</div>
+
+<script type="module">
+    // Importation de Supabase (Version 2026)
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loadCars() {
+        const { data, error } = await supabase
+            .from('vehicles')
+            .select('*');
+
+        const
