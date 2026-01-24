@@ -6,41 +6,40 @@
     <title>DjuntaCar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* DESIGN DIRECTEMENT ICI */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+        :root { --primary: #1d4379; --bg-gray: #F9FAFB; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--bg-gray); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .hero-gradient { background: linear-gradient(135deg, #1d4379 0%, #142f55 100%); }
+        .hero-shape { border-bottom-left-radius: 2.5rem; border-bottom-right-radius: 2.5rem; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
 </head>
 <body class="antialiased text-gray-800">
 
     <header class="fixed top-0 w-full z-50 glass border-b border-gray-200">
         <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center h-full py-3">
-                <img src="logo.png" onerror="this.src='sigle.png'" class="h-full w-auto object-contain max-h-10" alt="DjuntaCar">
-            </div>
-            
+            <h1 class="text-xl font-extrabold text-[#1d4379] tracking-tighter">DjuntaCar</h1>
             <div class="flex gap-2">
-                <select id="currency-select" onchange="setCurrency()" class="text-xs font-bold text-[#1A4384] bg-blue-50 px-2 py-1.5 rounded-lg border border-blue-100 outline-none">
-                    <option value="CVE">CVE</option>
-                    <option value="EUR">EUR (€)</option>
-                    <option value="USD">USD ($)</option>
-                </select>
-
-                <select id="lang-select" onchange="setLanguage()" class="text-xs font-bold text-gray-600 bg-gray-100 px-2 py-1.5 rounded-lg border border-gray-200 outline-none">
-                    <option value="fr">🇫🇷 FR</option>
-                    <option value="pt">🇵🇹 PT</option>
-                    <option value="en">🇬🇧 EN</option>
-                    <option value="cv">🇨🇻 CV</option>
-                </select>
+                <button onclick="window.location.href='login.html'" id="auth-btn" class="text-xs font-bold bg-[#1d4379] text-white px-3 py-1.5 rounded-full">
+                    Connexion
+                </button>
             </div>
         </div>
     </header>
 
     <div class="hero-gradient hero-shape pt-24 pb-12 px-5 text-white relative">
         <div class="max-w-md mx-auto relative z-10">
-            <h1 class="text-3xl font-extrabold mb-2" data-i18n="heroTitle">Où voulez-vous aller ?</h1>
+            <h1 class="text-3xl font-extrabold mb-2">Où allez-vous ?</h1>
             
             <div class="relative text-gray-800 mb-6">
                 <i data-lucide="map" class="absolute left-3 top-3.5 h-5 w-5 text-white/70"></i>
-                <select id="island-select" onchange="setIsland()" class="block w-full pl-10 pr-10 py-3.5 bg-white/10 border border-white/20 text-white rounded-xl focus:outline-none backdrop-blur-md appearance-none font-medium">
-                    <option value="all" data-i18n="islandAll">Toutes les îles</option>
+                <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-10 pr-10 py-3.5 bg-white/10 border border-white/20 text-white rounded-xl focus:outline-none backdrop-blur-md appearance-none font-bold">
+                    <option value="all">Toutes les îles</option>
                     <option value="Santiago">Santiago</option>
                     <option value="Sal">Sal</option>
                     <option value="SaoVicente">São Vicente</option>
@@ -50,36 +49,105 @@
                 <i data-lucide="chevron-down" class="absolute right-3 top-3.5 h-5 w-5 text-white/70 pointer-events-none"></i>
             </div>
 
-            <button onclick="window.location.href='profile.html'" class="w-full bg-white/20 hover:bg-white/30 border border-white/40 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all">
-                <i data-lucide="key" class="w-5 h-5"></i>
-                <span data-i18n="btnRentMyCar">Loue ta voiture</span>
+            <button onclick="checkAuthAndRedirect('add-car.html')" class="w-full bg-white/20 hover:bg-white/30 border border-white/40 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2">
+                <i data-lucide="key" class="w-5 h-5"></i> Loue ta voiture
             </button>
         </div>
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
         <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
-            <button onclick="setCategory('all', this)" class="cat-btn bg-[#1A4384] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg" data-i18n="catAll">Tout</button>
-            <button onclick="setCategory('citadina', this)" class="cat-btn bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold shadow-sm border border-gray-100" data-i18n="catCity">Citadines</button>
-            <button onclick="setCategory('4x4_aventura', this)" class="cat-btn bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold shadow-sm border border-gray-100" data-i18n="cat4x4">4x4</button>
-            <button onclick="setCategory('utilitaire', this)" class="cat-btn bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold shadow-sm border border-gray-100" data-i18n="catVan">Vans</button>
+            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg">Tout</button>
+            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100">Citadines</button>
+            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100">4x4</button>
         </div>
 
         <div id="vehicle-grid" class="grid grid-cols-1 gap-5 pb-6">
-            <div class="flex justify-center py-12 text-gray-400">
-                <i data-lucide="loader-2" class="w-8 h-8 animate-spin"></i>
-            </div>
+            <div class="text-center py-10 text-gray-400">Chargement...</div>
         </div>
     </main>
 
-    <nav class="fixed bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-200 pb-safe z-50">
-        <div class="max-w-md mx-auto flex justify-around items-center h-20 px-2">
-            <a href="index.html" class="flex flex-col items-center w-16 text-[#1A4384]"><i data-lucide="home" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold" data-i18n="navHome">Accueil</span></a>
-            <a href="#" class="flex flex-col items-center w-16 text-gray-400"><i data-lucide="calendar-days" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-medium" data-i18n="navBook">Resa</span></a>
-            <a href="profile.html" class="flex flex-col items-center w-16 text-gray-400"><i data-lucide="user-circle-2" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-medium" data-i18n="navProfile">Profil</span></a>
-        </div>
-    </nav>
+    <script>
+        // 1. CONFIGURATION SUPABASE (VOS CLES)
+        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <script type="module" src="app.js"></script>
+        let allVehicles = [];
+
+        // 2. INITIALISATION
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            await checkSession();
+            await fetchVehicles();
+        });
+
+        // 3. VÉRIFIER SESSION
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            const btn = document.getElementById('auth-btn');
+            if (session) {
+                btn.innerText = "Mon Profil";
+                btn.onclick = () => window.location.href = 'profile.html';
+            }
+        }
+
+        // 4. RÉCUPÉRER VÉHICULES
+        async function fetchVehicles() {
+            const grid = document.getElementById('vehicle-grid');
+            const island = document.getElementById('island-select').value;
+
+            let query = supabase.from('vehicles').select('*').eq('is_active', true);
+            if(island !== 'all') query = query.eq('island', island);
+
+            const { data, error } = await query;
+
+            if (error) {
+                grid.innerHTML = '<div class="text-red-500 text-center">Erreur chargement</div>';
+                console.error(error);
+                return;
+            }
+
+            allVehicles = data;
+            renderVehicles(data);
+        }
+
+        // 5. AFFICHER VÉHICULES
+        function renderVehicles(cars) {
+            const grid = document.getElementById('vehicle-grid');
+            if(cars.length === 0) {
+                grid.innerHTML = '<div class="text-center py-10 text-gray-400">Aucun véhicule trouvé.</div>';
+                return;
+            }
+
+            grid.innerHTML = cars.map(car => `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative h-48 bg-gray-200">
+                        <img src="${car.images_url?.[0] || 'https://via.placeholder.com/400'}" class="w-full h-full object-cover">
+                        <div class="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-bold">
+                            ${car.price_per_day} CVE/j
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">${car.make} ${car.model}</h3>
+                        <p class="text-sm text-gray-500">${car.island} • ${car.transmission}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 6. REDIRECTION SÉCURISÉE
+        window.checkAuthAndRedirect = async (url) => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if(!session) window.location.href = 'login.html';
+            else window.location.href = url;
+        }
+
+        // 7. FILTRE CATEGORIE (Simple)
+        window.filterCat = (cat) => {
+            if(cat === 'all') renderVehicles(allVehicles);
+            else renderVehicles(allVehicles.filter(c => c.category === cat));
+        }
+    </script>
 </body>
 </html>
