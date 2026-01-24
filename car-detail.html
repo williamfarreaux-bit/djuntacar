@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Détails - DjuntaCar</title>
+    <link rel="icon" type="image/png" href="sigle.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+        body { font-family: 'Montserrat', sans-serif; background-color: #F9FAFB; }
+    </style>
+</head>
+<body class="pb-24 bg-white">
+
+    <a href="index.html" class="fixed top-4 left-4 z-50 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-lg text-gray-800 hover:bg-white transition-all">
+        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+    </a>
+
+    <div class="relative w-full h-80 bg-gray-200">
+        <img id="car-image" src="assets/placeholder.jpg" class="w-full h-full object-cover">
+        <div class="absolute bottom-0 w-full h-32 bg-gradient-to-t from-white to-transparent"></div>
+        
+        <div class="absolute bottom-4 left-5">
+            <span id="car-island" class="bg-[#1d4379] text-white px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide shadow-sm">
+                Chargement...
+            </span>
+            <h1 id="car-title" class="text-3xl font-extrabold text-gray-900 mt-2 leading-tight">
+                ...
+            </h1>
+        </div>
+    </div>
+
+    <main class="max-w-md mx-auto px-5 relative z-10">
+
+        <div class="flex justify-between items-center py-6 border-b border-gray-100">
+            <div class="text-center">
+                <div class="bg-gray-50 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-1 text-[#1d4379]">
+                    <i data-lucide="gauge" class="w-5 h-5"></i>
+                </div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Année</p>
+                <p class="font-bold text-sm">2022</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-gray-50 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-1 text-[#1d4379]">
+                    <i data-lucide="settings-2" class="w-5 h-5"></i>
+                </div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Boîte</p>
+                <p id="spec-trans" class="font-bold text-sm">-</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-gray-50 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-1 text-[#1d4379]">
+                    <i data-lucide="fuel" class="w-5 h-5"></i>
+                </div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Carburant</p>
+                <p class="font-bold text-sm">Essence</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-gray-50 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-1 text-[#1d4379]">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Place</p>
+                <p class="font-bold text-sm">5</p>
+            </div>
+        </div>
+
+        <div class="py-6 space-y-4">
+            <h3 class="font-bold text-lg text-[#1d4379]">Assurance & Conditions</h3>
+            
+            <div class="flex gap-4 items-start">
+                <i data-lucide="shield-check" class="w-6 h-6 text-green-600 shrink-0 mt-0.5"></i>
+                <div>
+                    <p class="font-bold text-sm text-gray-900">Assurance Tout Risque</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Couverture complète incluse dans le prix. Franchise réduite à 40.000 CVE.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+                <i data-lucide="credit-card" class="w-6 h-6 text-[#1d4379] shrink-0 mt-0.5"></i>
+                <div>
+                    <p class="font-bold text-sm text-gray-900">Pas de débit immédiat</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Réservez maintenant, payez lors de la récupération du véhicule.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed bottom-0 w-full bg-white border-t border-gray-100 px-5 py-4 pb-safe z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
+        <div>
+            <p class="text-xs text-gray-400 font-bold uppercase">Prix total</p>
+            <div class="flex items-end gap-1">
+                <span id="price-display" class="text-2xl font-extrabold text-[#1d4379]">...</span>
+                <span class="text-sm font-bold text-gray-500 mb-1">CVE /j</span>
+            </div>
+        </div>
+        <button onclick="alert('Le module de paiement sera intégré au prochain Sprint !')" class="bg-[#1d4379] text-white px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl active:scale-95 transition-all flex items-center gap-2">
+            Réserver
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if(window.lucide) lucide.createIcons();
+
+            // 1. CONFIG
+            const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            // 2. RÉCUPÉRER ID URL
+            const params = new URLSearchParams(window.location.search);
+            const carId = params.get('id');
+
+            if (!carId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 3. FETCH DATA
+            const { data: car, error } = await supabase
+                .from('vehicles')
+                .select('*')
+                .eq('id', carId)
+                .single();
+
+            if (error) {
+                console.error(error);
+                document.getElementById('car-title').innerText = "Véhicule introuvable";
+                return;
+            }
+
+            // 4. REMPLIR UI
+            document.getElementById('car-title').innerText = `${car.make} ${car.model}`;
+            document.getElementById('car-island').innerText = car.island;
+            document.getElementById('price-display').innerText = car.price_per_day;
+            document.getElementById('spec-trans').innerText = car.transmission || 'Manuelle';
+            
+            // Image
+            if (car.images_url && car.images_url.length > 0) {
+                document.getElementById('car-image').src = car.images_url[0];
+            } else {
+                document.getElementById('car-image').src = 'assets/placeholder.jpg';
+            }
+        });
+    </script>
+</body>
+</html>
