@@ -18,61 +18,16 @@
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 60px; }
-
-        .filter-card { 
-            background: white; 
-            border-radius: 28px; 
-            border: 1px solid #f0f2f5; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
-        }
+        .filter-card { background: white; border-radius: 28px; border: 1px solid #f0f2f5; box-shadow: 0 15px 35px rgba(0,0,0,0.03); }
         .input-group { border-bottom: 1px solid #f0f2f5; padding: 16px 20px; }
         .input-group:last-child { border-bottom: none; }
-        
-        label { 
-            font-size: 10px; 
-            font-weight: 700; 
-            color: #bdc3c7; 
-            text-transform: uppercase; 
-            margin-bottom: 4px; 
-            display: block; 
-            letter-spacing: 0.8px; 
-        }
-        
-        select, input { 
-            width: 100%; 
-            font-weight: 600; 
-            color: #1d4379; 
-            outline: none; 
-            background: transparent; 
-            border: none; 
-            font-size: 14px; 
-        }
-
-        /* ETOILES */
+        label { font-size: 10px; font-weight: 700; color: #bdc3c7; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 0.8px; }
+        select, input { width: 100%; font-weight: 600; color: #1d4379; outline: none; background: transparent; border: none; font-size: 14px; }
         .star-rating { display: flex; gap: 8px; margin-top: 5px; }
         .star-icon { color: #e5e7eb; cursor: pointer; transition: all 0.2s; }
         .star-icon.active { color: #facc15; fill: #facc15; }
-
-        /* MODALE */
-        .modal-overlay { 
-            position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.4); 
-            backdrop-filter: blur(6px); 
-            z-index: 100; 
-            display: none; 
-            align-items: center; justify-content: center; 
-            padding: 24px; 
-        }
-        .modal-box { 
-            background: white; 
-            border-radius: 35px; 
-            padding: 35px; 
-            width: 100%; 
-            max-width: 340px; 
-            text-align: center; 
-            box-shadow: 0 25px 60px rgba(0,0,0,0.2); 
-        }
-        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
+        .modal-box { background: white; border-radius: 35px; padding: 35px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
         input[type="range"] { accent-color: #1d4379; }
     </style>
 </head>
@@ -108,10 +63,7 @@
 
             <div class="input-group">
                 <label>Période</label>
-                <div class="flex items-center gap-3">
-                    <i data-lucide="calendar" class="w-4 h-4 text-gray-300"></i>
-                    <input type="text" id="date-range" placeholder="Dates du séjour" class="cursor-pointer">
-                </div>
+                <input type="text" id="date-range" placeholder="Dates du séjour" class="cursor-pointer">
             </div>
 
             <div class="grid grid-cols-2">
@@ -121,7 +73,10 @@
                         <option value="all">Toutes</option>
                         <option value="4x4">4X4</option>
                         <option value="citadine">Citadine</option>
-                        <option value="van">Van</option>
+                        <option value="monospace">Monospace</option>
+                        <option value="fourgonnette">Fourgonnette</option>
+                        <option value="pickup">Pick-up</option>
+                        <option value="premium">Premium</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -151,15 +106,17 @@
                         <option value="Essence">Essence</option>
                         <option value="Diesel">Diesel</option>
                         <option value="Electrique">Électrique</option>
+                        <option value="Hybride">Hybride</option>
                     </select>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>Options de confort</label>
+                <label>Climatisation</label>
                 <select id="f-ac">
-                    <option value="all">Climatisation (peu importe)</option>
-                    <option value="true">Climatisation indispensable</option>
+                    <option value="all">Peu importe</option>
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
                 </select>
             </div>
 
@@ -209,12 +166,10 @@
     <script>
         lucide.createIcons();
         flatpickr("#date-range", { mode: "range", minDate: "today", dateFormat: "d/m/Y", locale: "fr" });
-
         const range = document.getElementById('price-range');
         range.addEventListener('input', (e) => {
             document.getElementById('price-val').innerText = parseInt(e.target.value).toLocaleString() + ' CVE';
         });
-
         const stars = document.querySelectorAll('.star-icon');
         stars.forEach(star => {
             star.addEventListener('click', () => {
@@ -222,7 +177,6 @@
                 stars.forEach(s => s.classList.toggle('active', s.dataset.val <= v));
             });
         });
-
         function handleMainSearch() {
             if (document.getElementById('driver-check').checked) {
                 document.getElementById('driver-modal').style.display = 'flex';
@@ -230,7 +184,6 @@
                 alert("Redirection vers la liste des voitures filtrées...");
             }
         }
-
         function skipDriverChoice() {
             alert("Un chauffeur vous sera assigné automatiquement et facturé 25€ pour 7h. Chaque heure supplémentaire sera facturée 5€.");
             document.getElementById('driver-modal').style.display = 'none';
