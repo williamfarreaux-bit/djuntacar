@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,28 +18,26 @@
         
         body { 
             background-color: #F9FAFB; 
-            padding-bottom: 220px; /* Espace pour les 2 boutons empilés */
+            padding-bottom: 220px; 
             margin: 0;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* STYLE DES BOUTONS D'ACTION (CENTRAGE ABSOLU) */
+        /* STYLE DES BOUTONS D'ACTION (CENTRAGE ET CASSE NORMALE) */
         .btn-action {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             width: 100% !important;
             height: 58px !important;
-            border-radius: 18px !important;
-            font-weight: 800 !important;
-            text-transform: uppercase !important;
-            font-size: 13px !important;
-            letter-spacing: 0.5px !important;
+            border-radius: 20px !important;
+            font-weight: 700 !important;
+            font-size: 15px !important;
             text-decoration: none !important;
-            transition: transform 0.2s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
         }
-        .btn-action:active { transform: scale(0.96); }
+        .btn-action:active { transform: scale(0.97); }
         .btn-blue { background-color: #1d4379 !important; color: white !important; }
         .btn-green { background-color: #22c55e !important; color: white !important; }
 
@@ -60,17 +58,17 @@
 <body class="antialiased text-gray-800">
 
     <div id="mobile-menu" class="fixed inset-0 z-[70] menu-closed flex">
-        <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div onclick="toggleMenu()" class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
         <div class="relative bg-white w-3/4 max-w-xs h-full shadow-2xl flex flex-col p-6">
             <div class="flex justify-between items-center mb-8">
                 <img src="logo.png" class="h-8 object-contain">
-                <button onclick="toggleMenu()" class="p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <button onclick="toggleMenu()" class="p-2"><i data-lucide="x" class="w-6 h-6 text-gray-400"></i></button>
             </div>
             <nav class="space-y-6 flex-1">
-                <a href="index.html" class="flex items-center gap-3 text-[#1d4379] font-black uppercase text-sm"><i data-lucide="home"></i> Accueil</a>
-                <a href="profile.html" class="flex items-center gap-3 text-gray-500 font-black uppercase text-sm"><i data-lucide="user"></i> Mon Profil</a>
-                <a href="add-car.html" class="flex items-center gap-3 text-gray-500 font-black uppercase text-sm"><i data-lucide="plus-square"></i> Ajoute ta voiture</a>
-                <a href="become-driver.html" class="flex items-center gap-3 text-gray-500 font-black uppercase text-sm"><i data-lucide="user-plus"></i> Deviens chauffeur</a>
+                <a href="index.html" class="flex items-center gap-3 text-[#1d4379] font-bold text-lg"><i data-lucide="home"></i> Accueil</a>
+                <a href="profile.html" class="flex items-center gap-3 text-gray-500 font-bold"><i data-lucide="user"></i> Mon profil</a>
+                <a href="add-car.html" class="flex items-center gap-3 text-gray-500 font-bold"><i data-lucide="plus-square"></i> Ajouter ma voiture</a>
+                <a href="become-driver.html" class="flex items-center gap-3 text-gray-500 font-bold"><i data-lucide="user-plus"></i> Devenir chauffeur</a>
             </nav>
         </div>
     </div>
@@ -86,20 +84,20 @@
     <div class="fixed bottom-0 w-full z-[60] px-6 pb-10 pt-4 bg-gradient-to-t from-white via-white to-transparent">
         <div class="max-w-md mx-auto flex flex-col gap-3">
             <a href="add-car.html" class="btn-action btn-blue">
-                <i data-lucide="plus-square" class="w-5 h-5 mr-3"></i> AJOUTE TA VOITURE
+                <i data-lucide="plus-square" class="w-5 h-5 mr-3"></i> Ajouter ma voiture
             </a>
             <a href="become-driver.html" class="btn-action btn-green">
-                <i data-lucide="user-plus" class="w-5 h-5 mr-3"></i> DEVIENS CHAUFFEUR
+                <i data-lucide="user-plus" class="w-5 h-5 mr-3"></i> Devenir chauffeur
             </a>
         </div>
     </div>
 
     <div class="hero-shape pt-24 pb-12 px-6 text-white text-center">
         <div class="max-w-md mx-auto">
-            <h1 class="text-2xl font-black uppercase mb-6 tracking-tight">Où allez-vous ?</h1>
+            <h1 class="text-2xl font-extrabold mb-6 tracking-tight">Choisis une voiture</h1>
             <div class="relative text-gray-900">
                 <i data-lucide="map-pin" class="absolute left-4 top-4 text-gray-400"></i>
-                <select id="island-select" onchange="fetchVehicles()" class="w-full p-4 pl-12 bg-white rounded-2xl font-black uppercase text-xs appearance-none outline-none shadow-xl">
+                <select id="island-select" onchange="fetchVehicles()" class="w-full p-4 pl-12 bg-white rounded-2xl font-bold text-sm appearance-none outline-none shadow-xl">
                     <option value="all">Toutes les îles</option>
                     <option value="Santiago">Santiago</option>
                     <option value="Sal">Sal</option>
@@ -113,17 +111,17 @@
 
     <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
         <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide">
-            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase shadow-lg whitespace-nowrap">Tout</button>
-            <button onclick="toggleDriver()" id="btn-driver" class="bg-white text-gray-500 px-4 py-2.5 rounded-full text-[10px] font-black border border-gray-100 shadow-sm whitespace-nowrap flex items-center gap-2 uppercase">
+            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">Tout</button>
+            <button onclick="toggleDriver()" id="btn-driver" class="bg-white text-gray-500 px-4 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap flex items-center gap-2">
                 <i data-lucide="user-check" class="w-4 h-4"></i> Chauffeur
             </button>
-            <button onclick="filterCat('citadina')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-[10px] font-black border border-gray-100 shadow-sm uppercase">Citadines</button>
-            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-[10px] font-black border border-gray-100 shadow-sm uppercase">4x4</button>
-            <button onclick="filterCat('utilitaire')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-[10px] font-black border border-gray-100 shadow-sm uppercase">Van</button>
+            <button onclick="filterCat('citadina')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm">Citadines</button>
+            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm">4x4</button>
+            <button onclick="filterCat('utilitaire')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm">Van</button>
         </div>
 
         <div id="vehicle-grid" class="grid grid-cols-1 gap-6">
-            <div class="text-center py-20 uppercase font-black text-gray-300 text-xs tracking-widest">Chargement...</div>
+            <div class="text-center py-20 font-bold text-gray-300 text-sm">Chargement...</div>
         </div>
     </main>
 
@@ -177,19 +175,19 @@
         function renderVehicles(cars) {
             const grid = document.getElementById('vehicle-grid');
             if(cars.length === 0) {
-                grid.innerHTML = `<div class="text-center py-20 uppercase font-black text-gray-300 text-xs">Aucun véhicule</div>`;
+                grid.innerHTML = `<div class="text-center py-20 font-bold text-gray-300 text-sm">Aucun véhicule</div>`;
                 return;
             }
             grid.innerHTML = cars.map(car => `
                 <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100" onclick="window.location.href='car-detail.html?id=${car.id}'">
                     <div class="relative h-52">
                         <img src="${car.images_url?.[0]}" class="w-full h-full object-cover">
-                        <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-black uppercase">${car.price_per_day} CVE / JOUR</div>
+                        <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-bold">${car.price_per_day} CVE / jour</div>
                     </div>
                     <div class="p-5 flex justify-between items-center">
                         <div>
-                            <h3 class="font-black uppercase text-gray-900 text-sm">${car.make} ${car.model}</h3>
-                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">${car.island} • ${car.transmission}</p>
+                            <h3 class="font-extrabold text-gray-900 text-sm">${car.make} ${car.model}</h3>
+                            <p class="text-[10px] font-bold text-gray-400 mt-1">${car.island} • ${car.transmission}</p>
                         </div>
                         <div class="bg-gray-50 p-2 rounded-full"><i data-lucide="chevron-right" class="w-5 h-5 text-gray-200"></i></div>
                     </div>
