@@ -3,210 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Mobilidade</title>
+    <title>DjuntaCar</title>
     
-    <link rel="icon" type="image/png" href="sigle.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1A4384',
+                        secondary: '#0f2a52',
+                        accent: '#76B852',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root { --blue: #1A4384; --green: #76B852; --bg: #f4f7f6; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
-        
-        /* HEADER */
-        header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
-        .logo { font-weight: 900; color: var(--blue); font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .logo img { height: 30px; }
-        select.lang { border: 1px solid #ddd; padding: 5px; border-radius: 15px; background: white; font-size: 14px; }
-
-        /* RECHERCHE */
-        .hero { padding: 20px 20px 10px 20px; }
-        .search-box { background: white; padding: 12px; border-radius: 12px; display: flex; align-items: center; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        
-        /* FILTRES */
-        .filters { display: flex; gap: 8px; overflow-x: auto; padding: 10px 20px; scrollbar-width: none; }
-        .chip { background: white; border: 1px solid #ccc; padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; }
-        .chip.active { background: var(--blue); color: white; border-color: var(--blue); }
-
-        /* LISTE */
-        #list { padding: 10px 20px; }
-        .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; transition: transform 0.1s; }
-        .card:active { transform: scale(0.98); }
-        .card-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
-        .card-body { padding: 15px; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .card-title { margin: 0; color: var(--blue); font-size: 17px; font-weight: 800; }
-        .price { background: #e8f5e9; color: var(--green); padding: 6px 10px; border-radius: 8px; font-weight: bold; font-size: 14px; }
-        .specs { display: flex; gap: 12px; font-size: 13px; color: #666; margin-top: 8px; }
-        .btn { background: var(--blue); color: white; border: none; padding: 14px; width: 100%; border-radius: 10px; margin-top: 15px; font-weight: bold; font-size: 15px; cursor: pointer; }
-
-        /* NAV BAS */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; z-index: 100; padding-bottom: max(15px, env(safe-area-inset-bottom)); }
-        
-        /* DEBUG */
-        #debug { font-size: 10px; color: #999; text-align: center; margin-top: 20px; font-family: monospace; }
+        /* Effet de verre (Glassmorphism) */
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        body { background-color: #F9FAFB; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
-<body>
+<body class="antialiased text-gray-800">
 
-<header>
-    <a href="#" class="logo">
-        <img src="logo.png" onerror="this.style.display='none'"> DjuntaCar
-    </a>
-    <select class="lang" id="langSelect" onchange="updateLang()">
-        <option value="fr">🇫🇷 FR</option>
-        <option value="pt">🇵🇹 PT</option>
-        <option value="en">🇬🇧 EN</option>
-        <option value="cv">🇨🇻 CV</option>
-    </select>
-</header>
+    <header class="fixed top-0 w-full z-50 glass border-b border-gray-200">
+        <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 font-bold text-primary text-xl">
+                <i data-lucide="car-front" class="w-6 h-6"></i>
+                DjuntaCar
+            </div>
+            <div class="flex items-center gap-2 text-sm font-medium text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                <span>🇫🇷 FR</span>
+                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </div>
+        </div>
+    </header>
 
-<div class="hero">
-    <h2 id="txt-title" style="color:var(--blue); margin:0 0 10px 0; font-size: 20px;">Où voulez-vous aller ?</h2>
-    <div class="search-box">
-        📍 <select style="border:none; width:100%; margin-left:10px; outline:none; background:white; font-size: 16px;">
-            <option>Santiago (Praia)</option>
-            <option>Sal</option>
-            <option>São Vicente</option>
-            <option>Boa Vista</option>
-        </select>
-    </div>
-</div>
-
-<div class="filters">
-    <div class="chip active" onclick="filter('all', this)" id="txt-all">Tous</div>
-    <div class="chip" onclick="filter('citadina', this)">Citadinas</div>
-    <div class="chip" onclick="filter('4x4_aventura', this)">4x4</div>
-    <div class="chip" onclick="filter('premium', this)">Premium</div>
-    <div class="chip" onclick="filter('utilitaire', this)">Van</div>
-</div>
-
-<div id="list">
-    <div style="text-align:center; padding:50px; color:#aaa;">Chargement...</div>
-</div>
-
-<div id="debug">System Check...</div>
-
-<nav>
-    <span style="font-size:24px; color:var(--blue);">🏠</span>
-    <span style="font-size:24px; opacity:0.4;">📅</span>
-    <span style="font-size:24px; opacity:0.4;">💬</span>
-    <span style="font-size:24px; opacity:0.4;">👤</span>
-</nav>
-
-<script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    // --- DONNÉES DE SECOURS (Si la DB plante, on affiche ça) ---
-    const BACKUP_CARS = [
-        { id: 1, make: "Toyota", model: "Hilux", category: "4x4_aventura", price_per_day: 6500, transmission: "Manuelle", seats: 5, fuel_type: "Diesel", images_url: ["https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600"] },
-        { id: 2, make: "Suzuki", model: "Jimny", category: "4x4_aventura", price_per_day: 4500, transmission: "Manuelle", seats: 4, fuel_type: "Essence", images_url: ["https://images.unsplash.com/photo-1609520505218-7421da3b3d4f?w=600"] },
-        { id: 3, make: "Renault", model: "Kwid", category: "citadina", price_per_day: 3000, transmission: "Manuelle", seats: 4, fuel_type: "Essence", images_url: ["https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=600"] },
-        { id: 4, make: "Mercedes", model: "C-Class", category: "premium", price_per_day: 12000, transmission: "Auto", seats: 5, fuel_type: "Diesel", images_url: ["https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600"] },
-        { id: 5, make: "Dacia", model: "Duster", category: "4x4_aventura", price_per_day: 5000, transmission: "Manuelle", seats: 5, fuel_type: "Diesel", images_url: ["https://images.unsplash.com/photo-1669286438080-6927d2c33219?w=600"] },
-        { id: 6, make: "Peugeot", model: "208", category: "citadina", price_per_day: 3500, transmission: "Manuelle", seats: 5, fuel_type: "Essence", images_url: ["https://images.unsplash.com/photo-1502877338535-766e1452684a?w=600"] }
-    ];
-
-    let currentCars = [];
-
-    // --- TRADUCTIONS ---
-    const texts = {
-        fr: { title: "Où voulez-vous aller ?", all: "Tous", btn: "Voir détails", unit: "jour" },
-        pt: { title: "Onde é que queres ir?", all: "Tudos", btn: "Ver detalhes", unit: "dia" },
-        en: { title: "Where do you want to go?", all: "All", btn: "View details", unit: "day" },
-        cv: { title: "Undi bu kre bai?", all: "Tud", btn: "Odja detalhis", unit: "dia" }
-    };
-
-    // --- LOGIQUE PRINCIPALE ---
-    async function init() {
-        const debug = document.getElementById('debug');
-        
-        try {
-            // 1. Essai Connexion DB
-            const supabase = createClient(
-                'https://enuiuuwnjzvpfvpklmjw.supabase.co',
-                'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-'
-            );
+    <div class="bg-gradient-to-br from-[#1A4384] via-[#1A4384] to-[#0f2a52] pt-24 pb-12 px-4 text-white rounded-b-[2rem] shadow-lg">
+        <div class="max-w-md mx-auto">
+            <h1 class="text-3xl font-bold mb-2">Où voulez-vous aller ?</h1>
+            <p class="text-blue-100 text-sm mb-6 flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                Mobilidadi pa tudu Cabo Verde 🇨🇻
+            </p>
             
-            debug.innerText = "Connexion DB...";
-            const { data, error } = await supabase.from('vehicles').select('*').eq('is_active', true);
+            <div class="relative">
+                <select id="island-select" onchange="applyFilters()" class="w-full appearance-none bg-white/10 border border-white/20 text-white py-3 px-4 rounded-xl backdrop-blur-md outline-none focus:border-white/50 transition-colors">
+                    <option value="all" class="text-gray-800">Toutes les îles</option>
+                    <option value="Santiago" class="text-gray-800">Santiago (Praia)</option>
+                    <option value="Sal" class="text-gray-800">Sal</option>
+                    <option value="SaoVicente" class="text-gray-800">São Vicente</option>
+                </select>
+                <i data-lucide="chevron-down" class="absolute right-4 top-3.5 w-5 h-5 text-white pointer-events-none"></i>
+            </div>
+        </div>
+    </div>
 
-            if (!error && data && data.length > 0) {
-                currentCars = data;
-                debug.innerText = "✅ Connecté à Supabase (" + data.length + " véhicules)";
-                debug.style.color = "green";
-            } else {
-                throw new Error(error ? error.message : "Table vide");
+    <main class="max-w-md mx-auto px-4 -mt-6 relative z-10">
+        
+        <div class="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-2">
+            <button onclick="setCategory('all', this)" class="cat-btn active bg-primary text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-md transition-all">Tous</button>
+            <button onclick="setCategory('citadina', this)" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-sm border border-gray-100">Citadines</button>
+            <button onclick="setCategory('4x4_aventura', this)" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-sm border border-gray-100">4x4 Aventura</button>
+            <button onclick="setCategory('premium', this)" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-sm border border-gray-100">Premium</button>
+        </div>
+
+        <div id="vehicle-grid" class="grid grid-cols-1 gap-4">
+            <div class="flex flex-col items-center justify-center py-12 text-gray-400">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mb-2"></i>
+                <span class="text-sm">Chargement des véhicules...</span>
+            </div>
+        </div>
+
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 pb-safe z-50">
+        <div class="max-w-md mx-auto flex justify-around items-center h-16">
+            <button class="flex flex-col items-center text-primary">
+                <i data-lucide="home" class="w-6 h-6"></i>
+                <span class="text-[10px] font-medium mt-1">Accueil</span>
+            </button>
+            <button class="flex flex-col items-center text-gray-400 hover:text-gray-600">
+                <i data-lucide="calendar" class="w-6 h-6"></i>
+                <span class="text-[10px] font-medium mt-1">Réservations</span>
+            </button>
+            <button class="flex flex-col items-center text-gray-400 hover:text-gray-600">
+                <i data-lucide="message-circle" class="w-6 h-6"></i>
+                <span class="text-[10px] font-medium mt-1">Messages</span>
+            </button>
+            <button class="flex flex-col items-center text-gray-400 hover:text-gray-600">
+                <i data-lucide="user" class="w-6 h-6"></i>
+                <span class="text-[10px] font-medium mt-1">Profil</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // 1. Initialisation des Icones
+        lucide.createIcons();
+
+        // 2. Connexion Supabase
+        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 3. Variables Globales
+        let allVehicles = [];
+        let currentCategory = 'all';
+
+        // 4. Fonction Principale
+        async function loadApp() {
+            const grid = document.getElementById('vehicle-grid');
+            
+            try {
+                // Récupération des données
+                const { data, error } = await supabase.from('vehicles').select('*').eq('is_active', true);
+                
+                if (error) throw error;
+
+                // ASTUCE: On assigne une île aléatoire pour que le filtre fonctionne (Simulation)
+                // Hilux/Duster -> Santiago | Jimny -> Sal | Autres -> Mixte
+                allVehicles = data.map(car => ({
+                    ...car,
+                    island: car.model.includes('Hilux') ? 'Santiago' : 
+                            car.model.includes('Jimny') ? 'Sal' : 
+                            car.model.includes('Hiace') ? 'SaoVicente' : 'Santiago'
+                }));
+
+                applyFilters();
+
+            } catch (err) {
+                console.error("Erreur:", err);
+                grid.innerHTML = `
+                    <div class="bg-red-50 text-red-600 p-4 rounded-xl text-center text-sm border border-red-100">
+                        <p class="font-bold">Erreur de connexion</p>
+                        <p>${err.message}</p>
+                    </div>`;
             }
-
-        } catch (err) {
-            // 2. Fallback (Plan B)
-            console.warn("Utilisation des données de secours", err);
-            currentCars = BACKUP_CARS;
-            debug.innerText = "⚠️ Mode Hors-Ligne/Démo (Données locales)";
-            debug.style.color = "orange";
         }
 
-        // 3. Affichage
-        render(currentCars);
-    }
+        // 5. Moteur de Filtrage
+        function applyFilters() {
+            const island = document.getElementById('island-select').value;
+            const grid = document.getElementById('vehicle-grid');
 
-    // --- FONCTIONS D'AFFICHAGE (Globales pour onclick) ---
-    window.render = (list) => {
-        const container = document.getElementById('list');
-        const lang = document.getElementById('langSelect').value;
-        const t = texts[lang];
-        
-        container.innerHTML = '';
-        
-        list.forEach(car => {
-            // Image sécurisée (Si tableau vide ou null -> Fallback)
-            let img = 'https://via.placeholder.com/400x200?text=Auto';
-            if (car.images_url && Array.isArray(car.images_url) && car.images_url.length > 0) {
-                img = car.images_url[0];
-            } else if (typeof car.images_url === 'string') {
-                img = car.images_url; // Cas où ce serait une simple string
+            // Filtrer
+            const filtered = allVehicles.filter(car => {
+                const matchIsland = island === 'all' || car.island === island;
+                const matchCat = currentCategory === 'all' || car.category === currentCategory;
+                return matchIsland && matchCat;
+            });
+
+            // Afficher
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <div class="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="car-front" class="w-8 h-8 opacity-50"></i>
+                        </div>
+                        <p>Aucun véhicule disponible ici.</p>
+                    </div>`;
+            } else {
+                grid.innerHTML = filtered.map(car => createCard(car)).join('');
             }
+            lucide.createIcons(); // Rafraîchir les icones
+        }
 
-            container.innerHTML += `
-                <div class="card">
-                    <img src="${img}" class="card-img" alt="${car.make}">
-                    <div class="card-body">
-                        <div class="card-header">
-                            <h3 class="card-title">${car.make} ${car.model}</h3>
-                            <div class="price">${car.price_per_day} CVE / ${t.unit}</div>
-                        </div>
-                        <div class="specs">
-                            <span>🕹️ ${car.transmission || 'Manuelle'}</span>
-                            <span>⛽ ${car.fuel_type || 'Diesel'}</span>
-                            <span>💺 ${car.seats || 5}</span>
-                        </div>
-                        <button class="btn" onclick="alert('Détail du véhicule ${car.model} à venir')">${t.btn}</button>
+        // 6. Création de la Carte (HTML)
+        function createCard(car) {
+            const img = (car.images_url && car.images_url.length) ? car.images_url[0] : 'https://via.placeholder.com/400';
+            
+            return `
+            <div onclick="alert('Détail pour ${car.make} ${car.model}')" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 active:scale-[0.98] transition-transform duration-150 cursor-pointer">
+                <div class="relative h-48 bg-gray-200">
+                    <img src="${img}" class="w-full h-full object-cover" loading="lazy" alt="${car.make}">
+                    <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">
+                        ${car.price_per_day.toLocaleString()} CVE<span class="font-normal text-gray-500">/j</span>
+                    </div>
+                    <div class="absolute bottom-3 left-3 bg-black/50 backdrop-blur-md text-white px-2 py-1 rounded-lg text-[10px] flex items-center gap-1">
+                        <i data-lucide="map-pin" class="w-3 h-3"></i> ${car.island}
                     </div>
                 </div>
-            `;
-        });
-    };
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 leading-tight">${car.make} ${car.model}</h3>
+                            <p class="text-xs text-gray-500 mt-0.5 capitalize">${car.category.replace('_', ' ')}</p>
+                        </div>
+                        <div class="flex items-center gap-1 text-accent text-xs font-bold bg-green-50 px-2 py-1 rounded-lg">
+                            <i data-lucide="check-circle-2" class="w-3 h-3"></i> Dispo
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 text-xs text-gray-500 mt-3 pt-3 border-t border-gray-50">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="fuel" class="w-4 h-4 text-primary/70"></i>
+                            ${car.fuel_type || 'Essence'}
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="joystick" class="w-4 h-4 text-primary/70"></i>
+                            ${car.transmission || 'Manuelle'}
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="users" class="w-4 h-4 text-primary/70"></i>
+                            ${car.seats || 4} pl.
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
 
-    window.filter = (cat, el) => {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        
-        if (cat === 'all') render(currentCars);
-        else render(currentCars.filter(c => c.category === cat));
-    };
+        // 7. Gestion des Boutons Catégorie
+        window.setCategory = (cat, btn) => {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.className = `cat-btn bg-white text-gray-600 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-sm border border-gray-100 transition-all`;
+            });
+            btn.className = `cat-btn active bg-primary text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap shadow-md transition-all`;
+            applyFilters();
+        }
 
-    window.updateLang = () => {
-        const lang = document.getElementById('langSelect').value;
-        const t = texts[lang];
-        document.getElementById('txt-title').innerText = t.title;
-        document.getElementById('txt-all').innerText = t.all;
-        render(currentCars);
-    };
-
-    // Lancement
-    init();
-</script>
-
+        // Démarrage
+        loadApp();
+    </script>
 </body>
 </html>
