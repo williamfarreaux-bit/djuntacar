@@ -1,61 +1,53 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Test Diagnostic DjuntaCar</title>
+    <title>TEST CONNEXION</title>
+    <style>body{font-family:monospace;padding:20px;font-size:18px;}</style>
 </head>
-<body style="font-family: monospace; padding: 20px;">
-
-    <h1>🕵️‍♂️ Mode Diagnostic</h1>
-    <div id="status">Tentative de connexion...</div>
-    <div id="logs" style="background: #eee; padding: 10px; margin-top: 10px; border: 1px solid #ccc;"></div>
+<body>
+    <h1>🛠️ DIAGNOSTIC DJUNTACAR</h1>
+    <div id="resultat">Tentative de connexion en cours...</div>
 
     <script type="module">
-        // 1. On charge Supabase
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-        // Fonction pour afficher les messages sur l'écran
-        function log(message, color = 'black') {
-            const div = document.createElement('div');
-            div.style.color = color;
-            div.innerText = `> ${message}`;
-            document.getElementById('logs').appendChild(div);
+        // Vos identifiants (J'ai repris ceux que vous m'avez donnés plus tôt)
+        const URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+        const KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+
+        async function testConnection() {
+            const div = document.getElementById('resultat');
+            
+            try {
+                const supabase = createClient(URL, KEY);
+                
+                // On essaie de lire la table 'vehicles'
+                const { data, error } = await supabase.from('vehicles').select('*');
+
+                if (error) {
+                    div.style.color = 'red';
+                    div.innerHTML = `
+                        <strong>🛑 ÉCHEC DE LA CONNEXION</strong><br><br>
+                        <strong>Code erreur :</strong> ${error.code}<br>
+                        <strong>Message :</strong> ${error.message}<br><br>
+                        <em>Conseil : Vérifiez que vous avez bien lancé le script SQL pour rendre la table publique.</em>
+                    `;
+                } else {
+                    div.style.color = 'green';
+                    div.innerHTML = `
+                        <strong>✅ SUCCÈS ! LA CONNEXION FONCTIONNE.</strong><br><br>
+                        <strong>Nombre de voitures trouvées :</strong> ${data.length}<br>
+                        <strong>Exemple :</strong> ${data[0] ? (data[0].make + ' ' + data[0].model) : 'Aucune voiture dans la table'}
+                    `;
+                }
+            } catch (err) {
+                div.style.color = 'red';
+                div.innerHTML = `<strong>💥 ERREUR CRITIQUE (CODE) :</strong> ${err.message}`;
+            }
         }
 
-        try {
-            log("Initialisation du client Supabase...");
-            
-            // Vos clés
-            const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-            
-            const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-            log("Client Supabase créé.");
-
-            // 2. Test de récupération des données
-            log("Lancement de la requête vers la table 'vehicles'...");
-            
-            const { data, error } = await supabase
-                .from('vehicles')
-                .select('*');
-
-            if (error) {
-                log("ERREUR CRITIQUE SUPABASE :", 'red');
-                log(JSON.stringify(error, null, 2), 'red');
-                document.getElementById('status').innerText = "❌ ÉCHEC";
-            } else {
-                log("RÉPONSE REÇUE !", 'green');
-                log(`Nombre de voitures trouvées : ${data.length}`, 'blue');
-                
-                if (data.length > 0) {
-                    log("Exemple de voiture 1 : " + data[0].make + " " + data[0].model);
-                    // On vérifie les images
-                    if (data[0].images_url) {
-                         log("Images détectées : OUI (Format Array)", 'green');
-                    } else {
-                         log("Attention : Pas d'images ou mauvais format", 'orange');
-                    }
-                } else {
-                    log("La table est vide (0 voitures).", 'orange');
-                }
-                document.getElementById('status').innerText = "✅ SUCCÈ
+        testConnection();
+    </script>
+</body>
+</html>
