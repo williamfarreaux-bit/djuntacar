@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Devenir Chauffeur - DjuntaCar</title>
+    <link rel="icon" type="image/png" href="sigle.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+        body { font-family: 'Montserrat', sans-serif; background-color: #F9FAFB; }
+    </style>
+</head>
+<body class="pb-10">
+
+    <header class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="text-gray-500 font-bold text-sm flex items-center gap-1">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Annuler
+            </a>
+            <h1 class="text-lg font-extrabold text-[#1d4379]">Profil Chauffeur</h1>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-4">
+        <form id="driver-form" class="space-y-4">
+            
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 text-center">
+                <div class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center border-2 border-dashed border-gray-300 relative overflow-hidden" id="photo-preview">
+                    <i data-lucide="user" class="w-10 h-10 text-gray-300"></i>
+                    <input type="file" id="avatar-upload" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+                </div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Ajouter une photo pro</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Île principale</label>
+                    <select id="driver-island" class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-[#1d4379]">
+                        <option value="Santiago">Santiago</option>
+                        <option value="Sal">Sal</option>
+                        <option value="SaoVicente">São Vicente</option>
+                        <option value="BoaVista">Boa Vista</option>
+                        <option value="Fogo">Fogo</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Tarif journalier (CVE)</label>
+                    <input type="number" id="driver-price" placeholder="Ex: 2500" class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-[#1d4379]">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Présentation / Expérience</label>
+                    <textarea id="driver-bio" rows="3" placeholder="Parlez de votre expérience de conduite..." class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-[#1d4379] text-sm"></textarea>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full bg-[#1d4379] text-white font-extrabold py-4 rounded-2xl shadow-xl flex justify-center items-center gap-2 hover:bg-[#142f55] transition-all">
+                Activer mon profil Chauffeur
+            </button>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Preview Photo
+        document.getElementById('avatar-upload').addEventListener('change', function(e) {
+            if(this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('photo-preview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        document.getElementById('driver-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Enregistrement...';
+            lucide.createIcons();
+
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) throw new Error("Non connecté");
+
+                // 1. Update Profile (Info + Ajouter le rôle driver si absent)
+                const { data: currentProfile } = await supabase.from('profiles').select('roles').eq('id', session.user.id).single();
+                let roles = currentProfile.roles || [];
+                if (!roles.includes('driver')) roles.push('driver');
+
+                const { error: updateError } = await supabase
+                    .from('profiles')
+                    .update({
+                        island: document.getElementById('driver-island').value,
+                        price_per_day_driver: document.getElementById('driver-price').value,
+                        bio: document.getElementById('driver-bio').value,
+                        roles: roles
+                    })
+                    .eq('id', session.user.id);
+
+                if (updateError) throw updateError;
+
+                alert("✅ Votre profil chauffeur est actif !");
+                window.location.href = 'profile.html';
+
+            } catch (err) {
+                alert(err.message);
+                btn.innerText = "Activer mon profil Chauffeur";
+            }
+        });
+    </script>
+</body>
+</html>
