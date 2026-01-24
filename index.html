@@ -3,70 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DjuntaCar 🇨🇻</title>
+    <title>DjuntaCar cv 🇨🇻</title>
     <style>
         :root {
             --primary: #2563eb;
             --bg: #f8fafc;
             --card: #ffffff;
+            --text: #1e293b;
         }
         body {
-            font-family: -apple-system, system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             margin: 0;
             padding: 0;
-            color: #1e293b;
+            color: var(--text);
         }
         header {
             padding: 20px;
             background: white;
             text-align: center;
-            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .search-container {
-            padding: 15px;
-            position: sticky;
-            top: 0;
-            background: var(--bg);
-            z-index: 10;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
         }
         input {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 12px;
             border: 1px solid #cbd5e1;
-            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         #car-list {
-            padding: 15px;
+            padding: 20px;
             display: grid;
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
         .car-card {
             background: var(--card);
-            border-radius: 15px;
-            padding: 15px;
+            border-radius: 16px;
+            padding: 20px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
         }
-        .car-info h3 { margin: 0 0 10px 0; }
+        .car-card:hover { transform: translateY(-5px); }
+        .car-info h3 { margin: 0 0 10px 0; color: var(--primary); }
         .car-specs { font-size: 0.9em; color: #64748b; margin-bottom: 15px; }
+        .price { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; }
         .btn-reserve {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px;
+            padding: 12px;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
         }
-        .loading { text-align: center; padding: 50px; color: #64748b; }
+        .status-msg { text-align: center; padding: 40px; color: #64748b; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>DjuntaCar 🇨🇻</h1>
+    <h1>DjuntaCar cv 🇨🇻</h1>
 </header>
 
 <div class="search-container">
@@ -74,20 +81,5 @@
 </div>
 
 <div id="car-list">
-    <div class="loading">Chargement des véhicules...</div>
+    <div class="status-msg">Connexion à la flotte en cours...</div>
 </div>
-
-<script type="module">
-    // Importation de Supabase (Version 2026)
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    async function loadCars() {
-        const { data, error } = await supabase
-            .from('vehicles')
-            .select('*');
-
-        const
