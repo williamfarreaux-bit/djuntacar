@@ -3,122 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DjuntaCar cv 🇨🇻</title>
+    <title>DjuntaCar - Mobilité Cap-Vert</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
+            --blue-atlantique: #1A4384;
+            --green-kaminhu: #76B852;
+            --bg-gray: #f4f7f6;
+            --white: #ffffff;
+            --radius: 12px; /* [cite: 10] */
         }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            color: var(--text);
-            text-align: center;
+            font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0; padding: 0; color: #333;
         }
-        header {
-            padding: 30px 20px;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+        /* --- UI GÉNÉRALE --- */
+        .card { background: var(--white); border-radius: var(--radius); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .btn-primary { background: var(--blue-atlantique); color: white; border: none; padding: 15px; border-radius: var(--radius); font-weight: bold; width: 100%; cursor: pointer; }
+        .btn-success { background: var(--green-kaminhu); color: white; border: none; padding: 15px; border-radius: var(--radius); font-weight: bold; width: 100%; cursor: pointer; }
+
+        /* --- ÉCRAN 1 : ACCUEIL [cite: 12] --- */
+        header { 
+            background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;
         }
-        h1 { margin: 0; font-size: 24px; color: var(--text); }
-        .search-container {
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
+        .logo { font-weight: bold; color: var(--blue-atlantique); display: flex; align-items: center; gap: 5px; }
+        .hero { padding: 30px 20px; text-align: left; }
+        .hero h1 { color: var(--blue-atlantique); font-size: 24px; margin-bottom: 20px; } /* [cite: 18] */
+        
+        .search-bar { background: white; padding: 12px; border-radius: var(--radius); display: flex; align-items: center; border: 1px solid #ddd; }
+        .search-bar input { border: none; width: 100%; outline: none; font-size: 16px; }
+
+        .filters { display: flex; gap: 10px; padding: 0 20px 20px; overflow-x: auto; } /* [cite: 21] */
+        .filter-item { padding: 10px 15px; background: white; border-radius: 20px; white-space: nowrap; border: 1px solid #ddd; font-size: 14px; }
+
+        /* --- LISTE VÉHICULES [cite: 25] --- */
+        #car-list { padding: 0 20px; }
+        .car-image { width: 100%; height: 180px; object-fit: cover; border-radius: var(--radius); margin-bottom: 10px; }
+        .price-toggle { font-size: 12px; color: var(--blue-atlantique); cursor: pointer; font-weight: bold; }
+
+        /* --- NAVIGATION --- */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        nav.bottom-nav { 
+            position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #ddd;
         }
-        input {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #cbd5e1;
-            font-size: 16px;
-            outline: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        #car-list {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .car-card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            text-align: left;
-        }
-        .car-info h3 { margin: 0 0 10px 0; color: var(--primary); }
-        .car-specs { font-size: 0.9em; color: #64748b; margin-bottom: 15px; }
-        .price { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; }
-        .btn-reserve {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .status-msg { margin-top: 50px; color: #64748b; font-size: 1.1em; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>DjuntaCar cv 🇨🇻</h1>
-</header>
+    <div class="logo">🤝 DjuntaCar</div>
+    <div class="lang">🇨🇻 ▼</div> </header>
 
-<div class="search-container">
-    <input type="text" placeholder="Onde é que queres ir? (Praia, Santiago...)">
+<div id="screen-home" class="screen active">
+    <div class="hero">
+        <h1>Onde é que queres ir?</h1> <div class="search-bar">
+            🔍 <input type="text" placeholder="Choisir une île (Santiago, Sal...)" id="search-input">
+        </div>
+    </div>
+
+    <div class="filters">
+        <div class="filter-item">🚙 4x4 & Aventura</div>
+        <div class="filter-item">🚗 Citadinas</div>
+        <div class="filter-item">💎 Premium</div>
+    </div>
+
+    <div id="car-list">
+        <div style="text-align:center; padding:50px;">Chargement du parc automobile...</div>
+    </div>
+    
+    <div style="height: 80px;"></div> </div>
+
+<div id="screen-detail" class="screen">
+    <button onclick="showScreen('screen-home')" style="margin: 20px; border:none; background:none; font-size:18px;">⬅ Retour</button>
+    <div id="detail-content" style="padding: 20px;"></div>
+    <div style="height: 100px;"></div>
+    <div style="position: fixed; bottom: 20px; width: 100%; padding: 0 20px; box-sizing: border-box;">
+        <button class="btn-primary">Reservar agora</button> </div>
 </div>
 
-<div id="car-list">
-    <div class="status-msg">Connexion à la flotte en cours...</div>
-</div>
+<nav class="bottom-nav">
+    <span>🏠</span>
+    <span>📅</span>
+    <span>👤</span>
+</nav>
 
 <script type="module">
-    // Chargement de la bibliothèque Supabase
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    // Configuration avec vos identifiants réels
     const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-    
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function displayVehicles() {
-        const container = document.getElementById('car-list');
+    let useEUR = false;
 
-        try {
-            // Récupération des données de la table "vehicles"
-            const { data, error } = await supabase
-                .from('vehicles')
-                .select('*');
+    // Fonction de conversion 
+    const formatPrice = (cve) => {
+        if (useEUR) return (cve / 110.265).toFixed(2) + ' EUR';
+        return cve.toLocaleString() + ' CVE';
+    };
 
-            if (error) throw error;
+    window.showScreen = (id) => {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    };
 
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div class="status-msg">Aucun véhicule disponible pour le moment.</div>';
-                return;
-            }
+    async function loadApp() {
+        const { data: vehicles, error } = await supabase.from('vehicles').select('*');
+        const list = document.getElementById('car-list');
 
-            container.innerHTML = ''; // On efface le message de chargement
+        if (error) {
+            list.innerHTML = "Erreur de connexion base de données.";
+            return;
+        }
 
-            data.forEach(car => {
-                const card = document.createElement('div');
-                card.className = 'car-card';
-                card.innerHTML = `
-                    <div class="car-info">
-                        <h3>${car.name}</h3>
-                        <div class="car-specs">
-                            ⛽ ${car.type || 'Diesel'} | 🕹️ ${car.transmission || 'Manuelle'}
-                        </div>
-                        <div class="price">${car.price_per_day || '---'} CVE <span
+        list.innerHTML = `<p class="price-toggle" onclick="toggleCurrency()">🔄 Convertir en EUR/USD</p>`;
+
+        vehicles.forEach(car => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${car.image_url || 'https://via.placeholder.com/400x200?text=DjuntaCar'}" class="car-image">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin:0; color:#1A4384;">${car.name}</h3>
+                    <span style="font-weight:bold;">${formatPrice(car.price_per_day)}</span>
+                </div>
+                <p style="font-size:12px; color:gray; margin: 5px 0;">⛽ ${car.type} | 🕹️ ${car.transmission}</p>
+                <button class="btn-primary" style="margin-top:10px; padding:10px;" onclick="viewCar('${car.id}')">Voir détails</button>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    window.toggleCurrency = () => {
+        useEUR = !useEUR;
+        loadApp();
+    };
+
+    window.viewCar = async (id) => {
+        const { data: car } = await supabase.from('vehicles').select('*').eq('id', id).single();
+        const content = document.getElementById('detail-content');
+        content.innerHTML = `
+            <img src="${car.image_url || 'https://via.placeholder.com/400x200'}" style="width:100%; border-radius:12px;">
+            <h2 style="color:#1A4384; margin-top:20px;">${car.name}</h2>
+            <div class="card" style="display:flex; align-items:center; gap:15px;">
+                <div style="width:50px; height:50px; background:#ddd; border-radius:50%;"></div>
+                <div><strong>Propriétaire : Manuel</strong><br><span style="color:var(--green-kaminhu);">⭐ 4.9 · Vérifié</span></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
+                <div class="card">🕹️ ${car.transmission}</div>
+                <div class="card">❄️ Clim AC</div>
+            </div>
+        `;
+        showScreen('screen-detail');
+    };
+
+    loadApp();
+</script>
+</body>
+</html>
