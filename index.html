@@ -6,10 +6,8 @@
     <title>DjuntaCar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    
     <style>
-        /* DESIGN DIRECTEMENT ICI */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
         :root { --primary: #1d4379; --bg-gray: #F9FAFB; font-family: 'Montserrat', sans-serif; }
         body { background-color: var(--bg-gray); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
@@ -24,11 +22,10 @@
     <header class="fixed top-0 w-full z-50 glass border-b border-gray-200">
         <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
             <h1 class="text-xl font-extrabold text-[#1d4379] tracking-tighter">DjuntaCar</h1>
-            <div class="flex gap-2">
-                <button onclick="window.location.href='login.html'" id="auth-btn" class="text-xs font-bold bg-[#1d4379] text-white px-3 py-1.5 rounded-full">
-                    Connexion
-                </button>
-            </div>
+            
+            <a href="login.html" id="auth-link" class="text-xs font-bold bg-[#1d4379] text-white px-4 py-2 rounded-full shadow-md hover:opacity-90 transition-opacity">
+                Connexion
+            </a>
         </div>
     </header>
 
@@ -37,8 +34,8 @@
             <h1 class="text-3xl font-extrabold mb-2">Où allez-vous ?</h1>
             
             <div class="relative text-gray-800 mb-6">
-                <i data-lucide="map" class="absolute left-3 top-3.5 h-5 w-5 text-white/70"></i>
-                <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-10 pr-10 py-3.5 bg-white/10 border border-white/20 text-white rounded-xl focus:outline-none backdrop-blur-md appearance-none font-bold">
+                <i data-lucide="map" class="absolute left-3 top-3.5 h-5 w-5 text-gray-400 z-10"></i>
+                <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-10 pr-10 py-3.5 bg-white border-0 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 font-bold shadow-lg">
                     <option value="all">Toutes les îles</option>
                     <option value="Santiago">Santiago</option>
                     <option value="Sal">Sal</option>
@@ -46,104 +43,130 @@
                     <option value="BoaVista">Boa Vista</option>
                     <option value="Fogo">Fogo</option>
                 </select>
-                <i data-lucide="chevron-down" class="absolute right-3 top-3.5 h-5 w-5 text-white/70 pointer-events-none"></i>
+                <i data-lucide="chevron-down" class="absolute right-3 top-3.5 h-5 w-5 text-gray-400 pointer-events-none z-10"></i>
             </div>
 
-            <button onclick="checkAuthAndRedirect('add-car.html')" class="w-full bg-white/20 hover:bg-white/30 border border-white/40 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2">
+            <a href="add-car.html" class="w-full bg-white/20 hover:bg-white/30 border border-white/40 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors">
                 <i data-lucide="key" class="w-5 h-5"></i> Loue ta voiture
-            </button>
+            </a>
         </div>
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
         <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
-            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg">Tout</button>
-            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100">Citadines</button>
-            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100">4x4</button>
+            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg whitespace-nowrap">Tout</button>
+            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap">Citadines</button>
+            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap">4x4</button>
         </div>
 
+        <div id="status-msg" class="hidden text-center p-4 mb-4 rounded-xl text-sm font-bold"></div>
+        
         <div id="vehicle-grid" class="grid grid-cols-1 gap-5 pb-6">
-            <div class="text-center py-10 text-gray-400">Chargement...</div>
+            <div class="text-center py-10 text-gray-400 flex flex-col items-center">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-[#1d4379] mb-2"></i>
+                <span>Recherche des voitures...</span>
+            </div>
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // 1. CONFIGURATION SUPABASE (VOS CLES)
-        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ON ATTEND QUE TOUT SOIT CHARGÉ
+        document.addEventListener('DOMContentLoaded', async () => {
+            if(window.lucide) lucide.createIcons();
+            
+            try {
+                // 1. CONNEXION
+                const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+                const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-'; // Clé corrigée
+                
+                if(!window.supabase) throw new Error("Supabase non chargé");
+                const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                window.sb = supabase; // Stockage global
+
+                // 2. CHECK SESSION
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    const btn = document.getElementById('auth-link');
+                    btn.innerText = "Mon Profil";
+                    btn.href = "profile.html";
+                    btn.classList.replace("bg-[#1d4379]", "bg-green-600");
+                }
+
+                // 3. CHARGEMENT VOITURES
+                await fetchVehicles();
+
+            } catch (err) {
+                console.error(err);
+                const msg = document.getElementById('status-msg');
+                msg.innerHTML = `⚠️ Erreur: ${err.message}`;
+                msg.className = "block text-center p-4 mb-4 rounded-xl text-sm font-bold bg-red-100 text-red-600";
+            }
+        });
 
         let allVehicles = [];
 
-        // 2. INITIALISATION
-        document.addEventListener('DOMContentLoaded', async () => {
-            lucide.createIcons();
-            await checkSession();
-            await fetchVehicles();
-        });
-
-        // 3. VÉRIFIER SESSION
-        async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            const btn = document.getElementById('auth-btn');
-            if (session) {
-                btn.innerText = "Mon Profil";
-                btn.onclick = () => window.location.href = 'profile.html';
-            }
-        }
-
-        // 4. RÉCUPÉRER VÉHICULES
         async function fetchVehicles() {
             const grid = document.getElementById('vehicle-grid');
             const island = document.getElementById('island-select').value;
+            const supabase = window.sb;
 
-            let query = supabase.from('vehicles').select('*').eq('is_active', true);
-            if(island !== 'all') query = query.eq('island', island);
+            try {
+                let query = supabase.from('vehicles').select('*').eq('is_active', true);
+                if(island !== 'all') query = query.eq('island', island);
 
-            const { data, error } = await query;
+                const { data, error } = await query;
+                
+                if (error) throw error;
 
-            if (error) {
-                grid.innerHTML = '<div class="text-red-500 text-center">Erreur chargement</div>';
-                console.error(error);
-                return;
+                allVehicles = data;
+                renderVehicles(data);
+
+            } catch (e) {
+                grid.innerHTML = `<div class="text-center text-gray-400 py-10">Impossible de charger les voitures.<br><span class="text-xs text-red-400">${e.message}</span></div>`;
             }
-
-            allVehicles = data;
-            renderVehicles(data);
         }
 
-        // 5. AFFICHER VÉHICULES
         function renderVehicles(cars) {
             const grid = document.getElementById('vehicle-grid');
-            if(cars.length === 0) {
-                grid.innerHTML = '<div class="text-center py-10 text-gray-400">Aucun véhicule trouvé.</div>';
+            if(!cars || cars.length === 0) {
+                grid.innerHTML = `
+                    <div class="text-center py-10 text-gray-400">
+                        <p class="font-bold mb-1">Aucune voiture trouvée 😢</p>
+                        <p class="text-xs">Essayez de changer d'île ou ajoutez la vôtre !</p>
+                    </div>`;
                 return;
             }
 
             grid.innerHTML = cars.map(car => `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4 cursor-pointer hover:shadow-md transition-all" onclick="alert('Détails bientôt disponibles')">
                     <div class="relative h-48 bg-gray-200">
-                        <img src="${car.images_url?.[0] || 'https://via.placeholder.com/400'}" class="w-full h-full object-cover">
-                        <div class="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-bold">
-                            ${car.price_per_day} CVE/j
+                        <img src="${car.images_url?.[0] || 'assets/placeholder.jpg'}" 
+                             onerror="this.src='https://via.placeholder.com/400x300?text=DjuntaCar'"
+                             class="w-full h-full object-cover">
+                        <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm">
+                            ${car.price_per_day} CVE <span class="text-xs font-normal">/j</span>
+                        </div>
+                        <div class="absolute top-2 right-2 bg-white/90 text-[#1d4379] px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide">
+                            ${car.island}
                         </div>
                     </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-lg">${car.make} ${car.model}</h3>
-                        <p class="text-sm text-gray-500">${car.island} • ${car.transmission}</p>
+                    <div class="p-4 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900">${car.make} ${car.model}</h3>
+                            <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                <i data-lucide="settings-2" class="w-3 h-3"></i> ${car.transmission || 'Manuelle'}
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded-full">
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                        </div>
                     </div>
                 </div>
             `).join('');
+            if(window.lucide) lucide.createIcons();
         }
 
-        // 6. REDIRECTION SÉCURISÉE
-        window.checkAuthAndRedirect = async (url) => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if(!session) window.location.href = 'login.html';
-            else window.location.href = url;
-        }
-
-        // 7. FILTRE CATEGORIE (Simple)
         window.filterCat = (cat) => {
             if(cat === 'all') renderVehicles(allVehicles);
             else renderVehicles(allVehicles.filter(c => c.category === cat));
