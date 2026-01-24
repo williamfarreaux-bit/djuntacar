@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rechercher un chauffeur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #fcfcfd; }
+        .driver-card { background: white; border-radius: 24px; border: 1px solid #f0f2f5; padding: 20px; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <div class="max-w-md mx-auto px-5 pt-8 pb-10">
+        <a href="search-car.html" class="flex items-center gap-2 text-gray-400 font-bold text-sm mb-6"><i data-lucide="arrow-left" class="w-4 h-4"></i> Retour</a>
+        <h1 class="text-2xl font-extrabold text-[#22c55e] mb-8">Trouver mon chauffeur</h1>
+
+        <div class="space-y-6 mb-10">
+            <div class="relative">
+                <i data-lucide="search" class="absolute left-4 top-4 text-gray-300"></i>
+                <input type="text" placeholder="Rechercher par nom..." class="w-full p-4 pl-12 bg-white rounded-2xl font-bold text-sm border border-gray-100 shadow-sm outline-none">
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between mb-2"><label class="text-[10px] font-bold text-gray-400 uppercase">Tarif max / jour</label><span id="dv" class="text-xs font-bold text-[#22c55e]">5000 CVE</span></div>
+                <input type="range" min="1000" max="10000" value="5000" class="w-full accent-[#22c55e]" oninput="document.getElementById('dv').innerText = this.value + ' CVE'">
+                
+                <label class="text-[10px] font-bold text-gray-400 uppercase mt-6 mb-2 block">Note minimum</label>
+                <div class="flex gap-2">
+                    <button class="flex-1 py-2 bg-green-50 text-green-600 rounded-xl text-xs font-bold border border-green-100">4★+</button>
+                    <button class="flex-1 py-2 bg-gray-50 text-gray-400 rounded-xl text-xs font-bold border border-gray-100">5★</button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Résultats correspondants</h2>
+        <div id="drivers">
+            <div class="driver-card shadow-sm flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center font-bold text-[#1d4379]">CS</div>
+                    <div>
+                        <p class="font-extrabold text-sm">Carlos Silva</p>
+                        <p class="text-[10px] text-yellow-500 font-bold">★ 4.9 (42 avis)</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-black text-green-600 text-sm">3500 CVE</p>
+                    <button class="text-[10px] font-bold text-[#1d4379] mt-1 bg-blue-50 px-3 py-1 rounded-lg">Choisir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
