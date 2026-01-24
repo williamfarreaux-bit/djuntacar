@@ -28,19 +28,18 @@
 
         /* --- HEADER --- */
         header { 
-            background: white; padding: 10px 20px; display: flex; justify-content: space-between; 
+            background: white; padding: 12px 20px; display: flex; justify-content: space-between; 
             align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000;
         }
-        .header-logo { display: flex; align-items: center; gap: 10px; }
-        .header-logo img { height: 35px; width: auto; } /* Ton logo.png */
-        .header-logo span { font-weight: 900; color: var(--blue-atlantique); font-size: 18px; }
+        .header-logo { display: flex; align-items: center; }
+        .header-logo img { height: 45px; width: auto; } /* Texte inclus dans l'image */
 
         /* --- UI COMPONENTS --- */
         .card { background: var(--white); border-radius: var(--radius); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .btn-primary { background: var(--blue-atlantique); color: white; border: none; padding: 16px; border-radius: var(--radius); font-weight: bold; width: 100%; cursor: pointer; font-size: 16px; }
         .btn-success { background: var(--green-kaminhu); color: white; border: none; padding: 16px; border-radius: var(--radius); font-weight: bold; width: 100%; cursor: pointer; font-size: 16px; }
         
-        /* --- SCREENS --- */
+        /* --- NAVIGATION --- */
         .screen { display: none; min-height: 100vh; padding-bottom: 100px; }
         .screen.active { display: block; animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -57,15 +56,12 @@
 
 <header>
     <div class="header-logo">
-        <img src="logo.png" alt="Logo DjuntaCar"> <span>DjuntaCar</span>
-    </div>
-    <div style="font-size: 18px;">🇨🇻 🇫🇷 🇬🇧 🇵🇹</div>
-</header>
+        <img src="logo.png" alt="DjuntaCar"> </div>
+    <div style="font-size: 18px;">🇨🇻 🇫🇷 🇬🇧 🇵🇹</div> </header>
 
 <div id="screen-home" class="screen active">
     <div style="padding: 20px;">
-        <h1 style="color: var(--blue-atlantique); font-size: 24px; font-weight: 800;">Onde é que queres ir?</h1>
-        <div style="background: white; padding: 12px; border-radius: var(--radius); display: flex; align-items: center; border: 1px solid #eee; margin-bottom: 15px;">
+        <h1 style="color: var(--blue-atlantique); font-size: 24px; font-weight: 800;">Onde é que queres ir?</h1> <div style="background: white; padding: 12px; border-radius: var(--radius); display: flex; align-items: center; border: 1px solid #eee; margin-bottom: 15px;">
             📍 <input type="text" placeholder="Santiago, Praia, Sal..." style="border:none; width:100%; margin-left:10px; outline:none; font-size:16px;">
         </div>
         <div id="car-list"></div>
@@ -74,124 +70,4 @@
 
 <div id="screen-detail" class="screen">
     <div style="padding: 20px;">
-        <button onclick="showScreen('screen-home')" style="border:none; background:none; font-size:18px; margin-bottom:15px;">⬅ Voltar</button>
-        <div id="detail-content"></div>
-        <div style="height: 20px;"></div>
-        <button class="btn-primary" onclick="showScreen('screen-map')">Reservar agora</button>
-    </div>
-</div>
-
-<div id="screen-map" class="screen">
-    <div style="padding: 20px;">
-        <button onclick="showScreen('screen-detail')" style="border:none; background:none; font-size:18px;">⬅ Voltar</button>
-        <h2 style="color:var(--blue-atlantique);">Onde quer o veículo?</h2>
-        <div style="width:100%; height:200px; background:#dde4f0; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
-            <strong style="color:var(--blue-atlantique);">Google Maps Live</strong>
-        </div>
-        <div class="card" style="border: 2px solid var(--blue-atlantique);">
-            <strong>Aéroport Nelson Mandela</strong><br><small>Entrega Grátis</small>
-        </div>
-        <div class="card">
-            <strong>Port de Praia</strong><br><small>Taxa: 1.500 CVE</small>
-        </div>
-        <button class="btn-success" onclick="showScreen('screen-protection')">Confirmar Localização</button>
-    </div>
-</div>
-
-<div id="screen-protection" class="screen">
-    <div style="padding: 20px;">
-        <h2 style="color:var(--blue-atlantique);">Escolha a sua Proteção</h2>
-        <div class="card" style="border-left: 5px solid #ccc;"><strong>Básica</strong><br><small>Franquia Total</small></div>
-        <div class="card" style="border: 2px solid var(--blue-atlantique);">
-            <div style="display:flex; justify-content:space-between;">
-                <strong>Morabeza (Franquia Reduzida)</strong> <span>+1.500 CVE</span>
-            </div>
-        </div>
-        <div class="card" style="border-left: 5px solid var(--green-kaminhu);">
-            <div style="display:flex; justify-content:space-between;">
-                <strong>No Stress (Zero Franquia)</strong> <span>+3.000 CVE</span>
-            </div>
-        </div>
-        <div class="card" style="background:#f8fafc; margin-top:20px;">
-            <p><strong>Caução (Gel no cartão) : Não debitado</strong></p> <p style="font-size:20px; font-weight:900;">Total: 6.500 CVE</p>
-        </div>
-        <button class="btn-success" onclick="showScreen('screen-checkin')">Confirmar e Pagar</button>
-    </div>
-</div>
-
-<div id="screen-checkin" class="screen">
-    <div style="padding: 20px; text-align:center;">
-        <h2 style="color:var(--blue-atlantique);">Check-in Operacional</h2>
-        <p style="font-size:13px; color:gray;">Toque nos pontos para fotografar os 8 ângulos</p>
-        
-        <div class="car-silhouette">
-            <img src="https://cdn-icons-png.flaticon.com/512/55/55283.png" alt="Silhouette">
-            <div class="inspect-point" style="top:10%; left:15%;" onclick="alert('Photo Avant Gauche')"></div>
-            <div class="inspect-point" style="top:10%; right:15%;" onclick="alert('Photo Avant Droit')"></div>
-            <div class="inspect-point" style="bottom:10%; left:15%;" onclick="alert('Photo Arrière Gauche')"></div>
-            <div class="inspect-point" style="bottom:10%; right:15%;" onclick="alert('Photo Arrière Droit')"></div>
-        </div>
-
-        <div class="card" style="margin-top:20px; border: 2px dashed #ccc;">
-            <p><strong>Assinatura Digital</strong></p> <div style="height:80px; display:flex; align-items:center; justify-content:center; color:#ccc;">Assinar aqui</div>
-        </div>
-        <button class="btn-success" onclick="alert('Contrato PDF Gerado!')">Finalizar e Partir</button>
-    </div>
-</div>
-
-<nav class="bottom-nav">
-    <span onclick="showScreen('screen-home')" style="font-size:24px;">🏠</span>
-    <span style="font-size:24px;">📅</span>
-    <span style="font-size:24px;">👤</span>
-</nav>
-
-<script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    window.showScreen = (id) => {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
-    };
-
-    async function loadApp() {
-        const { data: vehicles } = await supabase.from('vehicles').select('*');
-        const list = document.getElementById('car-list');
-        list.innerHTML = '';
-        vehicles.forEach(car => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.style.padding = '0'; card.style.overflow = 'hidden';
-            card.innerHTML = `
-                <img src="${car.image_url || 'https://via.placeholder.com/400x200'}" style="width:100%; height:150px; object-fit:cover;">
-                <div style="padding:15px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="margin:0; color:var(--blue-atlantique);">${car.name}</h3>
-                        <span style="font-weight:bold;">${car.price_per_day} CVE</span>
-                    </div>
-                    <button class="btn-primary" style="margin-top:10px; padding:10px;" onclick="viewCar('${car.id}')">Ver detalhes</button>
-                </div>
-            `;
-            list.appendChild(card);
-        });
-    }
-
-    window.viewCar = async (id) => {
-        const { data: car } = await supabase.from('vehicles').select('*').eq('id', id).single();
-        document.getElementById('detail-content').innerHTML = `
-            <img src="${car.image_url || 'https://via.placeholder.com/400x200'}" style="width:100%; border-radius:12px;">
-            <h2 style="color:var(--blue-atlantique); margin-bottom:5px;">${car.name}</h2>
-            <p style="color:var(--green-kaminhu); font-weight:bold; margin:0;">⭐ Perfil Verificado</p>
-            <div class="card" style="margin-top:15px;">🕹️ ${car.transmission} | ❄️ Ar Condicionado</div>
-        `;
-        showScreen('screen-detail');
-    };
-
-    loadApp();
-</script>
-</body>
-</html>
+        <button onclick="showScreen('screen-home')" style="
