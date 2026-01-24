@@ -17,16 +17,62 @@
         .hero-gradient { background: linear-gradient(135deg, #1d4379 0%, #142f55 100%); }
         .hero-shape { border-bottom-left-radius: 2.5rem; border-bottom-right-radius: 2.5rem; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        
+        /* Animation Menu */
+        #mobile-menu { transition: transform 0.3s ease-in-out; }
+        .menu-open { transform: translateX(0) !important; }
+        .menu-closed { transform: translateX(-100%); }
     </style>
 </head>
 <body class="antialiased text-gray-800">
 
+    <div id="mobile-menu" class="fixed inset-0 z-[60] menu-closed flex">
+        <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        
+        <div class="relative bg-white w-3/4 max-w-xs h-full shadow-2xl flex flex-col p-6">
+            
+            <div class="flex justify-between items-center mb-8">
+                <img src="logo.png" class="h-8 object-contain">
+                <button onclick="toggleMenu()" class="p-2 rounded-full hover:bg-gray-100">
+                    <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
+                </button>
+            </div>
+
+            <nav class="space-y-6 flex-1">
+                <a href="index.html" class="flex items-center gap-3 text-[#1d4379] font-bold text-lg">
+                    <i data-lucide="home" class="w-5 h-5"></i> Accueil
+                </a>
+                <a href="profile.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
+                    <i data-lucide="user-circle" class="w-5 h-5"></i> Mon Espace
+                </a>
+                <a href="add-car.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
+                    <i data-lucide="key" class="w-5 h-5"></i> Louer ma voiture
+                </a>
+                <div class="border-t border-gray-100 my-4"></div>
+                <a href="#" onclick="alert('Bientôt disponible')" class="flex items-center gap-3 text-gray-400 font-medium text-sm">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i> Aide & Support
+                </a>
+            </nav>
+
+            <div class="mt-auto">
+                <a href="login.html" class="block w-full text-center py-3 rounded-xl bg-gray-50 text-gray-600 font-bold text-sm">
+                    Connexion / Inscription
+                </a>
+            </div>
+        </div>
+    </div>
+
     <header class="fixed top-0 w-full z-50 glass border-b border-gray-200">
         <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
-            <img src="logo.png" alt="DjuntaCar" class="h-10 object-contain">
             
-            <a href="login.html" id="auth-link" class="text-xs font-bold bg-[#1d4379] text-white px-4 py-2 rounded-full shadow-md hover:opacity-90 transition-opacity">
-                Connexion
+            <button onclick="toggleMenu()" class="p-2 -ml-2 text-gray-700 hover:text-[#1d4379]">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+
+            <img src="logo.png" alt="DjuntaCar" class="h-8 object-contain">
+            
+            <a href="login.html" id="auth-link" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[#1d4379]">
+                <i data-lucide="user" class="w-5 h-5"></i>
             </a>
         </div>
     </header>
@@ -73,6 +119,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // FONCTION MENU BURGER
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('menu-closed')) {
+                menu.classList.remove('menu-closed');
+                menu.classList.add('menu-open');
+            } else {
+                menu.classList.remove('menu-open');
+                menu.classList.add('menu-closed');
+            }
+        }
+
+        // LOGIQUE PRINCIPALE
         document.addEventListener('DOMContentLoaded', async () => {
             if(window.lucide) lucide.createIcons();
             
@@ -85,13 +144,15 @@
                 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 window.sb = supabase;
 
-                // 2. CHECK SESSION
+                // 2. CHECK SESSION (Mise à jour du bouton Profil)
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session) {
                     const btn = document.getElementById('auth-link');
-                    btn.innerText = "Mon Profil";
                     btn.href = "profile.html";
-                    btn.classList.replace("bg-[#1d4379]", "bg-green-600");
+                    btn.classList.replace("bg-gray-100", "bg-green-100");
+                    btn.classList.replace("text-gray-500", "text-green-600");
+                    btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i>`;
+                    lucide.createIcons();
                 }
 
                 // 3. CHARGEMENT VOITURES
