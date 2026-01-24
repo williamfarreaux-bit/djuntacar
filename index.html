@@ -2,73 +2,82 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DjuntaCar - Mobilidade Cabo Verde</title>
+    
+    <link rel="icon" type="image/png" href="sigle.png">
+    <link rel="apple-touch-icon" href="sigle.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <style>
         :root {
-            --blue-atlantique: #1A4384; /* Couleur pour titres et confiance */
-            --green-kaminhu: #76B852;   /* Couleur pour validation et "No Stress" */
+            --blue-atlantique: #1A4384; /* */
+            --green-kaminhu: #76B852;   /* */
             --bg-gray: #f4f7f6;
             --white: #ffffff;
-            --radius: 12px;             /* Coins arrondis amicaux */
+            --radius: 12px;             /* */
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             background-color: var(--bg-gray);
             margin: 0; padding: 0; color: #333;
-            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- UI COMMUNE --- */
+        /* --- HEADER --- */
+        header { 
+            background: white; padding: 10px 20px; display: flex; justify-content: space-between; 
+            align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000;
+        }
+        .header-logo { display: flex; align-items: center; gap: 10px; }
+        .header-logo img { height: 35px; width: auto; } /* Ton logo.png */
+        .header-logo span { font-weight: 900; color: var(--blue-atlantique); font-size: 18px; }
+
+        /* --- UI COMPONENTS --- */
         .card { background: var(--white); border-radius: var(--radius); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .btn-primary { background: var(--blue-atlantique); color: white; border: none; padding: 16px; border-radius: var(--radius); font-weight: bold; width: 100%; cursor: pointer; font-size: 16px; }
         .btn-success { background: var(--green-kaminhu); color: white; border: none; padding: 16px; border-radius: var(--radius); font-weight: bold; width: 100%; cursor: pointer; font-size: 16px; }
-        .badge-green { background: #e8f5e9; color: var(--green-kaminhu); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        
+        /* --- SCREENS --- */
+        .screen { display: none; min-height: 100vh; padding-bottom: 100px; }
+        .screen.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* --- NAVIGATION & ÉCRANS --- */
-        .screen { display: none; min-height: 100vh; padding-bottom: 90px; }
-        .screen.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* --- ÉCRAN 5 : CHECK-IN --- */
+        .car-silhouette { position: relative; width: 100%; max-width: 280px; margin: 20px auto; }
+        .car-silhouette img { width: 100%; opacity: 0.2; }
+        .inspect-point { position: absolute; width: 22px; height: 22px; background: #ff4444; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
-        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
-        .logo { font-weight: 900; color: var(--blue-atlantique); font-size: 20px; }
-
-        /* --- ÉCRAN 4 : PROTECTION --- */
-        .prot-option { display: flex; align-items: center; gap: 15px; padding: 15px; border: 2px solid transparent; border-radius: var(--radius); margin-bottom: 10px; cursor: pointer; background: white; }
-        .prot-option.selected { border-color: var(--blue-atlantique); }
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
-
-        /* --- ÉCRAN 5 : CHECK-IN (SILHOUETTE) --- */
-        .car-silhouette { position: relative; width: 100%; max-width: 300px; margin: 20px auto; }
-        .car-silhouette img { width: 100%; opacity: 0.3; }
-        .inspect-point { position: absolute; width: 25px; height: 25px; background: red; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-
-        nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; z-index: 1000; }
+        nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; z-index: 2000; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">🤝 DjuntaCar</div>
-    <div style="font-size: 18px;">🇨🇻 🇫🇷 🇬🇧 🇵🇹</div> </header>
+    <div class="header-logo">
+        <img src="logo.png" alt="Logo DjuntaCar"> <span>DjuntaCar</span>
+    </div>
+    <div style="font-size: 18px;">🇨🇻 🇫🇷 🇬🇧 🇵🇹</div>
+</header>
 
 <div id="screen-home" class="screen active">
-    <div style="padding: 25px 20px;">
-        <h1 style="color: var(--blue-atlantique); font-size: 26px; font-weight: 800; margin-bottom: 20px;">Onde é que queres ir?</h1>
-        <div style="background: white; padding: 14px; border-radius: var(--radius); display: flex; align-items: center; border: 1px solid #eee;">
+    <div style="padding: 20px;">
+        <h1 style="color: var(--blue-atlantique); font-size: 24px; font-weight: 800;">Onde é que queres ir?</h1>
+        <div style="background: white; padding: 12px; border-radius: var(--radius); display: flex; align-items: center; border: 1px solid #eee; margin-bottom: 15px;">
             📍 <input type="text" placeholder="Santiago, Praia, Sal..." style="border:none; width:100%; margin-left:10px; outline:none; font-size:16px;">
         </div>
+        <div id="car-list"></div>
     </div>
-    <div id="car-list" style="padding: 0 20px;"></div>
 </div>
 
 <div id="screen-detail" class="screen">
     <div style="padding: 20px;">
-        <button onclick="showScreen('screen-home')" style="border:none; background:none; font-size:18px;">⬅ Voltar</button>
+        <button onclick="showScreen('screen-home')" style="border:none; background:none; font-size:18px; margin-bottom:15px;">⬅ Voltar</button>
         <div id="detail-content"></div>
-        <button class="btn-primary" style="margin-top:20px;" onclick="showScreen('screen-map')">Reservar agora</button>
+        <div style="height: 20px;"></div>
+        <button class="btn-primary" onclick="showScreen('screen-map')">Reservar agora</button>
     </div>
 </div>
 
@@ -76,11 +85,15 @@
     <div style="padding: 20px;">
         <button onclick="showScreen('screen-detail')" style="border:none; background:none; font-size:18px;">⬅ Voltar</button>
         <h2 style="color:var(--blue-atlantique);">Onde quer o veículo?</h2>
-        <div style="width:100%; height:250px; background:#e0e7ff; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; margin-bottom:20px;">
-            <span style="color:#4f46e5; font-weight:bold;">📍 Simulação Google Maps</span>
+        <div style="width:100%; height:200px; background:#dde4f0; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
+            <strong style="color:var(--blue-atlantique);">Google Maps Live</strong>
         </div>
-        <div class="card" onclick="select(this)"><strong>Aéroport Nelson Mandela</strong><br><small>Entrega Grátis</small></div>
-        <div class="card" onclick="select(this)"><strong>Hôtel / Airbnb</strong><br><small>Taxa: 1.500 CVE</small></div>
+        <div class="card" style="border: 2px solid var(--blue-atlantique);">
+            <strong>Aéroport Nelson Mandela</strong><br><small>Entrega Grátis</small>
+        </div>
+        <div class="card">
+            <strong>Port de Praia</strong><br><small>Taxa: 1.500 CVE</small>
+        </div>
         <button class="btn-success" onclick="showScreen('screen-protection')">Confirmar Localização</button>
     </div>
 </div>
@@ -88,27 +101,19 @@
 <div id="screen-protection" class="screen">
     <div style="padding: 20px;">
         <h2 style="color:var(--blue-atlantique);">Escolha a sua Proteção</h2>
-        <div class="prot-option" onclick="selectProt(this)">
-            <div class="dot" style="background: #999;"></div>
-            <div style="flex:1;"><strong>Básica (Franquia Total)</strong><br><small>Incluído no aluguer</small></div>
+        <div class="card" style="border-left: 5px solid #ccc;"><strong>Básica</strong><br><small>Franquia Total</small></div>
+        <div class="card" style="border: 2px solid var(--blue-atlantique);">
+            <div style="display:flex; justify-content:space-between;">
+                <strong>Morabeza (Franquia Reduzida)</strong> <span>+1.500 CVE</span>
+            </div>
         </div>
-        <div class="prot-option selected" onclick="selectProt(this)">
-            <div class="dot" style="background: var(--blue-atlantique);"></div>
-            <div style="flex:1;"><strong>Morabeza (Franquia Reduzida)</strong><br><small>Escolha popular</small></div>
-            <span>+1.500 CVE</span>
+        <div class="card" style="border-left: 5px solid var(--green-kaminhu);">
+            <div style="display:flex; justify-content:space-between;">
+                <strong>No Stress (Zero Franquia)</strong> <span>+3.000 CVE</span>
+            </div>
         </div>
-        <div class="prot-option" onclick="selectProt(this)">
-            <div class="dot" style="background: var(--green-kaminhu);"></div>
-            <div style="flex:1;"><strong>No Stress (Zero Franquia)</strong><br><small>Sérénité totale</small></div>
-            <span>+3.000 CVE</span>
-        </div>
-
-        <div class="card" style="margin-top:20px; background: #f8fafc;">
-            <p>Aluguer: 5.000 CVE</p>
-            <p>Serviço (25% incl.): Incluído</p>
-            <hr>
-            <p style="font-weight:bold;">Total: 6.500 CVE</p>
-            <p style="color:var(--blue-atlantique); font-size:12px;">Caução (Gel no cartão): Não debitado</p>
+        <div class="card" style="background:#f8fafc; margin-top:20px;">
+            <p><strong>Caução (Gel no cartão) : Não debitado</strong></p> <p style="font-size:20px; font-weight:900;">Total: 6.500 CVE</p>
         </div>
         <button class="btn-success" onclick="showScreen('screen-checkin')">Confirmar e Pagar</button>
     </div>
@@ -116,31 +121,28 @@
 
 <div id="screen-checkin" class="screen">
     <div style="padding: 20px; text-align:center;">
-        <h2 style="color:var(--blue-atlantique);">Check-in do Veículo</h2>
-        <p style="font-size:14px; color:gray;">Toque nos pontos vermelhos para fotografar os 8 ângulos obrigatórios.</p>
+        <h2 style="color:var(--blue-atlantique);">Check-in Operacional</h2>
+        <p style="font-size:13px; color:gray;">Toque nos pontos para fotografar os 8 ângulos</p>
         
         <div class="car-silhouette">
-            <img src="https://cdn-icons-png.flaticon.com/512/55/55283.png" alt="Car Silhouette">
-            <div class="inspect-point" style="top:10%; left:20%;" onclick="takePhoto('Avant Gauche')"></div>
-            <div class="inspect-point" style="top:10%; right:20%;" onclick="takePhoto('Avant Droit')"></div>
-            <div class="inspect-point" style="bottom:10%; left:20%;" onclick="takePhoto('Arrière Gauche')"></div>
-            <div class="inspect-point" style="bottom:10%; right:20%;" onclick="takePhoto('Arrière Droit')"></div>
+            <img src="https://cdn-icons-png.flaticon.com/512/55/55283.png" alt="Silhouette">
+            <div class="inspect-point" style="top:10%; left:15%;" onclick="alert('Photo Avant Gauche')"></div>
+            <div class="inspect-point" style="top:10%; right:15%;" onclick="alert('Photo Avant Droit')"></div>
+            <div class="inspect-point" style="bottom:10%; left:15%;" onclick="alert('Photo Arrière Gauche')"></div>
+            <div class="inspect-point" style="bottom:10%; right:15%;" onclick="alert('Photo Arrière Droit')"></div>
         </div>
 
-        <div class="card" style="margin-top:20px;">
-            <p><strong>Assinatura Digital</strong></p>
-            <div style="width:100%; height:100px; border:2px dashed #ccc; border-radius:var(--radius); display:flex; align-items:center; justify-content:center;">
-                <small>Assinar aqui</small>
-            </div>
+        <div class="card" style="margin-top:20px; border: 2px dashed #ccc;">
+            <p><strong>Assinatura Digital</strong></p> <div style="height:80px; display:flex; align-items:center; justify-content:center; color:#ccc;">Assinar aqui</div>
         </div>
-        <button class="btn-success" onclick="alert('Contrato PDF Gerado e Sincronizado!')">Finalizar e Partir</button>
+        <button class="btn-success" onclick="alert('Contrato PDF Gerado!')">Finalizar e Partir</button>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <span onclick="showScreen('screen-home')">🏠</span>
-    <span>📅</span>
-    <span>👤</span>
+    <span onclick="showScreen('screen-home')" style="font-size:24px;">🏠</span>
+    <span style="font-size:24px;">📅</span>
+    <span style="font-size:24px;">👤</span>
 </nav>
 
 <script type="module">
@@ -156,13 +158,6 @@
         window.scrollTo(0,0);
     };
 
-    window.selectProt = (el) => {
-        document.querySelectorAll('.prot-option').forEach(o => o.classList.remove('selected'));
-        el.classList.add('selected');
-    };
-
-    window.takePhoto = (zone) => alert('Abrir câmera para: ' + zone + '');
-
     async function loadApp() {
         const { data: vehicles } = await supabase.from('vehicles').select('*');
         const list = document.getElementById('car-list');
@@ -170,10 +165,9 @@
         vehicles.forEach(car => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.style.padding = '0';
-            card.style.overflow = 'hidden';
+            card.style.padding = '0'; card.style.overflow = 'hidden';
             card.innerHTML = `
-                <img src="${car.image_url || 'https://via.placeholder.com/400x200'}" style="width:100%; height:160px; object-fit:cover;">
+                <img src="${car.image_url || 'https://via.placeholder.com/400x200'}" style="width:100%; height:150px; object-fit:cover;">
                 <div style="padding:15px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <h3 style="margin:0; color:var(--blue-atlantique);">${car.name}</h3>
@@ -190,9 +184,9 @@
         const { data: car } = await supabase.from('vehicles').select('*').eq('id', id).single();
         document.getElementById('detail-content').innerHTML = `
             <img src="${car.image_url || 'https://via.placeholder.com/400x200'}" style="width:100%; border-radius:12px;">
-            <h2 style="color:var(--blue-atlantique);">${car.name}</h2>
-            <p class="badge-green">⭐ Perfil Verificado</p>
-            <div class="card">🕹️ ${car.transmission} | ❄️ Ar Condicionado</div>
+            <h2 style="color:var(--blue-atlantique); margin-bottom:5px;">${car.name}</h2>
+            <p style="color:var(--green-kaminhu); font-weight:bold; margin:0;">⭐ Perfil Verificado</p>
+            <div class="card" style="margin-top:15px;">🕹️ ${car.transmission} | ❄️ Ar Condicionado</div>
         `;
         showScreen('screen-detail');
     };
