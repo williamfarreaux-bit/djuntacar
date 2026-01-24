@@ -3,26 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Profil</title>
+    <title>Ajouter un véhicule</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+        body { font-family: 'Montserrat', sans-serif; background-color: #F9FAFB; }
+    </style>
 </head>
-<body class="bg-gray-50 pb-24">
+<body class="pb-24">
 
     <header class="bg-white border-b sticky top-0 z-50">
         <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
-            <h1 class="text-xl font-bold text-[#1d4379]">Mon Espace</h1>
-            <button id="btn-logout" class="text-sm text-red-500 font-medium hover:bg-red-50 px-3 py-1 rounded-lg transition-colors">
-                Déconnexion
-            </button>
+            <a href="index.html" class="text-gray-500 hover:text-[#1d4379] flex items-center gap-1 font-bold text-sm">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Annuler
+            </a>
+            <h1 class="text-lg font-bold text-[#1d4379]">Nouveau Véhicule</h1>
+            <div class="w-10"></div>
         </div>
     </header>
 
     <main class="max-w-md mx-auto p-4">
         
-        <div id="loader" class="text-center py-10">
-            <i data-lucide="loader-2" class="animate-spin w-8 h-8 mx-auto text-[#1d4379]"></i>
-        </div>
+        <form id="add-car-form">
+            
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4">
+                <h2 class="font-bold text-[#1d4379] mb-4 flex items-center gap-2">
+                    <i data-lucide="camera" class="w-5 h-5"></i> Photo du véhicule
+                </h2>
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center bg-gray-50 hover:bg-white transition-colors relative">
+                    <input type="file" id="photo-upload" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" required>
+                    <div id="preview-area">
+                        <i data-lucide="image-plus" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i>
+                        <p class="text-sm font-bold text-gray-600">Appuyez pour ajouter</p>
+                    </div>
+                </div>
+            </div>
 
-        <div id="
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4 space-y-4">
+                <h2 class="font-bold text-[#1d4379] mb-2 flex items-center gap-2">
+                    <i data-lucide="car-front" class="w-5 h-5"></i> Informations
+                </h2>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">Marque</label>
+                        <input type="text" name="make" placeholder="Ex: Toyota" class="w-full p-3 bg-gray-50 rounded-lg font-bold border border-gray-200" required>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">Modèle</label>
+                        <input type="text" name="model" placeholder="Ex: Hilux" class="w-full p-3 bg-gray-50 rounded-lg font-bold border border-gray-200" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase">Catégorie</label>
+                    <select name="category" class="w-full p-3 bg-gray-50 rounded-lg font-bold border border-gray-200">
+                        <option value="citadina">Citadine (Petite)</option>
+                        <option value="4x4_aventura">4x4 / Pickup</option>
+                        <option value="utilitaire">Van / Utilitaire</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">Transmission</label>
+                        <select name="transmission" class="w-full p-3 bg-gray-50 rounded-lg font-bold border border-gray-200">
+                            <option>Manuelle</option>
+                            <option>Automatique</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">Île</label>
+                        <select name="island" class="w-full p-3 bg-gray-50 rounded-lg font-bold border border-gray-200">
+                            <option value="Santiago">Santiago</option>
+                            <option value="Sal">Sal</option>
+                            <option value="SaoVicente">São Vicente</option>
+                            <option value="BoaVista">Boa Vista</option>
+                            <option value="Fogo">Fogo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                <h2 class="font-bold text-[#1d4379] mb-4 flex items-center gap-2">
+                    <i data-lucide="coins" class="w-5 h-5"></i> Prix par jour
+                </h2>
+                <div class="relative">
+                    <input type="number" name="price" value="4500" class="w-full p-3 bg-gray-50 rounded-lg text-2xl font-bold text-[#1d4379] text-center border border-gray-200" required>
+                    <span class="absolute right-4 top-4 font-bold text-gray-400 text-sm">CVE</span>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-[#1d4379] text-white font-bold py-4 rounded-xl shadow-lg flex justify-center items-center gap-2 hover:shadow-xl transition-all">
+                <span>Mettre en ligne</span>
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </button>
+
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+
+        // 1. CONFIG
+        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Preview Photo
+        document.getElementById('photo-upload').addEventListener('change', function(e) {
+            if(this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview-area').innerHTML = 
+                        `<img src="${e.target.result}" class="h-32 mx-auto object-contain rounded-lg shadow-sm">`;
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // ENVOI
+        document.getElementById('add-car-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '⏳ Envoi en cours...';
+
+            try {
+                // A. Check Session
+                const { data: { session } } = await supabase.auth.getSession();
+                if(!session) {
+                    alert("Votre session a expiré. Veuillez vous reconnecter.");
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const user = session.user;
+
+                // B. Data Form
+                const formData = new FormData(e.target);
+                const file = document.getElementById('photo-upload').files[0];
+                const timestamp = Date.now();
+
+                // C. Upload Photo
+                // Note: On upload dans 'car-photos' avec un nom unique
+                const fileName = `${user.id}/${timestamp}_car.jpg`;
+                const { error: uploadError } = await supabase.storage
+                    .from('car-photos')
+                    .upload(fileName, file);
+                
+                if(uploadError) throw new Error("Erreur Upload Photo: " + uploadError.message);
+
+                // D. Get Public URL
+                const { data: { publicUrl } } = supabase.storage
+                    .from('car-photos')
+                    .getPublicUrl(fileName);
+
+                // E. Insert DB
+                const { error: dbError } = await supabase
+                    .from('vehicles')
+                    .insert([{
+                        owner_id: user.id,
+                        make: formData.get('make'),
+                        model: formData.get('model'),
+                        category: formData.get('category'),
+                        island: formData.get('island'),
+                        transmission: formData.get('transmission'),
+                        price_per_day: parseInt(formData.get('price')),
+                        images_url: [publicUrl],
+                        is_active: true // On active direct pour voir le résultat
+                    }]);
+
+                if(dbError) throw new Error("Erreur Base de données: " + dbError.message);
+
+                // F. Succès
+                alert("✅ Voiture ajoutée !");
+                window.location.href = 'index.html';
+
+            } catch (err) {
+                console.error(err);
+                alert("Oups : " + err.message);
+                btn.innerHTML = oldText;
+            }
+        });
+    </script>
+</body>
+</html>
