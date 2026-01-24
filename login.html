@@ -3,109 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Connexion</title>
+    <title>DjuntaCar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* DESIGN DIRECTEMENT ICI */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+        :root { --primary: #1d4379; --bg-gray: #F9FAFB; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--bg-gray); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .hero-gradient { background: linear-gradient(135deg, #1d4379 0%, #142f55 100%); }
+        .hero-shape { border-bottom-left-radius: 2.5rem; border-bottom-right-radius: 2.5rem; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+<body class="antialiased text-gray-800">
 
-    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl p-8 border border-gray-100">
-        
-        <div class="text-center mb-8">
-            <img src="assets/logo.png" onerror="this.src='sigle.png'; this.onerror=null;" class="h-12 mx-auto mb-4 object-contain">
-            <h1 class="text-2xl font-extrabold text-[#1d4379]">Bienvenue</h1>
-            <p class="text-sm text-gray-500">Connectez-vous pour continuer</p>
+    <header class="fixed top-0 w-full z-50 glass border-b border-gray-200">
+        <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
+            <h1 class="text-xl font-extrabold text-[#1d4379] tracking-tighter">DjuntaCar</h1>
+            <div class="flex gap-2">
+                <button onclick="window.location.href='login.html'" id="auth-btn" class="text-xs font-bold bg-[#1d4379] text-white px-3 py-1.5 rounded-full">
+                    Connexion
+                </button>
+            </div>
         </div>
+    </header>
 
-        <form id="auth-form" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold text-gray-500 mb-1">Email</label>
-                <div class="relative">
-                    <i data-lucide="mail" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
-                    <input type="email" id="email" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#1d4379] outline-none font-bold text-gray-700" placeholder="exemple@email.com" required>
-                </div>
+    <div class="hero-gradient hero-shape pt-24 pb-12 px-5 text-white relative">
+        <div class="max-w-md mx-auto relative z-10">
+            <h1 class="text-3xl font-extrabold mb-2">Où allez-vous ?</h1>
+            
+            <div class="relative text-gray-800 mb-6">
+                <i data-lucide="map" class="absolute left-3 top-3.5 h-5 w-5 text-white/70"></i>
+                <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-10 pr-10 py-3.5 bg-white/10 border border-white/20 text-white rounded-xl focus:outline-none backdrop-blur-md appearance-none font-bold">
+                    <option value="all">Toutes les îles</option>
+                    <option value="Santiago">Santiago</option>
+                    <option value="Sal">Sal</option>
+                    <option value="SaoVicente">São Vicente</option>
+                    <option value="BoaVista">Boa Vista</option>
+                    <option value="Fogo">Fogo</option>
+                </select>
+                <i data-lucide="chevron-down" class="absolute right-3 top-3.5 h-5 w-5 text-white/70 pointer-events-none"></i>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-gray-500 mb-1">Mot de passe</label>
-                <div class="relative">
-                    <i data-lucide="lock" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
-                    <input type="password" id="password" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#1d4379] outline-none font-bold text-gray-700" placeholder="••••••••" required>
-                </div>
-            </div>
-
-            <button type="submit" id="btn-login" class="w-full bg-[#1d4379] text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95">
-                Se connecter / S'inscrire
+            <button onclick="checkAuthAndRedirect('add-car.html')" class="w-full bg-white/20 hover:bg-white/30 border border-white/40 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2">
+                <i data-lucide="key" class="w-5 h-5"></i> Loue ta voiture
             </button>
-        </form>
-
-        <div id="message" class="mt-4 text-center text-sm font-bold hidden"></div>
-
-        <p class="text-center text-xs text-gray-400 mt-6">
-            En continuant, vous acceptez nos <a href="legal.html" class="underline hover:text-[#1d4379]">CGU</a>.
-        </p>
+        </div>
     </div>
 
-    <script type="module">
-        // On importe votre fichier de configuration
-        import { supabase } from './services/supabase.js';
-        
-        lucide.createIcons();
+    <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
+        <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
+            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg">Tout</button>
+            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100">Citadines</button>
+            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100">4x4</button>
+        </div>
 
-        const form = document.getElementById('auth-form');
-        const msg = document.getElementById('message');
-        const btn = document.getElementById('btn-login');
+        <div id="vehicle-grid" class="grid grid-cols-1 gap-5 pb-6">
+            <div class="text-center py-10 text-gray-400">Chargement...</div>
+        </div>
+    </main>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+    <script>
+        // 1. CONFIGURATION SUPABASE (VOS CLES)
+        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            // Animation chargement
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin inline w-5 h-5"></i> Chargement...';
-            
-            // 1. Essai de Connexion (Login)
-            let { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
+        let allVehicles = [];
 
-            // 2. Si erreur, on essaie l'Inscription (Sign Up)
-            if (error) {
-                console.log("Tentative d'inscription...");
-                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        // On crée un nom par défaut basé sur l'email
-                        data: { full_name: email.split('@')[0] }
-                    }
-                });
-
-                if (signUpError) {
-                    showError("Erreur : " + signUpError.message);
-                    btn.innerText = "Se connecter / S'inscrire";
-                    return;
-                }
-                
-                // Inscription réussie : Supabase envoie un mail de confirm, 
-                // mais pour le test on peut souvent se connecter direct si le mail n'est pas obligatoire
-                showMessage("Compte créé ! Vérifiez vos emails ou réessayez.", "text-green-600");
-                btn.innerText = "Se connecter / S'inscrire";
-            } else {
-                // Connexion réussie -> Redirection vers le profil
-                window.location.href = 'profile.html';
-            }
+        // 2. INITIALISATION
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            await checkSession();
+            await fetchVehicles();
         });
 
-        function showError(text) {
-            msg.innerText = text;
-            msg.className = "mt-4 text-center text-sm font-bold text-red-500 block";
+        // 3. VÉRIFIER SESSION
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            const btn = document.getElementById('auth-btn');
+            if (session) {
+                btn.innerText = "Mon Profil";
+                btn.onclick = () => window.location.href = 'profile.html';
+            }
         }
-        function showMessage(text, color) {
-            msg.innerText = text;
-            msg.className = `mt-4 text-center text-sm font-bold ${color} block`;
+
+        // 4. RÉCUPÉRER VÉHICULES
+        async function fetchVehicles() {
+            const grid = document.getElementById('vehicle-grid');
+            const island = document.getElementById('island-select').value;
+
+            let query = supabase.from('vehicles').select('*').eq('is_active', true);
+            if(island !== 'all') query = query.eq('island', island);
+
+            const { data, error } = await query;
+
+            if (error) {
+                grid.innerHTML = '<div class="text-red-500 text-center">Erreur chargement</div>';
+                console.error(error);
+                return;
+            }
+
+            allVehicles = data;
+            renderVehicles(data);
+        }
+
+        // 5. AFFICHER VÉHICULES
+        function renderVehicles(cars) {
+            const grid = document.getElementById('vehicle-grid');
+            if(cars.length === 0) {
+                grid.innerHTML = '<div class="text-center py-10 text-gray-400">Aucun véhicule trouvé.</div>';
+                return;
+            }
+
+            grid.innerHTML = cars.map(car => `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative h-48 bg-gray-200">
+                        <img src="${car.images_url?.[0] || 'https://via.placeholder.com/400'}" class="w-full h-full object-cover">
+                        <div class="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-bold">
+                            ${car.price_per_day} CVE/j
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">${car.make} ${car.model}</h3>
+                        <p class="text-sm text-gray-500">${car.island} • ${car.transmission}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 6. REDIRECTION SÉCURISÉE
+        window.checkAuthAndRedirect = async (url) => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if(!session) window.location.href = 'login.html';
+            else window.location.href = url;
+        }
+
+        // 7. FILTRE CATEGORIE (Simple)
+        window.filterCat = (cat) => {
+            if(cat === 'all') renderVehicles(allVehicles);
+            else renderVehicles(allVehicles.filter(c => c.category === cat));
         }
     </script>
 </body>
