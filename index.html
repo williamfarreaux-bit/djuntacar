@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DjuntaCar</title>
+    <link rel="icon" type="image/png" href="sigle.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -21,7 +23,7 @@
 
     <header class="fixed top-0 w-full z-50 glass border-b border-gray-200">
         <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
-            <h1 class="text-xl font-extrabold text-[#1d4379] tracking-tighter">DjuntaCar</h1>
+            <img src="logo.png" alt="DjuntaCar" class="h-10 object-contain">
             
             <a href="login.html" id="auth-link" class="text-xs font-bold bg-[#1d4379] text-white px-4 py-2 rounded-full shadow-md hover:opacity-90 transition-opacity">
                 Connexion
@@ -71,18 +73,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ON ATTEND QUE TOUT SOIT CHARGÉ
         document.addEventListener('DOMContentLoaded', async () => {
             if(window.lucide) lucide.createIcons();
             
             try {
                 // 1. CONNEXION
                 const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-                const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-'; // Clé corrigée
+                const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
                 
                 if(!window.supabase) throw new Error("Supabase non chargé");
                 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                window.sb = supabase; // Stockage global
+                window.sb = supabase;
 
                 // 2. CHECK SESSION
                 const { data: { session } } = await supabase.auth.getSession();
@@ -139,7 +140,7 @@
             }
 
             grid.innerHTML = cars.map(car => `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4 cursor-pointer hover:shadow-md transition-all" onclick="alert('Détails bientôt disponibles')">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4 cursor-pointer hover:shadow-md transition-all" onclick="window.location.href='car-detail.html?id=${car.id}'">
                     <div class="relative h-48 bg-gray-200">
                         <img src="${car.images_url?.[0] || 'assets/placeholder.jpg'}" 
                              onerror="this.src='https://via.placeholder.com/400x300?text=DjuntaCar'"
