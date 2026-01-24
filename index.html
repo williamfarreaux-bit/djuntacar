@@ -1,122 +1,70 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Mobilidade Cabo Verde</title>
+    <title>DjuntaCar - Mobilidade</title>
     
     <link rel="icon" type="image/png" href="sigle.png">
-    <link rel="apple-touch-icon" href="sigle.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <style>
-        /* --- CHARTE GRAPHIQUE (Document Blueprint) --- */
-        :root {
-            --blue-atlantique: #1A4384;
-            --green-kaminhu: #76B852;
-            --bg-gray: #f4f7f6;
-            --white: #ffffff;
-            --radius: 12px;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-gray);
-            margin: 0; padding: 0; color: #333;
-            -webkit-tap-highlight-color: transparent;
-            padding-bottom: 80px; /* Espace pour le menu bas */
-        }
-
+        :root { --blue: #1A4384; --green: #76B852; --bg: #f4f7f6; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
+        
         /* HEADER */
-        header { 
-            background: white; padding: 15px 20px; display: flex; justify-content: space-between; 
-            align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000;
-        }
-        .header-logo img { height: 40px; width: auto; } /* Votre logo */
+        header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100; }
+        .logo { font-weight: 900; color: var(--blue); font-size: 20px; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo img { height: 30px; }
+        select.lang { border: 1px solid #ddd; padding: 5px; border-radius: 15px; background: white; font-size: 14px; }
 
-        /* BARRE DE RECHERCHE (User Story US-2.1) */
-        .search-container { padding: 20px 20px 10px 20px; }
-        .search-box {
-            background: white; padding: 12px; border-radius: var(--radius); 
-            display: flex; align-items: center; border: 1px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        /* RECHERCHE */
+        .hero { padding: 20px 20px 10px 20px; }
+        .search-box { background: white; padding: 12px; border-radius: 12px; display: flex; align-items: center; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        /* FILTRES */
+        .filters { display: flex; gap: 8px; overflow-x: auto; padding: 10px 20px; scrollbar-width: none; }
+        .chip { background: white; border: 1px solid #ccc; padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; }
+        .chip.active { background: var(--blue); color: white; border-color: var(--blue); }
 
-        /* FILTRES (User Story US-2.2) */
-        .filters-scroll {
-            display: flex; gap: 10px; overflow-x: auto; padding: 10px 20px; 
-            scrollbar-width: none;
-        }
-        .filters-scroll::-webkit-scrollbar { display: none; }
-        
-        .filter-btn {
-            background: white; border: 1px solid #ccc; padding: 8px 16px; 
-            border-radius: 20px; white-space: nowrap; font-size: 13px; font-weight: 600;
-            color: #666; cursor: pointer; transition: 0.2s;
-        }
-        .filter-btn.active {
-            background: var(--blue-atlantique); color: white; border-color: var(--blue-atlantique);
-        }
-
-        /* LISTE DES VÉHICULES */
-        #car-list { padding: 20px; }
-        
-        .card { 
-            background: var(--white); border-radius: var(--radius); 
-            margin-bottom: 20px; overflow: hidden; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: 1px solid #eee;
-        }
-        
+        /* LISTE */
+        #list { padding: 10px 20px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; transition: transform 0.1s; }
+        .card:active { transform: scale(0.98); }
         .card-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
-        
         .card-body { padding: 15px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .card-title { margin: 0; color: var(--blue); font-size: 17px; font-weight: 800; }
+        .price { background: #e8f5e9; color: var(--green); padding: 6px 10px; border-radius: 8px; font-weight: bold; font-size: 14px; }
+        .specs { display: flex; gap: 12px; font-size: 13px; color: #666; margin-top: 8px; }
+        .btn { background: var(--blue); color: white; border: none; padding: 14px; width: 100%; border-radius: 10px; margin-top: 15px; font-weight: bold; font-size: 15px; cursor: pointer; }
+
+        /* NAV BAS */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; z-index: 100; padding-bottom: max(15px, env(safe-area-inset-bottom)); }
         
-        .card-title { 
-            margin: 0; color: var(--blue-atlantique); font-size: 18px; font-weight: 800; 
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        
-        .price-tag {
-            background: #e8f5e9; color: var(--green-kaminhu); 
-            padding: 5px 10px; border-radius: 8px; font-size: 14px; font-weight: bold;
-        }
-
-        .card-info {
-            display: flex; gap: 15px; margin-top: 10px; color: #666; font-size: 13px;
-        }
-
-        .btn-rent {
-            background: var(--blue-atlantique); color: white; border: none; 
-            padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; 
-            margin-top: 15px; cursor: pointer; font-size: 15px;
-        }
-
-        /* MENU BAS */
-        nav.bottom-nav { 
-            position: fixed; bottom: 0; width: 100%; background: white; 
-            display: flex; justify-content: space-around; padding: 15px 0; 
-            border-top: 1px solid #eee; z-index: 2000; 
-        }
-
-        /* LOADING & ERROR STATES */
-        .status-msg { text-align: center; padding: 40px; color: #666; }
-        .error-msg { color: red; background: #fee; padding: 15px; border-radius: 8px; font-size: 12px; font-family: monospace; }
+        /* DEBUG */
+        #debug { font-size: 10px; color: #999; text-align: center; margin-top: 20px; font-family: monospace; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="header-logo">
-        <img src="logo.png" alt="DjuntaCar">
-    </div>
-    <div>🇨🇻 🇫🇷</div>
+    <a href="#" class="logo">
+        <img src="logo.png" onerror="this.style.display='none'"> DjuntaCar
+    </a>
+    <select class="lang" id="langSelect" onchange="updateLang()">
+        <option value="fr">🇫🇷 FR</option>
+        <option value="pt">🇵🇹 PT</option>
+        <option value="en">🇬🇧 EN</option>
+        <option value="cv">🇨🇻 CV</option>
+    </select>
 </header>
 
-<div class="search-container">
-    <h1 style="color: var(--blue-atlantique); font-size: 20px; margin: 0 0 10px 0;">Onde é que queres ir?</h1>
+<div class="hero">
+    <h2 id="txt-title" style="color:var(--blue); margin:0 0 10px 0; font-size: 20px;">Où voulez-vous aller ?</h2>
     <div class="search-box">
-        📍 <select style="border:none; width:100%; margin-left:10px; outline:none; font-size:16px; background:white;">
+        📍 <select style="border:none; width:100%; margin-left:10px; outline:none; background:white; font-size: 16px;">
             <option>Santiago (Praia)</option>
             <option>Sal</option>
             <option>São Vicente</option>
@@ -125,13 +73,140 @@
     </div>
 </div>
 
-<div class="filters-scroll">
-    <button class="filter-btn active" onclick="filterCars('all', this)">Tudos</button>
-    <button class="filter-btn" onclick="filterCars('citadina', this)">🚗 Citadinas</button>
-    <button class="filter-btn" onclick="filterCars('4x4_aventura', this)">🚙 4x4 Aventura</button>
-    <button class="filter-btn" onclick="filterCars('premium', this)">💎 Premium</button>
-    <button class="filter-btn" onclick="filterCars('utilitaire', this)">🚐 Van</button>
+<div class="filters">
+    <div class="chip active" onclick="filter('all', this)" id="txt-all">Tous</div>
+    <div class="chip" onclick="filter('citadina', this)">Citadinas</div>
+    <div class="chip" onclick="filter('4x4_aventura', this)">4x4</div>
+    <div class="chip" onclick="filter('premium', this)">Premium</div>
+    <div class="chip" onclick="filter('utilitaire', this)">Van</div>
 </div>
 
-<div id="car-list">
-    
+<div id="list">
+    <div style="text-align:center; padding:50px; color:#aaa;">Chargement...</div>
+</div>
+
+<div id="debug">System Check...</div>
+
+<nav>
+    <span style="font-size:24px; color:var(--blue);">🏠</span>
+    <span style="font-size:24px; opacity:0.4;">📅</span>
+    <span style="font-size:24px; opacity:0.4;">💬</span>
+    <span style="font-size:24px; opacity:0.4;">👤</span>
+</nav>
+
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // --- DONNÉES DE SECOURS (Si la DB plante, on affiche ça) ---
+    const BACKUP_CARS = [
+        { id: 1, make: "Toyota", model: "Hilux", category: "4x4_aventura", price_per_day: 6500, transmission: "Manuelle", seats: 5, fuel_type: "Diesel", images_url: ["https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600"] },
+        { id: 2, make: "Suzuki", model: "Jimny", category: "4x4_aventura", price_per_day: 4500, transmission: "Manuelle", seats: 4, fuel_type: "Essence", images_url: ["https://images.unsplash.com/photo-1609520505218-7421da3b3d4f?w=600"] },
+        { id: 3, make: "Renault", model: "Kwid", category: "citadina", price_per_day: 3000, transmission: "Manuelle", seats: 4, fuel_type: "Essence", images_url: ["https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=600"] },
+        { id: 4, make: "Mercedes", model: "C-Class", category: "premium", price_per_day: 12000, transmission: "Auto", seats: 5, fuel_type: "Diesel", images_url: ["https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600"] },
+        { id: 5, make: "Dacia", model: "Duster", category: "4x4_aventura", price_per_day: 5000, transmission: "Manuelle", seats: 5, fuel_type: "Diesel", images_url: ["https://images.unsplash.com/photo-1669286438080-6927d2c33219?w=600"] },
+        { id: 6, make: "Peugeot", model: "208", category: "citadina", price_per_day: 3500, transmission: "Manuelle", seats: 5, fuel_type: "Essence", images_url: ["https://images.unsplash.com/photo-1502877338535-766e1452684a?w=600"] }
+    ];
+
+    let currentCars = [];
+
+    // --- TRADUCTIONS ---
+    const texts = {
+        fr: { title: "Où voulez-vous aller ?", all: "Tous", btn: "Voir détails", unit: "jour" },
+        pt: { title: "Onde é que queres ir?", all: "Tudos", btn: "Ver detalhes", unit: "dia" },
+        en: { title: "Where do you want to go?", all: "All", btn: "View details", unit: "day" },
+        cv: { title: "Undi bu kre bai?", all: "Tud", btn: "Odja detalhis", unit: "dia" }
+    };
+
+    // --- LOGIQUE PRINCIPALE ---
+    async function init() {
+        const debug = document.getElementById('debug');
+        
+        try {
+            // 1. Essai Connexion DB
+            const supabase = createClient(
+                'https://enuiuuwnjzvpfvpklmjw.supabase.co',
+                'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-'
+            );
+            
+            debug.innerText = "Connexion DB...";
+            const { data, error } = await supabase.from('vehicles').select('*').eq('is_active', true);
+
+            if (!error && data && data.length > 0) {
+                currentCars = data;
+                debug.innerText = "✅ Connecté à Supabase (" + data.length + " véhicules)";
+                debug.style.color = "green";
+            } else {
+                throw new Error(error ? error.message : "Table vide");
+            }
+
+        } catch (err) {
+            // 2. Fallback (Plan B)
+            console.warn("Utilisation des données de secours", err);
+            currentCars = BACKUP_CARS;
+            debug.innerText = "⚠️ Mode Hors-Ligne/Démo (Données locales)";
+            debug.style.color = "orange";
+        }
+
+        // 3. Affichage
+        render(currentCars);
+    }
+
+    // --- FONCTIONS D'AFFICHAGE (Globales pour onclick) ---
+    window.render = (list) => {
+        const container = document.getElementById('list');
+        const lang = document.getElementById('langSelect').value;
+        const t = texts[lang];
+        
+        container.innerHTML = '';
+        
+        list.forEach(car => {
+            // Image sécurisée (Si tableau vide ou null -> Fallback)
+            let img = 'https://via.placeholder.com/400x200?text=Auto';
+            if (car.images_url && Array.isArray(car.images_url) && car.images_url.length > 0) {
+                img = car.images_url[0];
+            } else if (typeof car.images_url === 'string') {
+                img = car.images_url; // Cas où ce serait une simple string
+            }
+
+            container.innerHTML += `
+                <div class="card">
+                    <img src="${img}" class="card-img" alt="${car.make}">
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h3 class="card-title">${car.make} ${car.model}</h3>
+                            <div class="price">${car.price_per_day} CVE / ${t.unit}</div>
+                        </div>
+                        <div class="specs">
+                            <span>🕹️ ${car.transmission || 'Manuelle'}</span>
+                            <span>⛽ ${car.fuel_type || 'Diesel'}</span>
+                            <span>💺 ${car.seats || 5}</span>
+                        </div>
+                        <button class="btn" onclick="alert('Détail du véhicule ${car.model} à venir')">${t.btn}</button>
+                    </div>
+                </div>
+            `;
+        });
+    };
+
+    window.filter = (cat, el) => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        
+        if (cat === 'all') render(currentCars);
+        else render(currentCars.filter(c => c.category === cat));
+    };
+
+    window.updateLang = () => {
+        const lang = document.getElementById('langSelect').value;
+        const t = texts[lang];
+        document.getElementById('txt-title').innerText = t.title;
+        document.getElementById('txt-all').innerText = t.all;
+        render(currentCars);
+    };
+
+    // Lancement
+    init();
+</script>
+
+</body>
+</html>
