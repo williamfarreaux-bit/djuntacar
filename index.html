@@ -12,7 +12,13 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
         :root { --primary: #1d4379; --bg-gray: #F9FAFB; font-family: 'Montserrat', sans-serif; }
-        body { background-color: var(--bg-gray); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-gray); 
+            padding-bottom: 110px; /* Espace pour la barre fixe du bas */
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
         .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .hero-gradient { background: linear-gradient(135deg, #1d4379 0%, #142f55 100%); }
         .hero-shape { border-bottom-left-radius: 2.5rem; border-bottom-right-radius: 2.5rem; }
@@ -22,22 +28,22 @@
         #mobile-menu { transition: transform 0.3s ease-in-out; }
         .menu-open { transform: translateX(0) !important; }
         .menu-closed { transform: translateX(-100%); }
+
+        /* Ombre douce pour la barre du bas */
+        .nav-shadow { box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
 <body class="antialiased text-gray-800">
 
     <div id="mobile-menu" class="fixed inset-0 z-[60] menu-closed flex">
         <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        
         <div class="relative bg-white w-3/4 max-w-xs h-full shadow-2xl flex flex-col p-6">
-            
             <div class="flex justify-between items-center mb-8">
                 <img src="logo.png" class="h-8 object-contain">
                 <button onclick="toggleMenu()" class="p-2 rounded-full hover:bg-gray-100">
                     <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
                 </button>
             </div>
-
             <nav class="space-y-6 flex-1">
                 <a href="index.html" class="flex items-center gap-3 text-[#1d4379] font-bold text-lg">
                     <i data-lucide="home" class="w-5 h-5"></i> Accueil
@@ -46,14 +52,9 @@
                     <i data-lucide="user-circle" class="w-5 h-5"></i> Mon Espace
                 </a>
                 <a href="add-car.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
-                    <i data-lucide="key" class="w-5 h-5"></i> Louer ma voiture
-                </a>
-                <div class="border-t border-gray-100 my-4"></div>
-                <a href="#" onclick="alert('Bientôt disponible')" class="flex items-center gap-3 text-gray-400 font-medium text-sm">
-                    <i data-lucide="help-circle" class="w-4 h-4"></i> Aide & Support
+                    <i data-lucide="plus-square" class="w-5 h-5"></i> Ajoute ta voiture
                 </a>
             </nav>
-
             <div class="mt-auto">
                 <a href="login.html" class="block w-full text-center py-3 rounded-xl bg-gray-50 text-gray-600 font-bold text-sm">
                     Connexion / Inscription
@@ -64,26 +65,36 @@
 
     <header class="fixed top-0 w-full z-50 glass border-b border-gray-200">
         <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
-            
             <button onclick="toggleMenu()" class="p-2 -ml-2 text-gray-700 hover:text-[#1d4379]">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
-
             <img src="logo.png" alt="DjuntaCar" class="h-8 object-contain">
-            
             <a href="login.html" id="auth-link" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[#1d4379]">
                 <i data-lucide="user" class="w-5 h-5"></i>
             </a>
         </div>
     </header>
 
+    <div class="fixed bottom-0 w-full z-[55] px-4 pb-6 pt-4 bg-gradient-to-t from-white via-white/90 to-transparent">
+        <div class="max-w-md mx-auto grid grid-cols-2 gap-3">
+            <a href="add-car.html" class="flex flex-col items-center justify-center gap-1 bg-[#1d4379] text-white py-3 rounded-2xl font-extrabold shadow-2xl active:scale-95 transition-all nav-shadow">
+                <i data-lucide="plus-square" class="w-5 h-5"></i>
+                <span class="text-[10px] uppercase tracking-tighter">Ajoute ta voiture</span>
+            </a>
+            <a href="login.html" class="flex flex-col items-center justify-center gap-1 bg-white text-[#1d4379] border-2 border-[#1d4379] py-3 rounded-2xl font-extrabold shadow-2xl active:scale-95 transition-all nav-shadow">
+                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                <span class="text-[10px] uppercase tracking-tighter">Deviens chauffeur</span>
+            </a>
+        </div>
+    </div>
+
     <div class="hero-gradient hero-shape pt-24 pb-12 px-5 text-white relative">
         <div class="max-w-md mx-auto relative z-10">
-            <h1 class="text-3xl font-extrabold mb-2">Où allez-vous ?</h1>
+            <h1 class="text-3xl font-extrabold mb-2 text-center">Où allez-vous ?</h1>
             
-            <div class="relative text-gray-800 mb-6">
-                <i data-lucide="map" class="absolute left-3 top-3.5 h-5 w-5 text-gray-400 z-10"></i>
-                <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-10 pr-10 py-3.5 bg-white border-0 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 font-bold shadow-lg">
+            <div class="relative text-gray-800 mb-2">
+                <i data-lucide="map-pin" class="absolute left-3 top-3.5 h-5 w-5 text-gray-400 z-10"></i>
+                <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-10 pr-10 py-3.5 bg-white border-0 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 font-bold shadow-lg appearance-none">
                     <option value="all">Toutes les îles</option>
                     <option value="Santiago">Santiago</option>
                     <option value="Sal">Sal</option>
@@ -93,165 +104,17 @@
                 </select>
                 <i data-lucide="chevron-down" class="absolute right-3 top-3.5 h-5 w-5 text-gray-400 pointer-events-none z-10"></i>
             </div>
-
-            <a href="add-car.html" class="w-full bg-white/20 hover:bg-white/30 border border-white/40 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors">
-                <i data-lucide="key" class="w-5 h-5"></i> Loue ta voiture
-            </a>
         </div>
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
         
         <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
-            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg whitespace-nowrap transition-transform active:scale-95">
+            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-lg whitespace-nowrap active:scale-95 transition-transform">
                 Tout
             </button>
-            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap transition-transform active:scale-95">
-                Citadines
+            <button onclick="toggleDriver()" id="btn-driver" class="bg-white text-gray-600 px-4 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap flex items-center gap-2 active:scale-95 transition-transform">
+                <i data-lucide="user-check" class="w-4 h-4"></i> Chauffeur
             </button>
-            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap transition-transform active:scale-95">
-                4x4
-            </button>
-            <button onclick="filterCat('utilitaire')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap transition-transform active:scale-95">
-                Van
-            </button>
-        </div>
-
-        <div id="status-msg" class="hidden text-center p-4 mb-4 rounded-xl text-sm font-bold"></div>
-        
-        <div id="vehicle-grid" class="grid grid-cols-1 gap-5 pb-6">
-            <div class="text-center py-10 text-gray-400 flex flex-col items-center">
-                <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-[#1d4379] mb-2"></i>
-                <span>Recherche des voitures...</span>
-            </div>
-        </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // FONCTION MENU BURGER
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            if (menu.classList.contains('menu-closed')) {
-                menu.classList.remove('menu-closed');
-                menu.classList.add('menu-open');
-            } else {
-                menu.classList.remove('menu-open');
-                menu.classList.add('menu-closed');
-            }
-        }
-
-        // LOGIQUE PRINCIPALE
-        document.addEventListener('DOMContentLoaded', async () => {
-            if(window.lucide) lucide.createIcons();
-            
-            try {
-                // 1. CONNEXION
-                const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-                const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-                
-                if(!window.supabase) throw new Error("Supabase non chargé");
-                const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                window.sb = supabase;
-
-                // 2. CHECK SESSION (Mise à jour du bouton Profil)
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    const btn = document.getElementById('auth-link');
-                    btn.href = "profile.html";
-                    btn.classList.replace("bg-gray-100", "bg-green-100");
-                    btn.classList.replace("text-gray-500", "text-green-600");
-                    btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i>`;
-                    lucide.createIcons();
-                }
-
-                // 3. CHARGEMENT VOITURES
-                await fetchVehicles();
-
-            } catch (err) {
-                console.error(err);
-                const msg = document.getElementById('status-msg');
-                msg.innerHTML = `⚠️ Erreur: ${err.message}`;
-                msg.className = "block text-center p-4 mb-4 rounded-xl text-sm font-bold bg-red-100 text-red-600";
-            }
-        });
-
-        let allVehicles = [];
-
-        async function fetchVehicles() {
-            const grid = document.getElementById('vehicle-grid');
-            const island = document.getElementById('island-select').value;
-            const supabase = window.sb;
-
-            try {
-                let query = supabase.from('vehicles').select('*').eq('is_active', true);
-                if(island !== 'all') query = query.eq('island', island);
-
-                const { data, error } = await query;
-                
-                if (error) throw error;
-
-                allVehicles = data;
-                renderVehicles(data);
-
-            } catch (e) {
-                grid.innerHTML = `<div class="text-center text-gray-400 py-10">Impossible de charger les voitures.<br><span class="text-xs text-red-400">${e.message}</span></div>`;
-            }
-        }
-
-        function renderVehicles(cars) {
-            const grid = document.getElementById('vehicle-grid');
-            if(!cars || cars.length === 0) {
-                grid.innerHTML = `
-                    <div class="text-center py-10 text-gray-400">
-                        <p class="font-bold mb-1">Aucune voiture trouvée 😢</p>
-                        <p class="text-xs">Essayez de changer d'île ou ajoutez la vôtre !</p>
-                    </div>`;
-                return;
-            }
-
-            grid.innerHTML = cars.map(car => `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4 cursor-pointer hover:shadow-md transition-all" onclick="window.location.href='car-detail.html?id=${car.id}'">
-                    <div class="relative h-48 bg-gray-200">
-                        <img src="${car.images_url?.[0] || 'assets/placeholder.jpg'}" 
-                             onerror="this.src='https://via.placeholder.com/400x300?text=DjuntaCar'"
-                             class="w-full h-full object-cover">
-                        <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm">
-                            ${car.price_per_day} CVE <span class="text-xs font-normal">/j</span>
-                        </div>
-                        <div class="absolute top-2 right-2 bg-white/90 text-[#1d4379] px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide">
-                            ${car.island}
-                        </div>
-                    </div>
-                    <div class="p-4 flex justify-between items-center">
-                        <div>
-                            <h3 class="font-bold text-lg text-gray-900">${car.make} ${car.model}</h3>
-                            <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                <i data-lucide="settings-2" class="w-3 h-3"></i> ${car.transmission || 'Manuelle'}
-                            </p>
-                        </div>
-                        <div class="bg-gray-50 p-2 rounded-full">
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            if(window.lucide) lucide.createIcons();
-        }
-
-        // LOGIQUE FILTRE MISE A JOUR
-        window.filterCat = (cat) => {
-            // Reset styles
-            const buttons = document.querySelectorAll('main button'); // Boutons de filtres
-            buttons.forEach(btn => {
-                btn.className = "bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap transition-transform active:scale-95";
-            });
-            // Highlight active (simple visuel, on pourrait faire mieux en ciblant l'event)
-            // Pour l'instant on filtre juste les données :
-            
-            if(cat === 'all') renderVehicles(allVehicles);
-            else renderVehicles(allVehicles.filter(c => c.category === cat));
-        }
-    </script>
-</body>
-</html>
+            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap active:scale-95 transition-transform">
+                Cit
