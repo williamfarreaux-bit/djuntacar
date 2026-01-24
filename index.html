@@ -1,53 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>TEST CONNEXION</title>
-    <style>body{font-family:monospace;padding:20px;font-size:18px;}</style>
-</head>
-<body>
-    <h1>🛠️ DIAGNOSTIC DJUNTACAR</h1>
-    <div id="resultat">Tentative de connexion en cours...</div>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DjuntaCar - Mobilidade Cabo Verde</title>
+    
+    <link rel="icon" type="image/png" href="sigle.png">
+    <link rel="apple-touch-icon" href="sigle.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-        // Vos identifiants (J'ai repris ceux que vous m'avez donnés plus tôt)
-        const URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-        const KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-
-        async function testConnection() {
-            const div = document.getElementById('resultat');
-            
-            try {
-                const supabase = createClient(URL, KEY);
-                
-                // On essaie de lire la table 'vehicles'
-                const { data, error } = await supabase.from('vehicles').select('*');
-
-                if (error) {
-                    div.style.color = 'red';
-                    div.innerHTML = `
-                        <strong>🛑 ÉCHEC DE LA CONNEXION</strong><br><br>
-                        <strong>Code erreur :</strong> ${error.code}<br>
-                        <strong>Message :</strong> ${error.message}<br><br>
-                        <em>Conseil : Vérifiez que vous avez bien lancé le script SQL pour rendre la table publique.</em>
-                    `;
-                } else {
-                    div.style.color = 'green';
-                    div.innerHTML = `
-                        <strong>✅ SUCCÈS ! LA CONNEXION FONCTIONNE.</strong><br><br>
-                        <strong>Nombre de voitures trouvées :</strong> ${data.length}<br>
-                        <strong>Exemple :</strong> ${data[0] ? (data[0].make + ' ' + data[0].model) : 'Aucune voiture dans la table'}
-                    `;
-                }
-            } catch (err) {
-                div.style.color = 'red';
-                div.innerHTML = `<strong>💥 ERREUR CRITIQUE (CODE) :</strong> ${err.message}`;
-            }
+    <style>
+        /* --- CHARTE GRAPHIQUE (Document Blueprint) --- */
+        :root {
+            --blue-atlantique: #1A4384;
+            --green-kaminhu: #76B852;
+            --bg-gray: #f4f7f6;
+            --white: #ffffff;
+            --radius: 12px;
         }
 
-        testConnection();
-    </script>
-</body>
-</html>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0; padding: 0; color: #333;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 80px; /* Espace pour le menu bas */
+        }
+
+        /* HEADER */
+        header { 
+            background: white; padding: 15px 20px; display: flex; justify-content: space-between; 
+            align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000;
+        }
+        .header-logo img { height: 40px; width: auto; } /* Votre logo */
+
+        /* BARRE DE RECHERCHE (User Story US-2.1) */
+        .search-container { padding: 20px 20px 10px 20px; }
+        .search-box {
+            background: white; padding: 12px; border-radius: var(--radius); 
+            display: flex; align-items: center; border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* FILTRES (User Story US-2.2) */
+        .filters-scroll {
+            display: flex; gap: 10px; overflow-x: auto; padding: 10px 20px; 
+            scrollbar-width: none;
+        }
+        .filters-scroll::-webkit-scrollbar { display: none; }
+        
+        .filter-btn {
+            background: white; border: 1px solid #ccc; padding: 8px 16px; 
+            border-radius: 20px; white-space: nowrap; font-size: 13px; font-weight: 600;
+            color: #666; cursor: pointer; transition: 0.2s;
+        }
+        .filter-btn.active {
+            background: var(--blue-atlantique); color: white; border-color: var(--blue-atlantique);
+        }
+
+        /* LISTE DES VÉHICULES */
+        #car-list { padding: 20px; }
+        
+        .card { 
+            background: var(--white); border-radius: var(--radius); 
+            margin-bottom: 20px; overflow: hidden; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: 1px solid #eee;
+        }
+        
+        .card-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
+        
+        .card-body { padding: 15px; }
+        
+        .card-title { 
+            margin: 0; color: var(--blue-atlantique); font-size: 18px; font-weight: 800; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .price-tag {
+            background: #e8f5e9; color: var(--green-kaminhu); 
+            padding: 5px 10px; border-radius: 8px; font-size: 14px; font-weight: bold;
+        }
+
+        .card-info {
+            display: flex; gap: 15px; margin-top: 10px; color: #666; font-size: 13px;
+        }
+
+        .btn-rent {
+            background: var(--blue-atlantique); color: white; border: none; 
+            padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; 
+            margin-top: 15px; cursor: pointer; font-size: 15px;
+        }
+
+        /* MENU BAS */
+        nav.bottom-nav { 
+            position: fixed; bottom: 0; width: 100%; background: white; 
+            display: flex; justify-content: space-around; padding: 15px 0; 
+            border-top: 1px solid #eee; z-index: 2000; 
+        }
+
+        /* LOADING & ERROR STATES */
+        .status-msg { text-align: center; padding: 40px; color: #666; }
+        .error-msg { color: red; background: #fee; padding: 15px; border-radius: 8px; font-size: 12px; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-logo">
+        <img src="logo.png" alt="DjuntaCar">
+    </div>
+    <div>🇨🇻 🇫🇷</div>
+</header>
+
+<div class="search-container">
+    <h1 style="color: var(--blue-atlantique); font-size: 20px; margin: 0 0 10px 0;">Onde é que queres ir?</h1>
+    <div class="search-box">
+        📍 <select style="border:none; width:100%; margin-left:10px; outline:none; font-size:16px; background:white;">
+            <option>Santiago (Praia)</option>
+            <option>Sal</option>
+            <option>São Vicente</option>
+            <option>Boa Vista</option>
+        </select>
+    </div>
+</div>
+
+<div class="filters-scroll">
+    <button class="filter-btn active" onclick="filterCars('all', this)">Tudos</button>
+    <button class="filter-btn" onclick="filterCars('citadina', this)">🚗 Citadinas</button>
+    <button class="filter-btn" onclick="filterCars('4x4_aventura', this)">🚙 4x4 Aventura</button>
+    <button class="filter-btn" onclick="filterCars('premium', this)">💎 Premium</button>
+    <button class="filter-btn" onclick="filterCars('utilitaire', this)">🚐 Van</button>
+</div>
+
+<div id="car-list">
+    
