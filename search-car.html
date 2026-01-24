@@ -3,53 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Accueil</title>
+    <title>Rechercher un véhicule - DjuntaCar</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; margin: 0; padding-bottom: 200px; }
-        .hero-shape { 
-            border-bottom-left-radius: 3rem; border-bottom-right-radius: 3rem; 
-            background: linear-gradient(145deg, #1d4379 0%, #102a4d 100%); 
-        }
-        .btn-action {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; height: 60px; border-radius: 22px;
-            font-weight: 700; font-size: 15px; text-decoration: none;
-            transition: all 0.3s ease;
-        }
+        body { background-color: #fcfcfd; margin: 0; padding-bottom: 40px; }
+
+        /* CARTES ET CHAMPS */
+        .filter-card { background: white; border-radius: 28px; border: 1px solid #f0f2f5; box-shadow: 0 15px 35px rgba(0,0,0,0.03); }
+        .input-group { border-bottom: 1px solid #f0f2f5; padding: 18px 24px; }
+        .input-group:last-child { border-bottom: none; }
+        
+        label { font-size: 10px; font-weight: 700; color: #bdc3c7; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.8px; }
+        select, input { width: 100%; font-weight: 600; color: #1d4379; outline: none; background: transparent; border: none; font-size: 15px; }
+
+        /* ETOILES */
+        .star-rating { display: flex; gap: 10px; margin-top: 10px; }
+        .star-icon { color: #e5e7eb; cursor: pointer; transition: all 0.2s; }
+        .star-icon.active { color: #facc15; fill: #facc15; }
+
+        /* MODALES */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
+        .modal-box { background: white; border-radius: 35px; padding: 35px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
+        
+        input[type="range"] { accent-color: #1d4379; }
     </style>
 </head>
-<body>
-    <header class="h-16 flex items-center px-5 border-b border-gray-50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex justify-between items-center">
-            <i data-lucide="menu" class="w-6 h-6 text-gray-700"></i>
-            <img src="logo.png" alt="DjuntaCar" class="h-8 object-contain">
-            <i data-lucide="user" class="w-6 h-6 text-[#1d4379]"></i>
+<body class="antialiased text-gray-800">
+
+    <header class="h-14 flex items-center px-6 bg-white/80 backdrop-blur-md border-b border-gray-50 sticky top-0 z-50">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between">
+            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="arrow-left" class="w-6 h-6"></i></a>
+            <span class="font-bold text-sm text-[#1d4379]">Filtres de recherche</span>
+            <div class="w-10"></div>
         </div>
     </header>
 
-    <div class="hero-shape pt-20 pb-24 px-6 text-white text-center">
-        <div class="max-w-md mx-auto">
-            <h1 class="text-3xl font-extrabold mb-10 leading-tight">Trouvez la voiture parfaite</h1>
-            <a href="search-car.html" class="w-full bg-white text-gray-400 p-5 rounded-[2rem] shadow-2xl flex items-center gap-4 active:scale-95 transition-all text-left">
-                <div class="bg-gray-50 rounded-2xl p-2 text-[#1d4379]"><i data-lucide="search" class="w-5 h-5"></i></div>
-                <span class="font-bold text-sm">Commencer ma recherche...</span>
-            </a>
+    <main class="max-w-md mx-auto px-6 pt-8">
+        <h1 class="text-2xl font-extrabold text-[#1d4379] mb-8 leading-tight">Quelle voiture cherchez-vous ?</h1>
+
+        <div class="filter-card overflow-hidden">
+            <div class="grid grid-cols-2">
+                <div class="input-group border-r border-gray-100">
+                    <label>Île</label>
+                    <select id="f-island">
+                        <option>Santiago</option>
+                        <option>Sal</option>
+                        <option>São Vicente</option>
+                        <option>Boa Vista</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Ville</label>
+                    <input type="text" id="f-city" placeholder="Ex: Praia">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Période de location</label>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="calendar" class="w-4 h-4 text-gray-300"></i>
+                    <input type="text" id="date-range" placeholder="Sélectionnez vos dates" class="cursor-pointer">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2">
+                <div class="input-group border-r border-gray-100">
+                    <label>Type</label>
+                    <select id="f-type">
+                        <option value="all">Tout</option>
+                        <option value="4x4">4X4</option>
+                        <option value="citadine">Citadine</option>
+                        <option value="van">Van</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Sièges</label>
+                    <select id="f-seats">
+                        <option value="all">Tout</option>
+                        <option value="2">2 places</option>
+                        <option value="5">5 places</option>
+                        <option value="7">7+ places</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="flex justify-between items-center mb-4">
+                    <label class="m-0">Budget max / jour</label>
+                    <span id="price-val" class="text-[13px] font-extrabold text-[#1d4379]">12 000 CVE</span>
+                </div>
+                <input type="range" id="price-range" min="2000" max="30000" step="500" value="12000" class="w-full">
+            </div>
+
+            <div class="input-group">
+                <label>Avis utilisateurs minimum</label>
+                <div class="star-rating" id="star-box">
+                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="1"></i>
+                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="2"></i>
+                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="3"></i>
+                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="4"></i>
+                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="5"></i>
+                </div>
+            </div>
+
+            <div class="input-group bg-blue-50/40 flex items-center justify-between py-6">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white p-2 rounded-xl shadow-sm"><i data-lucide="user-check" class="w-5 h-5 text-[#1d4379]"></i></div>
+                    <span class="text-sm font-bold text-[#1d4379]">Prendre un chauffeur</span>
+                </div>
+                <input type="checkbox" id="driver-check" class="w-6 h-6 rounded-lg accent-[#1d4379] cursor-pointer">
+            </div>
+        </div>
+
+        <button onclick="handleMainSearch()" class="w-full bg-[#1d4379] text-white py-5 rounded-[22px] font-bold shadow-xl mt-8 active:scale-95 transition-all">Afficher les véhicules</button>
+    </main>
+
+    <div id="driver-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="user-plus" class="w-8 h-8"></i></div>
+            <h3 class="text-xl font-extrabold mb-3 text-gray-900">Option Chauffeur</h3>
+            <p class="text-sm text-gray-400 mb-8 leading-relaxed">Souhaitez-vous choisir personnellement votre chauffeur ?</p>
+            <div class="flex flex-col gap-3">
+                <a href="search-driver.html" class="bg-[#22c55e] text-white py-4 rounded-2xl font-bold shadow-lg">Oui, choisir</a>
+                <button onclick="skipDriverChoice()" class="text-gray-300 font-bold py-2 text-sm">Non, assignation auto</button>
+            </div>
         </div>
     </div>
 
-    <div class="fixed bottom-0 w-full z-50 px-6 pb-12 pt-4 bg-gradient-to-t from-white via-white/90 to-transparent">
-        <div class="max-w-md mx-auto flex flex-col gap-4">
-            <a href="add-car.html" class="btn-action bg-[#1d4379] text-white shadow-xl">Ajouter ma voiture</a>
-            <a href="become-driver.html" class="btn-action bg-[#22c55e] text-white shadow-xl">Devenir chauffeur</a>
-        </div>
-    </div>
+    <script>
+        lucide.createIcons();
+        flatpickr("#date-range", { mode: "range", minDate: "today", dateFormat: "d/m/Y", locale: "fr" });
 
-    <script>lucide.createIcons();</script>
+        const range = document.getElementById('price-range');
+        range.addEventListener('input', (e) => {
+            document.getElementById('price-val').innerText = parseInt(e.target.value).toLocaleString() + ' CVE';
+        });
+
+        const stars = document.querySelectorAll('.star-icon');
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const v = star.dataset.val;
+                stars.forEach(s => s.classList.toggle('active', s.dataset.val <= v));
+            });
+        });
+
+        function handleMainSearch() {
+            if (document.getElementById('driver-check').checked) {
+                document.getElementById('driver-modal').style.display = 'flex';
+            } else {
+                alert("Recherche lancée !");
+            }
+        }
+
+        function skipDriverChoice() {
+            alert("Un chauffeur vous sera assigné.");
+            document.getElementById('driver-modal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
