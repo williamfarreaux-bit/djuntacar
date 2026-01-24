@@ -13,100 +13,190 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        /* FORCE LA POLICE ET LE CENTRAGE SUR TOUT LE SITE */
-        * { 
-            font-family: 'Montserrat', sans-serif !important; 
-        }
+        /* FORCE LA POLICE SUR TOUT LE SITE */
+        * { font-family: 'Montserrat', sans-serif !important; }
         
         body { 
             background-color: #F9FAFB; 
-            padding-bottom: 200px; 
+            padding-bottom: 220px; /* Espace pour les 2 boutons empilés */
             margin: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* STYLE DES BOUTONS FIXES AVEC CENTRAGE ABSOLU */
-        .btn-fixe {
+        /* STYLE DES BOUTONS D'ACTION (CENTRAGE ABSOLU) */
+        .btn-action {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            text-align: center !important;
             width: 100% !important;
-            height: 60px !important; /* Hauteur fixe pour garantir le centrage vertical */
+            height: 58px !important;
             border-radius: 18px !important;
             font-weight: 800 !important;
             text-transform: uppercase !important;
+            font-size: 13px !important;
             letter-spacing: 0.5px !important;
-            font-size: 14px !important;
             text-decoration: none !important;
             transition: transform 0.2s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
+        .btn-action:active { transform: scale(0.96); }
+        .btn-blue { background-color: #1d4379 !important; color: white !important; }
+        .btn-green { background-color: #22c55e !important; color: white !important; }
 
-        .btn-fixe:active { transform: scale(0.96); }
-
-        .btn-bleu { background-color: #1d4379 !important; color: white !important; box-shadow: 0 10px 20px rgba(29, 67, 121, 0.2); }
-        .btn-vert { background-color: #22c55e !important; color: white !important; box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2); }
+        /* MENU LATÉRAL */
+        #mobile-menu { transition: transform 0.3s ease-in-out; }
+        .menu-open { transform: translateX(0) !important; }
+        .menu-closed { transform: translateX(-100%); }
 
         .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .hero-shape { border-bottom-left-radius: 2.5rem; border-bottom-right-radius: 2.5rem; background: linear-gradient(135deg, #1d4379 0%, #142f55 100%); }
+        .hero-shape { 
+            border-bottom-left-radius: 2.5rem; 
+            border-bottom-right-radius: 2.5rem; 
+            background: linear-gradient(135deg, #1d4379 0%, #142f55 100%); 
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased text-gray-800">
 
-    <header class="fixed top-0 w-full z-50 glass-nav border-b border-gray-100 h-16 flex items-center">
-        <div class="max-w-md mx-auto w-full px-4 flex justify-between items-center">
-            <i data-lucide="menu" class="w-6 h-6 text-gray-700"></i>
-            <img src="logo.png" alt="DjuntaCar" class="h-8 object-contain">
-            <div class="w-6"></div> </div>
-    </header>
-
-    <div class="fixed bottom-0 w-full z-[60] px-6 pb-10 pt-4 bg-gradient-to-t from-white via-white to-transparent">
-        <div class="max-w-md mx-auto flex flex-col gap-4">
-            
-            <a href="add-car.html" class="btn-fixe btn-bleu">
-                <i data-lucide="plus-square" class="w-5 h-5 mr-3"></i>
-                AJOUTE TA VOITURE
-            </a>
-            
-            <a href="become-driver.html" class="btn-fixe btn-vert">
-                <i data-lucide="user-plus" class="w-5 h-5 mr-3"></i>
-                DEVIENS CHAUFFEUR
-            </a>
-
+    <div id="mobile-menu" class="fixed inset-0 z-[70] menu-closed flex">
+        <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="relative bg-white w-3/4 max-w-xs h-full shadow-2xl flex flex-col p-6">
+            <div class="flex justify-between items-center mb-8">
+                <img src="logo.png" class="h-8 object-contain">
+                <button onclick="toggleMenu()" class="p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <nav class="space-y-6 flex-1">
+                <a href="index.html" class="flex items-center gap-3 text-[#1d4379] font-black uppercase text-sm"><i data-lucide="home"></i> Accueil</a>
+                <a href="profile.html" class="flex items-center gap-3 text-gray-500 font-black uppercase text-sm"><i data-lucide="user"></i> Mon Profil</a>
+                <a href="add-car.html" class="flex items-center gap-3 text-gray-500 font-black uppercase text-sm"><i data-lucide="plus-square"></i> Ajoute ta voiture</a>
+                <a href="become-driver.html" class="flex items-center gap-3 text-gray-500 font-black uppercase text-sm"><i data-lucide="user-plus"></i> Deviens chauffeur</a>
+            </nav>
         </div>
     </div>
 
-    <div class="hero-shape pt-24 pb-12 px-6 text-white">
-        <div class="max-w-md mx-auto text-center">
-            <h1 class="text-2xl font-black uppercase mb-6">Où allez-vous ?</h1>
-            <div class="relative">
-                <select id="island-select" class="w-full p-4 bg-white text-gray-900 rounded-2xl font-bold appearance-none uppercase text-sm outline-none">
+    <header class="fixed top-0 w-full z-50 glass-nav border-b border-gray-100 h-16 flex items-center">
+        <div class="max-w-md mx-auto w-full px-4 flex justify-between items-center">
+            <button onclick="toggleMenu()" class="p-2 -ml-2"><i data-lucide="menu" class="w-6 h-6 text-gray-700"></i></button>
+            <img src="logo.png" alt="DjuntaCar" class="h-8 object-contain">
+            <a href="login.html" id="auth-link" class="p-2"><i data-lucide="user" class="w-6 h-6 text-[#1d4379]"></i></a>
+        </div>
+    </header>
+
+    <div class="fixed bottom-0 w-full z-[60] px-6 pb-10 pt-4 bg-gradient-to-t from-white via-white to-transparent">
+        <div class="max-w-md mx-auto flex flex-col gap-3">
+            <a href="add-car.html" class="btn-action btn-blue">
+                <i data-lucide="plus-square" class="w-5 h-5 mr-3"></i> AJOUTE TA VOITURE
+            </a>
+            <a href="become-driver.html" class="btn-action btn-green">
+                <i data-lucide="user-plus" class="w-5 h-5 mr-3"></i> DEVIENS CHAUFFEUR
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-shape pt-24 pb-12 px-6 text-white text-center">
+        <div class="max-w-md mx-auto">
+            <h1 class="text-2xl font-black uppercase mb-6 tracking-tight">Où allez-vous ?</h1>
+            <div class="relative text-gray-900">
+                <i data-lucide="map-pin" class="absolute left-4 top-4 text-gray-400"></i>
+                <select id="island-select" onchange="fetchVehicles()" class="w-full p-4 pl-12 bg-white rounded-2xl font-black uppercase text-xs appearance-none outline-none shadow-xl">
                     <option value="all">Toutes les îles</option>
                     <option value="Santiago">Santiago</option>
                     <option value="Sal">Sal</option>
+                    <option value="SaoVicente">São Vicente</option>
+                    <option value="BoaVista">Boa Vista</option>
                 </select>
-                <i data-lucide="chevron-down" class="absolute right-4 top-4.5 text-gray-400"></i>
+                <i data-lucide="chevron-down" class="absolute right-4 top-4 text-gray-400"></i>
             </div>
         </div>
     </div>
 
-    <main class="max-w-md mx-auto px-4 mt-8" id="vehicle-grid">
-        </main>
+    <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
+        <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide">
+            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase shadow-lg whitespace-nowrap">Tout</button>
+            <button onclick="toggleDriver()" id="btn-driver" class="bg-white text-gray-500 px-4 py-2.5 rounded-full text-[10px] font-black border border-gray-100 shadow-sm whitespace-nowrap flex items-center gap-2 uppercase">
+                <i data-lucide="user-check" class="w-4 h-4"></i> Chauffeur
+            </button>
+            <button onclick="filterCat('citadina')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-[10px] font-black border border-gray-100 shadow-sm uppercase">Citadines</button>
+            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-[10px] font-black border border-gray-100 shadow-sm uppercase">4x4</button>
+            <button onclick="filterCat('utilitaire')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-[10px] font-black border border-gray-100 shadow-sm uppercase">Van</button>
+        </div>
+
+        <div id="vehicle-grid" class="grid grid-cols-1 gap-6">
+            <div class="text-center py-20 uppercase font-black text-gray-300 text-xs tracking-widest">Chargement...</div>
+        </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        lucide.createIcons();
-        
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('menu-closed');
+            menu.classList.toggle('menu-open');
+        }
+
         const supabase = window.supabase.createClient('https://enuiuuwnjzvpfvpklmjw.supabase.co', 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-');
 
-        async function loadVehicles() {
-            const { data } = await supabase.from('vehicles').select('*').eq('is_active', true);
+        let allVehicles = [];
+        let driverFilter = false;
+        let currentCat = 'all';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            fetchVehicles();
+        });
+
+        async function fetchVehicles() {
+            const island = document.getElementById('island-select').value;
+            let query = supabase.from('vehicles').select('*').eq('is_active', true);
+            if(island !== 'all') query = query.eq('island', island);
+            const { data } = await query;
+            allVehicles = data || [];
+            applyFilters();
+        }
+
+        window.filterCat = (cat) => {
+            currentCat = cat;
+            applyFilters();
+        }
+
+        window.toggleDriver = () => {
+            driverFilter = !driverFilter;
+            const btn = document.getElementById('btn-driver');
+            btn.classList.toggle('bg-blue-600'); btn.classList.toggle('text-white');
+            applyFilters();
+        }
+
+        function applyFilters() {
+            let filtered = allVehicles;
+            if (currentCat !== 'all') filtered = filtered.filter(v => v.category === currentCat);
+            if (driverFilter) filtered = filtered.filter(v => v.with_driver);
+            renderVehicles(filtered);
+        }
+
+        function renderVehicles(cars) {
             const grid = document.getElementById('vehicle-grid');
-            
-            if (data) {
-                grid.innerHTML = data.map(car => `
-                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 mb-6">
-                        <img src="${car.images_url?.[0]}" class="w-full h-48 object-cover">
-                        <div class="p-5 flex justify-between items-center">
-                            <div>
-                                <h3 class="font-black uppercase text-gray-900">${car.make} ${car.model}</h3>
-                                <p class="text-
+            if(cars.length === 0) {
+                grid.innerHTML = `<div class="text-center py-20 uppercase font-black text-gray-300 text-xs">Aucun véhicule</div>`;
+                return;
+            }
+            grid.innerHTML = cars.map(car => `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100" onclick="window.location.href='car-detail.html?id=${car.id}'">
+                    <div class="relative h-52">
+                        <img src="${car.images_url?.[0]}" class="w-full h-full object-cover">
+                        <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-black uppercase">${car.price_per_day} CVE / JOUR</div>
+                    </div>
+                    <div class="p-5 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-black uppercase text-gray-900 text-sm">${car.make} ${car.model}</h3>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">${car.island} • ${car.transmission}</p>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded-full"><i data-lucide="chevron-right" class="w-5 h-5 text-gray-200"></i></div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
