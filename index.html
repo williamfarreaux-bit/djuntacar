@@ -23,7 +23,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* STYLE DES BOUTONS D'ACTION (CENTRAGE ET CASSE NORMALE) */
+        /* STYLE DES BOUTONS D'ACTION DU BAS */
         .btn-action {
             display: flex !important;
             align-items: center !important;
@@ -53,6 +53,18 @@
             background: linear-gradient(135deg, #1d4379 0%, #142f55 100%); 
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+        /* STYLE DES FILTRES */
+        .filter-btn {
+            transition: all 0.2s;
+            border: 1px solid #f3f4f6;
+        }
+        .filter-btn.active {
+            background-color: #1d4379;
+            color: white;
+            box-shadow: 0 4px 12px rgba(29, 67, 121, 0.2);
+            border-color: #1d4379;
+        }
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -92,36 +104,43 @@
         </div>
     </div>
 
-    <div class="hero-shape pt-24 pb-12 px-6 text-white text-center">
+    <div class="hero-shape pt-24 pb-16 px-6 text-white text-center">
         <div class="max-w-md mx-auto">
-            <h1 class="text-2xl font-extrabold mb-6 tracking-tight">Choisis une voiture</h1>
-            <div class="relative text-gray-900">
-                <i data-lucide="map-pin" class="absolute left-4 top-4 text-gray-400"></i>
-                <select id="island-select" onchange="fetchVehicles()" class="w-full p-4 pl-12 bg-white rounded-2xl font-bold text-sm appearance-none outline-none shadow-xl">
-                    <option value="all">Toutes les îles</option>
-                    <option value="Santiago">Santiago</option>
-                    <option value="Sal">Sal</option>
-                    <option value="SaoVicente">São Vicente</option>
-                    <option value="BoaVista">Boa Vista</option>
-                </select>
-                <i data-lucide="chevron-down" class="absolute right-4 top-4 text-gray-400"></i>
+            <h1 class="text-2xl font-extrabold mb-8 tracking-tight">Choisis une voiture</h1>
+            
+            <div class="relative bg-white rounded-[2rem] p-4 flex items-center shadow-2xl transition-all active:scale-[0.98]">
+                <div class="bg-gray-50 rounded-2xl p-3 mr-4 flex items-center justify-center">
+                    <i data-lucide="map-pin" class="w-6 h-6 text-[#1d4379]"></i>
+                </div>
+                <div class="flex-1 text-left">
+                    <span class="block text-[9px] text-gray-400 font-bold tracking-widest uppercase leading-tight">Rechercher une île...</span>
+                    <div class="relative">
+                        <select id="island-select" onchange="fetchVehicles()" class="w-full bg-transparent border-0 font-bold text-[#1d4379] text-lg outline-none appearance-none cursor-pointer -mt-1 relative z-10">
+                            <option value="all">Toutes les îles</option>
+                            <option value="Santiago">Santiago</option>
+                            <option value="Sal">Sal</option>
+                            <option value="SaoVicente">São Vicente</option>
+                            <option value="BoaVista">Boa Vista</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ml-2">
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-300"></i>
+                </div>
             </div>
         </div>
     </div>
 
-    <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
-        <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide">
-            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">Tout</button>
-            <button onclick="toggleDriver()" id="btn-driver" class="bg-white text-gray-500 px-4 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap flex items-center gap-2">
-                <i data-lucide="user-check" class="w-4 h-4"></i> Chauffeur
-            </button>
-            <button onclick="filterCat('citadina')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm">Citadines</button>
-            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm">4x4</button>
-            <button onclick="filterCat('utilitaire')" class="bg-white text-gray-500 px-5 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm">Van</button>
+    <main class="max-w-md mx-auto px-4 -mt-8 relative z-20">
+        <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
+            <button onclick="filterCat('4X4')" class="filter-btn bg-white text-gray-500 px-6 py-2.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">4X4</button>
+            <button onclick="filterCat('citadine')" class="filter-btn bg-white text-gray-500 px-6 py-2.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">citadine</button>
+            <button onclick="filterCat('van')" class="filter-btn bg-white text-gray-500 px-6 py-2.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">van</button>
+            <button onclick="filterCat('premium')" class="filter-btn bg-white text-gray-500 px-6 py-2.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">premium</button>
         </div>
 
         <div id="vehicle-grid" class="grid grid-cols-1 gap-6">
-            <div class="text-center py-20 font-bold text-gray-300 text-sm">Chargement...</div>
+            <div class="text-center py-20 font-bold text-gray-300 text-sm italic">Recherche des véhicules...</div>
         </div>
     </main>
 
@@ -136,7 +155,6 @@
         const supabase = window.supabase.createClient('https://enuiuuwnjzvpfvpklmjw.supabase.co', 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-');
 
         let allVehicles = [];
-        let driverFilter = false;
         let currentCat = 'all';
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -148,40 +166,51 @@
             const island = document.getElementById('island-select').value;
             let query = supabase.from('vehicles').select('*').eq('is_active', true);
             if(island !== 'all') query = query.eq('island', island);
+            
             const { data } = await query;
             allVehicles = data || [];
             applyFilters();
         }
 
         window.filterCat = (cat) => {
-            currentCat = cat;
-            applyFilters();
-        }
+            if (currentCat === cat) {
+                currentCat = 'all';
+            } else {
+                currentCat = cat;
+            }
+            
+            // Mise à jour visuelle des boutons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText.toLowerCase() === cat.toLowerCase()) {
+                    btn.classList.toggle('active', currentCat === cat);
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
 
-        window.toggleDriver = () => {
-            driverFilter = !driverFilter;
-            const btn = document.getElementById('btn-driver');
-            btn.classList.toggle('bg-blue-600'); btn.classList.toggle('text-white');
             applyFilters();
         }
 
         function applyFilters() {
             let filtered = allVehicles;
-            if (currentCat !== 'all') filtered = filtered.filter(v => v.category === currentCat);
-            if (driverFilter) filtered = filtered.filter(v => v.with_driver);
+            if (currentCat !== 'all') {
+                filtered = allVehicles.filter(v => 
+                    v.category.toLowerCase().includes(currentCat.toLowerCase())
+                );
+            }
             renderVehicles(filtered);
         }
 
         function renderVehicles(cars) {
             const grid = document.getElementById('vehicle-grid');
             if(cars.length === 0) {
-                grid.innerHTML = `<div class="text-center py-20 font-bold text-gray-300 text-sm">Aucun véhicule</div>`;
+                grid.innerHTML = `<div class="text-center py-20 font-bold text-gray-300 text-sm">Aucun véhicule disponible</div>`;
                 return;
             }
             grid.innerHTML = cars.map(car => `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100" onclick="window.location.href='car-detail.html?id=${car.id}'">
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 mb-2 cursor-pointer transition-transform active:scale-[0.98]" onclick="window.location.href='car-detail.html?id=${car.id}'">
                     <div class="relative h-52">
-                        <img src="${car.images_url?.[0]}" class="w-full h-full object-cover">
+                        <img src="${car.images_url?.[0] || 'https://via.placeholder.com/400x300'}" class="w-full h-full object-cover">
                         <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-bold">${car.price_per_day} CVE / jour</div>
                     </div>
                     <div class="p-5 flex justify-between items-center">
@@ -189,7 +218,7 @@
                             <h3 class="font-extrabold text-gray-900 text-sm">${car.make} ${car.model}</h3>
                             <p class="text-[10px] font-bold text-gray-400 mt-1">${car.island} • ${car.transmission}</p>
                         </div>
-                        <div class="bg-gray-50 p-2 rounded-full"><i data-lucide="chevron-right" class="w-5 h-5 text-gray-200"></i></div>
+                        <div class="bg-gray-50 p-2 rounded-full text-gray-300"><i data-lucide="chevron-right" class="w-5 h-5"></i></div>
                     </div>
                 </div>
             `).join('');
