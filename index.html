@@ -15,7 +15,8 @@
         
         body { 
             background-color: var(--bg-gray); 
-            padding-bottom: 110px; /* Espace pour la barre fixe du bas */
+            /* On augmente la marge pour ne pas cacher le contenu sous les 2 boutons empilés */
+            padding-bottom: 180px; 
             -webkit-tap-highlight-color: transparent; 
         }
         
@@ -29,8 +30,8 @@
         .menu-open { transform: translateX(0) !important; }
         .menu-closed { transform: translateX(-100%); }
 
-        /* Ombre douce pour la barre du bas */
-        .nav-shadow { box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.1); }
+        /* Ombre pour la barre d'action */
+        .nav-shadow { box-shadow: 0 -10px 30px -5px rgba(0, 0, 0, 0.15); }
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -49,10 +50,13 @@
                     <i data-lucide="home" class="w-5 h-5"></i> Accueil
                 </a>
                 <a href="profile.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
-                    <i data-lucide="user-circle" class="w-5 h-5"></i> Mon Espace
+                    <i data-lucide="user-circle" class="w-5 h-5"></i> Mon Profil
                 </a>
                 <a href="add-car.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
                     <i data-lucide="plus-square" class="w-5 h-5"></i> Ajoute ta voiture
+                </a>
+                <a href="become-driver.html" class="flex items-center gap-3 text-gray-600 font-bold hover:text-[#1d4379]">
+                    <i data-lucide="user-plus" class="w-5 h-5"></i> Deviens chauffeur
                 </a>
             </nav>
             <div class="mt-auto">
@@ -75,24 +79,26 @@
         </div>
     </header>
 
-    <div class="fixed bottom-0 w-full z-[55] px-4 pb-6 pt-4 bg-gradient-to-t from-white via-white/90 to-transparent">
-        <div class="max-w-md mx-auto grid grid-cols-2 gap-3">
-            <a href="add-car.html" class="flex flex-col items-center justify-center gap-1 bg-[#1d4379] text-white py-3 rounded-2xl font-extrabold shadow-2xl active:scale-95 transition-all nav-shadow">
-                <i data-lucide="plus-square" class="w-5 h-5"></i>
-                <span class="text-[10px] uppercase tracking-tighter">Ajoute ta voiture</span>
+    <div class="fixed bottom-0 w-full z-[55] px-4 pb-8 pt-4 bg-gradient-to-t from-white via-white/95 to-transparent">
+        <div class="max-w-md mx-auto flex flex-col gap-3">
+            
+            <a href="add-car.html" class="flex items-center justify-center gap-3 bg-[#1d4379] text-white py-4 rounded-2xl font-extrabold shadow-2xl active:scale-95 transition-all nav-shadow">
+                <i data-lucide="plus-square" class="w-6 h-6"></i>
+                <span class="text-xs uppercase tracking-wider">Ajoute ta voiture</span>
             </a>
-            <a href="login.html" class="flex flex-col items-center justify-center gap-1 bg-white text-[#1d4379] border-2 border-[#1d4379] py-3 rounded-2xl font-extrabold shadow-2xl active:scale-95 transition-all nav-shadow">
-                <i data-lucide="user-plus" class="w-5 h-5"></i>
-                <span class="text-[10px] uppercase tracking-tighter">Deviens chauffeur</span>
+            
+            <a href="become-driver.html" class="flex items-center justify-center gap-3 bg-white text-[#1d4379] border-2 border-[#1d4379] py-4 rounded-2xl font-extrabold shadow-xl active:scale-95 transition-all">
+                <i data-lucide="user-plus" class="w-6 h-6"></i>
+                <span class="text-xs uppercase tracking-wider">Deviens chauffeur</span>
             </a>
+
         </div>
     </div>
 
     <div class="hero-gradient hero-shape pt-24 pb-12 px-5 text-white relative">
         <div class="max-w-md mx-auto relative z-10">
             <h1 class="text-3xl font-extrabold mb-2 text-center">Où allez-vous ?</h1>
-            
-            <div class="relative text-gray-800 mb-2">
+            <div class="relative text-gray-800">
                 <i data-lucide="map-pin" class="absolute left-3 top-3.5 h-5 w-5 text-gray-400 z-10"></i>
                 <select id="island-select" onchange="fetchVehicles()" class="block w-full pl-10 pr-10 py-3.5 bg-white border-0 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 font-bold shadow-lg appearance-none">
                     <option value="all">Toutes les îles</option>
@@ -109,12 +115,4 @@
 
     <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
         
-        <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
-            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-lg whitespace-nowrap active:scale-95 transition-transform">
-                Tout
-            </button>
-            <button onclick="toggleDriver()" id="btn-driver" class="bg-white text-gray-600 px-4 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap flex items-center gap-2 active:scale-95 transition-transform">
-                <i data-lucide="user-check" class="w-4 h-4"></i> Chauffeur
-            </button>
-            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-xs font-bold border border-gray-100 shadow-sm whitespace-nowrap active:scale-95 transition-transform">
-                Cit
+        <div class="flex gap-2 overflow
