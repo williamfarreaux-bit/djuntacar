@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar</title>
+    <title>DjuntaCar - Accueil</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,6 @@
         * { font-family: 'Montserrat', sans-serif !important; }
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 200px; }
         
-        /* HEADER BLEU : S'arrête au milieu du bouton */
         .hero-shape { 
             border-bottom-left-radius: 2.5rem; 
             border-bottom-right-radius: 2.5rem; 
@@ -29,42 +28,43 @@
             z-index: 10;
         }
 
-        /* BOUTON DE RECHERCHE EN CHEVAUCHEMENT (Middle overlap) */
-        .search-overlap {
+        .search-container {
             position: absolute;
             left: 24px;
             right: 24px;
             bottom: 0;
-            transform: translateY(50%); /* Pousse le bouton de moitié vers le bas */
-            z-index: 20;
+            transform: translateY(50%);
+            z-index: 50;
+        }
+
+        .btn-search {
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid #f0f2f5;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .btn-action {
             display: flex; align-items: center; justify-content: center;
             width: 100%; height: 56px; border-radius: 20px;
             font-weight: 700; font-size: 14px; text-decoration: none;
-            transition: all 0.3s ease;
         }
 
-        /* CARROUSEL AJUSTÉ POUR LAISSER LA PLACE AU BOUTON */
-        .swiper { width: 100%; padding-top: 40px; padding-bottom: 30px; }
+        .swiper { width: 100%; padding-top: 50px; padding-bottom: 30px; }
         .swiper-slide {
-            background-position: center;
-            background-size: cover;
-            width: 240px;
-            height: 330px;
-            border-radius: 26px;
-            overflow: hidden;
+            width: 240px; height: 330px; border-radius: 26px; overflow: hidden;
             box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            background-size: cover; background-position: center;
         }
         .slide-content {
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.4) 100%);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 16px;
-            color: white;
+            background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+            height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 18px; color: white;
         }
         .review-pill {
             display: flex; align-items: center; gap: 4px;
@@ -78,23 +78,22 @@
 </head>
 <body class="antialiased text-gray-800">
 
-    <header class="h-12 flex items-center px-6 border-b border-gray-50 bg-white/90 backdrop-blur-md sticky top-0 z-50">
+    <header class="h-12 flex items-center px-6 border-b border-gray-50 bg-white/90 backdrop-blur-md sticky top-0 z-[60]">
         <div class="max-w-md mx-auto w-full flex justify-between items-center">
-            <button class="p-1 text-gray-600"><i data-lucide="menu" class="w-5 h-5"></i></button>
+            <i data-lucide="menu" class="w-5 h-5 text-gray-600"></i>
             <img src="logo.png" alt="DjuntaCar" class="h-5 object-contain">
-            <button class="p-1 text-[#1d4379]"><i data-lucide="user" class="w-5 h-5"></i></button>
+            <i data-lucide="user" class="w-5 h-5 text-[#1d4379]"></i>
         </div>
     </header>
 
-    <div class="hero-shape pt-6 pb-12 px-6 text-white text-center">
-        <h1 class="text-sm font-bold tracking-wide mb-2">Trouvez la voiture parfaite</h1>
-        
-        <div class="search-overlap">
-            <a href="search-car.html" class="bg-white text-gray-400 p-3 rounded-xl shadow-xl flex items-center gap-3 active:scale-95 transition-all text-left border border-gray-50">
-                <div class="bg-blue-50 rounded-lg p-1.5 text-[#1d4379] flex items-center justify-center">
+    <div class="hero-shape pt-4 pb-12 px-6 text-white text-center">
+        <h1 class="text-sm font-bold tracking-wide mb-4">Trouvez la voiture parfaite</h1>
+        <div class="search-container">
+            <a href="search-car.html" class="btn-search">
+                <div class="bg-blue-50 rounded-lg p-2 text-[#1d4379] flex items-center justify-center">
                     <i data-lucide="search" class="w-4 h-4"></i>
                 </div>
-                <span class="font-bold text-[11px] tracking-tight">Lancer une recherche...</span>
+                <span class="font-bold text-[11px] text-gray-400">Commencer ma recherche...</span>
             </a>
         </div>
     </div>
@@ -105,7 +104,7 @@
                 <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400')">
                     <div class="slide-content">
                         <div class="flex justify-between items-start">
-                            <span class="bg-blue-600/90 text-[8px] font-bold px-2 py-1 rounded-md uppercase">4x4</span>
+                            <span class="bg-blue-600 text-[8px] font-bold px-2 py-1 rounded-md uppercase">Pick-up</span>
                             <div class="review-pill">
                                 <i data-lucide="star" class="w-2.5 h-2.5 text-yellow-400 fill-yellow-400"></i>
                                 <span class="text-[10px] font-bold">4.9</span>
@@ -120,7 +119,7 @@
                 <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=400')">
                     <div class="slide-content">
                         <div class="flex justify-between items-start">
-                            <span class="bg-green-600/90 text-[8px] font-bold px-2 py-1 rounded-md uppercase">City</span>
+                            <span class="bg-green-600 text-[8px] font-bold px-2 py-1 rounded-md uppercase">Citadine</span>
                             <div class="review-pill">
                                 <i data-lucide="star" class="w-2.5 h-2.5 text-yellow-400 fill-yellow-400"></i>
                                 <span class="text-[10px] font-bold">4.7</span>
@@ -137,7 +136,7 @@
         </div>
     </main>
 
-    <div class="fixed bottom-0 w-full z-[40] px-10 pb-8 pt-4 bg-gradient-to-t from-white via-white/95 to-transparent">
+    <div class="fixed bottom-0 w-full z-[40] px-10 pb-8 pt-4 bg-gradient-to-t from-white via-white to-transparent">
         <div class="max-w-xs mx-auto flex flex-col gap-3">
             <a href="add-car.html" class="btn-action bg-[#1d4379] text-white shadow-md">Ajouter ma voiture</a>
             <a href="become-driver.html" class="btn-action bg-[#22c55e] text-white shadow-md">Devenir chauffeur</a>
@@ -152,7 +151,6 @@
             slidesPerView: "auto",
             coverflowEffect: { rotate: 0, stretch: 0, depth: 100, modifier: 1.5, slideShadows: false },
             pagination: { el: ".swiper-pagination", clickable: true },
-            autoplay: { delay: 4000 }
         });
     </script>
 </body>
