@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DjuntaCar - Connexion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+        
+        <div class="text-center mb-8">
+            <img src="assets/logo.png" onerror="this.src='sigle.png'; this.onerror=null;" class="h-12 mx-auto mb-4 object-contain">
+            <h1 class="text-2xl font-extrabold text-[#1d4379]">Bienvenue</h1>
+            <p class="text-sm text-gray-500">Connectez-vous pour continuer</p>
+        </div>
+
+        <form id="auth-form" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1">Email</label>
+                <div class="relative">
+                    <i data-lucide="mail" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                    <input type="email" id="email" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#1d4379] outline-none font-bold text-gray-700" placeholder="exemple@email.com" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1">Mot de passe</label>
+                <div class="relative">
+                    <i data-lucide="lock" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                    <input type="password" id="password" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#1d4379] outline-none font-bold text-gray-700" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" id="btn-login" class="w-full bg-[#1d4379] text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95">
+                Se connecter / S'inscrire
+            </button>
+        </form>
+
+        <div id="message" class="mt-4 text-center text-sm font-bold hidden"></div>
+
+        <p class="text-center text-xs text-gray-400 mt-6">
+            En continuant, vous acceptez nos <a href="legal.html" class="underline hover:text-[#1d4379]">CGU</a>.
+        </p>
+    </div>
+
+    <script type="module">
+        // On importe votre fichier de configuration
+        import { supabase } from './services/supabase.js';
+        
+        lucide.createIcons();
+
+        const form = document.getElementById('auth-form');
+        const msg = document.getElementById('message');
+        const btn = document.getElementById('btn-login');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Animation chargement
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin inline w-5 h-5"></i> Chargement...';
+            
+            // 1. Essai de Connexion (Login)
+            let { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            // 2. Si erreur, on essaie l'Inscription (Sign Up)
+            if (error) {
+                console.log("Tentative d'inscription...");
+                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        // On crée un nom par défaut basé sur l'email
+                        data: { full_name: email.split('@')[0] }
+                    }
+                });
+
+                if (signUpError) {
+                    showError("Erreur : " + signUpError.message);
+                    btn.innerText = "Se connecter / S'inscrire";
+                    return;
+                }
+                
+                // Inscription réussie : Supabase envoie un mail de confirm, 
+                // mais pour le test on peut souvent se connecter direct si le mail n'est pas obligatoire
+                showMessage("Compte créé ! Vérifiez vos emails ou réessayez.", "text-green-600");
+                btn.innerText = "Se connecter / S'inscrire";
+            } else {
+                // Connexion réussie -> Redirection vers le profil
+                window.location.href = 'profile.html';
+            }
+        });
+
+        function showError(text) {
+            msg.innerText = text;
+            msg.className = "mt-4 text-center text-sm font-bold text-red-500 block";
+        }
+        function showMessage(text, color) {
+            msg.innerText = text;
+            msg.className = `mt-4 text-center text-sm font-bold ${color} block`;
+        }
+    </script>
+</body>
+</html>
