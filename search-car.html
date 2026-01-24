@@ -17,24 +17,61 @@
 
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; margin: 0; padding-bottom: 40px; }
+        body { background-color: #fcfcfd; margin: 0; padding-bottom: 60px; }
 
-        /* CARTES ET CHAMPS */
-        .filter-card { background: white; border-radius: 28px; border: 1px solid #f0f2f5; box-shadow: 0 15px 35px rgba(0,0,0,0.03); }
-        .input-group { border-bottom: 1px solid #f0f2f5; padding: 18px 24px; }
+        .filter-card { 
+            background: white; 
+            border-radius: 28px; 
+            border: 1px solid #f0f2f5; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
+        }
+        .input-group { border-bottom: 1px solid #f0f2f5; padding: 16px 20px; }
         .input-group:last-child { border-bottom: none; }
         
-        label { font-size: 10px; font-weight: 700; color: #bdc3c7; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.8px; }
-        select, input { width: 100%; font-weight: 600; color: #1d4379; outline: none; background: transparent; border: none; font-size: 15px; }
+        label { 
+            font-size: 10px; 
+            font-weight: 700; 
+            color: #bdc3c7; 
+            text-transform: uppercase; 
+            margin-bottom: 4px; 
+            display: block; 
+            letter-spacing: 0.8px; 
+        }
+        
+        select, input { 
+            width: 100%; 
+            font-weight: 600; 
+            color: #1d4379; 
+            outline: none; 
+            background: transparent; 
+            border: none; 
+            font-size: 14px; 
+        }
 
         /* ETOILES */
-        .star-rating { display: flex; gap: 10px; margin-top: 10px; }
+        .star-rating { display: flex; gap: 8px; margin-top: 5px; }
         .star-icon { color: #e5e7eb; cursor: pointer; transition: all 0.2s; }
         .star-icon.active { color: #facc15; fill: #facc15; }
 
-        /* MODALES */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
-        .modal-box { background: white; border-radius: 35px; padding: 35px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
+        /* MODALE */
+        .modal-overlay { 
+            position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(6px); 
+            z-index: 100; 
+            display: none; 
+            align-items: center; justify-content: center; 
+            padding: 24px; 
+        }
+        .modal-box { 
+            background: white; 
+            border-radius: 35px; 
+            padding: 35px; 
+            width: 100%; 
+            max-width: 340px; 
+            text-align: center; 
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2); 
+        }
         
         input[type="range"] { accent-color: #1d4379; }
     </style>
@@ -49,8 +86,8 @@
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-8">
-        <h1 class="text-2xl font-extrabold text-[#1d4379] mb-8 leading-tight">Quelle voiture cherchez-vous ?</h1>
+    <main class="max-w-md mx-auto px-6 pt-6">
+        <h1 class="text-xl font-extrabold text-[#1d4379] mb-6 leading-tight text-center">Trouvez la voiture parfaite</h1>
 
         <div class="filter-card overflow-hidden">
             <div class="grid grid-cols-2">
@@ -70,27 +107,27 @@
             </div>
 
             <div class="input-group">
-                <label>Période de location</label>
+                <label>Période</label>
                 <div class="flex items-center gap-3">
                     <i data-lucide="calendar" class="w-4 h-4 text-gray-300"></i>
-                    <input type="text" id="date-range" placeholder="Sélectionnez vos dates" class="cursor-pointer">
+                    <input type="text" id="date-range" placeholder="Dates du séjour" class="cursor-pointer">
                 </div>
             </div>
 
             <div class="grid grid-cols-2">
                 <div class="input-group border-r border-gray-100">
-                    <label>Type</label>
+                    <label>Catégorie</label>
                     <select id="f-type">
-                        <option value="all">Tout</option>
+                        <option value="all">Toutes</option>
                         <option value="4x4">4X4</option>
                         <option value="citadine">Citadine</option>
                         <option value="van">Van</option>
                     </select>
                 </div>
                 <div class="input-group">
-                    <label>Sièges</label>
+                    <label>Places</label>
                     <select id="f-seats">
-                        <option value="all">Tout</option>
+                        <option value="all">Peu importe</option>
                         <option value="2">2 places</option>
                         <option value="5">5 places</option>
                         <option value="7">7+ places</option>
@@ -98,16 +135,44 @@
                 </div>
             </div>
 
-            <div class="input-group">
-                <div class="flex justify-between items-center mb-4">
-                    <label class="m-0">Budget max / jour</label>
-                    <span id="price-val" class="text-[13px] font-extrabold text-[#1d4379]">12 000 CVE</span>
+            <div class="grid grid-cols-2">
+                <div class="input-group border-r border-gray-100">
+                    <label>Portes</label>
+                    <select id="f-doors">
+                        <option value="all">Peu importe</option>
+                        <option value="2">2-3 portes</option>
+                        <option value="4">4-5 portes</option>
+                    </select>
                 </div>
-                <input type="range" id="price-range" min="2000" max="30000" step="500" value="12000" class="w-full">
+                <div class="input-group">
+                    <label>Carburant</label>
+                    <select id="f-fuel">
+                        <option value="all">Tous</option>
+                        <option value="Essence">Essence</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Electrique">Électrique</option>
+                    </select>
+                </div>
             </div>
 
             <div class="input-group">
-                <label>Avis utilisateurs minimum</label>
+                <label>Options de confort</label>
+                <select id="f-ac">
+                    <option value="all">Climatisation (peu importe)</option>
+                    <option value="true">Climatisation indispensable</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <div class="flex justify-between items-center mb-3">
+                    <label class="m-0">Budget max / jour</label>
+                    <span id="price-val" class="text-xs font-extrabold text-[#1d4379]">15 000 CVE</span>
+                </div>
+                <input type="range" id="price-range" min="2000" max="30000" step="500" value="15000" class="w-full">
+            </div>
+
+            <div class="input-group">
+                <label>Avis utilisateurs</label>
                 <div class="star-rating" id="star-box">
                     <i data-lucide="star" class="star-icon w-6 h-6" data-val="1"></i>
                     <i data-lucide="star" class="star-icon w-6 h-6" data-val="2"></i>
@@ -117,7 +182,7 @@
                 </div>
             </div>
 
-            <div class="input-group bg-blue-50/40 flex items-center justify-between py-6">
+            <div class="input-group bg-blue-50/40 flex items-center justify-between py-5">
                 <div class="flex items-center gap-4">
                     <div class="bg-white p-2 rounded-xl shadow-sm"><i data-lucide="user-check" class="w-5 h-5 text-[#1d4379]"></i></div>
                     <span class="text-sm font-bold text-[#1d4379]">Prendre un chauffeur</span>
@@ -162,12 +227,12 @@
             if (document.getElementById('driver-check').checked) {
                 document.getElementById('driver-modal').style.display = 'flex';
             } else {
-                alert("Recherche lancée !");
+                alert("Redirection vers la liste des voitures filtrées...");
             }
         }
 
         function skipDriverChoice() {
-            alert("Un chauffeur vous sera assigné.");
+            alert("Un chauffeur vous sera assigné automatiquement et facturé 25€ pour 7h. Chaque heure supplémentaire sera facturée 5€.");
             document.getElementById('driver-modal').style.display = 'none';
         }
     </script>
