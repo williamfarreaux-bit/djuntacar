@@ -4,58 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ajouter un véhicule - DjuntaCar</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 40px; }
-
-        .form-card { 
-            background: white; 
-            border-radius: 28px; 
-            border: 1px solid #f0f2f5; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
-        }
+        .form-card { background: white; border-radius: 28px; border: 1px solid #f0f2f5; box-shadow: 0 15px 35px rgba(0,0,0,0.03); }
         .input-group { border-bottom: 1px solid #f0f2f5; padding: 18px 24px; }
         .input-group:last-child { border-bottom: none; }
-        
-        label { 
-            font-size: 10px; 
-            font-weight: 700; 
-            color: #bdc3c7; 
-            text-transform: uppercase; 
-            margin-bottom: 6px; 
-            display: block; 
-            letter-spacing: 0.8px; 
-        }
-        
-        select, input, textarea { 
-            width: 100%; 
-            font-weight: 600; 
-            color: #1d4379; 
-            outline: none; 
-            background: transparent; 
-            border: none; 
-            font-size: 15px; 
-        }
-
-        .btn-submit {
-            background-color: #1d4379;
-            color: white;
-            width: 100%;
-            padding: 20px;
-            border-radius: 22px;
-            font-weight: 700;
-            box-shadow: 0 12px 24px rgba(29, 67, 121, 0.2);
-            transition: all 0.3s ease;
-        }
-        .btn-submit:active { transform: scale(0.96); }
+        label { font-size: 10px; font-weight: 700; color: #bdc3c7; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.8px; }
+        select, input { width: 100%; font-weight: 600; color: #1d4379; outline: none; background: transparent; border: none; font-size: 15px; }
+        .btn-submit { background-color: #1d4379; color: white; width: 100%; padding: 20px; border-radius: 22px; font-weight: 700; box-shadow: 0 12px 24px rgba(29, 67, 121, 0.2); }
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -69,7 +29,7 @@
     </header>
 
     <main class="max-w-md mx-auto px-6 pt-8">
-        <h1 class="text-2xl font-extrabold text-[#1d4379] mb-8 leading-tight">Détails de votre voiture</h1>
+        <h1 class="text-2xl font-extrabold text-[#1d4379] mb-8 leading-tight text-center">Détails de votre voiture</h1>
 
         <form id="add-car-form" class="form-card overflow-hidden">
             <div class="input-group">
@@ -79,10 +39,32 @@
 
             <div class="grid grid-cols-2">
                 <div class="input-group border-r border-gray-100">
+                    <label>Catégorie</label>
+                    <select id="category">
+                        <option value="citadine">Citadine</option>
+                        <option value="4x4">4X4</option>
+                        <option value="monospace">Monospace</option>
+                        <option value="fourgonnette">Fourgonnette</option>
+                        <option value="pickup">Pick-up</option>
+                        <option value="premium">Premium</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Île</label>
+                    <select id="island">
+                        <option>Santiago</option>
+                        <option>Sal</option>
+                        <option>São Vicente</option>
+                        <option>Boa Vista</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2">
+                <div class="input-group border-r border-gray-100">
                     <label>Nombre de places</label>
                     <select id="seats">
                         <option value="2">2 places</option>
-                        <option value="4">4 places</option>
                         <option value="5" selected>5 places</option>
                         <option value="7">7 places</option>
                         <option value="9">9 places</option>
@@ -118,20 +100,9 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2">
-                <div class="input-group border-r border-gray-100">
-                    <label>Prix / jour (CVE)</label>
-                    <input type="number" id="price_per_day" placeholder="Ex: 5000" required>
-                </div>
-                <div class="input-group">
-                    <label>Île</label>
-                    <select id="island">
-                        <option>Santiago</option>
-                        <option>Sal</option>
-                        <option>São Vicente</option>
-                        <option>Boa Vista</option>
-                    </select>
-                </div>
+            <div class="input-group">
+                <label>Prix / jour (CVE)</label>
+                <input type="number" id="price_per_day" placeholder="Ex: 5000" required>
             </div>
 
             <div class="input-group">
@@ -146,33 +117,26 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
-
-        const supabase = window.supabase.createClient('URL_SUPABASE', 'CLE_ANON_SUPABASE');
+        const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
 
         document.getElementById('add-car-form').onsubmit = async (e) => {
             e.preventDefault();
-            
-            const { data, error } = await supabase
-                .from('vehicles')
-                .insert([{
-                    make: document.getElementById('make_model').value.split(' ')[0],
-                    model: document.getElementById('make_model').value.split(' ').slice(1).join(' '),
-                    seats: parseInt(document.getElementById('seats').value),
-                    doors: parseInt(document.getElementById('doors').value),
-                    fuel_type: document.getElementById('fuel_type').value,
-                    has_air_conditioning: document.getElementById('has_air_conditioning').value === 'true',
-                    price_per_day: parseInt(document.getElementById('price_per_day').value),
-                    island: document.getElementById('island').value,
-                    images_url: [document.getElementById('image_url').value],
-                    is_active: true
-                }]);
-
-            if (error) {
-                alert("Erreur lors de l'ajout : " + error.message);
-            } else {
-                alert("Véhicule ajouté avec succès !");
-                window.location.href = 'index.html';
-            }
+            const makeModel = document.getElementById('make_model').value.split(' ');
+            const { data, error } = await supabase.from('vehicles').insert([{
+                make: makeModel[0],
+                model: makeModel.slice(1).join(' '),
+                category: document.getElementById('category').value,
+                seats: parseInt(document.getElementById('seats').value),
+                doors: parseInt(document.getElementById('doors').value),
+                fuel_type: document.getElementById('fuel_type').value,
+                has_air_conditioning: document.getElementById('has_air_conditioning').value === 'true',
+                price_per_day: parseInt(document.getElementById('price_per_day').value),
+                island: document.getElementById('island').value,
+                images_url: [document.getElementById('image_url').value],
+                is_active: true
+            }]);
+            if (error) alert(error.message);
+            else { alert("Véhicule ajouté !"); window.location.href = 'index.html'; }
         };
     </script>
 </body>
