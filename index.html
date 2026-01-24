@@ -101,10 +101,20 @@
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-6 relative z-20">
+        
         <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
-            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg whitespace-nowrap">Tout</button>
-            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap">Citadines</button>
-            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap">4x4</button>
+            <button onclick="filterCat('all')" class="bg-[#1d4379] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg whitespace-nowrap transition-transform active:scale-95">
+                Tout
+            </button>
+            <button onclick="filterCat('citadina')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap transition-transform active:scale-95">
+                Citadines
+            </button>
+            <button onclick="filterCat('4x4_aventura')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap transition-transform active:scale-95">
+                4x4
+            </button>
+            <button onclick="filterCat('utilitaire')" class="bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap transition-transform active:scale-95">
+                Van
+            </button>
         </div>
 
         <div id="status-msg" class="hidden text-center p-4 mb-4 rounded-xl text-sm font-bold"></div>
@@ -229,7 +239,16 @@
             if(window.lucide) lucide.createIcons();
         }
 
+        // LOGIQUE FILTRE MISE A JOUR
         window.filterCat = (cat) => {
+            // Reset styles
+            const buttons = document.querySelectorAll('main button'); // Boutons de filtres
+            buttons.forEach(btn => {
+                btn.className = "bg-white text-gray-600 px-5 py-2.5 rounded-full text-sm font-bold border border-gray-100 shadow-sm whitespace-nowrap transition-transform active:scale-95";
+            });
+            // Highlight active (simple visuel, on pourrait faire mieux en ciblant l'event)
+            // Pour l'instant on filtre juste les données :
+            
             if(cat === 'all') renderVehicles(allVehicles);
             else renderVehicles(allVehicles.filter(c => c.category === cat));
         }
