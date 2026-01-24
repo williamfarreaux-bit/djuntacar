@@ -23,7 +23,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* STYLE DES BOUTONS D'ACTION DU BAS */
+        /* BOUTONS D'ACTION FIXES */
         .btn-action {
             display: flex !important;
             align-items: center !important;
@@ -34,7 +34,7 @@
             font-weight: 700 !important;
             font-size: 15px !important;
             text-decoration: none !important;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: transform 0.2s;
             box-shadow: 0 10px 20px rgba(0,0,0,0.08);
         }
         .btn-action:active { transform: scale(0.97); }
@@ -52,19 +52,33 @@
             border-bottom-right-radius: 2.5rem; 
             background: linear-gradient(135deg, #1d4379 0%, #142f55 100%); 
         }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-        /* STYLE DES FILTRES */
-        .filter-btn {
-            transition: all 0.2s;
-            border: 1px solid #f3f4f6;
+        /* DESIGN DES SÉLECTEURS DANS LA CARTE */
+        .search-card select {
+            background: transparent;
+            border: none;
+            width: 100%;
+            font-weight: 700;
+            color: #1d4379;
+            font-size: 14px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
         }
-        .filter-btn.active {
-            background-color: #1d4379;
-            color: white;
-            box-shadow: 0 4px 12px rgba(29, 67, 121, 0.2);
-            border-color: #1d4379;
+        .filter-label {
+            font-size: 9px;
+            font-weight: 800;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 2px;
         }
+        .filter-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .filter-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -104,18 +118,17 @@
         </div>
     </div>
 
-    <div class="hero-shape pt-24 pb-16 px-6 text-white text-center">
+    <div class="hero-shape pt-24 pb-20 px-6 text-white">
         <div class="max-w-md mx-auto">
-            <h1 class="text-2xl font-extrabold mb-8 tracking-tight">Choisis une voiture</h1>
+            <h1 class="text-2xl font-extrabold mb-8 tracking-tight text-center">Trouvez la voiture parfaite</h1>
             
-            <div class="relative bg-white rounded-[2rem] p-4 flex items-center shadow-2xl transition-all active:scale-[0.98]">
-                <div class="bg-gray-50 rounded-2xl p-3 mr-4 flex items-center justify-center">
-                    <i data-lucide="map-pin" class="w-6 h-6 text-[#1d4379]"></i>
-                </div>
-                <div class="flex-1 text-left">
-                    <span class="block text-[9px] text-gray-400 font-bold tracking-widest uppercase leading-tight">Rechercher une île...</span>
-                    <div class="relative">
-                        <select id="island-select" onchange="fetchVehicles()" class="w-full bg-transparent border-0 font-bold text-[#1d4379] text-lg outline-none appearance-none cursor-pointer -mt-1 relative z-10">
+            <div class="search-card bg-white rounded-3xl shadow-2xl overflow-hidden">
+                
+                <div class="filter-item flex items-center">
+                    <div class="w-10 flex justify-center text-gray-300"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
+                    <div class="flex-1">
+                        <label class="filter-label">Destination</label>
+                        <select id="island-select" onchange="fetchVehicles()">
                             <option value="all">Toutes les îles</option>
                             <option value="Santiago">Santiago</option>
                             <option value="Sal">Sal</option>
@@ -124,23 +137,54 @@
                         </select>
                     </div>
                 </div>
-                <div class="ml-2">
-                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-300"></i>
+
+                <div class="flex border-b border-gray-100">
+                    <div class="filter-item flex-1 flex items-center border-r border-gray-100">
+                        <div class="w-8 flex justify-center text-gray-300"><i data-lucide="car" class="w-4 h-4"></i></div>
+                        <div class="flex-1">
+                            <label class="filter-label">Type</label>
+                            <select id="type-select" onchange="applyFilters()">
+                                <option value="all">Tous</option>
+                                <option value="citadine">Citadine</option>
+                                <option value="4x4">4X4</option>
+                                <option value="van">Van</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-item flex-1 flex items-center">
+                        <div class="w-8 flex justify-center text-gray-300"><i data-lucide="users" class="w-4 h-4"></i></div>
+                        <div class="flex-1">
+                            <label class="filter-label">Sièges</label>
+                            <select id="seats-select" onchange="applyFilters()">
+                                <option value="all">Tous</option>
+                                <option value="2">2 places</option>
+                                <option value="5">5 places</option>
+                                <option value="7">7+ places</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-item flex items-center">
+                    <div class="w-10 flex justify-center text-gray-300"><i data-lucide="banknote" class="w-5 h-5"></i></div>
+                    <div class="flex-1">
+                        <label class="filter-label">Budget max / jour</label>
+                        <select id="price-select" onchange="applyFilters()">
+                            <option value="all">Peu importe</option>
+                            <option value="4000">Moins de 4000 CVE</option>
+                            <option value="7000">Entre 4000 et 7000 CVE</option>
+                            <option value="7001">Plus de 7000 CVE</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <main class="max-w-md mx-auto px-4 -mt-8 relative z-20">
-        <div class="flex gap-2 overflow-x-auto pb-6 scrollbar-hide px-1">
-            <button onclick="filterCat('4X4')" class="filter-btn bg-white text-gray-500 px-6 py-2.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">4X4</button>
-            <button onclick="filterCat('citadine')" class="filter-btn bg-white text-gray-500 px-6 py-2.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">citadine</button>
-            <button onclick="filterCat('van')" class="filter-btn bg-white text-gray-500 px-6 py-2.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">van</button>
-            <button onclick="filterCat('premium')" class="filter-btn bg-white text-gray-500 px-6 py-2.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">premium</button>
-        </div>
-
         <div id="vehicle-grid" class="grid grid-cols-1 gap-6">
-            <div class="text-center py-20 font-bold text-gray-300 text-sm italic">Recherche des véhicules...</div>
+            <div class="text-center py-20 font-bold text-gray-300 text-sm">Recherche des véhicules...</div>
         </div>
     </main>
 
@@ -155,7 +199,6 @@
         const supabase = window.supabase.createClient('https://enuiuuwnjzvpfvpklmjw.supabase.co', 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-');
 
         let allVehicles = [];
-        let currentCat = 'all';
 
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
@@ -172,58 +215,5 @@
             applyFilters();
         }
 
-        window.filterCat = (cat) => {
-            if (currentCat === cat) {
-                currentCat = 'all';
-            } else {
-                currentCat = cat;
-            }
-            
-            // Mise à jour visuelle des boutons
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.innerText.toLowerCase() === cat.toLowerCase()) {
-                    btn.classList.toggle('active', currentCat === cat);
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-
-            applyFilters();
-        }
-
         function applyFilters() {
-            let filtered = allVehicles;
-            if (currentCat !== 'all') {
-                filtered = allVehicles.filter(v => 
-                    v.category.toLowerCase().includes(currentCat.toLowerCase())
-                );
-            }
-            renderVehicles(filtered);
-        }
-
-        function renderVehicles(cars) {
-            const grid = document.getElementById('vehicle-grid');
-            if(cars.length === 0) {
-                grid.innerHTML = `<div class="text-center py-20 font-bold text-gray-300 text-sm">Aucun véhicule disponible</div>`;
-                return;
-            }
-            grid.innerHTML = cars.map(car => `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 mb-2 cursor-pointer transition-transform active:scale-[0.98]" onclick="window.location.href='car-detail.html?id=${car.id}'">
-                    <div class="relative h-52">
-                        <img src="${car.images_url?.[0] || 'https://via.placeholder.com/400x300'}" class="w-full h-full object-cover">
-                        <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-bold">${car.price_per_day} CVE / jour</div>
-                    </div>
-                    <div class="p-5 flex justify-between items-center">
-                        <div>
-                            <h3 class="font-extrabold text-gray-900 text-sm">${car.make} ${car.model}</h3>
-                            <p class="text-[10px] font-bold text-gray-400 mt-1">${car.island} • ${car.transmission}</p>
-                        </div>
-                        <div class="bg-gray-50 p-2 rounded-full text-gray-300"><i data-lucide="chevron-right" class="w-5 h-5"></i></div>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-    </script>
-</body>
-</html>
+            const type = document.getElementById('type
