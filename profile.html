@@ -22,6 +22,7 @@
             padding: 24px;
             border: 1px solid #f1f5f9;
             box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            margin-bottom: 24px;
         }
 
         .input-field {
@@ -60,17 +61,20 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 10px;
             transition: opacity 0.2s;
         }
-        .btn-save:active { opacity: 0.8; }
+        .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
+        .price-badge {
+            background: #f0f7ff;
+            color: #1d4379;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
@@ -87,66 +91,63 @@
     <main class="max-w-md mx-auto px-6 pt-8">
         
         <div class="flex flex-col items-center mb-8">
-            <div class="w-24 h-24 bg-[#1d4379] rounded-full flex items-center justify-center text-white text-3xl font-black mb-4 border-4 border-white shadow-lg">
-                <span id="avatar-initials">--</span>
+            <div class="relative">
+                <div class="w-24 h-24 bg-[#1d4379] rounded-full flex items-center justify-center text-white text-3xl font-black border-4 border-white shadow-lg">
+                    <span id="avatar-initials">--</span>
+                </div>
+                <div id="role-tag" class="absolute -bottom-2 bg-[#22c55e] text-white text-[8px] font-black px-3 py-1 rounded-full uppercase shadow-sm">Chargement...</div>
             </div>
-            <h2 class="text-xl font-extrabold text-[#1d4379]" id="display-name">Chargement...</h2>
-            <div id="kyc-badge" class="mt-2 status-badge bg-gray-100 text-gray-400">Statut: Inconnu</div>
+            <h2 class="text-xl font-extrabold text-[#1d4379] mt-6" id="display-name">...</h2>
         </div>
 
-        <div class="space-y-8">
-            <section>
-                <span class="section-label">Informations Personnelles</span>
-                <div class="profile-card space-y-4">
-                    <div>
-                        <label class="section-label !text-[9px]">Nom Complet</label>
-                        <input type="text" id="full_name" class="input-field" placeholder="Votre nom">
-                    </div>
-                    <div>
-                        <label class="section-label !text-[9px]">Numéro de Permis</label>
-                        <input type="text" id="license_number" class="input-field" placeholder="Ex: ST-12345-CV">
-                    </div>
-                    <button onclick="updateProfile()" class="btn-save">
-                        <i data-lucide="save" class="w-4 h-4"></i>
-                        Enregistrer les informations
-                    </button>
+        <section>
+            <span class="section-label">Identité</span>
+            <div class="profile-card space-y-4">
+                <div>
+                    <label class="section-label !text-[9px]">Nom Complet</label>
+                    <input type="text" id="full_name" class="input-field">
                 </div>
-            </section>
-
-            <section>
-                <span class="section-label">Sécurité & Mot de passe</span>
-                <div class="profile-card space-y-4">
-                    <div>
-                        <label class="section-label !text-[9px]">Nouveau mot de passe</label>
-                        <input type="password" id="new_password" class="input-field" placeholder="Minimum 6 caractères">
-                    </div>
-                    <div>
-                        <label class="section-label !text-[9px]">Confirmer le mot de passe</label>
-                        <input type="password" id="confirm_password" class="input-field" placeholder="••••••••">
-                    </div>
-                    <button onclick="updatePassword()" class="btn-save bg-slate-800">
-                        <i data-lucide="lock" class="w-4 h-4"></i>
-                        Mettre à jour le mot de passe
-                    </button>
+                <div>
+                    <label class="section-label !text-[9px]">Numéro de Permis</label>
+                    <input type="text" id="license_number" class="input-field">
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="pb-10">
-                <span class="section-label">Activité</span>
-                <a href="my-rentals.html" class="profile-card flex items-center justify-between py-5 no-underline">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-blue-50 p-3 rounded-2xl text-[#1d4379]">
-                            <i data-lucide="car" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-[#1d4379]">Mes Locations</p>
-                            <p class="text-[10px] text-gray-400 font-medium">Historique et contrats</p>
-                        </div>
+        <section id="driver-settings" class="hidden">
+            <span class="section-label">Paramètres Chauffeur</span>
+            <div class="profile-card space-y-6">
+                <div>
+                    <label class="section-label !text-[9px]">Votre Tarif Journalier (Forfait 7h)</label>
+                    <div class="relative">
+                        <input type="number" id="driver_price" class="input-field !pr-16" min="25" step="1" oninput="validatePrice()">
+                        <span class="absolute right-5 top-1/2 -translate-y-1/2 font-black text-[#1d4379]">€</span>
                     </div>
-                    <i data-lucide="chevron-right" class="text-gray-300"></i>
-                </a>
-            </section>
-        </div>
+                    <p id="price-error" class="text-[9px] text-red-500 font-bold mt-2 hidden">Le tarif doit être supérieur ou égal à 25€ (tarif de base).</p>
+                </div>
+
+                <div class="price-badge">
+                    <span>Equivalent en CVE</span>
+                    <span id="price-cve" class="font-black text-blue-600">2 757 CVE</span>
+                </div>
+
+                <p class="text-[10px] text-gray-400 leading-relaxed italic">
+                    Note : Ce tarif s'applique pour une mission standard de 7 heures. Toute heure supplémentaire sera facturée 5€/h par défaut.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <span class="section-label">Sécurité</span>
+            <div class="profile-card space-y-4">
+                <input type="password" id="new_password" class="input-field" placeholder="Nouveau mot de passe">
+                <button onclick="updateProfile()" id="save-btn" class="btn-save">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    Enregistrer le profil
+                </button>
+            </div>
+        </section>
+
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -154,76 +155,26 @@
         lucide.createIcons();
 
         const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
+        const EUR_TO_CVE = 110.265;
+        const MIN_PRICE = 25;
 
         async function loadProfile() {
-            const { data: { user }, error } = await supabase.auth.getUser();
-            if (error || !user) {
-                window.location.href = 'login.html';
-                return;
-            }
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return window.location.href = 'login.html';
 
-            const metadata = user.user_metadata;
-            document.getElementById('full_name').value = metadata.full_name || '';
-            document.getElementById('license_number').value = metadata.license_number || '';
-            document.getElementById('display-name').innerText = metadata.full_name || user.email;
+            const meta = user.user_metadata;
+            const role = meta.role || 'tenant'; // 'tenant', 'host', 'driver'
+
+            // Remplissage des champs
+            document.getElementById('display-name').innerText = meta.full_name || user.email;
+            document.getElementById('full_name').value = meta.full_name || '';
+            document.getElementById('license_number').value = meta.license_number || '';
+            document.getElementById('role-tag').innerText = role;
             
-            const initials = metadata.full_name 
-                ? metadata.full_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
-                : user.email[0].toUpperCase();
+            // Gestion Initiale
+            const initials = (meta.full_name || "D").split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
             document.getElementById('avatar-initials').innerText = initials;
 
-            const kycBadge = document.getElementById('kyc-badge');
-            if (metadata.license_number) {
-                kycBadge.innerText = "Statut: Vérifié";
-                kycBadge.className = "mt-2 status-badge bg-green-100 text-green-600";
-            }
-        }
-
-        async function updateProfile() {
-            const fullName = document.getElementById('full_name').value;
-            const license = document.getElementById('license_number').value;
-
-            const { error } = await supabase.auth.updateUser({
-                data: { full_name: fullName, license_number: license }
-            });
-
-            if (error) alert("Erreur: " + error.message);
-            else {
-                alert("Informations mises à jour !");
-                loadProfile();
-            }
-        }
-
-        async function updatePassword() {
-            const newPwd = document.getElementById('new_password').value;
-            const confirmPwd = document.getElementById('confirm_password').value;
-
-            if (newPwd.length < 6) {
-                alert("Le mot de passe doit contenir au moins 6 caractères.");
-                return;
-            }
-
-            if (newPwd !== confirmPwd) {
-                alert("Les mots de passe ne correspondent pas.");
-                return;
-            }
-
-            const { error } = await supabase.auth.updateUser({ password: newPwd });
-
-            if (error) alert("Erreur: " + error.message);
-            else {
-                alert("Mot de passe modifié avec succès !");
-                document.getElementById('new_password').value = '';
-                document.getElementById('confirm_password').value = '';
-            }
-        }
-
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = 'login.html';
-        }
-
-        loadProfile();
-    </script>
-</body>
-</html>
+            // Affichage de la section chauffeur
+            if (role === 'driver') {
+                document.getElementById('driver
