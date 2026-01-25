@@ -4,177 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mon Profil - DjuntaCar</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #f8fafc; padding-bottom: 100px; }
-
-        .profile-card {
-            background: white;
-            border-radius: 28px;
-            padding: 24px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            margin-bottom: 24px;
-        }
-
-        .input-field {
-            width: 100%;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 14px 18px;
-            font-weight: 600;
-            font-size: 14px;
-            color: #1d4379;
-            outline: none;
-            transition: all 0.3s;
-        }
-        .input-field:focus { border-color: #1d4379; background: white; }
-
-        .section-label {
-            font-size: 10px;
-            font-weight: 800;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            display: block;
-            margin-left: 4px;
-        }
-
-        .btn-save {
-            background: #1d4379;
-            color: white;
-            padding: 16px;
-            border-radius: 18px;
-            font-weight: 700;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: opacity 0.2s;
-        }
-        .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .price-badge {
-            background: #f0f7ff;
-            color: #1d4379;
-            padding: 12px;
-            border-radius: 14px;
-            font-size: 11px;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="bg-[#fcfcfd]">
 
     <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between">
-            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left" class="w-6 h-6"></i></a>
+        <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
+            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left"></i></a>
             <span class="font-bold text-sm text-[#1d4379]">Mon Profil</span>
-            <button onclick="logout()" class="text-red-500 p-2"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+            <div class="relative cursor-pointer" onclick="toggleNotifications()">
+                <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
+                <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
+                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2 tracking-widest">Notifications</h4>
+                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2 no-scrollbar"></div>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-8">
-        
-        <div class="flex flex-col items-center mb-8">
-            <div class="relative">
-                <div class="w-24 h-24 bg-[#1d4379] rounded-full flex items-center justify-center text-white text-3xl font-black border-4 border-white shadow-lg">
-                    <span id="avatar-initials">--</span>
-                </div>
-                <div id="role-tag" class="absolute -bottom-2 bg-[#22c55e] text-white text-[8px] font-black px-3 py-1 rounded-full uppercase shadow-sm">Chargement...</div>
+    <main class="max-w-md mx-auto px-6 pt-10">
+        <div class="flex flex-col items-center mb-10">
+            <div class="w-24 h-24 bg-[#1d4379] rounded-full border-4 border-white shadow-xl flex items-center justify-center text-white text-3xl font-black mb-4">
+                <span id="initials">--</span>
             </div>
-            <h2 class="text-xl font-extrabold text-[#1d4379] mt-6" id="display-name">...</h2>
+            <h2 id="user-name" class="text-xl font-black text-[#1d4379]">Chargement...</h2>
+            <div id="kyc-badge" class="mt-2 text-[10px] font-black px-3 py-1 rounded-full uppercase">Statut: Inconnu</div>
         </div>
 
-        <section>
-            <span class="section-label">Identité</span>
-            <div class="profile-card space-y-4">
-                <div>
-                    <label class="section-label !text-[9px]">Nom Complet</label>
-                    <input type="text" id="full_name" class="input-field">
-                </div>
-                <div>
-                    <label class="section-label !text-[9px]">Numéro de Permis</label>
-                    <input type="text" id="license_number" class="input-field">
+        <div class="space-y-4">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50">
+                <label class="text-[10px] font-black text-gray-300 uppercase block mb-4">Mon activité</label>
+                <div class="space-y-4">
+                    <a href="wallet.html" class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="wallet" class="text-blue-500"></i>
+                            <span class="text-sm font-bold text-[#1d4379]">Mon Portefeuille</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="text-gray-200"></i>
+                    </a>
                 </div>
             </div>
-        </section>
-
-        <section id="driver-settings" class="hidden">
-            <span class="section-label">Paramètres Chauffeur</span>
-            <div class="profile-card space-y-6">
-                <div>
-                    <label class="section-label !text-[9px]">Votre Tarif Journalier (Forfait 7h)</label>
-                    <div class="relative">
-                        <input type="number" id="driver_price" class="input-field !pr-16" min="25" step="1" oninput="validatePrice()">
-                        <span class="absolute right-5 top-1/2 -translate-y-1/2 font-black text-[#1d4379]">€</span>
-                    </div>
-                    <p id="price-error" class="text-[9px] text-red-500 font-bold mt-2 hidden">Le tarif doit être supérieur ou égal à 25€ (tarif de base).</p>
-                </div>
-
-                <div class="price-badge">
-                    <span>Equivalent en CVE</span>
-                    <span id="price-cve" class="font-black text-blue-600">2 757 CVE</span>
-                </div>
-
-                <p class="text-[10px] text-gray-400 leading-relaxed italic">
-                    Note : Ce tarif s'applique pour une mission standard de 7 heures. Toute heure supplémentaire sera facturée 5€/h par défaut.
-                </p>
-            </div>
-        </section>
-
-        <section>
-            <span class="section-label">Sécurité</span>
-            <div class="profile-card space-y-4">
-                <input type="password" id="new_password" class="input-field" placeholder="Nouveau mot de passe">
-                <button onclick="updateProfile()" id="save-btn" class="btn-save">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i>
-                    Enregistrer le profil
-                </button>
-            </div>
-        </section>
-
+            
+            <button onclick="logout()" class="w-full py-5 text-red-500 font-bold text-sm uppercase">Se déconnecter</button>
+        </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
+        const supabase = window.supabase.createClient('URL_SUPABASE', 'CLE_ANON');
 
-        const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
-        const EUR_TO_CVE = 110.265;
-        const MIN_PRICE = 25;
-
-        async function loadProfile() {
+        // NOTIFICATIONS
+        async function loadNotifications() {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return window.location.href = 'login.html';
+            const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', user.id).eq('is_read', false);
+            const badge = document.getElementById('notif-badge');
+            if (notifs && notifs.length > 0) {
+                badge.innerText = notifs.length;
+                badge.classList.remove('hidden');
+            }
+            document.getElementById('notif-list').innerHTML = notifs.map(n => `<div class="p-3 bg-blue-50 rounded-2xl text-[10px] font-bold text-[#1d4379]">${n.title}</div>`).join('') || '<p class="text-center py-4 text-[9px] font-bold text-gray-300 uppercase">Rien à signaler</p>';
+        }
 
-            const meta = user.user_metadata;
-            const role = meta.role || 'tenant'; // 'tenant', 'host', 'driver'
+        function toggleNotifications() {
+            document.getElementById('notif-panel').classList.toggle('hidden');
+            loadNotifications();
+        }
 
-            // Remplissage des champs
-            document.getElementById('display-name').innerText = meta.full_name || user.email;
-            document.getElementById('full_name').value = meta.full_name || '';
-            document.getElementById('license_number').value = meta.license_number || '';
-            document.getElementById('role-tag').innerText = role;
-            
-            // Gestion Initiale
-            const initials = (meta.full_name || "D").split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            document.getElementById('avatar-initials').innerText = initials;
+        // Données utilisateur
+        async function loadUser() {
+            const { data: { user } } = await supabase.auth.getUser();
+            document.getElementById('user-name').innerText = user.user_metadata.full_name || user.email;
+            document.getElementById('initials').innerText = (user.user_metadata.full_name || "D").substring(0,2).toUpperCase();
+        }
 
-            // Affichage de la section chauffeur
-            if (role === 'driver') {
-                document.getElementById('driver
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        loadUser();
+        loadNotifications();
+    </script>
+</body>
+</html>
