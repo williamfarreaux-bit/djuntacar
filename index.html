@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Plateforme P2P Cap-Vert</title>
+    <title>DjuntaCar - Accueil</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,86 +14,230 @@
 
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* Menu Hamburger Animation */
+        .hero-section {
+            background-color: #1d4379;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            padding-bottom: 60px;
+        }
+
+        .search-container {
+            margin-top: -35px;
+            z-index: 20;
+        }
+
+        /* Grille de voitures */
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .car-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+            transition: transform 0.2s;
+        }
+        .car-card:active { transform: scale(0.97); }
+
+        .tag-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 8px;
+            font-weight: 900;
+            color: white;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .rating-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 3px 6px;
+            border-radius: 8px;
+            color: #1d4379;
+            font-size: 9px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            z-index: 10;
+        }
+
         #mobile-menu {
             transition: transform 0.3s ease-in-out;
-            transform: translateX(100%);
+            transform: translateX(-100%);
         }
         #mobile-menu.active {
             transform: translateX(0);
         }
-        
-        .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            transition: all 0.2s;
-        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-[#fcfcfd] antialiased pb-10">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="h-20 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-[100]">
-        <div class="max-w-5xl mx-auto w-full flex items-center justify-between">
-            
-            <img src="logo.png" alt="DjuntaCar" class="h-7 cursor-pointer" onclick="window.location.href='index.html'">
-            
-            <div class="flex items-center gap-3">
-                <select id="lang-selector" onchange="switchLang(this.value)" class="bg-gray-50 border-none text-[10px] font-black text-[#1d4379] rounded-lg px-2 py-1 outline-none cursor-pointer">
-                    <option value="fr">FR</option>
-                    <option value="en">EN</option>
-                    <option value="pt">PT</option>
-                    <option value="cv">CV</option>
-                </select>
-
-                <div class="relative cursor-pointer p-2" onclick="toggleNotifications()">
-                    <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
-                    <span id="notif-badge" class="absolute top-1 right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden border-2 border-white">0</span>
-                    
-                    <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden p-4">
-                        <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2 tracking-widest" data-i18n="notifications">Notifications</h4>
-                        <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2 no-scrollbar"></div>
-                    </div>
-                </div>
-
-                <button onclick="toggleMenu()" class="p-2 text-[#1d4379]">
-                    <i data-lucide="menu" class="w-7 h-7"></i>
-                </button>
-            </div>
+    <header class="h-16 flex items-center px-6 bg-white sticky top-0 z-[100]">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between">
+            <button onclick="toggleMenu()" class="p-2"><i data-lucide="menu" class="w-6 h-6 text-gray-700"></i></button>
+            <img src="logo.png" alt="DjuntaCar" class="h-5">
+            <button onclick="window.location.href='profile.html'" class="p-2 relative">
+                <i data-lucide="user" class="w-6 h-6 text-[#1d4379]"></i>
+                <span id="notif-badge" class="absolute top-1 right-1 bg-red-500 w-2.5 h-2.5 rounded-full border-2 border-white hidden"></span>
+            </button>
         </div>
     </header>
 
     <div id="mobile-menu" class="fixed inset-0 bg-white z-[150] p-8 flex flex-col">
-        <div class="flex justify-end mb-8">
-            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full">
-                <i data-lucide="x" class="w-6 h-6 text-gray-400"></i>
-            </button>
+        <div class="flex justify-between items-center mb-10">
+            <select id="lang-selector" onchange="switchLang(this.value)" class="bg-gray-50 border-none text-xs font-black text-[#1d4379] rounded-lg px-3 py-2 outline-none">
+                <option value="fr">FR</option><option value="en">EN</option><option value="pt">PT</option><option value="cv">CV</option>
+            </select>
+            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full"><i data-lucide="x" class="w-6 h-6 text-gray-400"></i></button>
         </div>
+        <nav class="space-y-6 flex-1">
+            <a href="results.html" class="flex items-center gap-4 text-lg font-extrabold text-[#1d4379]"><i data-lucide="search"></i> <span data-i18n="start_search">Rechercher</span></a>
+            <a href="add-car.html" class="flex items-center gap-4 text-lg font-extrabold text-[#1d4379]"><i data-lucide="plus-circle"></i> <span data-i18n="add_car">Ajouter ma voiture</span></a>
+            <a href="profile.html?driver=true" class="flex items-center gap-4 text-lg font-extrabold text-[#1d4379]"><i data-lucide="user-plus"></i> <span data-i18n="be_driver">Devenir chauffeur</span></a>
+            <hr>
+            <a href="my-rentals.html" class="flex items-center gap-4 text-sm font-bold text-gray-400"><i data-lucide="calendar"></i> Mes Locations</a>
+            <a href="wallet.html" class="flex items-center gap-4 text-sm font-bold text-gray-400"><i data-lucide="wallet"></i> Portefeuille</a>
+        </nav>
+        <button onclick="logout()" class="text-xs font-black text-red-400 uppercase tracking-widest text-left">Déconnexion</button>
+    </div>
 
-        <div class="space-y-4 flex-1">
-            <button onclick="window.location.href='results.html'" class="nav-btn bg-blue-50 text-[#1d4379]">
-                <i data-lucide="search" class="w-5 h-5"></i>
-                <span data-i18n="start_search">Commencer ma recherche</span>
-            </button>
-            
-            <button onclick="window.location.href='add-car.html'" class="nav-btn bg-green-50 text-green-700">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                <span data-i18n="add_car">Ajouter ma voiture</span>
-            </button>
-            
-            <button onclick="window.location.href='profile.html?action=be-driver'" class="nav-btn bg-amber-50 text-amber-700">
-                <i data-lucide="user-plus" class="w-5 h-5"></i>
-                <span data-i18n="be_driver">Devenir chauffeur</span>
-            </button>
+    <section class="hero-section text-center px-6 pt-6">
+        <h1 class="text-white text-xl font-extrabold mb-10" data-i18n="hero_title">Trouvez la voiture parfaite</h1>
+        
+        <div class="search-container max-w-sm mx-auto relative px-4">
+            <div class="bg-white rounded-3xl shadow-xl flex items-center p-2 border border-gray-100">
+                <div class="w-10 h-10 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 ml-1">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </div>
+                <input type="text" onclick="window.location.href='results.html'" data-i18n-placeholder="search_placeholder" placeholder="Rechercher..." class="flex-1 px-4 text-xs font-semibold outline-none text-gray-400" readonly>
+            </div>
+        </div>
+    </section>
 
-            <hr class="border-gray-50 my-6">
+    <section class="mt-12 px-6">
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-6" data-i18n="popular_cars">Véhicules populaires</h2>
+        
+        <div class="car-grid" id="car-display-grid">
+            <div class="car-card" onclick="window.location.href='car-detail.html'">
+                <div class="tag-badge bg-blue-600">4x4</div>
+                <div class="rating-badge"><i data-lucide="star" class="w-2.5 h-2.5 fill-amber-400 text-amber-400"></i> 4.9</div>
+                <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400" class="w-full h-32 object-cover">
+                <div class="p-4">
+                    <h3 class="text-[11px] font-black text-[#1d4379] truncate">Toyota Hilux</h3>
+                    <p class="text-[10px] font-bold text-blue-500 mt-1">6500 CVE <span class="text-gray-300">/j</span></p>
+                </div>
+            </div>
 
-            <a
+            <div class="car-card" onclick="window.location.href='car-detail.html'">
+                <div class="tag-badge bg-green-500">Eco</div>
+                <div class="rating-badge"><i data-lucide="star" class="w-2.5 h-2.5 fill-amber-400 text-amber-400"></i> 4.7</div>
+                <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=400" class="w-full h-32 object-cover">
+                <div class="p-4">
+                    <h3 class="text-[11px] font-black text-[#1d4379] truncate">Kia Picanto</h3>
+                    <p class="text-[10px] font-bold text-blue-500 mt-1">3500 CVE <span class="text-gray-300">/j</span></p>
+                </div>
+            </div>
+
+            <div class="car-card">
+                <div class="tag-badge bg-blue-600">4x4</div>
+                <div class="rating-badge"><i data-lucide="star" class="w-2.5 h-2.5 fill-amber-400 text-amber-400"></i> 4.8</div>
+                <img src="https://images.unsplash.com/photo-1532581133552-da7d25e016f4?auto=format&fit=crop&q=80&w=400" class="w-full h-32 object-cover">
+                <div class="p-4">
+                    <h3 class="text-[11px] font-black text-[#1d4379] truncate">Suzuki Jimny</h3>
+                    <p class="text-[10px] font-bold text-blue-500 mt-1">5500 CVE <span class="text-gray-300">/j</span></p>
+                </div>
+            </div>
+
+            <div class="car-card">
+                <div class="tag-badge bg-orange-500">SUV</div>
+                <div class="rating-badge"><i data-lucide="star" class="w-2.5 h-2.5 fill-amber-400 text-amber-400"></i> 4.6</div>
+                <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=400" class="w-full h-32 object-cover">
+                <div class="p-4">
+                    <h3 class="text-[11px] font-black text-[#1d4379] truncate">Dacia Duster</h3>
+                    <p class="text-[10px] font-bold text-blue-500 mt-1">4800 CVE <span class="text-gray-300">/j</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-6 mt-12 space-y-4 mb-10">
+        <button onclick="window.location.href='add-car.html'" class="w-full bg-[#1d4379] text-white py-5 rounded-[22px] font-black text-xs uppercase tracking-wider shadow-lg active:scale-95 transition-all">
+            <span data-i18n="add_car_btn">Ajouter ma voiture</span>
+        </button>
+        
+        <button onclick="window.location.href='profile.html?driver=true'" class="w-full bg-[#22c55e] text-white py-5 rounded-[22px] font-black text-xs uppercase tracking-wider shadow-lg active:scale-95 transition-all">
+            <span data-i18n="be_driver_btn">Devenir chauffeur</span>
+        </button>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+        const supabase = window.supabase.createClient('URL_SUPABASE', 'CLE_ANON');
+
+        // GESTION LANGUES
+        const translations = {
+            fr: { 
+                hero_title: "Trouvez la voiture parfaite", search_placeholder: "Rechercher...",
+                add_car_btn: "Ajouter ma voiture", be_driver_btn: "Devenir chauffeur",
+                start_search: "Rechercher", add_car: "Mettre en location", be_driver: "Travailler comme chauffeur",
+                popular_cars: "Véhicules populaires"
+            },
+            en: { 
+                hero_title: "Find the perfect car", search_placeholder: "Search...",
+                add_car_btn: "Add my car", be_driver_btn: "Become a driver",
+                start_search: "Search", add_car: "Rent my car", be_driver: "Drive for us",
+                popular_cars: "Popular vehicles"
+            }
+        };
+
+        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
+
+        function switchLang(lang) {
+            localStorage.setItem('djuntacar_lang', lang);
+            applyTranslations();
+        }
+
+        function applyTranslations() {
+            const lang = localStorage.getItem('djuntacar_lang') || 'fr';
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) el.innerText = translations[lang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key]) el.placeholder = translations[lang][key];
+            });
+        }
+
+        async function loadNotifs() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+            const { count } = await supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('is_read', false);
+            if (count > 0) document.getElementById('notif-badge').classList.remove('hidden');
+        }
+
+        async function logout() { await supabase.auth.signOut(); window.location.href = 'login.html'; }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations();
+            loadNotifs();
+        });
+    </script>
+</body>
+</html>
