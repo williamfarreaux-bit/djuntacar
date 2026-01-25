@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture Officielle - DjuntaCar</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f8fafc; color: #1e293b; padding: 20px; }
+
+        .invoice-box {
+            background: white;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 50px;
+            border-radius: 4px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .line-item {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 18px 0;
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .header-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #1d4379;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+        }
+
+        .total-section {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        #notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+            z-index: 100;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .invoice-box { box-shadow: none; border: none; max-width: 100%; padding: 30px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-[850px] mx-auto mb-6 flex justify-between items-center no-print">
+        <a href="my-rentals.html" class="flex items-center gap-2 text-gray-500 font-bold text-xs uppercase">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i> Retour
+        </a>
+        <div class="flex gap-3">
+            <button onclick="sendInvoiceByEmail()" id="email-btn" class="bg-blue-50 text-[#1d4379] px-6 py-3 rounded-xl font-bold text-xs flex items-center gap-2 border border-blue-100">
+                <i data-lucide="mail" class="w-4 h-4"></i> ENVOYER PAR E-MAIL
+            </button>
+            <button onclick="window.print()" class="bg-[#1d4379] text-white px-6 py-3 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg">
+                <i data-lucide="printer" class="w-4 h-4"></i> IMPRIMER
+            </button>
+        </div>
+    </div>
+
+    <div id="notification-toast" class="bg-[#1d4379] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
+        <i data-lucide="send" class="w-5 h-5 text-green-400"></i>
+        <span class="text-xs font-bold uppercase tracking-widest">Facture envoyée avec succès par e-mail !</span>
+    </div>
+
+    <main class="invoice-box" id="invoice-content">
+        <div class="flex justify-between items-start mb-16">
+            <div>
+                <img src="logo.png" alt="DjuntaCar" class="h-10 mb-4">
+                <div class="text-[10px] text-gray-400 font-bold uppercase leading-tight">
+                    <p>DjuntaCar LDA</p>
+                    <p>Praia, Cabo Verde</p>
+                    <p>NIF: 123456789</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <h1 class="text-3xl font-black text-[#1d4379] mb-1">FACTURE</h1>
+                <p class="text-[10px] font-bold text-gray-400">ID: <span id="inv-uuid" class="font-mono">---</span></p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase mt-1">Date: <span id="inv-date">--/--/----</span></p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-12 mb-16">
+            <div>
+                <span class="header-label !border-none !p-0 block mb-3">Locataire / Tenant</span>
+                <p class="text-sm font-extrabold text-[#1d4379]" id="user-name">Chargement...</p>
+                <p class="text-[11px] text-gray-500 font-medium" id="user-email">...</p>
+            </div>
+            <div class="text-right">
+                <span class="header-label !border-none !p-0 block mb-3">Véhicule & Mission</span>
+                <p class="text-sm font-extrabold text-[#1d4379]" id="car-info">...</p>
+                <p class="text-[11px] text-gray-500 font-medium" id="rental-period">...</p>
+            </div>
+        </div>
+
+        <div class="header-label grid grid-cols-[3fr_1fr_1fr_1fr]">
+            <div>Description</div>
+            <div class="text-center">Qté / Jours</div>
+            <div class="text-right">Prix (EUR)</div>
+            <div class="text-right">Total (CVE)</div>
+        </div>
+
+        <div id="invoice-items">
+            </div>
+
+        <div class="flex justify-end">
+            <div class="w-full max-w-[350px] total-section">
+                <div class="flex justify-between items-center mb-3 text-gray-400 font-bold text-xs uppercase">
+                    <span>Sous-total HT</span>
+                    <span id="subtotal-cve">0 CVE</span>
+                </div>
+                <div class="flex justify-between items-center mb-6 text-gray-400 font-bold text-xs uppercase border-b border-gray-100 pb-3">
+                    <span>TVA Cap-Vert (15%)</span>
+                    <span id="tva-cve">0 CVE</span>
+                </div>
+                <div class="flex justify-between items-end">
+                    <span class="text-sm font-black text-[#1d4379] uppercase">Total TTC</span>
+                    <div class="text-right">
+                        <p class="text-2xl font-black text-[#1d4379]" id="grand-total-cve">0 CVE</p>
+                        <p class="text-xs font-bold text-gray-400" id="grand-total-eur">0.00 EUR</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 p-6 bg-blue-50 border-l-4 border-[#1d4379] rounded-r-2xl">
+            <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-2">Informations sur le dépôt de garantie</h4>
+            <p class="text-[9px] text-blue-800 leading-relaxed font-medium">
+                Conformément au plan <strong><span id="note-plan">---</span></strong>, une caution de <strong><span id="note-deposit">---</span> €</strong> a été pré-autorisée. 
+                Ce montant sera libéré automatiquement sous 48 heures après le check-out sans dommages.
+            </p>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+
+        const CVE_RATE = 110.265;
+        const SERVICE_FEE_RATE = 0.08;
+        const TVA_RATE = 0.15;
+        const PROTECTION_PLANS = {
+            'Kaminhu': { eur: 0, deposit: 1000 },
+            'Morabeza': { eur: 15, deposit: 500 },
+            'No Stress': { eur: 25, deposit: 250 }
+        };
+
+        const supabase = window.supabase.createClient('VOTRE_URL_SUPABASE', 'VOTRE_CLE_ANON');
+
+        async function initInvoice() {
+            const params = new URLSearchParams(window.location.search);
+            const bookingId = params.get('id');
+            if (!bookingId) return;
+
+            const { data: b, error } = await supabase
+                .from('bookings')
+                .select('*, vehicles(*), drivers:driver_id(*), profiles:tenant_id(full_name, email)')
+                .eq('id', bookingId)
+                .single();
+
+            if (b) {
+                const days = Math.max(Math.ceil((new Date(b.end_date) - new Date(b.start_date)) / (1000*60*60*24)), 1);
+                
+                // Remplissage UI
+                document.getElementById('inv-uuid').innerText = b.id.toUpperCase();
+                document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
+                document.getElementById('user-name').innerText = b.profiles.full_name;
+                document.getElementById('user-email').innerText = b.profiles.email;
+                document.getElementById('car-info').innerText = `${b.vehicles.make} ${b.vehicles.model}`;
+                document.getElementById('rental-period').innerText = `${new Date(b.start_date).toLocaleDateString()} - ${new Date(b.end_date).toLocaleDateString()} (${days} j)`;
+
+                // Calculs
+                const totalCarCVE = b.vehicles.price_per_day * days;
+                const plan = b.protection_plan || 'Kaminhu';
+                const totalProtCVE = (PROTECTION_PLANS[plan].eur * CVE_RATE) * days;
+                
+                let totalDriverCVE = 0;
+                if (b.driver_id) {
+                    totalDriverCVE = ((b.driver_daily_price || 25) * CVE_RATE) * days;
+                }
+
+                const subtotalCVE = totalCarCVE + totalDriverCVE + totalProtCVE;
+                const serviceFeeCVE = subtotalCVE * SERVICE_FEE_RATE;
+                const grandTotalCVE = subtotalCVE + serviceFeeCVE;
+                const tvaCVE = grandTotalCVE * (TVA_RATE / (1 + TVA_RATE));
+
+                // Injection du tableau
+                let itemsHtml = `
+                    <div class="line-item"><div><p class="font-extrabold text-[#1d4379]">Location véhicule</p></div><div class="text-center font-bold">${days}</div><div class="text-right text-gray-400 font-bold">${(b.vehicles.price_per_day/CVE_RATE).toFixed(2)}</div><div class="text-right font-black">${totalCarCVE.toLocaleString()}</div></div>
+                    ${b.driver_id ? `<div class="line-item"><div><p class="font-extrabold text-[#1d4379]">Service Chauffeur</p></div><div class="text-center font-bold">${days}</div><div class="text-right text-gray-400 font-bold">${(b.driver_daily_price || 25).toFixed(2)}</div><div class="text-right font-black">${Math.round(totalDriverCVE).toLocaleString()}</div></div>` : ''}
+                    <div class="line-item"><div><p class="font-extrabold text-[#1d4379]">Protection: ${plan}</p></div><div class="text-center font-bold">${days}</div><div class="text-right text-gray-400 font-bold">${PROTECTION_PLANS[plan].eur.toFixed(2)}</div><div class="text-right font-black">${Math.round(totalProtCVE).toLocaleString()}</div></div>
+                    <div class="line-item"><div><p class="font-extrabold text-[#1d4379]">Frais de service (8%)</p></div><div class="text-center font-bold">1</div><div class="text-right text-gray-400 font-bold">${(serviceFeeCVE/CVE_RATE).toFixed(2)}</div><div class="text-right font-black">${Math.round(serviceFeeCVE).toLocaleString()}</div></div>
+                `;
+                document.getElementById('invoice-items').innerHTML = itemsHtml;
+
+                // Totaux
+                document.getElementById('subtotal-cve').innerText = Math.round(grandTotalCVE - tvaCVE).toLocaleString() + " CVE";
+                document.getElementById('tva-cve').innerText = Math.round(tvaCVE).toLocaleString() + " CVE";
+                document.getElementById('grand-total-cve').innerText = Math.round(grandTotalCVE).toLocaleString() + " CVE";
+                document.getElementById('grand-total-eur').innerText = (grandTotalCVE / CVE_RATE).toFixed(2) + " EUR";
+                document.getElementById('note-plan').innerText = plan;
+                document.getElementById('note-deposit').innerText = PROTECTION_PLANS[plan].deposit;
+
+                // ENVOI AUTOMATIQUE PAR MAIL (Fonctionnalité demandée)
+                sendInvoiceByEmail(true);
+            }
+        }
+
+        async function sendInvoiceByEmail(isAuto = false) {
+            const btn = document.getElementById('email-btn');
+            const toast = document.getElementById('notification-toast');
+            
+            if (!isAuto) {
+                btn.disabled = true;
+                btn.innerText = "Envoi en cours...";
+            }
+
+            try {
+                // Appel à votre Edge Function Supabase "send-invoice-email"
+                // Cette fonction recevra l'ID du booking et enverra le mail via Resend/SendGrid
+                const { data, error } = await supabase.functions.invoke('send-invoice-email', {
+                    body: { bookingId: new URLSearchParams(window.location.search).get('id') }
+                });
+
+                if (!error) {
+                    toast.style.display = 'flex';
+                    setTimeout(() => toast.style.display = 'none', 5000);
+                }
+            } catch (err) {
+                console.error("Erreur lors de l'envoi du mail:", err);
+            } finally {
+                if (!isAuto) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i data-lucide="mail" class="w-4 h-4"></i> ENVOYER PAR E-MAIL`;
+                    lucide.createIcons();
+                }
+            }
+        }
+
+        initInvoice();
+    </script>
+</body>
+</html>
