@@ -4,84 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Check-out - DjuntaCar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; padding-bottom: 100px; }
-        .photo-card { background: #fff; border: 2px dashed #e2e8f0; border-radius: 20px; aspect-ratio: 4/3; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .photo-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
-    </style>
 </head>
-<body>
+<body class="bg-[#fcfcfd] p-6">
 
-    <header class="h-14 flex items-center px-6 bg-white border-b border-gray-50 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between">
-            <span class="font-bold text-sm text-[#1d4379]">Inspeção de Saída</span>
-            <i data-lucide="log-out" class="w-5 h-5 text-red-500"></i>
-        </div>
+    <header class="flex justify-between items-center mb-8">
+        <h1 class="text-xl font-black text-[#1d4379]">ÉTAT DES LIEUX RETOUR</h1>
+        <div class="text-[10px] bg-red-100 text-red-600 px-3 py-1 rounded-full font-black uppercase">Phase 2/2</div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-8">
-        <h1 class="text-2xl font-extrabold text-[#1d4379] mb-2 leading-tight">Fin de location</h1>
-        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-8">Veuillez photographier le véhicule avant la remise des clés</p>
-
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <div class="photo-card" onclick="this.querySelector('input').click()">
-                <i data-lucide="camera" class="w-6 h-6 text-gray-300"></i>
-                <span class="text-[9px] font-bold text-gray-400 mt-2">EXTÉRIEUR 1</span>
-                <input type="file" accept="image/*" capture="camera" class="hidden" onchange="preview(this)">
-                <img>
-            </div>
-            <div class="photo-card" onclick="this.querySelector('input').click()">
-                <i data-lucide="camera" class="w-6 h-6 text-gray-300"></i>
-                <span class="text-[9px] font-bold text-gray-400 mt-2">EXTÉRIEUR 2</span>
-                <input type="file" accept="image/*" capture="camera" class="hidden" onchange="preview(this)">
-                <img>
-            </div>
-            <div class="photo-card" onclick="this.querySelector('input').click()">
-                <i data-lucide="camera" class="w-6 h-6 text-gray-300"></i>
-                <span class="text-[9px] font-bold text-gray-400 mt-2">INTÉRIEUR</span>
-                <input type="file" accept="image/*" capture="camera" class="hidden" onchange="preview(this)">
-                <img>
-            </div>
-            <div class="photo-card" onclick="this.querySelector('input').click()">
-                <i data-lucide="camera" class="w-6 h-6 text-gray-300"></i>
-                <span class="text-[9px] font-bold text-gray-400 mt-2">NIVEAU FUEL</span>
-                <input type="file" accept="image/*" capture="camera" class="hidden" onchange="preview(this)">
-                <img>
+    <div id="driver-adjustment" class="bg-amber-50 p-6 rounded-[2.5rem] border border-amber-100 mb-8">
+        <h2 class="text-[10px] font-black text-amber-600 uppercase mb-4 tracking-widest">Ajustement Chauffeur</h2>
+        <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-amber-900">Heures sup. constatées (>7h)</span>
+            <div class="flex items-center gap-4">
+                <button onclick="updateHours(-1)" class="w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center font-black">-</button>
+                <span id="extra-hours" class="font-black text-lg">0</span>
+                <button onclick="updateHours(1)" class="w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center font-black">+</button>
             </div>
         </div>
+        <p class="text-[9px] text-amber-700 mt-4 font-bold">+ 5€ (551 CVE) par heure supplémentaire.</p>
+    </div>
 
-        <div class="bg-white p-6 rounded-3xl border border-gray-100 space-y-6">
-            <div>
-                <label class="text-[10px] font-bold text-gray-400 uppercase block mb-4">Niveau de carburant au retour</label>
-                <input type="range" min="0" max="100" value="100" class="w-full accent-[#1d4379] h-2 bg-gray-100 rounded-lg">
-                <p class="text-[9px] text-gray-400 mt-2 italic font-medium">Doit correspondre au niveau de départ (Check-in).</p>
-            </div>
+    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 mb-8">
+        <h2 class="text-xs font-black text-gray-400 uppercase mb-4 tracking-widest">Nouveaux dommages ?</h2>
+        <textarea placeholder="Décrivez d'éventuels incidents..." class="w-full h-24 bg-gray-50 rounded-2xl p-4 text-xs font-bold outline-none border-none"></textarea>
+    </div>
 
-            <label class="flex items-center gap-4 py-2">
-                <input type="checkbox" class="w-6 h-6 accent-[#1d4379]">
-                <span class="text-[11px] font-bold text-gray-600">Le véhicule est propre</span>
-            </label>
-        </div>
+    <button onclick="confirmCheckOut()" class="w-full bg-red-500 text-white py-5 rounded-[22px] font-black shadow-xl flex items-center justify-center gap-3">
+        TERMINER LA MISSION
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+    </button>
 
-        <button onclick="alert('Merci ! Votre caution sera libérée sous 48h.')" class="w-full bg-red-500 text-white py-5 rounded-[22px] font-bold shadow-xl mt-8 active:scale-95 transition-all">Terminer la location</button>
-
-    </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
-        function preview(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = input.parentElement.querySelector('img');
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
+        let extraHours = 0;
+        const supabase = window.supabase.createClient('URL', 'KEY');
+
+        function updateHours(val) {
+            extraHours = Math.max(0, extraHours + val);
+            document.getElementById('extra-hours').innerText = extraHours;
+        }
+
+        async function confirmCheckOut() {
+            const bookingId = new URLSearchParams(window.location.search).get('id');
+            
+            // 1. Mise à jour du statut
+            const { error } = await supabase.from('bookings').update({ 
+                status: 'completed',
+                extra_hours: extraHours 
+            }).eq('id', bookingId);
+            
+            if (!error) {
+                // 2. LOGIQUE BACK-END (Appel automatique)
+                // On déclenche le virement chauffeur (Forfait + Heures sup)
+                await supabase.functions.invoke('process-payout', {
+                    body: { bookingId: bookingId, type: 'END_RENTAL', extraHours: extraHours }
+                });
+                
+                alert("Mission terminée ! La caution est en cours de libération et le chauffeur a été payé.");
+                window.location.href = 'my-rentals.html';
             }
         }
     </script>
