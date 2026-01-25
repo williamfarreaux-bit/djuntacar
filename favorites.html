@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mes Favoris - DjuntaCar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        .car-card { background: white; border-radius: 24px; border: 1px solid #f1f5f9; overflow: hidden; transition: transform 0.2s; }
+        .car-card:active { transform: scale(0.98); }
+    </style>
+</head>
+<body class="bg-[#fcfcfd] pb-24">
+
+    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between">
+            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left"></i></a>
+            <span class="font-bold text-sm text-[#1d4379]">Mes Favoris</span>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 pt-8">
+        <div id="fav-list" class="grid grid-cols-2 gap-4">
+            <div class="animate-pulse bg-gray-100 h-40 rounded-3xl"></div>
+            <div class="animate-pulse bg-gray-100 h-40 rounded-3xl"></div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-50 px-8 py-4 flex justify-between items-center z-50">
+        <a href="index.html" class="text-gray-300"><i data-lucide="home"></i></a>
+        <a href="favorites.html" class="text-[#1d4379]"><i data-lucide="heart"></i></a>
+        <a href="my-rentals.html" class="text-gray-300"><i data-lucide="calendar-days"></i></a>
+        <a href="profile.html" class="text-gray-300"><i data-lucide="user"></i></a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+        const supabase = window.supabase.createClient('URL', 'KEY');
+
+        async function loadFavorites() {
+            const { data: { user } } = await supabase.auth.getUser();
+            const { data: favs } = await supabase.from('favorites').select('*, vehicles(*)').eq('user_id', user.id);
+
+            const container = document.getElementById('fav-list');
+            if (!favs || favs.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center py-20 text-gray-300 font-bold uppercase text-[10px]">Aucun favori enregistré</div>`;
+                return;
+            }
+
+            container.innerHTML = favs.map(f => `
+                <div class="car-card" onclick="window.location.href='car-detail.html?id=${f.vehicles.id}'">
+                    <img src="${f.vehicles.images_url[0]}" class="w-full h-28 object-cover">
+                    <div class="p-3">
+                        <h3 class="font-black text-[10px] text-[#1d4379] uppercase truncate">${f.vehicles.make} ${f.vehicles.model}</h3>
+                        <p class="text-[11px] font-black text-blue-500 mt-1">${f.vehicles.price_per_day.toLocaleString()} CVE</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        loadFavorites();
+    </script>
+</body>
+</html>
