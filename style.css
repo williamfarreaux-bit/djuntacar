@@ -1,392 +1,300 @@
-/* =========================================
-   1. CONFIGURATION GLOBALE
-   ========================================= */
+/* ==========================================================================
+   1. CONFIGURATION GÉNÉRALE & VARIABLES
+   ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');
 
 :root {
+    /* Palette DjuntaCar */
     --primary-blue: #1d4379;
     --primary-green: #22c55e;
     --bg-color: #fcfcfd;
     --border-color: #f1f5f9;
     --text-gray: #94a3b8;
+    --text-light: #cbd5e1;
+    --white: #ffffff;
+    
+    /* Dimensions standards */
+    --header-height: 70px;
+    --footer-height: 80px; /* Espace réservé pour les boutons fixes */
 }
 
 * {
     font-family: 'Montserrat', sans-serif !important;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Supprime le flash gris sur mobile */
 }
 
 body {
     background-color: var(--bg-color);
     margin: 0;
     padding: 0;
-    /* Espace pour ne pas cacher le contenu derrière le footer fixe */
-    padding-bottom: 150px; 
+    /* IMPORTANT : Marge en bas pour ne pas cacher le contenu derrière les boutons fixes */
+    padding-bottom: 160px; 
     -webkit-font-smoothing: antialiased;
 }
 
 a { text-decoration: none; color: inherit; }
-button { cursor: pointer; border: none; background: none; }
+button { cursor: pointer; border: none; background: none; padding: 0; }
+input, select { outline: none; }
 
-/* =========================================
-   2. HEADER (Structure 20% - 60% - 20%)
-   ========================================= */
-.header-main {
-    height: 70px;
-    background: white;
+/* ==========================================================================
+   2. HEADER STANDARD (70px | 20-60-20)
+   ========================================================================== */
+header {
+    height: var(--header-height);
+    background: var(--white);
     display: flex;
     align-items: center;
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1000; /* Toujours au-dessus du contenu, mais sous le menu */
     border-bottom: 1px solid var(--border-color);
     padding: 0 16px;
 }
 
-.header-side {
-    width: 20%;
-    display: flex;
-    align-items: center;
-}
-
-.header-side.left { justify-content: flex-start; }
-.header-side.right { justify-content: flex-end; }
-
-.header-center {
-    width: 60%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+.header-left { width: 20%; display: flex; justify-content: flex-start; }
+.header-center { width: 60%; display: flex; justify-content: center; align-items: center; }
+.header-right { width: 20%; display: flex; justify-content: flex-end; }
 
 .header-logo {
     width: 100%;
-    max-height: 40px;
+    max-height: 40px; /* Taille contrôlée */
     object-fit: contain;
 }
 
-/* =========================================
-   3. ZONE HERO & NAVIGATION
-   ========================================= */
+/* ==========================================================================
+   3. MENU LATÉRAL (BURGER) - COHÉRENT
+   ========================================================================== */
+/* Fond sombre transparent */
+#menu-overlay {
+    position: fixed; inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1999;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+/* Le panneau blanc du menu */
+#universal-menu {
+    position: fixed; top: 0; bottom: 0; left: 0;
+    width: 80%; max-width: 300px;
+    background-color: var(--white);
+    z-index: 2000; /* Le plus haut niveau */
+    padding: 24px;
+    display: flex; flex-direction: column;
+    box-shadow: 10px 0 25px rgba(0,0,0,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* États Ouverts */
+#universal-menu.open { transform: translateX(0); }
+#menu-overlay.open { opacity: 1; visibility: visible; }
+
+/* Liens du menu */
+.menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+.menu-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; }
+
+.menu-link {
+    display: flex; align-items: center; gap: 16px;
+    font-size: 14px; font-weight: 800; color: var(--primary-blue);
+    text-transform: uppercase; padding: 12px; border-radius: 12px;
+    transition: all 0.2s;
+}
+
+/* Page active (Surlignée) */
+.menu-link.current-page {
+    background-color: #eff6ff; /* Bleu très clair */
+    color: #3b82f6; /* Bleu vif */
+    padding-left: 20px;
+}
+
+.menu-footer { border-top: 1px solid var(--border-color); padding-top: 20px; }
+.btn-logout { width: 100%; text-align: left; color: #f87171; font-weight: 900; text-transform: uppercase; font-size: 12px; display: flex; gap: 12px; align-items: center; }
+
+/* ==========================================================================
+   4. ZONE HERO & RECHERCHE (COMPACTE)
+   ========================================================================== */
 .hero-section {
     background-color: var(--primary-blue);
     border-bottom-left-radius: 40px;
     border-bottom-right-radius: 40px;
-    padding: 15px 0 30px 0; /* Compact */
+    padding: 15px 0 30px 0; /* Pas de texte, juste la barre */
 }
 
-.nav-wrapper {
-    width: 90%;
-    max-width: 400px;
-    margin: 0 auto;
-}
+.nav-container { width: 90%; max-width: 450px; margin: 0 auto; }
 
-/* Barre de recherche blanche */
-.search-bar {
-    background: white;
+.search-bar-link {
+    background: var(--white);
     border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
     padding: 8px;
-    border: 1px solid var(--border-color);
+    display: flex; align-items: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     cursor: pointer;
 }
 
-.search-icon-box {
-    width: 36px;
-    height: 36px;
-    background: #eff6ff; /* blue-50 */
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.search-icon {
+    width: 36px; height: 36px;
+    background: #eff6ff; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
     color: var(--primary-blue);
 }
 
-.search-input {
-    flex: 1;
-    padding: 0 16px;
-    font-size: 12px;
-    font-weight: 700;
-    outline: none;
-    color: var(--text-gray);
-    background: transparent;
-    border: none;
+.search-text {
+    flex: 1; padding: 0 16px;
+    font-size: 12px; font-weight: 700; color: var(--text-gray);
 }
 
-/* =========================================
-   4. FILTRES (À CHEVAL)
-   ========================================= */
-.filter-container {
-    margin-top: -16px; /* 50% de la hauteur des boutons (32px) */
-    position: relative;
-    z-index: 50;
+/* ==========================================================================
+   5. FILTRES (32px, ALIGNÉS, À CHEVAL)
+   ========================================================================== */
+.filter-wrapper {
+    margin-top: -16px; /* Remonte de la moitié de la hauteur (32px / 2) */
+    position: relative; z-index: 50;
+    width: 90%; max-width: 450px; margin-left: auto; margin-right: auto;
 }
 
 .filter-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
 }
 
 .filter-btn {
-    background: white;
+    background: var(--white);
     height: 32px;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    font-size: 8px;
-    font-weight: 800;
-    color: var(--text-gray);
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    font-size: 8px; font-weight: 900; color: var(--text-gray);
     text-transform: uppercase;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
     border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
+    transition: transform 0.1s;
 }
 
-.filter-btn.active {
-    color: var(--primary-blue);
-    border-color: var(--primary-blue);
-    transform: translateY(-1px);
-}
-
+.filter-btn:active { transform: scale(0.95); }
+.filter-btn.active { color: var(--primary-blue); border-color: var(--primary-blue); }
 .filter-btn svg { width: 12px; height: 12px; }
 
-/* =========================================
-   5. LISTE & CARTES VOITURES
-   ========================================= */
-.main-content {
-    max-width: 450px;
-    margin: 0 auto;
-    padding: 40px 24px 0 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.section-title {
-    font-size: 11px;
-    font-weight: 900;
-    color: var(--text-gray);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 24px;
-}
+/* ==========================================================================
+   6. LISTES & CARTES (VERTICAL)
+   ========================================================================== */
+.content-padding { padding: 40px 20px 0 20px; max-width: 480px; margin: 0 auto; }
+.vertical-list { display: flex; flex-direction: column; gap: 24px; }
 
 .car-card {
-    background: white;
+    background: var(--white);
     border-radius: 30px;
     overflow: hidden;
     border: 1px solid var(--border-color);
     box-shadow: 0 10px 30px rgba(0,0,0,0.04);
     position: relative;
-    transition: transform 0.2s;
 }
 
-.car-card:active { transform: scale(0.98); }
+.card-image-box { position: relative; height: 220px; }
+.card-image-box img { width: 100%; height: 100%; object-fit: cover; }
 
-.car-img-wrapper {
-    position: relative;
-    height: 220px;
-    width: 100%;
-}
-
-.car-img-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Badges */
-.badge-stack {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    display: flex;
-    gap: 6px;
-    z-index: 10;
-}
-
-.badge {
-    color: white;
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-size: 9px;
-    font-weight: 800;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
+/* Badges sur l'image */
+.badge-container { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; z-index: 10; }
+.badge { padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 900; color: white; text-transform: uppercase; }
 .badge.superhost { background: #84cc16; }
 .badge.verified { background: var(--primary-blue); }
-
-.location-chip {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(5px);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.location-pill {
+    position: absolute; bottom: 12px; left: 12px;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    color: white; padding: 4px 10px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 4px;
 }
 
-.card-content { padding: 20px; }
+.card-details { padding: 20px; }
+.card-title-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.card-title { font-size: 18px; font-weight: 900; color: var(--primary-blue); margin: 0; }
+.card-subtitle { font-size: 10px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
+.rating { font-size: 14px; font-weight: 900; color: #f59e0b; display: flex; align-items: center; gap: 4px; }
 
-.card-title {
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--primary-blue);
-    margin: 0;
+.card-footer-row {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid #f8fafc;
 }
+.btn-text { font-size: 10px; font-weight: 900; color: #3b82f6; text-decoration: underline; text-transform: uppercase; }
+.price-display { font-size: 20px; font-weight: 900; color: var(--primary-blue); }
+.price-suffix { font-size: 10px; color: var(--text-light); }
 
-.card-specs {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--text-gray);
-    text-transform: uppercase;
-    margin-top: 4px;
-}
-
-.card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border-color);
-}
-
-.btn-details {
-    font-size: 10px;
-    font-weight: 900;
-    color: #3b82f6;
-    text-transform: uppercase;
-    text-decoration: underline;
-}
-
-.price-tag {
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--primary-blue);
-}
-
-.price-unit { font-size: 10px; color: #cbd5e1; }
-
-/* =========================================
-   6. FOOTER ACTIONS (FIXE)
-   ========================================= */
-.sticky-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+/* ==========================================================================
+   7. FOOTER FIXE (STICKY BOTTOM)
+   ========================================================================== */
+.fixed-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     padding: 16px 20px;
     border-top: 1px solid var(--border-color);
     z-index: 900;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: flex; flex-direction: column; gap: 10px;
+    /* Ombre portée inversée vers le haut */
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
 }
 
-.action-btn {
+.btn-action {
     width: 100%;
-    color: white;
     padding: 16px;
     border-radius: 20px;
-    font-size: 11px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     transition: transform 0.1s;
 }
+.btn-action:active { transform: scale(0.98); }
+.btn-primary { background: var(--primary-blue); }
+.btn-success { background: var(--primary-green); }
 
-.action-btn:active { transform: scale(0.98); }
-.action-btn.primary { background: var(--primary-blue); }
-.action-btn.secondary { background: var(--primary-green); }
-
-/* =========================================
-   7. SIDEBAR (MENU HAMBURGER)
-   ========================================= */
-.sidebar-overlay {
-    position: fixed;
-    inset: 0;
-    background: white;
-    z-index: 2000;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar-overlay.active { transform: translateX(0); }
-
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--primary-blue);
-    text-transform: uppercase;
-    padding: 12px 0;
-}
-
-.btn-logout {
-    font-size: 12px;
-    font-weight: 900;
-    color: #f87171;
-    text-transform: uppercase;
-    margin-top: auto;
-    letter-spacing: 1px;
-}
-
-/* =========================================
-   8. UTILITAIRES FORMULAIRES (ADD CAR / SEARCH)
-   ========================================= */
-.form-group {
-    background: white;
+/* ==========================================================================
+   8. FORMULAIRES (ADD CAR, SEARCH, DRIVER)
+   ========================================================================== */
+.form-section {
+    background: var(--white); border-radius: 20px;
+    padding: 20px; margin-bottom: 16px;
     border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 16px;
-    margin-bottom: 16px;
 }
-
-.label-mini {
-    font-size: 9px;
-    font-weight: 800;
-    color: var(--text-gray);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 8px;
-}
-
+.input-label { font-size: 9px; font-weight: 900; color: var(--text-gray); text-transform: uppercase; display: block; margin-bottom: 8px; }
 .input-field {
-    width: 100%;
-    font-weight: 700;
-    color: var(--primary-blue);
-    outline: none;
-    background: transparent;
-    border-bottom: 1px solid transparent;
+    width: 100%; padding: 10px 0;
+    border-bottom: 2px solid var(--border-color); background: transparent;
+    font-weight: 700; color: var(--primary-blue);
 }
 .input-field:focus { border-bottom-color: var(--primary-blue); }
+
+.upload-zone {
+    border: 2px dashed #bfdbfe; background: #eff6ff;
+    border-radius: 16px; padding: 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   9. PROFIL & WALLET
+   ========================================================================== */
+.profile-card {
+    background: var(--white); padding: 24px;
+    border-bottom-left-radius: 32px; border-bottom-right-radius: 32px;
+    text-align: center; margin-bottom: 24px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+.avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #f8fafc; margin: 0 auto 12px; object-fit: cover; }
+
+.wallet-banner {
+    background: linear-gradient(135deg, #1d4379 0%, #2563eb 100%);
+    border-radius: 24px; padding: 20px; color: white;
+    margin: 0 24px 32px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 10px 20px -5px rgba(29, 67, 121, 0.4);
+}
+
+.action-list-item {
+    background: var(--white); border-radius: 20px; padding: 16px;
+    display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+    border: 1px solid var(--border-color);
+}
+.icon-rounded { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.bg-blue-light { background: #eff6ff; color: var(--primary-blue); }
+.bg-green-light { background: #f0fdf4; color: var(--primary-green); }
+
+/* UTILITAIRES */
+.hidden { display: none; }
