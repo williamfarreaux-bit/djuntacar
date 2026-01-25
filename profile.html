@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Connexion - DjuntaCar</title>
+    <title>Mon Profil - DjuntaCar</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,121 +14,139 @@
 
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; margin: 0; }
+        body { background-color: #f8fafc; padding-bottom: 100px; }
 
-        .input-group { 
-            background: #f8fafc;
+        .profile-card {
+            background: white;
+            border-radius: 28px;
+            padding: 24px;
             border: 1px solid #f1f5f9;
-            border-radius: 20px;
-            padding: 12px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .input-field {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 18px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1d4379;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .input-field:focus { border-color: #1d4379; background: white; }
+
+        .section-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+            margin-left: 4px;
+        }
+
+        .btn-save {
+            background: #1d4379;
+            color: white;
+            padding: 16px;
+            border-radius: 18px;
+            font-weight: 700;
+            width: 100%;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            transition: opacity 0.2s;
         }
-        .input-group:focus-within {
-            border-color: #1d4379;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(29, 67, 121, 0.05);
-        }
+        .btn-save:active { opacity: 0.8; }
 
-        /* Animation de secousse en cas d'erreur */
-        .shake {
-            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-            border-color: #ef4444 !important;
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
-        input { 
-            width: 100%; font-weight: 600; color: #1d4379; 
-            outline: none; background: transparent; border: none; font-size: 15px; 
-        }
-
-        .btn-primary {
-            background-color: #1d4379;
-            color: white;
-            width: 100%;
-            padding: 18px;
-            border-radius: 20px;
-            font-weight: 700;
-            box-shadow: 0 10px 20px rgba(29, 67, 121, 0.15);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:active { transform: scale(0.97); }
-
-        #error-banner {
-            display: none;
-            background-color: #fef2f2;
-            border: 1px solid #fee2e2;
-            color: #b91c1c;
-            padding: 14px;
-            border-radius: 18px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
         }
     </style>
 </head>
-<body class="antialiased text-gray-800 flex flex-col min-h-screen">
+<body class="antialiased text-gray-800">
 
-    <main class="flex-1 flex flex-col justify-center px-8 py-12 max-w-md mx-auto w-full">
+    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between">
+            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left" class="w-6 h-6"></i></a>
+            <span class="font-bold text-sm text-[#1d4379]">Mon Profil</span>
+            <button onclick="logout()" class="text-red-500 p-2"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 pt-8">
         
-        <div class="text-center mb-10">
-            <img src="logo.png" alt="DjuntaCar" class="h-10 mx-auto mb-6">
-            <h1 class="text-2xl font-extrabold text-[#1d4379]">Bon retour !</h1>
-            <p class="text-gray-400 text-sm font-medium mt-2">Connectez-vous pour continuer</p>
+        <div class="flex flex-col items-center mb-8">
+            <div class="w-24 h-24 bg-[#1d4379] rounded-full flex items-center justify-center text-white text-3xl font-black mb-4 border-4 border-white shadow-lg">
+                <span id="avatar-initials">--</span>
+            </div>
+            <h2 class="text-xl font-extrabold text-[#1d4379]" id="display-name">Chargement...</h2>
+            <div id="kyc-badge" class="mt-2 status-badge bg-gray-100 text-gray-400">Statut: Inconnu</div>
         </div>
 
-        <div id="error-banner" class="flex items-center gap-3">
-            <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
-            <span id="error-text">Email ou mot de passe incorrect.</span>
+        <div class="space-y-8">
+            <section>
+                <span class="section-label">Informations Personnelles</span>
+                <div class="profile-card space-y-4">
+                    <div>
+                        <label class="section-label !text-[9px]">Nom Complet</label>
+                        <input type="text" id="full_name" class="input-field" placeholder="Votre nom">
+                    </div>
+                    <div>
+                        <label class="section-label !text-[9px]">Numéro de Permis</label>
+                        <input type="text" id="license_number" class="input-field" placeholder="Ex: ST-12345-CV">
+                    </div>
+                    <button onclick="updateProfile()" class="btn-save">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        Enregistrer les informations
+                    </button>
+                </div>
+            </section>
+
+            <section>
+                <span class="section-label">Sécurité & Mot de passe</span>
+                <div class="profile-card space-y-4">
+                    <div>
+                        <label class="section-label !text-[9px]">Nouveau mot de passe</label>
+                        <input type="password" id="new_password" class="input-field" placeholder="Minimum 6 caractères">
+                    </div>
+                    <div>
+                        <label class="section-label !text-[9px]">Confirmer le mot de passe</label>
+                        <input type="password" id="confirm_password" class="input-field" placeholder="••••••••">
+                    </div>
+                    <button onclick="updatePassword()" class="btn-save bg-slate-800">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                        Mettre à jour le mot de passe
+                    </button>
+                </div>
+            </section>
+
+            <section class="pb-10">
+                <span class="section-label">Activité</span>
+                <a href="my-rentals.html" class="profile-card flex items-center justify-between py-5 no-underline">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-blue-50 p-3 rounded-2xl text-[#1d4379]">
+                            <i data-lucide="car" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-[#1d4379]">Mes Locations</p>
+                            <p class="text-[10px] text-gray-400 font-medium">Historique et contrats</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-gray-300"></i>
+                </a>
+            </section>
         </div>
-
-        <form id="login-form" class="space-y-4">
-            <div class="space-y-1">
-                <label class="text-[10px] font-bold text-gray-400 uppercase ml-4 tracking-wider">Email</label>
-                <div class="input-group" id="email-group">
-                    <i data-lucide="mail" class="w-5 h-5 text-gray-300"></i>
-                    <input type="email" id="email" placeholder="votre@email.com" required>
-                </div>
-            </div>
-
-            <div class="space-y-1">
-                <label class="text-[10px] font-bold text-gray-400 uppercase ml-4 tracking-wider">Mot de passe</label>
-                <div class="input-group" id="password-group">
-                    <i data-lucide="lock" class="w-5 h-5 text-gray-300"></i>
-                    <input type="password" id="password" placeholder="••••••••" required>
-                </div>
-                
-                <div class="flex justify-end px-2 mt-2">
-                    <a href="forgot-password.html" class="text-[11px] font-bold text-[#1d4379] hover:underline">
-                        Mot de passe oublié ?
-                    </a>
-                </div>
-            </div>
-
-            <button type="submit" id="submit-btn" class="btn-primary mt-6 flex justify-center items-center gap-2">
-                <span id="btn-text">Se connecter</span>
-                <i data-lucide="chevron-right" class="w-4 h-4" id="btn-icon"></i>
-            </button>
-        </form>
-
-        <p class="text-center mt-10 text-sm font-medium text-gray-400">
-            Pas encore de compte ? 
-            <a href="signup.html" class="text-[#1d4379] font-bold hover:underline">S'inscrire</a>
-        </p>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -137,65 +155,75 @@
 
         const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
 
-        const loginForm = document.getElementById('login-form');
-        const errorBanner = document.getElementById('error-banner');
-        const errorText = document.getElementById('error-text');
-        const submitBtn = document.getElementById('submit-btn');
-        const btnText = document.getElementById('btn-text');
-        
-        const emailGroup = document.getElementById('email-group');
-        const passwordGroup = document.getElementById('password-group');
-
-        // Supprimer les effets d'erreur quand on recommence à taper
-        [document.getElementById('email'), document.getElementById('password')].forEach(input => {
-            input.addEventListener('input', () => {
-                errorBanner.style.display = 'none';
-                emailGroup.classList.remove('shake');
-                passwordGroup.classList.remove('shake');
-            });
-        });
-
-        loginForm.onsubmit = async (e) => {
-            e.preventDefault();
-            
-            errorBanner.style.display = 'none';
-            emailGroup.classList.remove('shake');
-            passwordGroup.classList.remove('shake');
-            
-            submitBtn.disabled = true;
-            btnText.innerText = "Connexion...";
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password,
-            });
-
-            if (error) {
-                errorBanner.style.display = 'flex';
-                
-                // On secoue les champs pour attirer l'attention
-                emailGroup.classList.add('shake');
-                passwordGroup.classList.add('shake');
-
-                // Traduction des erreurs courantes de Supabase
-                if (error.message.includes("Invalid login credentials")) {
-                    errorText.innerText = "Email ou mot de passe incorrect.";
-                } else if (error.message.includes("Email not confirmed")) {
-                    errorText.innerText = "Veuillez confirmer votre email avant de vous connecter.";
-                } else {
-                    errorText.innerText = "Une erreur est survenue : " + error.message;
-                }
-
-                submitBtn.disabled = false;
-                btnText.innerText = "Se connecter";
-                lucide.createIcons();
-            } else {
-                window.location.href = 'index.html';
+        async function loadProfile() {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error || !user) {
+                window.location.href = 'login.html';
+                return;
             }
-        };
+
+            const metadata = user.user_metadata;
+            document.getElementById('full_name').value = metadata.full_name || '';
+            document.getElementById('license_number').value = metadata.license_number || '';
+            document.getElementById('display-name').innerText = metadata.full_name || user.email;
+            
+            const initials = metadata.full_name 
+                ? metadata.full_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+                : user.email[0].toUpperCase();
+            document.getElementById('avatar-initials').innerText = initials;
+
+            const kycBadge = document.getElementById('kyc-badge');
+            if (metadata.license_number) {
+                kycBadge.innerText = "Statut: Vérifié";
+                kycBadge.className = "mt-2 status-badge bg-green-100 text-green-600";
+            }
+        }
+
+        async function updateProfile() {
+            const fullName = document.getElementById('full_name').value;
+            const license = document.getElementById('license_number').value;
+
+            const { error } = await supabase.auth.updateUser({
+                data: { full_name: fullName, license_number: license }
+            });
+
+            if (error) alert("Erreur: " + error.message);
+            else {
+                alert("Informations mises à jour !");
+                loadProfile();
+            }
+        }
+
+        async function updatePassword() {
+            const newPwd = document.getElementById('new_password').value;
+            const confirmPwd = document.getElementById('confirm_password').value;
+
+            if (newPwd.length < 6) {
+                alert("Le mot de passe doit contenir au moins 6 caractères.");
+                return;
+            }
+
+            if (newPwd !== confirmPwd) {
+                alert("Les mots de passe ne correspondent pas.");
+                return;
+            }
+
+            const { error } = await supabase.auth.updateUser({ password: newPwd });
+
+            if (error) alert("Erreur: " + error.message);
+            else {
+                alert("Mot de passe modifié avec succès !");
+                document.getElementById('new_password').value = '';
+                document.getElementById('confirm_password').value = '';
+            }
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        loadProfile();
     </script>
 </body>
 </html>
