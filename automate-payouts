@@ -1,0 +1,35 @@
+// Calcul des parts selon le document "Modèle Économique"
+// Commission globale 25% (15% plateforme + 10% assurance)
+
+export async function handlePayouts(booking) {
+  const EUR_RATE = 110.265;
+  const days = calculateDays(booking.start_date, booking.end_date);
+  
+  // 1. PART DU PROPRIÉTAIRE (Payée au Check-in)
+  // Prix du véhicule - 25% de commission
+  const ownerGross = booking.vehicles.price_per_day * days;
+  const ownerNet = ownerGross * 0.75; 
+  
+  await supabase.from('transactions').insert({
+    booking_id: booking.id,
+    recipient_id: booking.host_id,
+    recipient_role: 'host',
+    amount_cve: ownerNet,
+    scheduled_for: booking.start_date // Déclanché au Check-in
+  });
+
+  // 2. PART DU CHAUFFEUR (Payée au Check-out)
+  if (booking.driver_id) {
+    const driverDaily = booking.driver_daily_price || 25;
+    const driverTotalEur = driverDaily * days;
+    // On ajoute les éventuelles heures sup constatées au check-out ici
+    
+    await supabase.from('transactions').insert({
+      booking_id: booking.id,
+      recipient_id: booking.driver_id,
+      recipient_role: 'driver',
+      amount_cve: driverTotalEur * EUR_RATE,
+      scheduled_for: booking.end_date // Déclanché au Check-out
+    });
+  }
+}
