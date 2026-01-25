@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,8 +14,8 @@
 
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
-        
-        /* HEADER : Rigueur 70px / 20-60-20 */
+
+        /* HEADER : Hauteur 70px / Structure 20-60-20 */
         header { 
             height: 70px; 
             background: white; 
@@ -27,75 +26,90 @@
             z-index: 1000; 
             border-bottom: 1px solid #f1f5f9;
         }
-        .header-side { width: 20%; display: flex; align-items: center; padding: 0 16px; }
-        .header-center { width: 60%; display: flex; justify-content: center; align-items: center; }
+        .header-left { width: 20%; display: flex; justify-content: flex-start; padding-left: 16px; }
+        .header-center { width: 60%; display: flex; justify-content: center; }
+        .header-right { width: 20%; display: flex; justify-content: flex-end; padding-right: 16px; }
 
-        /* ZONE HERO : Réduite de 60% */
-        .hero-bg { 
-            background-color: #1d4379; 
-            border-bottom-left-radius: 45px; 
-            border-bottom-right-radius: 45px;
-            padding-top: 15px;
-            padding-bottom: 35px; /* Très compact */
+        /* ZONE HERO : Réduite de 60%, aucun texte */
+        .hero-section {
+            background-color: #1d4379;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            padding: 15px 0 30px 0; /* Ultra compact */
         }
 
-        /* ALIGNEMENT RECHERCHE ET FILTRES */
-        .content-wrapper {
-            max-width: 400px; /* Largeur de référence pour aligner recherche et filtres */
+        /* Conteneur aligné */
+        .nav-align-wrapper {
+            width: 90%;
             margin: 0 auto;
         }
 
-        /* FILTRES : Hauteur réduite de moitié, blancs, à cheval */
-        .filter-float {
-            margin-top: -20px; /* Positionnement 50/50 sur le bord bleu */
+        /* FILTRES : Hauteur 32px, Blancs, alignés, à cheval 50% */
+        .filter-overlap {
+            margin-top: -16px; /* 50% de 32px */
+            position: relative;
             z-index: 50;
         }
 
-        .categories-grid {
+        .filter-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 8px;
         }
 
-        .cat-chip {
+        .filter-btn {
             background: white;
-            height: 40px; /* Hauteur réduite de moitié par rapport aux versions initiales */
-            border-radius: 12px;
+            height: 32px; /* Hauteur réduite de moitié */
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
             font-size: 8px;
-            font-weight: 800;
+            font-weight: 900;
             color: #94a3b8;
             text-transform: uppercase;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             border: 1px solid #f1f5f9;
-            transition: all 0.2s;
         }
-        .cat-chip.active { color: #1d4379; border-color: #1d4379; }
-        .cat-chip i { width: 14px; height: 14px; }
+        .filter-btn.active {
+            color: #1d4379;
+            border-color: #1d4379;
+        }
+        .filter-btn i { width: 12px; height: 12px; }
 
-        /* LISTE : Colonne Unique Détaillée */
-        .car-card {
+        /* LISTE : Une seule colonne détaillée */
+        .car-vertical-list {
+            padding: 40px 16px 180px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .car-card-full {
             background: white;
-            border-radius: 32px;
+            border-radius: 30px;
             overflow: hidden;
             border: 1px solid #f1f5f9;
-            position: relative;
-            margin-bottom: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            position: relative;
         }
 
-        .location-tag { 
-            position: absolute; bottom: 15px; left: 15px; 
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); 
-            color: white; padding: 4px 12px; border-radius: 12px; 
-            font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 6px; 
+        .card-img-zone { position: relative; height: 240px; }
+        .card-img-zone img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .badge-stack {
+            position: absolute; top: 12px; left: 12px;
+            display: flex; gap: 6px; z-index: 10;
+        }
+        .island-chip {
+            position: absolute; bottom: 12px; left: 12px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            color: white; padding: 4px 12px; border-radius: 12px; font-size: 10px; font-weight: 700;
         }
 
-        /* ACTIONS FIXES AU BAS */
-        .action-bar-fixed {
+        /* BOUTONS ACTIONS FIXES AU BAS */
+        .footer-sticky-actions {
             position: fixed;
             bottom: 0;
             left: 0;
@@ -105,128 +119,106 @@
             padding: 16px 20px;
             border-top: 1px solid #f1f5f9;
             z-index: 900;
-        }
-
-        /* MENU HAMBURGER (Sidebar) */
-        #mobile-menu {
-            position: fixed;
-            inset: 0;
-            background: white;
-            z-index: 2000;
-            padding: 32px;
             display: flex;
             flex-direction: column;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
+            gap: 10px;
         }
-        #mobile-menu.active { transform: translateX(0); }
 
-        body { padding-bottom: 160px; } /* Espace pour les boutons fixes */
+        /* SIDEBAR (Hamburger) */
+        #mobile-sidebar {
+            position: fixed; inset: 0; background: white; z-index: 2000;
+            transform: translateX(-100%); transition: transform 0.3s ease;
+            padding: 30px;
+        }
+        #mobile-sidebar.active { transform: translateX(0); }
     </style>
 </head>
 <body class="bg-[#fcfcfd] antialiased">
 
     <header>
-        <div class="max-w-md mx-auto w-full flex h-full items-center">
-            <div class="header-side flex justify-start">
-                <button onclick="toggleMenu()" class="p-2"><i data-lucide="menu" class="w-7 h-7 text-[#1d4379]"></i></button>
-            </div>
-            <div class="header-center">
-                <img src="logo.png" alt="DjuntaCar" class="w-full max-h-10 object-contain">
-            </div>
-            <div class="header-side flex justify-end">
-                <button onclick="window.location.href='profile.html'" class="p-2"><i data-lucide="user" class="w-7 h-7 text-[#1d4379]"></i></button>
-            </div>
+        <div class="header-left">
+            <button onclick="toggleSidebar()"><i data-lucide="menu" class="w-7 h-7 text-[#1d4379]"></i></button>
+        </div>
+        <div class="header-center">
+            <img src="logo.png" alt="DjuntaCar" class="w-full max-h-10 object-contain">
+        </div>
+        <div class="header-right">
+            <button onclick="window.location.href='profile.html'"><i data-lucide="user" class="w-7 h-7 text-[#1d4379]"></i></button>
         </div>
     </header>
 
-    <section class="hero-bg px-6">
-        <div class="content-wrapper">
-            <div class="bg-white rounded-2xl shadow-xl flex items-center p-2 border border-gray-100">
-                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-[#1d4379]">
-                    <i data-lucide="search" class="w-5 h-5"></i>
+    <section class="hero-section">
+        <div class="nav-align-wrapper">
+            <div onclick="window.location.href='search-car.html'" class="bg-white rounded-xl shadow-lg flex items-center p-2 cursor-pointer">
+                <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-[#1d4379]">
+                    <i data-lucide="search" class="w-4 h-4"></i>
                 </div>
-                <input type="text" onclick="window.location.href='results.html'" placeholder="Trouver la voiture parfaite" class="flex-1 px-4 text-sm font-bold outline-none text-gray-400" readonly>
+                <div class="flex-1 px-4 text-xs font-bold text-gray-400">Trouver la voiture parfaite</div>
             </div>
         </div>
     </section>
 
-    <div class="px-6 filter-float">
-        <div class="content-wrapper">
-            <div class="categories-grid">
-                <button onclick="filterType('all', this)" class="cat-chip active">
-                    <i data-lucide="layout-grid"></i> <span>Tous</span>
-                </button>
-                <button onclick="filterType('4x4', this)" class="cat-chip">
-                    <i data-lucide="mountain"></i> <span>4x4</span>
-                </button>
-                <button onclick="filterType('citadine', this)" class="cat-chip">
-                    <i data-lucide="car"></i> <span>Citas</span>
-                </button>
-                <button onclick="filterType('luxe', this)" class="cat-chip">
-                    <i data-lucide="gem"></i> <span>Luxe</span>
-                </button>
-            </div>
+    <div class="nav-align-wrapper filter-overlap">
+        <div class="filter-grid">
+            <button onclick="filter('all', this)" class="filter-btn active"><i data-lucide="layout-grid"></i> Tous</button>
+            <button onclick="filter('4x4', this)" class="filter-btn"><i data-lucide="mountain"></i> 4x4</button>
+            <button onclick="filter('citas', this)" class="filter-btn"><i data-lucide="car"></i> Citas</button>
+            <button onclick="filter('luxe', this)" class="filter-btn"><i data-lucide="gem"></i> Luxe</button>
         </div>
     </div>
 
-    <main class="max-w-md mx-auto px-6 pt-10">
-        <div id="car-list" class="space-y-6">
-            <div class="car-card">
-                <div class="relative">
-                    <div class="absolute top-4 left-4 flex gap-2 z-10">
-                        <div class="bg-[#84cc16] text-white px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase">Super-Host</div>
-                        <div class="bg-[#1d4379] text-white px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase">Vérifié</div>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800" class="w-full h-56 object-cover">
-                    <div class="location-tag"><i data-lucide="map-pin" class="w-3 h-3 text-pink-500 fill-pink-500"></i> Boa Vista</div>
+    <main class="car-vertical-list">
+        
+        <div class="car-card-full">
+            <div class="card-img-zone">
+                <div class="badge-stack">
+                    <span class="bg-[#84cc16] text-white text-[9px] font-black px-2 py-1 rounded">SUPER-HOST</span>
+                    <span class="bg-[#1d4379] text-white text-[9px] font-black px-2 py-1 rounded uppercase">Vérifié</span>
                 </div>
-                <div class="p-5">
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <h3 class="text-base font-black text-[#1d4379]">Mercedes GLC</h3>
-                            <p class="text-[9px] font-bold text-gray-400 uppercase mt-1">Auto • Diesel • 5 Places</p>
-                        </div>
-                        <div class="flex items-center gap-1 font-black text-amber-500"><i data-lucide="star" class="w-4 h-4 fill-amber-500"></i> 5.0</div>
+                <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=800">
+                <div class="island-chip"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> Sal</div>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-xl font-black text-[#1d4379]">Mercedes GLC</h3>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Auto • Diesel • 5 Places</p>
                     </div>
-                    <div class="flex justify-between items-end border-t border-gray-50 pt-3">
-                        <span class="text-[10px] font-black text-blue-500 underline uppercase">Plus d'infos</span>
-                        <p class="text-xl font-black text-[#1d4379]">15 000 CVE <span class="text-[9px] text-gray-300">/j</span></p>
+                    <div class="flex items-center text-amber-500 font-black">
+                        <i data-lucide="star" class="w-4 h-4 fill-amber-500 mr-1"></i> 5.0
                     </div>
+                </div>
+                <div class="flex justify-between items-end border-t border-gray-50 pt-4">
+                    <button class="text-[10px] font-black text-blue-500 underline uppercase">Détails</button>
+                    <p class="text-2xl font-black text-[#1d4379]">15 000 <span class="text-xs">CVE</span></p>
                 </div>
             </div>
         </div>
+
     </main>
 
-    <div class="action-bar-fixed">
-        <div class="max-w-md mx-auto w-full flex flex-col gap-2">
-            <button onclick="window.location.href='add-car.html'" class="w-full bg-[#1d4379] text-white py-4 rounded-[18px] font-black text-[11px] uppercase tracking-widest shadow-lg">
-                Ajouter ma voiture
-            </button>
-            <button onclick="window.location.href='profile.html?driver=true'" class="w-full bg-[#22c55e] text-white py-4 rounded-[18px] font-black text-[10px] uppercase tracking-widest shadow-lg">
-                Devenir chauffeur
-            </button>
-        </div>
+    <div class="footer-sticky-actions">
+        <button onclick="window.location.href='add-car.html'" class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Ajouter ma voiture</button>
+        <button onclick="window.location.href='profile.html?action=driver'" class="w-full bg-[#22c55e] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Devenir chauffeur</button>
     </div>
 
-    <div id="mobile-menu">
+    <div id="mobile-sidebar">
         <div class="flex justify-between items-center mb-10">
             <img src="logo.png" class="h-6">
-            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full"><i data-lucide="x" class="w-6 h-6 text-gray-400"></i></button>
+            <button onclick="toggleSidebar()"><i data-lucide="x" class="w-7 h-7 text-gray-400"></i></button>
         </div>
-        <nav class="space-y-8 flex-1">
-            <a href="index.html" class="flex items-center gap-5 text-lg font-black text-[#1d4379] uppercase"><i data-lucide="home"></i> Accueil</a>
-            <a href="results.html" class="flex items-center gap-5 text-lg font-black text-[#1d4379] uppercase"><i data-lucide="search"></i> Recherche</a>
-            <a href="my-rentals.html" class="flex items-center gap-5 text-lg font-black text-[#1d4379] uppercase"><i data-lucide="calendar"></i> Mes Locations</a>
+        <nav class="space-y-6">
+            <a href="index.html" class="block text-lg font-black text-blue-500 uppercase">Accueil</a>
+            <a href="search-car.html" class="block text-lg font-black text-[#1d4379] uppercase">Recherche</a>
+            <a href="my-rentals.html" class="block text-lg font-black text-[#1d4379] uppercase">Mes Locations</a>
         </nav>
-        <button class="text-xs font-black text-red-400 uppercase text-left">Déconnexion</button>
     </div>
 
     <script>
         lucide.createIcons();
-        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
-        function filterType(type, btn) {
-            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+        function toggleSidebar() { document.getElementById('mobile-sidebar').classList.toggle('active'); }
+        function filter(type, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }
     </script>
