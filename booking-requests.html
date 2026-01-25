@@ -1,51 +1,163 @@
-<div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm mt-6">
-    <label class="text-[10px] font-bold text-gray-400 uppercase block mb-4">Planning du chauffeur</label>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Finaliser ma demande - DjuntaCar</title>
     
-    <div class="space-y-4">
-        <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl">
-            <i data-lucide="clock-3" class="w-5 h-5 text-[#1d4379]"></i>
-            <div class="flex-1">
-                <span class="text-[9px] font-bold text-gray-400 block">DÉBUT (CHECK-IN)</span>
-                <input type="text" id="start-time" placeholder="08:00" class="bg-transparent font-bold text-sm outline-none">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #fcfcfd; padding-bottom: 40px; }
+        .booking-card { background: white; border-radius: 28px; border: 1px solid #f1f5f9; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .input-group { background: #f8fafc; border-radius: 18px; padding: 12px 18px; display: flex; align-items: center; gap: 12px; }
+        input { width: 100%; font-weight: 700; color: #1d4379; outline: none; background: transparent; border: none; font-size: 14px; }
+        label { font-size: 10px; font-weight: 800; color: #bdc3c7; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <header class="h-14 flex items-center px-6 bg-white border-b border-gray-50 sticky top-0 z-50">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between">
+            <a href="results.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left" class="w-6 h-6"></i></a>
+            <span class="font-bold text-sm text-[#1d4379]">Finaliser les demandes</span>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 pt-8">
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2 leading-tight">Proposez un RDV</h1>
+        <p class="text-xs text-gray-400 font-medium mb-8 uppercase tracking-widest">Planification des 3 véhicules</p>
+
+        <div id="selection-list" class="space-y-3 mb-8">
+            </div>
+
+        <div class="booking-card space-y-6">
+            <div>
+                <label>Lieu de la remise des clés</label>
+                <div class="input-group">
+                    <i data-lucide="map-pin" class="w-5 h-5 text-[#1d4379]"></i>
+                    <select id="rdv-location" class="w-full bg-transparent font-bold text-sm outline-none text-[#1d4379]">
+                        <option>Aéroport Nelson Mandela (RAI)</option>
+                        <option>Port de Praia</option>
+                        <option>Centre Ville (Plateau)</option>
+                        <option>Hôtel / Adresse personnalisée</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label>Heure de Début</label>
+                    <div class="input-group">
+                        <i data-lucide="clock-3" class="w-5 h-5 text-[#1d4379]"></i>
+                        <input type="text" id="start-time" placeholder="08:00">
+                    </div>
+                </div>
+                <div>
+                    <label>Heure de Fin</label>
+                    <div class="input-group">
+                        <i data-lucide="clock-9" class="w-5 h-5 text-red-500"></i>
+                        <input type="text" id="end-time" placeholder="18:00">
+                    </div>
+                </div>
+            </div>
+
+            <div id="security-alert" class="hidden p-4 bg-red-50 border border-red-100 rounded-2xl">
+                <div class="flex items-center gap-3 text-red-600 mb-1">
+                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                    <span class="text-[11px] font-black uppercase">Alerte Sécurité</span>
+                </div>
+                <p id="alert-text" class="text-[10px] text-red-500 leading-relaxed font-medium"></p>
             </div>
         </div>
 
-        <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl">
-            <i data-lucide="clock-9" class="w-5 h-5 text-red-500"></i>
-            <div class="flex-1">
-                <span class="text-[9px] font-bold text-red-400 block">FIN MAX (MAX 10H)</span>
-                <input type="text" id="end-time" placeholder="18:00" class="bg-transparent font-bold text-sm outline-none">
-            </div>
-        </div>
-    </div>
-    
-    <p id="time-warning" class="text-[10px] text-red-500 font-bold mt-4 hidden">
-        Attention : Le chauffeur ne peut pas travailler plus de 10h.
-    </p>
-</div>
+        <button id="submit-requests" onclick="processBooking()" class="w-full bg-[#1d4379] text-white py-5 rounded-[22px] font-bold shadow-xl mt-8 active:scale-95 transition-all">Envoyer mes 3 demandes</button>
+    </main>
 
-<script>
-    // Initialisation Flatpickr avec contraintes
-    flatpickr("#start-time", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
-    flatpickr("#end-time", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
 
-    // Calcul automatique pour prévenir l'utilisateur
-    document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('change', () => {
-            const start = document.getElementById('start-time').value;
-            const end = document.getElementById('end-time').value;
-            if(start && end) {
-                const diff = calculateHours(start, end);
-                document.getElementById('time-warning').classList.toggle('hidden', diff <= 10);
+        // INIT CALENDRIERS HEURES
+        const timeConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true };
+        const startPicker = flatpickr("#start-time", { ...timeConfig, defaultDate: "08:00" });
+        const endPicker = flatpickr("#end-time", { ...timeConfig, defaultDate: "15:00" });
+
+        // LOGIQUE DE VALIDATION (NUMÉRO 2)
+        function checkConstraints() {
+            const startStr = document.getElementById('start-time').value;
+            const endStr = document.getElementById('end-time').value;
+            const alertBox = document.getElementById('security-alert');
+            const alertText = document.getElementById('alert-text');
+            const submitBtn = document.getElementById('submit-requests');
+
+            if (!startStr || !endStr) return;
+
+            const start = new Date(`2026-01-01T${startStr}:00`);
+            const end = new Date(`2026-01-01T${endStr}:00`);
+            
+            // Calcul de la durée
+            let diff = (end - start) / (1000 * 60 * 60);
+            if (diff < 0) diff += 24; // Gestion du passage à minuit
+
+            if (diff > 10) {
+                alertBox.classList.remove('hidden');
+                alertText.innerText = "La durée maximale de service pour un chauffeur est de 10h. Veuillez ajuster vos horaires.";
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50');
+            } else {
+                alertBox.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50');
             }
-        });
-    });
+        }
 
-    function calculateHours(start, end) {
-        const s = start.split(':');
-        const e = end.split(':');
-        const startDate = new Date(0, 0, 0, s[0], s[1], 0);
-        const endDate = new Date(0, 0, 0, e[0], e[1], 0);
-        return (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
-    }
-</script>
+        document.getElementById('start-time').addEventListener('change', checkConstraints);
+        document.getElementById('end-time').addEventListener('change', checkConstraints);
+
+        // RÉCUPÉRATION DES VÉHICULES SÉLECTIONNÉS (Simulation)
+        function loadSelection() {
+            const selection = JSON.parse(localStorage.getItem('djunta_selection') || '[]');
+            const list = document.getElementById('selection-list');
+            
+            if (selection.length === 0) {
+                list.innerHTML = `<p class="text-center py-10 text-gray-400 font-bold text-xs">Aucun véhicule sélectionné.</p>`;
+                return;
+            }
+
+            // Ici vous feriez un appel Supabase pour avoir les détails réels
+            list.innerHTML = selection.map(id => `
+                <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-50">
+                    <div class="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden">
+                        <img src="https://via.placeholder.com/100" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[11px] font-black text-[#1d4379]">ID Véhicule: ${id}</p>
+                        <p class="text-[9px] text-gray-400 font-bold uppercase">Disponibilité à vérifier</p>
+                    </div>
+                    <i data-lucide="check-circle-2" class="text-[#22c55e] w-5 h-5"></i>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        async function processBooking() {
+            // Ici, vous ajouteriez la logique Supabase pour vérifier le repos de 10h 
+            // entre les missions passées/futures du chauffeur dans la table driver_availability.
+            alert("Vos 3 demandes ont été envoyées aux propriétaires. Vous recevrez une notification dès qu'un chauffeur aura validé le RDV !");
+            window.location.href = 'index.html';
+        }
+
+        loadSelection();
+    </script>
+</body>
+</html>
