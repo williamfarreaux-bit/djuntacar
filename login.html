@@ -4,180 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Connexion - DjuntaCar</title>
-    <link rel="icon" type="image/png" href="sigle.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
-        body { font-family: 'Montserrat', sans-serif; background-color: #F3F4F6; }
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #fcfcfd; margin: 0; }
+
+        .auth-card { 
+            background: white; 
+            border-radius: 32px; 
+            border: 1px solid #f0f2f5; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.03); 
+        }
+        
+        .input-group { 
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 20px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+        .input-group:focus-within {
+            border-color: #1d4379;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(29, 67, 121, 0.05);
+        }
+
+        input { 
+            width: 100%; 
+            font-weight: 600; 
+            color: #1d4379; 
+            outline: none; 
+            background: transparent; 
+            border: none; 
+            font-size: 15px; 
+        }
+        input::placeholder { color: #cbd5e1; }
+
+        .btn-primary {
+            background-color: #1d4379;
+            color: white;
+            width: 100%;
+            padding: 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(29, 67, 121, 0.15);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:active { transform: scale(0.97); }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="antialiased text-gray-800 flex flex-col min-h-screen">
 
-    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden">
-        
-        <div class="absolute top-0 left-0 w-full h-2 bg-[#1d4379]"></div>
-
-        <div class="text-center mb-6 mt-4">
-            <img src="logo.png" alt="DjuntaCar" class="h-20 mx-auto mb-4 object-contain">
-            <h2 id="page-title" class="text-xl font-extrabold text-[#1d4379]">Bon retour !</h2>
-            <p id="page-subtitle" class="text-xs text-gray-400 font-medium mt-1">Connectez-vous pour gérer vos véhicules</p>
+    <main class="flex-1 flex flex-col justify-center px-8 py-12 max-w-md mx-auto w-full">
+        <div class="text-center mb-10">
+            <img src="logo.png" alt="DjuntaCar" class="h-10 mx-auto mb-6">
+            <h1 class="text-2xl font-extrabold text-[#1d4379]">Bon retour !</h1>
+            <p class="text-gray-400 text-sm font-medium mt-2">Connectez-vous pour continuer</p>
         </div>
 
-        <form id="auth-form" class="space-y-4">
-            
-            <div id="name-field" class="hidden">
-                <label class="block text-[10px] font-bold text-gray-400 mb-1 ml-1 uppercase">Prénom / Nom</label>
-                <div class="relative">
-                    <i data-lucide="user" class="absolute left-4 top-3.5 w-5 h-5 text-gray-300"></i>
-                    <input type="text" id="full_name" class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#1d4379] outline-none font-bold text-gray-700 placeholder="Ex: Cesaria Evora">
+        <form id="login-form" class="space-y-4">
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-gray-400 uppercase ml-4 tracking-wider">Email</label>
+                <div class="input-group">
+                    <i data-lucide="mail" class="w-5 h-5 text-gray-300"></i>
+                    <input type="email" id="email" placeholder="votre@email.com" required>
                 </div>
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold text-gray-400 mb-1 ml-1 uppercase">Email</label>
-                <div class="relative">
-                    <i data-lucide="mail" class="absolute left-4 top-3.5 w-5 h-5 text-gray-300"></i>
-                    <input type="email" id="email" class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#1d4379] outline-none font-bold text-gray-700" placeholder="exemple@gmail.com" required>
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-gray-400 uppercase ml-4 tracking-wider">Mot de passe</label>
+                <div class="input-group">
+                    <i data-lucide="lock" class="w-5 h-5 text-gray-300"></i>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                
+                <div class="flex justify-end px-2 mt-2">
+                    <a href="forgot-password.html" class="text-[11px] font-bold text-[#1d4379] hover:underline transition-all">
+                        Mot de passe oublié ?
+                    </a>
                 </div>
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold text-gray-400 mb-1 ml-1 uppercase">Mot de passe</label>
-                <div class="relative">
-                    <i data-lucide="lock" class="absolute left-4 top-3.5 w-5 h-5 text-gray-300"></i>
-                    <input type="password" id="password" class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#1d4379] outline-none font-bold text-gray-700" placeholder="••••••••" required>
-                </div>
-            </div>
-
-            <button type="submit" id="submit-btn" class="w-full bg-[#1d4379] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
-                Se connecter
+            <button type="submit" class="btn-primary mt-6 flex justify-center items-center gap-2">
+                <span>Se connecter</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
         </form>
 
-        <div id="msg" class="mt-4 text-center text-xs font-bold min-h-[20px]"></div>
-
-        <div class="mt-6 text-center">
-            <p class="text-xs text-gray-500">
-                <span id="toggle-text">Pas encore de compte ?</span>
-                <button type="button" onclick="toggleMode()" class="text-[#1d4379] font-bold hover:underline ml-1" id="toggle-btn">
-                    Créer un compte
-                </button>
-            </p>
-        </div>
-
-        <div class="mt-6 text-center border-t border-gray-100 pt-4">
-            <a href="index.html" class="text-[10px] text-gray-400 hover:text-[#1d4379] font-bold flex items-center justify-center gap-1">
-                <i data-lucide="arrow-left" class="w-3 h-3"></i> Retour à l'accueil
-            </a>
-        </div>
-    </div>
+        <p class="text-center mt-10 text-sm font-medium text-gray-400">
+            Pas encore de compte ? 
+            <a href="signup.html" class="text-[#1d4379] font-bold hover:underline">S'inscrire</a>
+        </p>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
-        
-        // 1. CONFIGURATION SUPABASE
-        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Variables d'état
-        let isSignUpMode = false;
+        // Remplacez par vos identifiants réels
+        const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
 
-        // Éléments du DOM
-        const form = document.getElementById('auth-form');
-        const msg = document.getElementById('msg');
-        const submitBtn = document.getElementById('submit-btn');
-        const title = document.getElementById('page-title');
-        const subtitle = document.getElementById('page-subtitle');
-        const nameField = document.getElementById('name-field');
-        const toggleText = document.getElementById('toggle-text');
-        const toggleBtn = document.getElementById('toggle-btn');
-
-        // 2. FONCTION POUR BASCULER ENTRE CONNEXION ET INSCRIPTION
-        window.toggleMode = () => {
-            isSignUpMode = !isSignUpMode;
-            
-            if (isSignUpMode) {
-                // MODE INSCRIPTION
-                title.innerText = "Créer un compte";
-                subtitle.innerText = "Rejoignez la communauté DjuntaCar";
-                submitBtn.innerText = "S'inscrire";
-                nameField.classList.remove('hidden'); // Affiche le champ Nom
-                document.getElementById('full_name').required = true; // Rend le nom obligatoire
-                toggleText.innerText = "Déjà un compte ?";
-                toggleBtn.innerText = "Se connecter";
-            } else {
-                // MODE CONNEXION
-                title.innerText = "Bon retour !";
-                subtitle.innerText = "Connectez-vous pour continuer";
-                submitBtn.innerText = "Se connecter";
-                nameField.classList.add('hidden'); // Cache le champ Nom
-                document.getElementById('full_name').required = false;
-                toggleText.innerText = "Pas encore de compte ?";
-                toggleBtn.innerText = "Créer un compte";
-            }
-        };
-
-        // 3. TRAITEMENT DU FORMULAIRE
-        form.addEventListener('submit', async (e) => {
+        document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault();
-            
-            // Récupération des valeurs
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const fullName = document.getElementById('full_name').value;
 
-            // Animation de chargement
-            submitBtn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Patientez...';
-            lucide.createIcons();
-            msg.innerText = "";
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
 
-            try {
-                if (isSignUpMode) {
-                    // --- CAS 1 : INSCRIPTION ---
-                    // C'est ici qu'on rattache le formulaire à la base de données
-                    const { data, error } = await supabase.auth.signUp({
-                        email: email,
-                        password: password,
-                        options: {
-                            // On envoie le nom dans les "méta-données"
-                            // Le Trigger SQL va récupérer ça pour créer le Profil
-                            data: { full_name: fullName } 
-                        }
-                    });
-                    
-                    if (error) throw error;
-                    
-                    msg.innerText = "✅ Compte créé ! Vérifiez vos emails pour confirmer.";
-                    msg.className = "mt-4 text-center text-xs font-bold text-green-600";
-                    
-                    // On attend 2 secondes puis on redirige
-                    setTimeout(() => window.location.href = 'index.html', 2000);
-
-                } else {
-                    // --- CAS 2 : CONNEXION ---
-                    const { data, error } = await supabase.auth.signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-                    
-                    if (error) throw error;
-
-                    // Succès : Redirection immédiate
-                    window.location.href = 'index.html';
-                }
-
-            } catch (err) {
-                console.error(err);
-                msg.innerText = "❌ " + err.message;
-                msg.className = "mt-4 text-center text-xs font-bold text-red-500";
-                // On remet le texte du bouton si erreur
-                submitBtn.innerText = isSignUpMode ? "S'inscrire" : "Se connecter";
+            if (error) {
+                alert("Erreur de connexion : " + error.message);
+            } else {
+                window.location.href = 'index.html';
             }
-        });
+        };
     </script>
 </body>
 </html>
