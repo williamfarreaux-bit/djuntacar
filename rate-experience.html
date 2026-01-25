@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Évaluation - DjuntaCar</title>
+    <title>Évaluations - DjuntaCar</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,35 +14,36 @@
 
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #f8fafc; padding-bottom: 40px; }
+        body { background-color: #f8fafc; padding-bottom: 60px; }
 
-        .star-rating {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
+        .review-card {
+            background: white;
+            border-radius: 28px;
+            padding: 24px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
         }
-        .star {
-            cursor: pointer;
-            transition: transform 0.2s;
-            color: #e2e8f0;
-        }
+
+        .star-group { display: flex; gap: 8px; justify-content: center; margin: 15px 0; }
+        .star { cursor: pointer; color: #e2e8f0; transition: transform 0.2s; }
         .star.active { color: #fbbf24; fill: #fbbf24; }
-        .star:active { transform: scale(0.9); }
-
-        .blacklist-box {
-            border: 2px solid #fee2e2;
-            background: #fff5f5;
-            border-radius: 24px;
-            padding: 20px;
+        
+        .comment-area {
+            width: 100%;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            outline: none;
+            min-height: 80px;
         }
 
-        /* Toggle Switch Custom */
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #ef4444; }
-        input:checked + .slider:before { transform: translateX(20px); }
+        .section-label {
+            font-[8px] font-black text-gray-300 uppercase tracking-widest block mb-2 text-center;
+        }
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -50,62 +51,28 @@
     <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
             <a href="my-rentals.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left" class="w-6 h-6"></i></a>
-            <span class="font-bold text-sm text-[#1d4379]">Évaluation</span>
-            
-            <div class="relative cursor-pointer" onclick="toggleNotifications()">
-                <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
-                <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
-                
-                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
-                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2">Notifications</h4>
-                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2"></div>
-                </div>
-            </div>
+            <span class="font-bold text-sm text-[#1d4379]">Évaluations</span>
+            <div class="w-10"></div>
         </div>
     </header>
 
     <main class="max-w-md mx-auto px-6 pt-8">
         
-        <div class="text-center mb-10">
-            <div id="avatar-container" class="w-20 h-20 bg-gray-100 rounded-3xl mx-auto mb-4 overflow-hidden border-2 border-white shadow-md">
-                <img id="reviewee-img" src="https://via.placeholder.com/150" class="w-full h-full object-cover">
-            </div>
-            <h1 class="text-xl font-black text-[#1d4379]" id="title-name">Comment s'est passée la location ?</h1>
-            <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest" id="subtitle-role">Partagez votre avis</p>
+        <div class="mb-8">
+            <h1 class="text-xl font-black text-[#1d4379]" id="main-title">Partagez votre expérience</h1>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Vos avis aident la communauté au Cap-Vert</p>
         </div>
 
-        <div class="bg-white rounded-[2.5rem] p-8 border border-gray-50 shadow-sm mb-6">
-            <p class="text-center text-[10px] font-black text-gray-300 uppercase mb-6 tracking-widest">Note globale</p>
-            <div class="star-rating" id="star-box">
-                <i data-lucide="star" class="star w-8 h-8" onclick="setRating(1)"></i>
-                <i data-lucide="star" class="star w-8 h-8" onclick="setRating(2)"></i>
-                <i data-lucide="star" class="star w-8 h-8" onclick="setRating(3)"></i>
-                <i data-lucide="star" class="star w-8 h-8" onclick="setRating(4)"></i>
-                <i data-lucide="star" class="star w-8 h-8" onclick="setRating(5)"></i>
+        <div id="review-forms-container">
+            <div class="animate-pulse space-y-4">
+                <div class="h-40 bg-gray-200 rounded-3xl"></div>
+                <div class="h-40 bg-gray-200 rounded-3xl"></div>
             </div>
         </div>
 
-        <div class="bg-white rounded-[2.5rem] p-8 border border-gray-50 shadow-sm mb-6">
-            <p class="text-[10px] font-black text-gray-400 uppercase mb-4 tracking-widest">Commentaire (optionnel)</p>
-            <textarea id="comment" placeholder="Décrivez votre expérience..." class="w-full h-32 bg-gray-50 rounded-2xl p-4 text-xs font-bold text-[#1d4379] outline-none border-none placeholder-gray-300"></textarea>
-        </div>
-
-        <div id="blacklist-section" class="blacklist-box mb-8 hidden">
-            <div class="flex justify-between items-start">
-                <div class="flex-1 pr-4">
-                    <h4 class="text-xs font-black text-red-600 uppercase">Comportement dangereux</h4>
-                    <p class="text-[9px] text-red-400 font-bold mt-1 leading-relaxed">Activez ceci si le locataire a mis en danger le véhicule ou autrui. L'administrateur examinera le profil pour un éventuel bannissement.</p>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="dangerous-behavior">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <button onclick="submitReview()" id="submit-btn" class="w-full bg-[#1d4379] text-white py-5 rounded-[22px] font-black shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
-            <i data-lucide="send" class="w-5 h-5"></i>
-            VALIDER L'ÉVALUATION
+        <button onclick="submitAllReviews()" id="submit-btn" class="w-full bg-[#1d4379] text-white py-5 rounded-[22px] font-black shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all mt-4">
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+            PUBLIER LES AVIS
         </button>
 
     </main>
@@ -114,83 +81,118 @@
     <script>
         lucide.createIcons();
         const supabase = window.supabase.createClient('URL', 'KEY');
-        let currentRating = 0;
-        let role = 'tenant'; // 'tenant' ou 'host'
-        let bookingId, targetUserId;
+        
+        let bookingData = null;
+        let currentUser = null;
+        let ratings = { vehicle: 0, host: 0, driver: 0, tenant: 0 };
 
         async function init() {
             const params = new URLSearchParams(window.location.search);
-            bookingId = params.get('id');
+            const bookingId = params.get('id');
+            
             const { data: { user } } = await supabase.auth.getUser();
+            currentUser = user;
+
+            const { data: b } = await supabase.from('bookings')
+                .select('*, vehicles(*), profiles:tenant_id(full_name), hosts:host_id(full_name), drivers:driver_id(full_name)')
+                .eq('id', bookingId).single();
             
-            // Récupérer les détails du booking
-            const { data: b } = await supabase.from('bookings').select('*, vehicles(*)').eq('id', bookingId).single();
-            
-            if (user.id === b.tenant_id) {
-                role = 'tenant';
-                targetUserId = b.host_id;
-                document.getElementById('title-name').innerText = `Notez le véhicule de ${b.vehicles.make}`;
-                document.getElementById('subtitle-role').innerText = "Avis sur le propriétaire";
-            } else {
-                role = 'host';
-                targetUserId = b.tenant_id;
-                document.getElementById('title-name').innerText = "Évaluez le comportement du locataire";
-                document.getElementById('blacklist-section').classList.remove('hidden');
-            }
-            loadNotifications(user.id);
+            bookingData = b;
+            renderForms();
         }
 
-        function setRating(n) {
-            currentRating = n;
-            const stars = document.querySelectorAll('.star');
+        function renderForms() {
+            const container = document.getElementById('review-forms-container');
+            let html = '';
+
+            if (currentUser.id === bookingData.tenant_id) {
+                // VUE LOCATAIRE : Note la voiture, le proprio et le chauffeur
+                html += createReviewCard('vehicle', `La Voiture (${bookingData.vehicles.make})`, 'Qualité, propreté, confort...');
+                html += createReviewCard('host', `Le Propriétaire (${bookingData.hosts.full_name})`, 'Accueil, ponctualité, réactivité...');
+                if (bookingData.driver_id) {
+                    html += createReviewCard('driver', `Le Chauffeur (${bookingData.drivers.full_name})`, 'Conduite, courtoisie, service...');
+                }
+            } else {
+                // VUE PROPRIO / CHAUFFEUR : Note le locataire
+                html += createReviewCard('tenant', `Le Locataire (${bookingData.profiles.full_name})`, 'Soin du véhicule, communication, respect des horaires...');
+                // Option danger pour l'admin
+                html += `
+                    <div class="bg-red-50 p-6 rounded-3xl border border-red-100 mb-6">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-black text-red-600 uppercase">Comportement Dangereux ?</span>
+                            <input type="checkbox" id="is_dangerous" class="w-5 h-5 accent-red-600">
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function createReviewCard(type, title, placeholder) {
+            return `
+                <div class="review-card" data-type="${type}">
+                    <span class="text-[9px] font-black text-gray-300 uppercase block text-center tracking-widest">${title}</span>
+                    <div class="star-group" id="stars-${type}">
+                        ${[1,2,3,4,5].map(n => `<i data-lucide="star" class="star w-7 h-7" onclick="handleStarClick('${type}', ${n})"></i>`).join('')}
+                    </div>
+                    <textarea id="comment-${type}" class="comment-area" placeholder="${placeholder}"></textarea>
+                </div>
+            `;
+        }
+
+        function handleStarClick(type, rating) {
+            ratings[type] = rating;
+            const stars = document.querySelectorAll(`#stars-${type} .star`);
             stars.forEach((s, i) => {
-                if (i < n) s.classList.add('active');
+                if (i < rating) s.classList.add('active');
                 else s.classList.remove('active');
             });
         }
 
-        async function submitReview() {
-            if (currentRating === 0) return alert("Veuillez sélectionner une note.");
-            
+        async function submitAllReviews() {
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerText = "Envoi...";
+            btn.innerText = "Publication...";
 
-            const comment = document.getElementById('comment').value;
-            const isDangerous = document.getElementById('dangerous-behavior').checked;
+            const reviewEntries = [];
+            const types = currentUser.id === bookingData.tenant_id ? ['vehicle', 'host', 'driver'] : ['tenant'];
 
-            const { error } = await supabase.from('reviews').insert({
-                booking_id: bookingId,
-                rating: currentRating,
-                comment: comment,
-                is_dangerous: isDangerous,
-                target_user_id: targetUserId
-            });
+            for (const type of types) {
+                if (type === 'driver' && !bookingData.driver_id) continue;
+                if (ratings[type] === 0) continue; // On ignore si pas de note
+
+                let targetId = null;
+                let targetType = type;
+
+                if (type === 'vehicle') targetId = bookingData.vehicle_id;
+                else if (type === 'host') targetId = bookingData.host_id;
+                else if (type === 'driver') targetId = bookingData.driver_id;
+                else if (type === 'tenant') targetId = bookingData.tenant_id;
+
+                reviewEntries.push({
+                    booking_id: bookingData.id,
+                    reviewer_id: currentUser.id,
+                    target_id: targetId,
+                    target_type: targetType,
+                    rating: ratings[type],
+                    comment: document.getElementById(`comment-${type}`).value,
+                    is_dangerous: document.getElementById('is_dangerous')?.checked || false
+                });
+            }
+
+            const { error } = await supabase.from('reviews').insert(reviewEntries);
 
             if (!error) {
-                // Créer une notification pour l'autre utilisateur
-                await supabase.from('notifications').insert({
-                    user_id: targetUserId,
-                    title: "Nouvel avis reçu",
-                    content: `Vous avez reçu une note de ${currentRating}/5.`
-                });
-
-                alert("Merci pour votre retour !");
+                alert("Merci ! Vos avis ont été publiés.");
                 window.location.href = 'my-rentals.html';
+            } else {
+                alert("Erreur : " + error.message);
+                btn.disabled = false;
             }
         }
 
-        async function loadNotifications(userId) {
-            const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', userId).eq('is_read', false);
-            const badge = document.getElementById('notif-badge');
-            if (notifs && notifs.length > 0) {
-                badge.innerText = notifs.length;
-                badge.classList.remove('hidden');
-            }
-            document.getElementById('notif-list').innerHTML = notifs.map(n => `<div class="p-3 bg-blue-50 rounded-2xl text-[10px] font-bold text-[#1d4379]">${n.title}</div>`).join('') || '<p class="text-center py-4 text-[9px] font-bold text-gray-300">Pas d\'alertes</p>';
-        }
-
-        function toggleNotifications() { document.getElementById('notif-panel').classList.toggle('hidden'); }
         init();
     </script>
 </body>
