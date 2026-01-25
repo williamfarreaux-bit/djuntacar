@@ -1,160 +1,35 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Véhicules Disponibles - DjuntaCar</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+<div id="selection-bar" class="fixed bottom-6 left-6 right-6 bg-[#1d4379] text-white p-4 rounded-2xl shadow-2xl flex justify-between items-center hidden z-[60]">
+    <div class="flex items-center gap-3">
+        <span id="selection-count" class="bg-white text-[#1d4379] w-6 h-6 rounded-full flex items-center justify-center font-black text-xs">0</span>
+        <span class="text-xs font-bold">Véhicules sélectionnés (max 3)</span>
+    </div>
+    <a href="booking-requests.html" class="bg-[#22c55e] px-4 py-2 rounded-xl text-[11px] font-black uppercase">Continuer</a>
+</div>
 
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; margin: 0; }
+<script>
+    let selectedVehicles = [];
 
-        /* GRILLE À DEUX COLONNES */
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            padding: 20px;
-        }
-
-        .car-card {
-            background: white;
-            border-radius: 24px;
-            border: 1px solid #f0f2f5;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease;
-        }
-        .car-card:active { transform: scale(0.97); }
-
-        .image-container {
-            position: relative;
-            width: 100%;
-            padding-top: 75%; /* Ratio 4:3 */
-        }
-        .car-image {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-        }
-
-        .review-pill {
-            display: flex; align-items: center; gap: 3px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            padding: 3px 8px;
-            border-radius: 99px;
-            color: white;
-            position: absolute;
-            top: 8px; right: 8px;
-        }
-
-        .badge-category {
-            position: absolute;
-            bottom: 8px; left: 8px;
-            background: rgba(29, 67, 121, 0.85);
-            color: white;
-            font-size: 8px;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 6px;
-            text-transform: uppercase;
-        }
-    </style>
-</head>
-<body class="antialiased text-gray-800">
-
-    <header class="h-14 flex items-center px-6 bg-white/90 backdrop-blur-md border-b border-gray-50 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between">
-            <a href="search-car.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="arrow-left" class="w-6 h-6"></i></a>
-            <span class="font-bold text-sm text-[#1d4379]">Véhicules trouvés</span>
-            <div class="w-10"></div>
-        </div>
-    </header>
-
-    <main class="max-w-md mx-auto">
-        <div class="px-6 pt-6 flex justify-between items-end">
-            <div>
-                <h1 class="text-xl font-extrabold text-[#1d4379] tracking-tight">Disponibles</h1>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1" id="count-label">Chargement...</p>
-            </div>
-            <i data-lucide="sliders-horizontal" class="w-5 h-5 text-gray-400 mb-1"></i>
-        </div>
-
-        <div class="results-grid" id="vehicle-list">
-            <div class="animate-pulse bg-gray-100 h-48 rounded-[24px]"></div>
-            <div class="animate-pulse bg-gray-100 h-48 rounded-[24px]"></div>
-            <div class="animate-pulse bg-gray-100 h-48 rounded-[24px]"></div>
-            <div class="animate-pulse bg-gray-100 h-48 rounded-[24px]"></div>
-        </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        lucide.createIcons();
-
-        // CONFIGURATION SUPABASE
-        const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
-
-        async function fetchVehicles() {
-            const { data, error } = await supabase
-                .from('vehicles')
-                .select('*')
-                .eq('is_active', true)
-                .order('created_at', { ascending: false });
-
-            const list = document.getElementById('vehicle-list');
-            const label = document.getElementById('count-label');
-
-            if (error) {
-                list.innerHTML = `<p class="col-span-2 text-center py-10 text-red-400 font-bold">Erreur de connexion</p>`;
+    function toggleSelection(vehicleId, vehicleName) {
+        const index = selectedVehicles.indexOf(vehicleId);
+        if (index > -1) {
+            selectedVehicles.splice(index, 1);
+        } else {
+            if (selectedVehicles.length < 3) {
+                selectedVehicles.push(vehicleId);
+            } else {
+                alert("Vous pouvez choisir jusqu'à 3 véhicules maximum.");
                 return;
             }
-
-            label.innerText = `${data.length} voitures trouvées`;
-
-            if (data.length === 0) {
-                list.innerHTML = `<p class="col-span-2 text-center py-10 text-gray-400 font-bold">Aucun véhicule disponible</p>`;
-                return;
-            }
-
-            list.innerHTML = data.map(car => `
-                <div class="car-card" onclick="window.location.href='car-detail.html?id=${car.id}'">
-                    <div class="image-container">
-                        <img src="${car.images_url?.[0] || 'https://via.placeholder.com/300x225'}" class="car-image" alt="${car.make}">
-                        <div class="review-pill">
-                            <i data-lucide="star" class="w-2.5 h-2.5 text-yellow-400 fill-yellow-400"></i>
-                            <span class="text-[10px] font-bold">4.8</span>
-                        </div>
-                        <div class="badge-category">${car.category || 'Véhicule'}</div>
-                    </div>
-                    <div class="p-4 flex-1 flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-extrabold text-[12px] text-gray-900 leading-tight truncate">${car.make} ${car.model}</h3>
-                            <p class="text-[9px] text-gray-400 font-bold mt-1 uppercase">${car.island}</p>
-                        </div>
-                        <div class="mt-3 flex items-baseline gap-1">
-                            <span class="text-[#1d4379] font-black text-sm">${car.price_per_day}</span>
-                            <span class="text-[8px] text-gray-400 font-bold uppercase tracking-tighter">CVE / jour</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            lucide.createIcons();
         }
+        updateSelectionUI();
+    }
 
-        fetchVehicles();
-    </script>
-</body>
-</html>
+    function updateSelectionUI() {
+        const bar = document.getElementById('selection-bar');
+        const count = document.getElementById('selection-count');
+        count.innerText = selectedVehicles.length;
+        bar.classList.toggle('hidden', selectedVehicles.length === 0);
+        // Sauvegarder dans le stockage pour la page suivante
+        localStorage.setItem('djunta_selection', JSON.stringify(selectedVehicles));
+    }
+</script>
