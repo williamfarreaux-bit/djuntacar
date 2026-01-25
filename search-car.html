@@ -3,191 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rechercher un véhicule - DjuntaCar</title>
+    <title>DjuntaCar - Recherche</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
-
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; margin: 0; padding-bottom: 60px; }
-        .filter-card { background: white; border-radius: 28px; border: 1px solid #f0f2f5; box-shadow: 0 15px 35px rgba(0,0,0,0.03); }
-        .input-group { border-bottom: 1px solid #f0f2f5; padding: 16px 20px; }
-        .input-group:last-child { border-bottom: none; }
-        label { font-size: 10px; font-weight: 700; color: #bdc3c7; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 0.8px; }
-        select, input { width: 100%; font-weight: 600; color: #1d4379; outline: none; background: transparent; border: none; font-size: 14px; }
-        .star-rating { display: flex; gap: 8px; margin-top: 5px; }
-        .star-icon { color: #e5e7eb; cursor: pointer; transition: all 0.2s; }
-        .star-icon.active { color: #facc15; fill: #facc15; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
-        .modal-box { background: white; border-radius: 35px; padding: 35px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
-        input[type="range"] { accent-color: #1d4379; }
-    </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="h-14 flex items-center px-6 bg-white/80 backdrop-blur-md border-b border-gray-50 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between">
-            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="arrow-left" class="w-6 h-6"></i></a>
-            <span class="font-bold text-sm text-[#1d4379]">Filtres de recherche</span>
-            <div class="w-10"></div>
+    <header>
+        <div class="header-left">
+            <button onclick="toggleMenu()"><i data-lucide="menu" class="w-7 h-7 text-[#1d4379]"></i></button>
+        </div>
+        <div class="header-center">
+            <img src="logo.png" alt="DjuntaCar" class="header-logo">
+        </div>
+        <div class="header-right">
+            <button onclick="window.location.href='profile.html'"><i data-lucide="user" class="w-7 h-7 text-[#1d4379]"></i></button>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-6">
-        <h1 class="text-xl font-extrabold text-[#1d4379] mb-6 leading-tight text-center">Trouvez la voiture parfaite</h1>
+    <main class="content-padding pt-8">
+        <h1 class="text-2xl font-black text-[#1d4379] mb-6">Planifier mon trajet</h1>
 
-        <div class="filter-card overflow-hidden">
-            <div class="grid grid-cols-2">
-                <div class="input-group border-r border-gray-100">
-                    <label>Île</label>
-                    <select id="f-island">
-                        <option>Santiago</option>
-                        <option>Sal</option>
-                        <option>São Vicente</option>
-                        <option>Boa Vista</option>
+        <form id="searchForm" onsubmit="event.preventDefault(); goToResults();">
+            
+            <div class="form-section">
+                <label class="input-label">Lieu de prise en charge</label>
+                <div class="relative flex items-center">
+                    <i data-lucide="map-pin" class="absolute left-0 text-[#1d4379] w-5 h-5"></i>
+                    
+                    <select id="locationSelect" class="input-field pl-8 bg-transparent appearance-none">
+                        <option value="" disabled selected>Choisir une ville ou un aéroport...</option>
+                        
+                        <optgroup label="🏝️ SANTIAGO">
+                            <option value="rai_airport">Praia - Aéroport N. Mandela (RAI)</option>
+                            <option value="praia_city">Praia - Centre Ville</option>
+                            <option value="tarrafal">Tarrafal</option>
+                            <option value="assomada">Assomada</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ SÃO VICENTE">
+                            <option value="vxe_airport">Mindelo - Aéroport C. Évora (VXE)</option>
+                            <option value="mindelo_city">Mindelo - Centre Ville</option>
+                            <option value="mindelo_port">Porto Grande (Ferry)</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ SAL">
+                            <option value="sid_airport">Espargos - Aéroport A. Cabral (SID)</option>
+                            <option value="santa_maria">Santa Maria</option>
+                            <option value="palmeira">Palmeira (Port)</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ BOA VISTA">
+                            <option value="bvc_airport">Rabil - Aéroport A. Pereira (BVC)</option>
+                            <option value="sal_rei">Sal Rei</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ FOGO">
+                            <option value="sfl_airport">São Filipe - Aéroport (SFL)</option>
+                            <option value="sao_filipe">São Filipe - Ville</option>
+                            <option value="mosteiros">Mosteiros</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ SANTO ANTÃO">
+                            <option value="porto_novo">Porto Novo (Gare Maritime)</option>
+                            <option value="ribeira_grande">Ribeira Grande</option>
+                            <option value="ponta_sol">Ponta do Sol</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ SÃO NICOLAU">
+                            <option value="sne_airport">Preguiça - Aéroport (SNE)</option>
+                            <option value="ribeira_brava">Ribeira Brava</option>
+                            <option value="tarrafal_sn">Tarrafal de São Nicolau</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ MAIO">
+                            <option value="mmo_airport">Vila do Maio - Aéroport (MMO)</option>
+                            <option value="porto_ingles">Porto Inglês / Vila do Maio</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ BRAVA">
+                            <option value="furna">Furna (Port)</option>
+                            <option value="nova_sintra">Nova Sintra</option>
+                        </optgroup>
+
                     </select>
-                </div>
-                <div class="input-group">
-                    <label>Ville</label>
-                    <input type="text" id="f-city" placeholder="Ex: Praia">
+                    <i data-lucide="chevron-down" class="absolute right-0 text-gray-400 w-4 h-4 pointer-events-none"></i>
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>Période</label>
-                <input type="text" id="date-range" placeholder="Dates du séjour" class="cursor-pointer">
-            </div>
-
-            <div class="grid grid-cols-2">
-                <div class="input-group border-r border-gray-100">
-                    <label>Catégorie</label>
-                    <select id="f-type">
-                        <option value="all">Toutes</option>
-                        <option value="4x4">4X4</option>
-                        <option value="citadine">Citadine</option>
-                        <option value="monospace">Monospace</option>
-                        <option value="fourgonnette">Fourgonnette</option>
-                        <option value="pickup">Pick-up</option>
-                        <option value="premium">Premium</option>
-                    </select>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-section">
+                    <label class="input-label">Début</label>
+                    <input type="date" id="dateStart" class="input-field text-sm">
                 </div>
-                <div class="input-group">
-                    <label>Places</label>
-                    <select id="f-seats">
-                        <option value="all">Peu importe</option>
-                        <option value="2">2 places</option>
-                        <option value="5">5 places</option>
-                        <option value="7">7+ places</option>
-                    </select>
+                <div class="form-section">
+                    <label class="input-label">Fin</label>
+                    <input type="date" id="dateEnd" class="input-field text-sm">
                 </div>
             </div>
 
-            <div class="grid grid-cols-2">
-                <div class="input-group border-r border-gray-100">
-                    <label>Portes</label>
-                    <select id="f-doors">
-                        <option value="all">Peu importe</option>
-                        <option value="2">2-3 portes</option>
-                        <option value="4">4-5 portes</option>
-                    </select>
+            <div class="form-section flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="icon-rounded bg-blue-light">
+                        <i data-lucide="user-check" class="w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-[#1d4379] text-sm">Avec Chauffeur</span>
                 </div>
-                <div class="input-group">
-                    <label>Carburant</label>
-                    <select id="f-fuel">
-                        <option value="all">Tous</option>
-                        <option value="Essence">Essence</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="Electrique">Électrique</option>
-                        <option value="Hybride">Hybride</option>
-                    </select>
-                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="driverToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1d4379]"></div>
+                </label>
             </div>
 
-            <div class="input-group">
-                <label>Climatisation</label>
-                <select id="f-ac">
-                    <option value="all">Peu importe</option>
-                    <option value="true">Oui</option>
-                    <option value="false">Non</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <div class="flex justify-between items-center mb-3">
-                    <label class="m-0">Budget max / jour</label>
-                    <span id="price-val" class="text-xs font-extrabold text-[#1d4379]">15 000 CVE</span>
-                </div>
-                <input type="range" id="price-range" min="2000" max="30000" step="500" value="15000" class="w-full">
-            </div>
-
-            <div class="input-group">
-                <label>Avis utilisateurs</label>
-                <div class="star-rating" id="star-box">
-                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="1"></i>
-                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="2"></i>
-                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="3"></i>
-                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="4"></i>
-                    <i data-lucide="star" class="star-icon w-6 h-6" data-val="5"></i>
-                </div>
-            </div>
-
-            <div class="input-group bg-blue-50/40 flex items-center justify-between py-5">
-                <div class="flex items-center gap-4">
-                    <div class="bg-white p-2 rounded-xl shadow-sm"><i data-lucide="user-check" class="w-5 h-5 text-[#1d4379]"></i></div>
-                    <span class="text-sm font-bold text-[#1d4379]">Prendre un chauffeur</span>
-                </div>
-                <input type="checkbox" id="driver-check" class="w-6 h-6 rounded-lg accent-[#1d4379] cursor-pointer">
-            </div>
-        </div>
-
-        <button onclick="handleMainSearch()" class="w-full bg-[#1d4379] text-white py-5 rounded-[22px] font-bold shadow-xl mt-8 active:scale-95 transition-all">Afficher les véhicules</button>
+        </form>
     </main>
 
-    <div id="driver-modal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="user-plus" class="w-8 h-8"></i></div>
-            <h3 class="text-xl font-extrabold mb-3 text-gray-900">Option Chauffeur</h3>
-            <p class="text-sm text-gray-400 mb-8 leading-relaxed">Souhaitez-vous choisir personnellement votre chauffeur ?</p>
-            <div class="flex flex-col gap-3">
-                <a href="search-driver.html" class="bg-[#22c55e] text-white py-4 rounded-2xl font-bold shadow-lg">Oui, choisir</a>
-                <button onclick="skipDriverChoice()" class="text-gray-300 font-bold py-2 text-sm">Non, assignation auto</button>
-            </div>
+    <div class="fixed-footer">
+        <button onclick="goToResults()" class="btn-action btn-primary flex items-center justify-center gap-2 shadow-xl">
+            <i data-lucide="search" class="w-4 h-4"></i>
+            Voir les véhicules
+        </button>
+    </div>
+
+    <div id="menu-overlay" onclick="toggleMenu()"></div>
+    <div id="universal-menu">
+        <div class="menu-header">
+            <img src="logo.png" style="height: 32px;">
+            <button onclick="toggleMenu()"><i data-lucide="x" style="width: 24px; color: #1d4379;"></i></button>
+        </div>
+        <nav class="menu-nav">
+            <a href="index.html" class="menu-link"><i data-lucide="home"></i> Accueil</a>
+            <a href="search-car.html" class="menu-link"><i data-lucide="search"></i> Recherche</a>
+            <a href="my-rentals.html" class="menu-link"><i data-lucide="calendar"></i> Mes Locations</a>
+            <a href="profile.html" class="menu-link"><i data-lucide="user"></i> Profil</a>
+        </nav>
+        <div class="menu-footer">
+            <button onclick="if(confirm('Déconnexion ?')) window.location.href='login.html'" class="btn-logout"><i data-lucide="log-out"></i> Déconnexion</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-        flatpickr("#date-range", { mode: "range", minDate: "today", dateFormat: "d/m/Y", locale: "fr" });
-        const range = document.getElementById('price-range');
-        range.addEventListener('input', (e) => {
-            document.getElementById('price-val').innerText = parseInt(e.target.value).toLocaleString() + ' CVE';
-        });
-        const stars = document.querySelectorAll('.star-icon');
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                const v = star.dataset.val;
-                stars.forEach(s => s.classList.toggle('active', s.dataset.val <= v));
-            });
-        });
-        function handleMainSearch() {
-            if (document.getElementById('driver-check').checked) {
-                document.getElementById('driver-modal').style.display = 'flex';
-            } else {
-                alert("Redirection vers la liste des voitures filtrées...");
+        
+        // Gestion du Menu Burger
+        function toggleMenu() { 
+            document.getElementById('universal-menu').classList.toggle('open'); 
+            document.getElementById('menu-overlay').classList.toggle('open'); 
+        }
+
+        // Action de recherche
+        function goToResults() {
+            const loc = document.getElementById('locationSelect').value;
+            const start = document.getElementById('dateStart').value;
+            const end = document.getElementById('dateEnd').value;
+
+            if(!loc) {
+                alert("Veuillez choisir une ville ou un aéroport.");
+                return;
             }
+            if(!start || !end) {
+                alert("Veuillez sélectionner vos dates.");
+                return;
+            }
+
+            // Redirection vers l'accueil filtré (simulation)
+            // Dans une vraie app, on passerait les paramètres dans l'URL (index.html?loc=praia&start=...)
+            window.location.href = 'index.html';
         }
-        function skipDriverChoice() {
-            alert("Un chauffeur vous sera assigné automatiquement et facturé 25€ pour 7h. Chaque heure supplémentaire sera facturée 5€.");
-            document.getElementById('driver-modal').style.display = 'none';
-        }
+
+        // Dates par défaut (Demain -> +3 jours)
+        window.onload = () => {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('dateStart').valueAsDate = tomorrow;
+            
+            const next = new Date(tomorrow);
+            next.setDate(next.getDate() + 3);
+            document.getElementById('dateEnd').valueAsDate = next;
+        };
     </script>
 </body>
 </html>
