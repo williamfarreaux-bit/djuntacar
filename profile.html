@@ -7,8 +7,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f8fafc; padding-bottom: 40px; }
+        .review-card { background: white; border-radius: 20px; padding: 16px; border: 1px solid #f1f5f9; margin-bottom: 12px; }
+    </style>
 </head>
-<body class="bg-[#fcfcfd]">
+<body class="antialiased">
 
     <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
@@ -19,7 +24,7 @@
                 <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
                 <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
                     <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2 tracking-widest">Notifications</h4>
-                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2 no-scrollbar"></div>
+                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2"></div>
                 </div>
             </div>
         </div>
@@ -27,40 +32,71 @@
 
     <main class="max-w-md mx-auto px-6 pt-10">
         <div class="flex flex-col items-center mb-10">
-            <div class="w-24 h-24 bg-[#1d4379] rounded-full border-4 border-white shadow-xl flex items-center justify-center text-white text-3xl font-black mb-4">
+            <div class="w-24 h-24 bg-[#1d4379] rounded-[2rem] border-4 border-white shadow-xl flex items-center justify-center text-white text-3xl font-black mb-4">
                 <span id="initials">--</span>
             </div>
             <h2 id="user-name" class="text-xl font-black text-[#1d4379]">Chargement...</h2>
-            <div id="kyc-badge" class="mt-2 text-[10px] font-black px-3 py-1 rounded-full uppercase">Statut: Inconnu</div>
+            <div id="rating-avg" class="mt-2 flex items-center gap-1 bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] font-black">
+                <i data-lucide="star" class="w-3 h-3 fill-amber-600"></i> <span id="avg-val">--</span>
+            </div>
         </div>
 
-        <div class="space-y-4">
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-50">
-                <label class="text-[10px] font-black text-gray-300 uppercase block mb-4">Mon activité</label>
-                <div class="space-y-4">
-                    <a href="wallet.html" class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="wallet" class="text-blue-500"></i>
-                            <span class="text-sm font-bold text-[#1d4379]">Mon Portefeuille</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="text-gray-200"></i>
-                    </a>
+        <div class="mb-8">
+            <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">Avis de la communauté</h3>
+            <div id="reviews-container" class="space-y-3">
                 </div>
-            </div>
-            
-            <button onclick="logout()" class="w-full py-5 text-red-500 font-bold text-sm uppercase">Se déconnecter</button>
         </div>
+
+        <button onclick="logout()" class="w-full py-5 text-red-500 font-bold text-xs uppercase tracking-widest">Se déconnecter</button>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
-        const supabase = window.supabase.createClient('URL_SUPABASE', 'CLE_ANON');
+        const supabase = window.supabase.createClient('URL', 'KEY');
+        let currentUserId;
 
-        // NOTIFICATIONS
-        async function loadNotifications() {
+        async function init() {
             const { data: { user } } = await supabase.auth.getUser();
-            const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', user.id).eq('is_read', false);
+            if (!user) return window.location.href = 'login.html';
+            currentUserId = user.id;
+
+            document.getElementById('user-name').innerText = user.user_metadata.full_name || user.email;
+            document.getElementById('initials').innerText = (user.user_metadata.full_name || "D").substring(0,2).toUpperCase();
+
+            loadReviews();
+            loadNotifications();
+        }
+
+        async function loadReviews() {
+            const { data: reviews } = await supabase.from('reviews')
+                .select('*, profiles:reviewer_id(full_name)')
+                .eq('target_id', currentUserId)
+                .order('created_at', { ascending: false });
+
+            const container = document.getElementById('reviews-container');
+            if (!reviews || reviews.length === 0) {
+                container.innerHTML = `<p class="text-center py-6 text-[9px] font-bold text-gray-300 uppercase italic">Aucun avis pour le moment</p>`;
+                return;
+            }
+
+            const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+            document.getElementById('avg-val').innerText = `${avg.toFixed(1)} (${reviews.length})`;
+
+            container.innerHTML = reviews.map(r => `
+                <div class="review-card">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-black text-[#1d4379]">${r.profiles.full_name}</span>
+                        <div class="flex gap-0.5">${Array(r.rating).fill('<i data-lucide="star" class="w-2.5 h-2.5 text-amber-500 fill-amber-500"></i>').join('')}</div>
+                    </div>
+                    <p class="text-[11px] text-gray-500 font-medium leading-relaxed italic">"${r.comment}"</p>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        async function loadNotifications() {
+            const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', currentUserId).eq('is_read', false);
             const badge = document.getElementById('notif-badge');
             if (notifs && notifs.length > 0) {
                 badge.innerText = notifs.length;
@@ -69,25 +105,10 @@
             document.getElementById('notif-list').innerHTML = notifs.map(n => `<div class="p-3 bg-blue-50 rounded-2xl text-[10px] font-bold text-[#1d4379]">${n.title}</div>`).join('') || '<p class="text-center py-4 text-[9px] font-bold text-gray-300 uppercase">Rien à signaler</p>';
         }
 
-        function toggleNotifications() {
-            document.getElementById('notif-panel').classList.toggle('hidden');
-            loadNotifications();
-        }
+        function toggleNotifications() { document.getElementById('notif-panel').classList.toggle('hidden'); }
+        async function logout() { await supabase.auth.signOut(); window.location.href = 'login.html'; }
 
-        // Données utilisateur
-        async function loadUser() {
-            const { data: { user } } = await supabase.auth.getUser();
-            document.getElementById('user-name').innerText = user.user_metadata.full_name || user.email;
-            document.getElementById('initials').innerText = (user.user_metadata.full_name || "D").substring(0,2).toUpperCase();
-        }
-
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = 'login.html';
-        }
-
-        loadUser();
-        loadNotifications();
+        init();
     </script>
 </body>
 </html>
