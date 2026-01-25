@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -136,4 +137,84 @@
             <img src="logo.png" alt="Logo" class="w-full max-h-10 object-contain">
         </div>
         <div class="header-right">
-            <button onclick="window.location.href='profile.html'"><i data-lucide="user"
+            <button onclick="window.location.href='profile.html'"><i data-lucide="user" class="w-7 h-7 text-[#1d4379]"></i></button>
+        </div>
+    </header>
+
+    <section class="hero-blue">
+        <div class="nav-container">
+            <div class="bg-white rounded-xl shadow-lg flex items-center p-2">
+                <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-[#1d4379]">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </div>
+                <input type="text" placeholder="Trouver la voiture parfaite" class="flex-1 px-4 text-xs font-bold outline-none text-gray-400" readonly>
+            </div>
+        </div>
+    </section>
+
+    <div class="nav-container">
+        <div class="filter-row">
+            <button onclick="filter('all', this)" class="filter-btn active"><i data-lucide="layout-grid"></i> Tous</button>
+            <button onclick="filter('4x4', this)" class="filter-btn"><i data-lucide="mountain"></i> 4x4</button>
+            <button onclick="filter('citas', this)" class="filter-btn"><i data-lucide="car"></i> Citas</button>
+            <button onclick="filter('luxe', this)" class="filter-btn"><i data-lucide="gem"></i> Luxe</button>
+        </div>
+    </div>
+
+    <main class="car-list-vertical">
+        
+        <div class="car-card-full">
+            <div class="img-container">
+                <div class="badge-overlay">
+                    <span class="bg-[#84cc16] text-white text-[9px] font-black px-2 py-1 rounded">SUPER-HOST</span>
+                    <span class="bg-[#1d4379] text-white text-[9px] font-black px-2 py-1 rounded uppercase">Vérifié</span>
+                </div>
+                <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=800">
+                <div class="island-badge"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> Boa Vista</div>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-xl font-black text-[#1d4379]">Mercedes GLC</h3>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Auto • Diesel • 5 Places</p>
+                    </div>
+                    <div class="flex items-center text-amber-500 font-black">
+                        <i data-lucide="star" class="w-4 h-4 fill-amber-500 mr-1"></i> 5.0
+                    </div>
+                </div>
+                <div class="flex justify-between items-end border-t border-gray-50 pt-4">
+                    <button class="text-[10px] font-black text-blue-500 underline uppercase">Détails</button>
+                    <p class="text-2xl font-black text-[#1d4379]">15 000 <span class="text-xs">CVE</span></p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed-footer">
+        <button class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Ajouter ma voiture</button>
+        <button class="w-full bg-[#22c55e] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Devenir chauffeur</button>
+    </div>
+
+    <div id="menu-sidebar">
+        <div class="flex justify-between items-center mb-10">
+            <img src="logo.png" class="h-6">
+            <button onclick="toggleSidebar()"><i data-lucide="x" class="w-7 h-7 text-gray-400"></i></button>
+        </div>
+        <nav class="space-y-6">
+            <a href="#" class="block text-lg font-black text-[#1d4379] uppercase">Accueil</a>
+            <a href="#" class="block text-lg font-black text-[#1d4379] uppercase">Mes Locations</a>
+            <a href="#" class="block text-lg font-black text-[#1d4379] uppercase">Portefeuille</a>
+        </nav>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        function toggleSidebar() { document.getElementById('menu-sidebar').classList.toggle('open'); }
+        function filter(type, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
