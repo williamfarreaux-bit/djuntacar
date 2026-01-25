@@ -1,35 +1,210 @@
-<div id="selection-bar" class="fixed bottom-6 left-6 right-6 bg-[#1d4379] text-white p-4 rounded-2xl shadow-2xl flex justify-between items-center hidden z-[60]">
-    <div class="flex items-center gap-3">
-        <span id="selection-count" class="bg-white text-[#1d4379] w-6 h-6 rounded-full flex items-center justify-center font-black text-xs">0</span>
-        <span class="text-xs font-bold">Véhicules sélectionnés (max 3)</span>
-    </div>
-    <a href="booking-requests.html" class="bg-[#22c55e] px-4 py-2 rounded-xl text-[11px] font-black uppercase">Continuer</a>
-</div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Véhicules - DjuntaCar</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-<script>
-    let selectedVehicles = [];
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #fcfcfd; margin: 0; }
 
-    function toggleSelection(vehicleId, vehicleName) {
-        const index = selectedVehicles.indexOf(vehicleId);
-        if (index > -1) {
-            selectedVehicles.splice(index, 1);
-        } else {
-            if (selectedVehicles.length < 3) {
-                selectedVehicles.push(vehicleId);
-            } else {
-                alert("Vous pouvez choisir jusqu'à 3 véhicules maximum.");
-                return;
-            }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
         }
-        updateSelectionUI();
-    }
 
-    function updateSelectionUI() {
-        const bar = document.getElementById('selection-bar');
-        const count = document.getElementById('selection-count');
-        count.innerText = selectedVehicles.length;
-        bar.classList.toggle('hidden', selectedVehicles.length === 0);
-        // Sauvegarder dans le stockage pour la page suivante
-        localStorage.setItem('djunta_selection', JSON.stringify(selectedVehicles));
-    }
-</script>
+        .car-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease;
+        }
+        .car-card:active { transform: scale(0.97); }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            padding-top: 75%;
+        }
+        .car-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        /* TOGGLE OPTION CHAUFFEUR */
+        .driver-toggle {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            margin: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #e2e8f0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #1d4379; }
+        input:checked + .slider:before { transform: translateX(18px); }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <header class="h-14 flex items-center px-6 bg-white sticky top-0 z-50 border-b border-gray-50">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between">
+            <a href="search-car.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left" class="w-6 h-6"></i></a>
+            <span class="font-bold text-sm text-[#1d4379]">Résultats</span>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto pt-6">
+        
+        <div class="driver-toggle mb-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-50 p-2 rounded-xl">
+                    <i data-lucide="user-check" class="w-4 h-4 text-[#1d4379]"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-black text-[#1d4379] uppercase">Option Chauffeur</p>
+                    <p class="text-[9px] text-gray-400 font-bold">Forfait 7h inclus</p>
+                </div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="driver-mode" onchange="toggleDriverMode()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="px-6 mb-4 flex justify-between items-end">
+            <h1 class="text-xl font-extrabold text-[#1d4379]">Disponibles</h1>
+            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest" id="count-label">Chargement...</p>
+        </div>
+
+        <div class="results-grid" id="vehicle-list">
+            <div class="animate-pulse bg-gray-100 h-48 rounded-[24px]"></div>
+            <div class="animate-pulse bg-gray-100 h-48 rounded-[24px]"></div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+
+        const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
+        const CVE_RATE = 110.265;
+        const DEFAULT_DRIVER_EUR = 25; // Tarif min imposé
+
+        let vehiclesData = [];
+        let isDriverMode = false;
+
+        async function fetchVehicles() {
+            // On récupère les véhicules et on simule la jointure avec le chauffeur assigné
+            const { data, error } = await supabase
+                .from('vehicles')
+                .select('*, driver_meta:owner_id(full_name, driver_daily_price)')
+                .eq('is_active', true);
+
+            if (error) return console.error(error);
+
+            vehiclesData = data;
+            renderVehicles();
+        }
+
+        function renderVehicles() {
+            const list = document.getElementById('vehicle-list');
+            const label = document.getElementById('count-label');
+            label.innerText = `${vehiclesData.length} voitures trouvées`;
+
+            list.innerHTML = vehiclesData.map(car => {
+                // Calcul du tarif chauffeur : Prix personnalisé du profil ou 25€ min
+                const driverFeeEUR = car.driver_meta?.driver_daily_price || DEFAULT_DRIVER_EUR;
+                const driverFeeCVE = Math.round(driverFeeEUR * CVE_RATE);
+                
+                // Prix final affiché
+                const basePrice = car.price_per_day;
+                const totalPrice = isDriverMode ? (basePrice + driverFeeCVE) : basePrice;
+
+                return `
+                <div class="car-card" onclick="window.location.href='car-detail.html?id=${car.id}&driver=${isDriverMode}'">
+                    <div class="image-container">
+                        <img src="${car.images_url?.[0]}" class="car-image">
+                        <div class="absolute top-2 right-2 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full flex items-center gap-1">
+                            <i data-lucide="star" class="w-2 h-2 text-yellow-400 fill-yellow-400"></i>
+                            <span class="text-[8px] text-white font-bold">4.9</span>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-black text-[11px] text-[#1d4379] truncate uppercase">${car.make} ${car.model}</h3>
+                            <p class="text-[8px] text-gray-400 font-bold uppercase mt-1">${car.island}</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-sm font-black text-[#1d4379]">${totalPrice.toLocaleString()}</span>
+                                <span class="text-[8px] text-gray-400 font-bold uppercase">CVE / Jour</span>
+                            </div>
+                            ${isDriverMode ? `
+                                <div class="flex items-center gap-1 mt-1 text-[7px] text-green-600 font-bold uppercase">
+                                    <i data-lucide="user" class="w-2 h-2"></i>
+                                    Chauffeur inclus (Forfait 7h)
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function toggleDriverMode() {
+            isDriverMode = document.getElementById('driver-mode').checked;
+            renderVehicles();
+        }
+
+        fetchVehicles();
+    </script>
+</body>
+</html>
