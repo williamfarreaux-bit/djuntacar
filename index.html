@@ -38,7 +38,7 @@
             padding: 15px 0 30px 0; /* Ultra compact */
         }
 
-        /* Conteneur aligné */
+        /* Conteneur aligné (90% de largeur) */
         .nav-align-wrapper {
             width: 90%;
             margin: 0 auto;
@@ -46,7 +46,7 @@
 
         /* FILTRES : Hauteur 32px, Blancs, alignés, à cheval 50% */
         .filter-overlap {
-            margin-top: -16px; /* 50% de 32px */
+            margin-top: -16px; /* Remonte de 50% de la hauteur des boutons (16px) */
             position: relative;
             z-index: 50;
         }
@@ -59,7 +59,7 @@
 
         .filter-btn {
             background: white;
-            height: 32px; /* Hauteur réduite de moitié */
+            height: 32px; /* Hauteur réduite */
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -80,7 +80,7 @@
 
         /* LISTE : Une seule colonne détaillée */
         .car-vertical-list {
-            padding: 40px 16px 180px 16px;
+            padding: 40px 16px 180px 16px; /* Padding bas large pour ne pas cacher la dernière voiture derrière le footer */
             display: flex;
             flex-direction: column;
             gap: 24px;
@@ -169,7 +169,7 @@
 
     <main class="car-vertical-list">
         
-        <div class="car-card-full">
+        <div class="car-card-full" onclick="window.location.href='car-detail.html'">
             <div class="card-img-zone">
                 <div class="badge-stack">
                     <span class="bg-[#84cc16] text-white text-[9px] font-black px-2 py-1 rounded">SUPER-HOST</span>
@@ -195,11 +195,40 @@
             </div>
         </div>
 
+        <div class="car-card-full" onclick="window.location.href='car-detail.html'">
+            <div class="card-img-zone">
+                <div class="badge-stack">
+                    <span class="bg-[#1d4379] text-white text-[9px] font-black px-2 py-1 rounded uppercase">Vérifié</span>
+                </div>
+                <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800">
+                <div class="island-chip"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> Santiago</div>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-xl font-black text-[#1d4379]">Toyota Hilux</h3>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Manuelle • Diesel • 5 Places</p>
+                    </div>
+                    <div class="flex items-center text-amber-500 font-black">
+                        <i data-lucide="star" class="w-4 h-4 fill-amber-500 mr-1"></i> 4.8
+                    </div>
+                </div>
+                <div class="flex justify-between items-end border-t border-gray-50 pt-4">
+                    <button class="text-[10px] font-black text-blue-500 underline uppercase">Détails</button>
+                    <p class="text-2xl font-black text-[#1d4379]">6 500 <span class="text-xs">CVE</span></p>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <div class="footer-sticky-actions">
-        <button onclick="window.location.href='add-car.html'" class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Ajouter ma voiture</button>
-        <button onclick="window.location.href='profile.html?action=driver'" class="w-full bg-[#22c55e] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Devenir chauffeur</button>
+        <button onclick="window.location.href='add-car.html'" class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+            Ajouter ma voiture
+        </button>
+        <button onclick="window.location.href='driver-application.html'" class="w-full bg-[#22c55e] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+            Devenir chauffeur
+        </button>
     </div>
 
     <div id="mobile-sidebar">
@@ -208,10 +237,12 @@
             <button onclick="toggleSidebar()"><i data-lucide="x" class="w-7 h-7 text-gray-400"></i></button>
         </div>
         <nav class="space-y-6">
-            <a href="index.html" class="block text-lg font-black text-blue-500 uppercase">Accueil</a>
+            <a href="index.html" class="block text-lg font-black text-[#1d4379] uppercase">Accueil</a>
             <a href="search-car.html" class="block text-lg font-black text-[#1d4379] uppercase">Recherche</a>
             <a href="my-rentals.html" class="block text-lg font-black text-[#1d4379] uppercase">Mes Locations</a>
+            <a href="profile.html" class="block text-lg font-black text-[#1d4379] uppercase">Profil</a>
         </nav>
+        <button onclick="window.location.href='login.html'" class="mt-10 text-xs font-black text-red-400 uppercase text-left">Déconnexion</button>
     </div>
 
     <script>
