@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Accueil</title>
+    <title>DjuntaCar - L'excellence P2P au Cap-Vert</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,59 +15,77 @@
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
         
-        .hero-bg { background-color: #1d4379; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; }
+        /* Design System */
+        .hero-bg { background-color: #1d4379; border-bottom-left-radius: 45px; border-bottom-right-radius: 45px; }
+        
+        /* Header Logic */
+        header { height: 80px; } /* h-20 */
+        .logo-container { width: 60%; }
+        .side-block { width: 20%; }
 
-        /* Filtres Catégories */
+        /* Floating Search */
+        .search-container { margin-top: -30px; z-index: 50; }
+
+        /* Horizontal Categories */
         .categories-scroll::-webkit-scrollbar { display: none; }
         .categories-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
         .cat-chip {
             flex-shrink: 0;
             padding: 12px 20px;
-            border-radius: 18px;
+            border-radius: 20px;
             background: white;
             border: 1px solid #f1f5f9;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
-            color: #64748b;
+            color: #94a3b8;
             text-transform: uppercase;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
         .cat-chip.active {
             background: #1d4379;
             color: white;
             border-color: #1d4379;
+            transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(29, 67, 121, 0.2);
         }
 
-        /* Cartes Véhicules */
-        .car-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .car-card { background: white; border-radius: 28px; overflow: hidden; border: 1px solid #f1f5f9; position: relative; }
+        /* Car Grid (2 columns) */
+        .car-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .car-card:active { transform: scale(0.96); }
         
-        .badge-top { position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 8px; font-size: 8px; font-weight: 900; color: white; text-transform: uppercase; z-index: 10; }
-        .rating-box { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: 10px; font-size: 10px; font-weight: 800; display: flex; items-center; gap: 3px; z-index: 10; }
+        .badge-type { position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 8px; font-size: 8px; font-weight: 900; color: white; text-transform: uppercase; z-index: 10; }
+        .rating-pill { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: 10px; font-size: 9px; font-weight: 800; display: flex; align-items: center; gap: 3px; z-index: 10; color: #1d4379; }
 
+        /* Menu Sidebar */
         #mobile-menu { transition: transform 0.3s ease-in-out; transform: translateX(-100%); }
         #mobile-menu.active { transform: translateX(0); }
     </style>
 </head>
 <body class="bg-[#fcfcfd] antialiased">
 
-    <header class="h-20 flex items-center px-4 bg-white sticky top-0 z-[100] shadow-sm">
+    <header class="flex items-center px-4 bg-white sticky top-0 z-[100] shadow-sm">
         <div class="max-w-md mx-auto w-full flex items-center justify-between">
-            <div class="flex-1 flex justify-start">
-                 <button onclick="toggleMenu()" class="p-2"><i data-lucide="menu" class="w-7 h-7 text-[#1d4379]"></i></button>
+            <div class="side-block flex justify-start">
+                <button onclick="toggleMenu()" class="p-2"><i data-lucide="menu" class="w-7 h-7 text-[#1d4379]"></i></button>
             </div>
 
-            <div class="w-[60%] flex justify-center items-center">
-                <img src="logo.png" alt="DjuntaCar" class="w-full h-auto max-h-14 object-contain">
+            <div class="logo-container flex justify-center">
+                <img src="logo.png" alt="DjuntaCar" class="w-full max-h-12 object-contain">
             </div>
 
-            <div class="flex-1 flex justify-end">
+            <div class="side-block flex justify-end text-right">
                 <button onclick="window.location.href='profile.html'" class="p-2 relative">
                     <i data-lucide="user" class="w-7 h-7 text-[#1d4379]"></i>
                     <span id="notif-badge" class="absolute top-2 right-2 bg-red-500 w-2.5 h-2.5 rounded-full border-2 border-white hidden"></span>
@@ -76,44 +94,24 @@
         </div>
     </header>
 
-    <section class="hero-bg px-6 pt-8 pb-16">
-        <h1 class="text-white text-xl font-black text-center mb-10" data-i18n="hero_title">Trouvez la voiture parfaite</h1>
-        
-        <div class="max-w-md mx-auto bg-white rounded-2xl shadow-xl flex items-center p-2">
-            <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 ml-1">
-                <i data-lucide="search" class="w-4 h-4"></i>
-            </div>
-            <input type="text" onclick="window.location.href='results.html'" data-i18n-placeholder="search_placeholder" placeholder="Rechercher..." class="flex-1 px-4 text-xs font-bold outline-none text-gray-400" readonly>
-        </div>
+    <section class="hero-bg px-6 pt-10 pb-20 text-center">
+        <h1 class="text-white text-2xl font-black leading-tight mb-2" data-i18n="hero_title">Trouvez la voiture parfaite</h1>
+        <p class="text-blue-200 text-[10px] font-bold uppercase tracking-[3px]" data-i18n="hero_sub">Location 100% sécurisée au Cap-Vert</p>
     </section>
 
-    <div class="relative -mt-8 z-30 px-6">
+    <div class="search-container px-6">
+        <div class="max-w-md mx-auto bg-white rounded-2xl shadow-2xl flex items-center p-2 border border-gray-100">
+            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-[#1d4379]">
+                <i data-lucide="search" class="w-5 h-5"></i>
+            </div>
+            <input type="text" onclick="window.location.href='results.html'" data-i18n-placeholder="search_placeholder" placeholder="Commencer ma recherche..." class="flex-1 px-4 text-sm font-bold outline-none text-gray-400" readonly>
+        </div>
+    </div>
+
+    <div class="mt-8 px-6">
         <div class="categories-scroll flex gap-3 overflow-x-auto no-scrollbar py-2">
             <button onclick="filterType('all', this)" class="cat-chip active">
                 <i data-lucide="layout-grid" class="w-4 h-4"></i> <span data-i18n="cat_all">Tous</span>
             </button>
             <button onclick="filterType('4x4', this)" class="cat-chip">
                 <i data-lucide="mountain" class="w-4 h-4"></i> <span data-i18n="cat_4x4">4x4</span>
-            </button>
-            <button onclick="filterType('citadine', this)" class="cat-chip">
-                <i data-lucide="car" class="w-4 h-4"></i> <span data-i18n="cat_city">Citadines</span>
-            </button>
-            <button onclick="filterType('premium', this)" class="cat-chip">
-                <i data-lucide="gem" class="w-4 h-4"></i> <span data-i18n="cat_premium">Luxe</span>
-            </button>
-            <button onclick="filterType('van', this)" class="cat-chip">
-                <i data-lucide="users" class="w-4 h-4"></i> <span data-i18n="cat_van">Vans</span>
-            </button>
-        </div>
-    </div>
-
-    <main class="max-w-md mx-auto px-6 pt-10">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-i18n="nearby">À proximité</h2>
-            <button class="text-[10px] font-black text-blue-500 uppercase underline" data-i18n="see_all">Voir tout</button>
-        </div>
-
-        <div class="car-grid" id="car-display-grid">
-            <div class="car-card" data-type="4x4" onclick="window.location.href='car-detail.html'">
-                <div class="badge-top bg-blue-600">4x4</div>
-                <div class="rating-box"><i data-lucide="star" class="w-2.5 h-2.5 fill-amber-400 text-
