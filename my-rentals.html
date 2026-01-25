@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mes Activités - DjuntaCar</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f8fafc; padding-bottom: 40px; }
+
+        /* COMMUTATEUR DE RÔLE À 3 POSITIONS */
+        .role-switcher {
+            background: #e2e8f0;
+            border-radius: 20px;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        .role-btn {
+            flex: 1;
+            padding: 12px 5px;
+            border-radius: 16px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #64748b;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+        .role-btn.active {
+            background: #1d4379;
+            color: white;
+            box-shadow: 0 4px 12px rgba(29, 67, 121, 0.25);
+        }
+
+        /* CARTES DE LOCATION */
+        .activity-card {
+            background: white;
+            border-radius: 32px;
+            padding: 24px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+        }
+
+        .status-pill {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-document {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .driver-info-tag {
+            background: #f0f7ff;
+            color: #1d4379;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 15px;
+            border: 1px solid #dbeafe;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <header class="h-20 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between">
+            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left" class="w-6 h-6"></i></a>
+            <span class="font-extrabold text-base text-[#1d4379]">Mes Activités</span>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 pt-6">
+        
+        <div class="role-switcher mb-8">
+            <button onclick="setRole('tenant')" id="btn-tenant" class="role-btn active">Locataire</button>
+            <button onclick="setRole('host')" id="btn-host" class="role-btn">Propriétaire</button>
+            <button onclick="setRole('driver')" id="btn-driver" class="role-btn">Chauffeur</button>
+        </div>
+
+        <div id="activities-list" class="space-y-4">
+            <div class="flex flex-col items-center justify-center py-20 opacity-20">
+                <i data-lucide="refresh-cw" class="w-10 h-10 animate-spin mb-4"></i>
+                <p class="font-bold text-xs uppercase tracking-widest">Récupération des données...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+
+        // 1. CONFIGURATION SUPABASE
+        const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
+        const EUR_RATE = 110.265;
+        let currentRole = 'tenant';
+
+        async function setRole(role) {
+            currentRole = role;
+            // Mise à jour visuelle des boutons
+            ['tenant', 'host', 'driver'].forEach(r => {
+                document.getElementById(`btn-${r}`).classList.toggle('active', r === role);
+            });
+            loadActivities();
+        }
+
+        async function loadActivities() {
+            const list = document.getElementById('activities-list');
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Définition de la colonne de filtrage selon le rôle
+            let filterColumn = 'tenant_id';
+            if (currentRole === 'host') filterColumn = 'host_id';
+            if (currentRole === 'driver') filterColumn = 'driver_id';
+
+            const { data: bookings, error } = await supabase
+                .from('bookings')
+                .select('*, vehicles(*), drivers:driver_id(full_name)')
+                .eq(filterColumn, user.id)
+                .order('created_at', { ascending: false });
+
+            if (error || !bookings || bookings.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-20">
+                        <div class="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="archive" class="w-8 h-8 text-gray-200"></i>
+                        </div>
+                        <p class="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Aucune activité enregistrée</p>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            renderActivities(bookings);
+        }
+
+        function renderActivities(bookings) {
+            const list = document.getElementById('activities-list');
+            
+            list.innerHTML = bookings.map(b => {
+                const priceCVE = b.total_price || 0;
+                const priceEUR = (priceCVE / EUR_RATE).toFixed(2);
+                const status = getStatusDisplay(b.status);
+
+                return `
+                    <div class="activity-card animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex gap-4">
+                                <div class="w-16 h-16 rounded-[20px] bg-slate-50 border border-slate-100 overflow-hidden">
+                                    <img src="${b.vehicles?.images_url?.[0] || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h3 class="font-extrabold text-sm text-[#1d4379]">${b.vehicles?.make} ${b.vehicles?.model}</h3>
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">${b.vehicles?.island}</p>
+                                    <div class="mt-2 text-[9px] font-mono text-slate-300">#${b.id.substring(0,8).toUpperCase()}</div>
+                                </div>
+                            </div>
+                            <span class="status-pill ${status.class}">${status.label}</span>
+                        </div>
+
+                        ${b.driver_id ? `
+                        <div class="driver-info-tag flex items-center gap-3">
+                            <i data-lucide="user-check" class="w-4 h-4"></i>
+                            <span>Chauffeur : ${b.drivers?.full_name || 'Assigné'} (Forfait 7h)</span>
+                        </div>
+                        ` : ''}
+
+                        <div class="grid grid-cols-2 gap-6
