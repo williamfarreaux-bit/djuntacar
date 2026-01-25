@@ -16,13 +16,6 @@
         * { font-family: 'Montserrat', sans-serif !important; }
         body { background-color: #fcfcfd; margin: 0; }
 
-        .auth-card { 
-            background: white; 
-            border-radius: 32px; 
-            border: 1px solid #f0f2f5; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.03); 
-        }
-        
         .input-group { 
             background: #f8fafc;
             border: 1px solid #f1f5f9;
@@ -40,15 +33,9 @@
         }
 
         input { 
-            width: 100%; 
-            font-weight: 600; 
-            color: #1d4379; 
-            outline: none; 
-            background: transparent; 
-            border: none; 
-            font-size: 15px; 
+            width: 100%; font-weight: 600; color: #1d4379; 
+            outline: none; background: transparent; border: none; font-size: 15px; 
         }
-        input::placeholder { color: #cbd5e1; }
 
         .btn-primary {
             background-color: #1d4379;
@@ -61,15 +48,40 @@
             transition: all 0.3s ease;
         }
         .btn-primary:active { transform: scale(0.97); }
+
+        /* ZONE D'ERREUR DYNAMIQUE */
+        #error-banner {
+            display: none;
+            background-color: #fef2f2;
+            border: 1px solid #fee2e2;
+            color: #b91c1c;
+            padding: 14px;
+            border-radius: 18px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="antialiased text-gray-800 flex flex-col min-h-screen">
 
     <main class="flex-1 flex flex-col justify-center px-8 py-12 max-w-md mx-auto w-full">
+        
         <div class="text-center mb-10">
             <img src="logo.png" alt="DjuntaCar" class="h-10 mx-auto mb-6">
             <h1 class="text-2xl font-extrabold text-[#1d4379]">Bon retour !</h1>
             <p class="text-gray-400 text-sm font-medium mt-2">Connectez-vous pour continuer</p>
+        </div>
+
+        <div id="error-banner" class="flex items-center gap-3">
+            <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
+            <span id="error-text">Email ou mot de passe incorrect.</span>
         </div>
 
         <form id="login-form" class="space-y-4">
@@ -89,15 +101,15 @@
                 </div>
                 
                 <div class="flex justify-end px-2 mt-2">
-                    <a href="forgot-password.html" class="text-[11px] font-bold text-[#1d4379] hover:underline transition-all">
+                    <a href="forgot-password.html" class="text-[11px] font-bold text-[#1d4379] hover:underline">
                         Mot de passe oublié ?
                     </a>
                 </div>
             </div>
 
-            <button type="submit" class="btn-primary mt-6 flex justify-center items-center gap-2">
-                <span>Se connecter</span>
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            <button type="submit" id="submit-btn" class="btn-primary mt-6 flex justify-center items-center gap-2">
+                <span id="btn-text">Se connecter</span>
+                <i data-lucide="chevron-right" class="w-4 h-4" id="btn-icon"></i>
             </button>
         </form>
 
@@ -111,11 +123,25 @@
     <script>
         lucide.createIcons();
 
-        // Remplacez par vos identifiants réels
+        // Configuration Supabase
         const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
 
-        document.getElementById('login-form').onsubmit = async (e) => {
+        const loginForm = document.getElementById('login-form');
+        const errorBanner = document.getElementById('error-banner');
+        const errorText = document.getElementById('error-text');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+
+        loginForm.onsubmit = async (e) => {
             e.preventDefault();
+            
+            // Masquer l'erreur précédente
+            errorBanner.style.display = 'none';
+            
+            // État de chargement
+            submitBtn.disabled = true;
+            btnText.innerText = "Connexion...";
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
@@ -125,7 +151,19 @@
             });
 
             if (error) {
-                alert("Erreur de connexion : " + error.message);
+                // Gestion personnalisée des messages selon le code erreur de Supabase
+                errorBanner.style.display = 'flex';
+                
+                if (error.status === 400) {
+                    errorText.innerText = "Email ou mot de passe invalide.";
+                } else {
+                    errorText.innerText = "Un problème est survenu. Veuillez réessayer.";
+                }
+
+                // Réinitialiser le bouton
+                submitBtn.disabled = false;
+                btnText.innerText = "Se connecter";
+                lucide.createIcons();
             } else {
                 window.location.href = 'index.html';
             }
