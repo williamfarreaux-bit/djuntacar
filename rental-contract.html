@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrat de Location - DjuntaCar</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
+
+        .contract-container {
+            background: white;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .section-header {
+            background: #1d4379;
+            color: white;
+            padding: 8px 15px;
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .data-box { border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
+        .label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .value { font-size: 13px; font-weight: 600; color: #1e293b; display: block; }
+        
+        .clause-text { font-size: 11px; line-height: 1.5; color: #475569; margin-bottom: 5px; }
+        .lang-tag { font-weight: 800; color: #1d4379; margin-right: 5px; }
+
+        .signature-pad-container {
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 8px;
+            height: 150px;
+            position: relative;
+            margin-top: 10px;
+        }
+        canvas { width: 100%; height: 100%; cursor: crosshair; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .contract-container { box-shadow: none; border: none; max-width: 100%; padding: 30px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-[900px] mx-auto mb-6 flex justify-between items-center no-print">
+        <a href="index.html" class="flex items-center gap-2 text-gray-500 font-bold text-xs"><i data-lucide="chevron-left" class="w-4 h-4"></i> RETOUR</a>
+        <div class="flex gap-3">
+            <button onclick="signaturePad.clear()" class="text-[10px] font-bold text-gray-400 uppercase">Effacer signature</button>
+            <button onclick="window.print()" class="bg-[#1d4379] text-white px-6 py-2 rounded-lg font-bold text-sm flex items-center gap-2">
+                <i data-lucide="download" class="w-4 h-4"></i> GÉNÉRER PDF
+            </button>
+        </div>
+    </div>
+
+    <main class="contract-container">
+        <div class="flex justify-between items-start border-b-4 border-[#1d4379] pb-6">
+            <div>
+                <img src="logo.png" alt="DjuntaCar" class="h-10 mb-2">
+                <p class="text-[9px] font-bold text-gray-400">UUID: <span id="c-uuid">550e8400-e29b-41d4-a716-446655440000</span></p>
+            </div>
+            <div class="text-right">
+                <h1 class="text-2xl font-black text-[#1d4379] leading-none">CONTRATO DE ALUGUER</h1>
+                <p class="text-[10px] font-bold text-gray-400 mt-1">CONTRAT DE LOCATION / RENTAL AGREEMENT</p>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span>A. IDENTIDADE / IDENTIFICATION</span>
+            <i data-lucide="user" class="w-4 h-4"></i>
+        </div>
+        <div class="lang-grid">
+            <div class="space-y-4">
+                <div class="data-box"><span class="label">Propriétaire (Host)</span><span class="value" id="c-host">Chargement...</span></div>
+                <div class="data-box"><span class="label">Locataire (Tenant)</span><span class="value" id="c-tenant">...</span></div>
+                <div class="data-box"><span class="label">N° Permis / Driver License</span><span class="value" id="c-license">...</span></div>
+            </div>
+            <div class="space-y-4">
+                <div class="data-box"><span class="label">Véhicule / Veículo</span><span class="value" id="c-car">...</span></div>
+                <div class="data-box"><span class="label">Immatriculation / Matrícula</span><span class="value">ST-00-XX</span></div>
+                <div class="data-box"><span class="label">Île d'exploitation / Ilha</span><span class="value" id="c-island">...</span></div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span>B. LOGÍSTICA / LOGISTICS</span>
+            <i data-lucide="map-pin" class="w-4 h-4"></i>
+        </div>
+        <div class="lang-grid">
+            <div class="space-y-4">
+                <div class="data-box"><span class="label">Point de Retrait (Check-in)</span><span class="value" id="c-pickup">Aéroport Nelson Mandela</span></div>
+                <div class="data-box"><span class="label">Coordonnées GPS</span><span class="value text-[10px]" id="c-gps">14.9458, -23.4862</span></div>
+            </div>
+            <div class="space-y-4">
+                <div class="data-box"><span class="label">Check-in Date</span><span class="value" id="c-date-start">--/--/----</span></div>
+                <div class="data-box"><span class="label">Check-out Date</span><span class="value" id="c-date-end">--/--/----</span></div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <span>C. FINANÇAS / FINANCE & INSURANCE</span>
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+        </div>
+        <div class="grid grid-cols-3 gap-6 mb-6">
+            <div class="bg-gray-50 p-3 rounded">
+                <span class="label">Prix Total (Double Devise)</span>
+                <span class="value text-[#1d4379]" id="c-total">0 CVE / 0 EUR</span>
+                <span class="text-[8px] text-gray-400">Taux: 1 EUR = 110,265 CVE</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+                <span class="label">Niveau de Protection</span>
+                <span class="value" id="c-protection">Morabeza</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded">
+                <span class="label">Caution (Pre-auth)</span>
+                <span class="value" id="c-caution">---</span>
+            </div>
+        </div>
+
+        <div class="mt-8 space-y-6">
+            <div>
+                <h3 class="font-bold text-[10px] text-gray-400 uppercase mb-2">Conditions de livraison / Entrega</h3>
+                <p class="clause-text"><span class="lang-tag">FR:</span> Le véhicule sera livré au point convenu. Le locataire s'engage à être présent à l'heure dite.</p>
+                <p class="clause-text"><span class="lang-tag">PT:</span> O veículo será entregue no ponto acordado. O locatário compromete-se a estar presente à hora marcada.</p>
+                <p class="clause-text"><span class="lang-tag">CV:</span> Kel kaxu ta entregadu na pontu ki fika konkordadu. Ken ki ta aluga ten ki sta la na ora markadu.</p>
+                <p class="clause-text"><span class="lang-tag">EN:</span> The vehicle will be delivered at the agreed point. The renter agrees to be present at the scheduled time.</p>
+            </div>
+            
+            <div class="bg-slate-50 p-4 border-l-4 border-[#1d4379]">
+                <h3 class="font-bold text-[10px] text-gray-400 uppercase mb-2">Politique Carburant / Combustível</h3>
+                <p class="clause-text"><span class="lang-tag">FR:</span> Le véhicule doit être rendu avec le même niveau de carburant qu'au départ. À défaut, des frais de recharge et de service s'appliqueront.</p>
+                <p class="clause-text"><span class="lang-tag">PT:</span> O veículo deve ser devolvido com o mesmo nível de combustível do início. Caso contrário, serão aplicadas taxas de reabastecimento.</p>
+            </div>
+        </div>
+
+        <div class="mt-12 pt-8 border-t grid grid-cols-2 gap-20">
+            <div>
+                <span class="label">Signature Locataire / Renter</span>
+                <div class="signature-pad-container">
+                    <canvas id="signature-pad"></canvas>
+                </div>
+                <p class="text-[8px] text-gray-400 mt-2 italic">Certifié conforme via l'application DjuntaCar.</p>
+            </div>
+            <div class="text-center flex flex-col items-center justify-center border border-dashed border-gray-200 rounded-lg">
+                <i data-lucide="stamp" class="w-10 h-10 text-gray-100 mb-2"></i>
+                <span class="text-[9px] font-bold text-gray-300">CACHET DJUNTACAR<br>STAMP / CARIMBO</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+
+        // INIT SIGNATURE
+        const canvas = document.getElementById('signature-pad');
+        const signaturePad = new SignaturePad(canvas, { penColor: '#1d4379' });
+
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+        }
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+
+        // LOGIQUE SUPABASE & CALCULS
+        const supabase = window.supabase.createClient('URL_SUPABASE', 'CLE_ANON');
+
+        async function loadContractData() {
+            // Simulation de récupération de données
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookingId = urlParams.get('id');
+
+            // Exemple de calcul double devise
+            const rate = 110.265;
+            const priceCVE = 45000;
+            const priceEUR = (priceCVE / rate).toFixed(2);
+
+            document.getElementById('c-total').innerText = `${priceCVE.toLocaleString()} CVE / ${priceEUR} EUR`;
+            
+            // Remplissage automatique (Profil)
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                document.getElementById('c-tenant').innerText = user.user_metadata.full_name || user.email;
+                document.getElementById('c-license').innerText = user.user_metadata.license_number || "Vérifié KYC";
+            }
+        }
+
+        loadContractData();
+    </script>
+</body>
+</html>
