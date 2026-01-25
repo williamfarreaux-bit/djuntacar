@@ -3,112 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - P2P Rental</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <title>DjuntaCar - Plateforme P2P Cap-Vert</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Menu Hamburger Animation */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        #mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
     </style>
 </head>
-<body class="bg-[#fcfcfd] antialiased pb-24">
+<body class="bg-[#fcfcfd] antialiased pb-10">
 
-    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
-            <img src="logo.png" alt="DjuntaCar" class="h-6">
+    <header class="h-20 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-[100]">
+        <div class="max-w-5xl mx-auto w-full flex items-center justify-between">
             
-            <div class="flex items-center gap-4">
-                <select id="lang-selector" onchange="switchLang(this.value)" class="bg-gray-50 border-none text-[10px] font-black text-[#1d4379] rounded-lg px-2 py-1 outline-none">
+            <img src="logo.png" alt="DjuntaCar" class="h-7 cursor-pointer" onclick="window.location.href='index.html'">
+            
+            <div class="flex items-center gap-3">
+                <select id="lang-selector" onchange="switchLang(this.value)" class="bg-gray-50 border-none text-[10px] font-black text-[#1d4379] rounded-lg px-2 py-1 outline-none cursor-pointer">
                     <option value="fr">FR</option>
                     <option value="en">EN</option>
                     <option value="pt">PT</option>
                     <option value="cv">CV</option>
                 </select>
 
-                <div class="relative cursor-pointer" onclick="toggleNotifications()">
+                <div class="relative cursor-pointer p-2" onclick="toggleNotifications()">
                     <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
-                    <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                    <span id="notif-badge" class="absolute top-1 right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden border-2 border-white">0</span>
+                    
+                    <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden p-4">
+                        <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2 tracking-widest" data-i18n="notifications">Notifications</h4>
+                        <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2 no-scrollbar"></div>
+                    </div>
                 </div>
-                
-                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
-                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2 tracking-widest" data-i18n="notifications">Notifications</h4>
-                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2 no-scrollbar"></div>
-                </div>
+
+                <button onclick="toggleMenu()" class="p-2 text-[#1d4379]">
+                    <i data-lucide="menu" class="w-7 h-7"></i>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-8">
-        <h1 class="text-3xl font-black text-[#1d4379] leading-tight mb-8" data-i18n="welcome">Bienvenue</h1>
-        
-        <div class="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-blue-900/5 border border-gray-50 mb-10">
-            <div class="space-y-6">
-                <div class="flex items-center gap-4 border-b border-gray-50 pb-4">
-                    <i data-lucide="map-pin" class="text-blue-500 w-5 h-5"></i>
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-300 uppercase block" data-i18n="where_to">Où allez-vous ?</span>
-                        <select class="text-sm font-bold text-[#1d4379] bg-transparent outline-none w-full">
-                            <option>Santiago (Praia)</option>
-                            <option>Sal (Santa Maria)</option>
-                            <option>Boa Vista</option>
-                            <option>São Vicente</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <i data-lucide="calendar" class="text-blue-500 w-5 h-5"></i>
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-300 uppercase block" data-i18n="dates">Dates</span>
-                        <input type="text" placeholder="24 Jan - 30 Jan" class="text-sm font-bold text-[#1d4379] bg-transparent outline-none">
-                    </div>
-                </div>
-                <a href="results.html" class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
-                    <i data-lucide="search" class="w-4 h-4"></i> 
-                    <span data-i18n="search">Rechercher</span>
-                </a>
-            </div>
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-[150] p-8 flex flex-col">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full">
+                <i data-lucide="x" class="w-6 h-6 text-gray-400"></i>
+            </button>
         </div>
-    </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-50 px-8 py-4 flex justify-between items-center z-50">
-        <a href="index.html" class="text-[#1d4379]"><i data-lucide="home"></i></a>
-        <a href="my-rentals.html" class="text-gray-300"><i data-lucide="calendar-days"></i></a>
-        <a href="wallet.html" class="text-gray-300"><i data-lucide="wallet"></i></a>
-        <a href="profile.html" class="text-gray-300"><i data-lucide="user"></i></a>
-    </nav>
+        <div class="space-y-4 flex-1">
+            <button onclick="window.location.href='results.html'" class="nav-btn bg-blue-50 text-[#1d4379]">
+                <i data-lucide="search" class="w-5 h-5"></i>
+                <span data-i18n="start_search">Commencer ma recherche</span>
+            </button>
+            
+            <button onclick="window.location.href='add-car.html'" class="nav-btn bg-green-50 text-green-700">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                <span data-i18n="add_car">Ajouter ma voiture</span>
+            </button>
+            
+            <button onclick="window.location.href='profile.html?action=be-driver'" class="nav-btn bg-amber-50 text-amber-700">
+                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                <span data-i18n="be_driver">Devenir chauffeur</span>
+            </button>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        lucide.createIcons();
+            <hr class="border-gray-50 my-6">
 
-        // 1. Dictionnaire
-        const translations = {
-            fr: { welcome: "Bienvenue", search: "Rechercher", where_to: "Où allez-vous ?", dates: "Dates", notifications: "Notifications" },
-            en: { welcome: "Welcome", search: "Search", where_to: "Where to?", dates: "Dates", notifications: "Notifications" },
-            pt: { welcome: "Bem-vindo", search: "Pesquisar", where_to: "Para onde vai?", dates: "Datas", notifications: "Notificações" },
-            cv: { welcome: "Benvindu", search: "Buska", where_to: "Pa undi bo ba?", dates: "Datas", notifications: "Notifikasons" }
-        };
-
-        // 2. Moteur i18n
-        function applyTranslations() {
-            const lang = localStorage.getItem('djuntacar_lang') || 'fr';
-            document.getElementById('lang-selector').value = lang;
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[lang][key]) el.innerText = translations[lang][key];
-            });
-        }
-
-        function switchLang(lang) {
-            localStorage.setItem('djuntacar_lang', lang);
-            applyTranslations();
-        }
-
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', applyTranslations);
-        
-        // (Reste du code Supabase/Notifications identique au précédent...)
-    </script>
-</body>
-</html>
+            <a
