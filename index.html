@@ -3,155 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Accueil</title>
-    
+    <title>DjuntaCar - Location P2P Cap-Vert</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; margin: 0; padding-bottom: 200px; }
-        
-        .hero-shape { 
-            border-bottom-left-radius: 2.5rem; 
-            border-bottom-right-radius: 2.5rem; 
-            background: linear-gradient(145deg, #1d4379 0%, #102a4d 100%);
-            margin: 0 auto;
-            max-width: 450px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .search-container {
-            position: absolute;
-            left: 24px;
-            right: 24px;
-            bottom: 0;
-            transform: translateY(50%);
-            z-index: 50;
-        }
-
-        .btn-search {
-            background: white;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border: 1px solid #f0f2f5;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .btn-action {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; height: 56px; border-radius: 20px;
-            font-weight: 700; font-size: 14px; text-decoration: none;
-        }
-
-        .swiper { width: 100%; padding-top: 50px; padding-bottom: 30px; }
-        .swiper-slide {
-            width: 240px; height: 330px; border-radius: 26px; overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-            background-size: cover; background-position: center;
-        }
-        .slide-content {
-            background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
-            height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 18px; color: white;
-        }
-        .review-pill {
-            display: flex; align-items: center; gap: 4px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            padding: 4px 8px;
-            border-radius: 99px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="bg-[#fcfcfd] antialiased pb-24">
 
-    <header class="h-12 flex items-center px-6 border-b border-gray-50 bg-white/90 backdrop-blur-md sticky top-0 z-[60]">
-        <div class="max-w-md mx-auto w-full flex justify-between items-center">
-            <i data-lucide="menu" class="w-5 h-5 text-gray-600"></i>
-            <img src="logo.png" alt="DjuntaCar" class="h-5 object-contain">
-            <i data-lucide="user" class="w-5 h-5 text-[#1d4379]"></i>
+    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
+            <img src="logo.png" alt="DjuntaCar" class="h-6">
+            
+            <div class="flex items-center gap-4">
+                <div class="relative cursor-pointer" onclick="toggleNotifications()">
+                    <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
+                    <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </div>
+                
+                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
+                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2 tracking-widest">Notifications</h4>
+                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2 no-scrollbar">
+                        </div>
+                </div>
+                
+                <a href="profile.html"><i data-lucide="user" class="w-6 h-6 text-gray-400"></i></a>
+            </div>
         </div>
     </header>
 
-    <div class="hero-shape pt-4 pb-12 px-6 text-white text-center">
-        <h1 class="text-sm font-bold tracking-wide mb-4">Trouvez la voiture parfaite</h1>
-        <div class="search-container">
-            <a href="search-car.html" class="btn-search">
-                <div class="bg-blue-50 rounded-lg p-2 text-[#1d4379] flex items-center justify-center">
-                    <i data-lucide="search" class="w-4 h-4"></i>
-                </div>
-                <span class="font-bold text-[11px] text-gray-400">Commencer ma recherche...</span>
-            </a>
-        </div>
-    </div>
-
-    <main class="max-w-md mx-auto mt-4 relative z-0">
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400')">
-                    <div class="slide-content">
-                        <div class="flex justify-between items-start">
-                            <span class="bg-blue-600 text-[8px] font-bold px-2 py-1 rounded-md uppercase">Pick-up</span>
-                            <div class="review-pill">
-                                <i data-lucide="star" class="w-2.5 h-2.5 text-yellow-400 fill-yellow-400"></i>
-                                <span class="text-[10px] font-bold">4.9</span>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="font-extrabold text-sm">Toyota Hilux</h3>
-                            <p class="text-[10px] text-gray-300">6500 CVE / jour</p>
-                        </div>
+    <main class="max-w-md mx-auto px-6 pt-8">
+        <h1 class="text-3xl font-black text-[#1d4379] leading-tight mb-8">Trouvez votre liberté au Cap-Vert</h1>
+        
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-blue-900/5 border border-gray-50 mb-10">
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 border-b border-gray-50 pb-4">
+                    <i data-lucide="map-pin" class="text-blue-500 w-5 h-5"></i>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-300 uppercase block">Où allez-vous ?</span>
+                        <select class="text-sm font-bold text-[#1d4379] bg-transparent outline-none w-full">
+                            <option>Santiago (Praia)</option>
+                            <option>Sal (Santa Maria)</option>
+                            <option>Boa Vista</option>
+                            <option>São Vicente (Mindelo)</option>
+                        </select>
                     </div>
                 </div>
-                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=400')">
-                    <div class="slide-content">
-                        <div class="flex justify-between items-start">
-                            <span class="bg-green-600 text-[8px] font-bold px-2 py-1 rounded-md uppercase">Citadine</span>
-                            <div class="review-pill">
-                                <i data-lucide="star" class="w-2.5 h-2.5 text-yellow-400 fill-yellow-400"></i>
-                                <span class="text-[10px] font-bold">4.7</span>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="font-extrabold text-sm">Kia Picanto</h3>
-                            <p class="text-[10px] text-gray-300">3500 CVE / jour</p>
-                        </div>
+                <div class="flex items-center gap-4">
+                    <i data-lucide="calendar" class="text-blue-500 w-5 h-5"></i>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-300 uppercase block">Dates</span>
+                        <input type="text" placeholder="24 Jan - 30 Jan" class="text-sm font-bold text-[#1d4379] bg-transparent outline-none">
                     </div>
                 </div>
+                <a href="results.html" class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
+                    <i data-lucide="search" class="w-4 h-4"></i> Rechercher
+                </a>
             </div>
-            <div class="swiper-pagination"></div>
         </div>
     </main>
 
-    <div class="fixed bottom-0 w-full z-[40] px-10 pb-8 pt-4 bg-gradient-to-t from-white via-white to-transparent">
-        <div class="max-w-xs mx-auto flex flex-col gap-3">
-            <a href="add-car.html" class="btn-action bg-[#1d4379] text-white shadow-md">Ajouter ma voiture</a>
-            <a href="become-driver.html" class="btn-action bg-[#22c55e] text-white shadow-md">Devenir chauffeur</a>
-        </div>
-    </div>
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-50 px-8 py-4 flex justify-between items-center z-50">
+        <a href="index.html" class="text-[#1d4379]"><i data-lucide="home"></i></a>
+        <a href="my-rentals.html" class="text-gray-300"><i data-lucide="calendar-days"></i></a>
+        <a href="wallet.html" class="text-gray-300"><i data-lucide="wallet"></i></a>
+        <a href="profile.html" class="text-gray-300"><i data-lucide="settings"></i></a>
+    </nav>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
-        new Swiper(".mySwiper", {
-            effect: "coverflow",
-            centeredSlides: true,
-            slidesPerView: "auto",
-            coverflowEffect: { rotate: 0, stretch: 0, depth: 100, modifier: 1.5, slideShadows: false },
-            pagination: { el: ".swiper-pagination", clickable: true },
-        });
+        const supabase = window.supabase.createClient('URL_SUPABASE', 'CLE_ANON');
+
+        // GESTION NOTIFICATIONS
+        async function loadNotifications() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data: notifs } = await supabase.from('notifications')
+                .select('*').eq('user_id', user.id).eq('is_read', false).order('created_at', { ascending: false });
+
+            const badge = document.getElementById('notif-badge');
+            const list = document.getElementById('notif-list');
+
+            if (notifs && notifs.length > 0) {
+                badge.innerText = notifs.length;
+                badge.classList.remove('hidden');
+                list.innerHTML = notifs.map(n => `
+                    <div class="p-3 bg-blue-50 rounded-2xl border border-blue-100">
+                        <p class="text-[10px] font-black text-[#1d4379] uppercase mb-1">${n.title}</p>
+                        <p class="text-[10px] text-gray-500 leading-tight">${n.content}</p>
+                    </div>
+                `).join('');
+            } else {
+                badge.classList.add('hidden');
+                list.innerHTML = `<p class="text-center py-6 text-[9px] font-bold text-gray-300 uppercase">Aucune nouvelle alerte</p>`;
+            }
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notif-panel');
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) loadNotifications();
+        }
+
+        // REALTIME SUBSCRIPTION
+        function subscribeNotifs() {
+            supabase.channel('global-notifs')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, () => {
+                    loadNotifications();
+                }).subscribe();
+        }
+
+        loadNotifications();
+        subscribeNotifs();
     </script>
 </body>
 </html>
