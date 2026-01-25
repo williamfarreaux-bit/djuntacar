@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Assistance & Urgence - DjuntaCar</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f8fafc; padding-bottom: 40px; }
+
+        .emergency-card {
+            background: white;
+            border-radius: 28px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .emergency-card:active { transform: scale(0.98); }
+
+        .icon-box {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-pill {
+            width: 24px;
+            height: 24px;
+            background: #1d4379;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
+            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left"></i></a>
+            <span class="font-bold text-sm text-[#1d4379]">Assistance 24/7</span>
+            
+            <div class="relative cursor-pointer" onclick="toggleNotifications()">
+                <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
+                <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                
+                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
+                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2">Notifications</h4>
+                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 pt-8">
+        
+        <div class="mb-8">
+            <h1 class="text-2xl font-black text-[#1d4379] leading-tight">Besoin d'aide ?</h1>
+            <p class="text-xs font-bold text-gray-400 mt-2 uppercase tracking-widest">Urgence et dépannage au Cap-Vert</p>
+        </div>
+
+        <div class="space-y-4 mb-10">
+            <a href="tel:132" class="emergency-card">
+                <div class="icon-box bg-blue-50 text-blue-600">
+                    <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-sm text-[#1d4379] uppercase">Police (PN)</h3>
+                    <p class="text-[10px] font-bold text-blue-500">Appeler le 132</p>
+                </div>
+            </a>
+
+            <a href="tel:130" class="emergency-card">
+                <div class="icon-box bg-red-50 text-red-600">
+                    <i data-lucide="ambulance" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-sm text-[#1d4379] uppercase">Urgences Médicales</h3>
+                    <p class="text-[10px] font-bold text-red-500">Appeler le 130</p>
+                </div>
+            </a>
+
+            <a href="tel:+2380000000" id="btn-mechanic" class="emergency-card border-2 border-blue-100 bg-blue-50/30">
+                <div class="icon-box bg-[#1d4379] text-white">
+                    <i data-lucide="truck" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-sm text-[#1d4379] uppercase">Dépanneur Local</h3>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter" id="island-context">Chargement du contact île...</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
+            <h3 class="text-xs font-black text-gray-400 uppercase mb-6 tracking-widest">En cas d'accident</h3>
+            
+            <div class="space-y-6">
+                <div class="flex gap-4">
+                    <div class="step-pill">1</div>
+                    <p class="text-[11px] font-bold text-gray-600 leading-relaxed">Sécurisez la zone et les passagers. Utilisez le gilet et le triangle.</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="step-pill">2</div>
+                    <p class="text-[11px] font-bold text-gray-600 leading-relaxed">Prenez des photos de l'accident et des dommages sous tous les angles.</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="step-pill">3</div>
+                    <p class="text-[11px] font-bold text-gray-600 leading-relaxed">Remplissez le constat amiable présent dans la boîte à gants.</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="step-pill">4</div>
+                    <p class="text-[11px] font-bold text-gray-600 leading-relaxed">Contactez immédiatement le propriétaire via le chat DjuntaCar.</p>
+                </div>
+            </div>
+
+            <a href="my-rentals.html" class="mt-8 w-full bg-[#1d4379] text-white py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-3">
+                <i data-lucide="message-square" class="w-4 h-4"></i>
+                OUVRIR LE CHAT PROPRIÉTAIRE
+            </a>
+        </div>
+
+        <p class="text-center text-[9px] text-gray-300 font-bold mt-10 uppercase tracking-widest leading-loose">
+            DjuntaCar Assistance est disponible 24h/24.<br>
+            Merci de respecter le code de la route capverdien.
+        </p>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+        const supabase = window.supabase.createClient('URL_SUPABASE', 'CLE_ANON');
+
+        // CHARGEMENT DU CONTEXTE (ÎLE & NOTIFICATIONS)
+        async function initAssistance() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // Récupérer la dernière location active pour adapter le dépanneur
+            const { data: b } = await supabase.from('bookings')
+                .select('*, vehicles(island)')
+                .eq('tenant_id', user.id)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
+
+            if (b) {
+                const island = b.vehicles.island;
+                document.getElementById('island-context').innerText = `Assistance Île de ${island}`;
+                // Ici, on pourrait lier un numéro de dépanneur spécifique par île
+            }
+
+            loadNotifications(user.id);
+        }
+
+        async function loadNotifications(userId) {
+            const { data: notifs } = await supabase.from('notifications')
+                .select('*').eq('user_id', userId).eq('is_read', false);
+
+            const badge = document.getElementById('notif-badge');
+            if (notifs && notifs.length > 0) {
+                badge.innerText = notifs.length;
+                badge.classList.remove('hidden');
+            }
+
+            document.getElementById('notif-list').innerHTML = notifs.map(n => `
+                <div class="p-3 bg-blue-50 rounded-2xl text-[10px] font-bold text-[#1d4379]">
+                    ${n.title}
+                </div>
+            `).join('') || '<p class="text-center py-4 text-[9px] font-bold text-gray-300 uppercase">Aucune notification</p>';
+        }
+
+        function toggleNotifications() {
+            document.getElementById('notif-panel').classList.toggle('hidden');
+        }
+
+        initAssistance();
+    </script>
+</body>
+</html>
