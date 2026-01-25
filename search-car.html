@@ -31,66 +31,76 @@
             
             <div class="form-section">
                 <label class="input-label">Lieu de prise en charge</label>
-                <div class="relative flex items-center">
+                <div class="relative flex items-center mb-4">
                     <i data-lucide="map-pin" class="absolute left-0 text-[#1d4379] w-5 h-5"></i>
                     
-                    <select id="locationSelect" class="input-field pl-8 bg-transparent appearance-none">
-                        <option value="" disabled selected>Choisir une ville ou un aéroport...</option>
+                    <select id="locationSelect" onchange="checkAddressOption()" class="input-field pl-8 bg-transparent appearance-none">
+                        <option value="" disabled selected>Choisir un point de rendez-vous...</option>
                         
                         <optgroup label="🏝️ SANTIAGO">
-                            <option value="rai_airport">Praia - Aéroport N. Mandela (RAI)</option>
-                            <option value="praia_city">Praia - Centre Ville</option>
-                            <option value="tarrafal">Tarrafal</option>
-                            <option value="assomada">Assomada</option>
+                            <option value="rai_airport">✈️ Praia - Aéroport N. Mandela (RAI)</option>
+                            <option value="praia_port">⚓ Port de Praia (Ferry)</option>
+                            <option value=" Santiago_custom">📍 Praia - À l'adresse de votre choix</option>
+                            <option value="tarrafal">🏙️ Tarrafal</option>
                         </optgroup>
 
                         <optgroup label="🏝️ SÃO VICENTE">
-                            <option value="vxe_airport">Mindelo - Aéroport C. Évora (VXE)</option>
-                            <option value="mindelo_city">Mindelo - Centre Ville</option>
-                            <option value="mindelo_port">Porto Grande (Ferry)</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ SAL">
-                            <option value="sid_airport">Espargos - Aéroport A. Cabral (SID)</option>
-                            <option value="santa_maria">Santa Maria</option>
-                            <option value="palmeira">Palmeira (Port)</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ BOA VISTA">
-                            <option value="bvc_airport">Rabil - Aéroport A. Pereira (BVC)</option>
-                            <option value="sal_rei">Sal Rei</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ FOGO">
-                            <option value="sfl_airport">São Filipe - Aéroport (SFL)</option>
-                            <option value="sao_filipe">São Filipe - Ville</option>
-                            <option value="mosteiros">Mosteiros</option>
+                            <option value="vxe_airport">✈️ Mindelo - Aéroport C. Évora (VXE)</option>
+                            <option value="mindelo_port">⚓ Porto Grande (Ferry)</option>
+                            <option value="SV_custom">📍 Mindelo - À l'adresse de votre choix</option>
                         </optgroup>
 
                         <optgroup label="🏝️ SANTO ANTÃO">
-                            <option value="porto_novo">Porto Novo (Gare Maritime)</option>
-                            <option value="ribeira_grande">Ribeira Grande</option>
-                            <option value="ponta_sol">Ponta do Sol</option>
+                            <option value="porto_novo_port">⚓ Port de Porto Novo (Ferry)</option>
+                            <option value="SA_custom">📍 À l'adresse de votre choix (Porto Novo)</option>
+                            <option value="ribeira_grande">🏙️ Ribeira Grande</option>
                         </optgroup>
 
-                        <optgroup label="🏝️ SÃO NICOLAU">
-                            <option value="sne_airport">Preguiça - Aéroport (SNE)</option>
-                            <option value="ribeira_brava">Ribeira Brava</option>
-                            <option value="tarrafal_sn">Tarrafal de São Nicolau</option>
+                        <optgroup label="🏝️ SAL">
+                            <option value="sid_airport">✈️ Espargos - Aéroport A. Cabral (SID)</option>
+                            <option value="palmeira_port">⚓ Port de Palmeira</option>
+                            <option value="Sal_custom">📍 Santa Maria - À l'adresse de votre choix</option>
                         </optgroup>
 
-                        <optgroup label="🏝️ MAIO">
-                            <option value="mmo_airport">Vila do Maio - Aéroport (MMO)</option>
-                            <option value="porto_ingles">Porto Inglês / Vila do Maio</option>
+                        <optgroup label="🏝️ BOA VISTA">
+                            <option value="bvc_airport">✈️ Rabil - Aéroport A. Pereira (BVC)</option>
+                            <option value="sal_rei_port">⚓ Port de Sal Rei</option>
+                            <option value="BV_custom">📍 Sal Rei - À l'adresse de votre choix</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ FOGO">
+                            <option value="sfl_airport">✈️ São Filipe - Aéroport (SFL)</option>
+                            <option value="cavaleiros_port">⚓ Port de Vale dos Cavaleiros</option>
+                            <option value="Fogo_custom">📍 São Filipe - À l'adresse de votre choix</option>
                         </optgroup>
 
                         <optgroup label="🏝️ BRAVA">
-                            <option value="furna">Furna (Port)</option>
-                            <option value="nova_sintra">Nova Sintra</option>
+                            <option value="furna_port">⚓ Port de Furna (Ferry)</option>
+                            <option value="Brava_custom">📍 À l'adresse de votre choix</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ SÃO NICOLAU">
+                            <option value="sne_airport">✈️ Preguiça - Aéroport (SNE)</option>
+                            <option value="tarrafal_port">⚓ Port de Tarrafal</option>
+                            <option value="SN_custom">📍 À l'adresse de votre choix</option>
+                        </optgroup>
+
+                        <optgroup label="🏝️ MAIO">
+                            <option value="mmo_airport">✈️ Vila do Maio - Aéroport (MMO)</option>
+                            <option value="porto_ingles_port">⚓ Port de Porto Inglês</option>
+                            <option value="Maio_custom">📍 À l'adresse de votre choix</option>
                         </optgroup>
 
                     </select>
                     <i data-lucide="chevron-down" class="absolute right-0 text-gray-400 w-4 h-4 pointer-events-none"></i>
+                </div>
+
+                <div id="customAddressBox" class="hidden animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label class="input-label">Précisez l'adresse (Hôtel, Résidence...)</label>
+                    <div class="relative flex items-center">
+                        <i data-lucide="navigation" class="absolute left-0 text-blue-500 w-4 h-4"></i>
+                        <input type="text" id="customAddressInput" class="input-field pl-8 border-blue-200" placeholder="Ex: Hôtel Hilton, Santa Maria">
+                    </div>
                 </div>
             </div>
 
@@ -114,7 +124,7 @@
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="driverToggle" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1d4379]"></div>
+                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1d4379]"></div>
                 </label>
             </div>
 
@@ -123,68 +133,4 @@
 
     <div class="fixed-footer">
         <button onclick="goToResults()" class="btn-action btn-primary flex items-center justify-center gap-2 shadow-xl">
-            <i data-lucide="search" class="w-4 h-4"></i>
-            Voir les véhicules
-        </button>
-    </div>
-
-    <div id="menu-overlay" onclick="toggleMenu()"></div>
-    <div id="universal-menu">
-        <div class="menu-header">
-            <img src="logo.png" style="height: 32px;">
-            <button onclick="toggleMenu()"><i data-lucide="x" style="width: 24px; color: #1d4379;"></i></button>
-        </div>
-        <nav class="menu-nav">
-            <a href="index.html" class="menu-link"><i data-lucide="home"></i> Accueil</a>
-            <a href="search-car.html" class="menu-link"><i data-lucide="search"></i> Recherche</a>
-            <a href="my-rentals.html" class="menu-link"><i data-lucide="calendar"></i> Mes Locations</a>
-            <a href="profile.html" class="menu-link"><i data-lucide="user"></i> Profil</a>
-        </nav>
-        <div class="menu-footer">
-            <button onclick="if(confirm('Déconnexion ?')) window.location.href='login.html'" class="btn-logout"><i data-lucide="log-out"></i> Déconnexion</button>
-        </div>
-    </div>
-
-    <script>
-        lucide.createIcons();
-        
-        // Gestion du Menu Burger
-        function toggleMenu() { 
-            document.getElementById('universal-menu').classList.toggle('open'); 
-            document.getElementById('menu-overlay').classList.toggle('open'); 
-        }
-
-        // Action de recherche
-        function goToResults() {
-            const loc = document.getElementById('locationSelect').value;
-            const start = document.getElementById('dateStart').value;
-            const end = document.getElementById('dateEnd').value;
-
-            if(!loc) {
-                alert("Veuillez choisir une ville ou un aéroport.");
-                return;
-            }
-            if(!start || !end) {
-                alert("Veuillez sélectionner vos dates.");
-                return;
-            }
-
-            // Redirection vers l'accueil filtré (simulation)
-            // Dans une vraie app, on passerait les paramètres dans l'URL (index.html?loc=praia&start=...)
-            window.location.href = 'index.html';
-        }
-
-        // Dates par défaut (Demain -> +3 jours)
-        window.onload = () => {
-            const today = new Date();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            document.getElementById('dateStart').valueAsDate = tomorrow;
-            
-            const next = new Date(tomorrow);
-            next.setDate(next.getDate() + 3);
-            document.getElementById('dateEnd').valueAsDate = next;
-        };
-    </script>
-</body>
-</html>
+            <i data-lucide="search
