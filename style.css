@@ -1,0 +1,392 @@
+/* =========================================
+   1. CONFIGURATION GLOBALE
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');
+
+:root {
+    --primary-blue: #1d4379;
+    --primary-green: #22c55e;
+    --bg-color: #fcfcfd;
+    --border-color: #f1f5f9;
+    --text-gray: #94a3b8;
+}
+
+* {
+    font-family: 'Montserrat', sans-serif !important;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 0;
+    /* Espace pour ne pas cacher le contenu derrière le footer fixe */
+    padding-bottom: 150px; 
+    -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+/* =========================================
+   2. HEADER (Structure 20% - 60% - 20%)
+   ========================================= */
+.header-main {
+    height: 70px;
+    background: white;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 16px;
+}
+
+.header-side {
+    width: 20%;
+    display: flex;
+    align-items: center;
+}
+
+.header-side.left { justify-content: flex-start; }
+.header-side.right { justify-content: flex-end; }
+
+.header-center {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-logo {
+    width: 100%;
+    max-height: 40px;
+    object-fit: contain;
+}
+
+/* =========================================
+   3. ZONE HERO & NAVIGATION
+   ========================================= */
+.hero-section {
+    background-color: var(--primary-blue);
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    padding: 15px 0 30px 0; /* Compact */
+}
+
+.nav-wrapper {
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Barre de recherche blanche */
+.search-bar {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.search-icon-box {
+    width: 36px;
+    height: 36px;
+    background: #eff6ff; /* blue-50 */
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-blue);
+}
+
+.search-input {
+    flex: 1;
+    padding: 0 16px;
+    font-size: 12px;
+    font-weight: 700;
+    outline: none;
+    color: var(--text-gray);
+    background: transparent;
+    border: none;
+}
+
+/* =========================================
+   4. FILTRES (À CHEVAL)
+   ========================================= */
+.filter-container {
+    margin-top: -16px; /* 50% de la hauteur des boutons (32px) */
+    position: relative;
+    z-index: 50;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.filter-btn {
+    background: white;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 8px;
+    font-weight: 800;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.filter-btn.active {
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    transform: translateY(-1px);
+}
+
+.filter-btn svg { width: 12px; height: 12px; }
+
+/* =========================================
+   5. LISTE & CARTES VOITURES
+   ========================================= */
+.main-content {
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 40px 24px 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.section-title {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+}
+
+.car-card {
+    background: white;
+    border-radius: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.car-card:active { transform: scale(0.98); }
+
+.car-img-wrapper {
+    position: relative;
+    height: 220px;
+    width: 100%;
+}
+
+.car-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Badges */
+.badge-stack {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+}
+
+.badge {
+    color: white;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.badge.superhost { background: #84cc16; }
+.badge.verified { background: var(--primary-blue); }
+
+.location-chip {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.card-content { padding: 20px; }
+
+.card-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--primary-blue);
+    margin: 0;
+}
+
+.card-specs {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-details {
+    font-size: 10px;
+    font-weight: 900;
+    color: #3b82f6;
+    text-transform: uppercase;
+    text-decoration: underline;
+}
+
+.price-tag {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--primary-blue);
+}
+
+.price-unit { font-size: 10px; color: #cbd5e1; }
+
+/* =========================================
+   6. FOOTER ACTIONS (FIXE)
+   ========================================= */
+.sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-color);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-btn {
+    width: 100%;
+    color: white;
+    padding: 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    transition: transform 0.1s;
+}
+
+.action-btn:active { transform: scale(0.98); }
+.action-btn.primary { background: var(--primary-blue); }
+.action-btn.secondary { background: var(--primary-green); }
+
+/* =========================================
+   7. SIDEBAR (MENU HAMBURGER)
+   ========================================= */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-overlay.active { transform: translateX(0); }
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    padding: 12px 0;
+}
+
+.btn-logout {
+    font-size: 12px;
+    font-weight: 900;
+    color: #f87171;
+    text-transform: uppercase;
+    margin-top: auto;
+    letter-spacing: 1px;
+}
+
+/* =========================================
+   8. UTILITAIRES FORMULAIRES (ADD CAR / SEARCH)
+   ========================================= */
+.form-group {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.label-mini {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.input-field {
+    width: 100%;
+    font-weight: 700;
+    color: var(--primary-blue);
+    outline: none;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+}
+.input-field:focus { border-bottom-color: var(--primary-blue); }
