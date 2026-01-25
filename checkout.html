@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DjuntaCar - Paiement</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        
+        /* HEADER STANDARD */
+        header { height: 70px; background: white; border-bottom: 1px solid #f1f5f9; position: sticky; top: 0; z-index: 1000; }
+        
+        body { padding-bottom: 120px; background: #fcfcfd; }
+
+        .summary-card {
+            background: white; border-radius: 24px; padding: 20px; 
+            border: 1px solid #f1f5f9; margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .row { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .row.total { border-top: 1px dashed #e2e8f0; padding-top: 16px; margin-top: 16px; margin-bottom: 0; }
+        
+        .label { font-size: 11px; font-weight: 700; color: #94a3b8; }
+        .value { font-size: 11px; font-weight: 900; color: #1d4379; }
+        
+        .fixed-footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 16px 20px; border-top: 1px solid #f1f5f9; z-index: 900;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="flex items-center px-4">
+        <div class="w-[20%] flex justify-start">
+            <button onclick="window.history.back()" class="p-2"><i data-lucide="arrow-left" class="w-7 h-7 text-[#1d4379]"></i></button>
+        </div>
+        <div class="w-[60%] flex justify-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Confirmation</span>
+        </div>
+        <div class="w-[20%]"></div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 pt-8">
+        
+        <h2 class="text-xs font-black text-gray-400 uppercase mb-3 ml-2">Véhicule</h2>
+        <div class="summary-card flex gap-4 items-center">
+            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=200" class="w-20 h-20 rounded-xl object-cover">
+            <div>
+                <h3 class="text-lg font-black text-[#1d4379]">Mercedes GLC</h3>
+                <p class="text-xs font-bold text-gray-400">Boa Vista • Sal Rei</p>
+                <div class="mt-2 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded inline-block font-bold">DISPONIBLE</div>
+            </div>
+        </div>
+
+        <h2 class="text-xs font-black text-gray-400 uppercase mb-3 ml-2">Détails</h2>
+        <div class="summary-card">
+            <div class="row">
+                <span class="label">Départ</span>
+                <span class="value">Jeu. 24 Fév - 10:00</span>
+            </div>
+            <div class="row">
+                <span class="label">Retour</span>
+                <span class="value">Dim. 27 Fév - 10:00</span>
+            </div>
+            <div class="row">
+                <span class="label">Durée</span>
+                <span class="value">3 Jours</span>
+            </div>
+        </div>
+
+        <h2 class="text-xs font-black text-gray-400 uppercase mb-3 ml-2">Paiement</h2>
+        <div class="summary-card">
+            <div class="row">
+                <span class="label">Prix par jour</span>
+                <span class="value">15 000 CVE</span>
+            </div>
+            <div class="row">
+                <span class="label">Frais de service</span>
+                <span class="value">500 CVE</span>
+            </div>
+            <div class="row total">
+                <span class="text-sm font-black text-[#1d4379]">TOTAL À PAYER</span>
+                <span class="text-xl font-black text-[#1d4379]">45 500 CVE</span>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed-footer">
+        <button onclick="confirmBooking()" class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+            Confirmer et Payer
+        </button>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function confirmBooking() {
+            // Simulation de chargement
+            const btn = document.querySelector('.fixed-footer button');
+            const originalText = btn.innerText;
+            btn.innerHTML = '<i data-lucide="loader" class="animate-spin inline w-4 h-4"></i> Traitement...';
+            
+            setTimeout(() => {
+                // Redirection vers "Mes Locations" après succès
+                alert("Réservation confirmée avec succès !");
+                window.location.href = 'my-rentals.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
