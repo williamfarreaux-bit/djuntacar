@@ -10,6 +10,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="config.js"></script>
 </head>
 <body class="bg-[#fcfcfd] antialiased">
 
@@ -22,8 +24,7 @@
         <div class="header-center">
             <span class="text-[#1d4379] font-black uppercase text-sm">Nouvelle Annonce</span>
         </div>
-        <div class="header-right">
-            </div>
+        <div class="header-right"></div>
     </header>
 
     <main class="content-padding pt-6 pb-24">
@@ -34,7 +35,7 @@
             
             <div class="form-section">
                 <label class="input-label">Marque & Modèle</label>
-                <input type="text" id="carModel" class="input-field" placeholder="Ex: Toyota Hilux 4x4" required>
+                <input type="text" id="carModel" class="input-field" placeholder="Ex: Toyota Hilux" required>
             </div>
 
             <div class="form-section">
@@ -71,9 +72,6 @@
                         <option value="Boa Vista">Boa Vista</option>
                         <option value="Fogo">Fogo</option>
                         <option value="Santo Antão">Santo Antão</option>
-                        <option value="São Nicolau">São Nicolau</option>
-                        <option value="Maio">Maio</option>
-                        <option value="Brava">Brava</option>
                     </select>
                     <i data-lucide="map-pin" class="absolute right-0 text-gray-400 w-4 h-4 pointer-events-none"></i>
                 </div>
@@ -81,11 +79,11 @@
 
             <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Photos du véhicule</h2>
             <div class="form-section">
-                <label class="upload-zone cursor-pointer">
-                    <i data-lucide="image-plus" class="w-8 h-8 text-blue-300 mb-2"></i>
-                    <span class="text-xs font-bold text-[#1d4379]">Ajouter des photos</span>
-                    <span class="text-[9px] text-gray-400 mt-1">Format JPG, PNG (Max 5Mo)</span>
-                    <input type="file" id="carPhotos" class="hidden" multiple accept="image/*">
+                <label class="upload-zone cursor-pointer block border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50">
+                    <i data-lucide="image-plus" class="w-8 h-8 text-blue-300 mb-2 mx-auto"></i>
+                    <span class="text-xs font-bold text-[#1d4379] block">Ajouter des photos</span>
+                    <span class="text-[9px] text-gray-400 mt-1 block">Format JPG, PNG (Max 5Mo)</span>
+                    <input type="file" id="carPhotos" class="hidden" accept="image/*" onchange="handleFileSelect(this)">
                 </label>
                 <div id="previewContainer" class="flex gap-2 mt-4 overflow-x-auto hidden"></div>
             </div>
@@ -94,22 +92,24 @@
                 <label class="input-label mb-3">Caractéristiques</label>
                 <div class="flex flex-wrap gap-2">
                     <label class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100">
-                        <input type="checkbox" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Automatique</span>
+                        <input type="checkbox" id="chk-auto" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Automatique</span>
                     </label>
                     <label class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100">
-                        <input type="checkbox" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Climatisation</span>
+                        <input type="checkbox" id="chk-ac" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Climatisation</span>
                     </label>
                     <label class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100">
-                        <input type="checkbox" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Diesel</span>
+                        <input type="checkbox" id="chk-diesel" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Diesel</span>
                     </label>
                 </div>
             </div>
+
+            <p id="error-msg" class="text-center text-xs text-red-500 font-bold mt-4"></p>
 
         </form>
     </main>
 
     <div class="fixed-footer">
-        <button onclick="document.getElementById('addCarForm').dispatchEvent(new Event('submit'))" class="btn-action btn-primary shadow-xl">
+        <button id="submit-btn" onclick="submitCar()" class="btn-action btn-primary shadow-xl">
             Publier l'annonce
         </button>
     </div>
@@ -117,46 +117,119 @@
     <script>
         lucide.createIcons();
 
-        // Configuration Supabase
-        const SUPABASE_URL = 'VOTRE_URL_ICI';
-        const SUPABASE_KEY = 'VOTRE_CLE_ICI';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // 1. Initialisation via config.js
+        // On utilise window.supabase car la librairie est chargée via CDN
+        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        
+        let currentUser = null;
+        let selectedFile = null;
 
-        // Gestion de l'upload (Simulation visuelle)
-        document.getElementById('carPhotos').addEventListener('change', function(e) {
+        // Vérification connexion
+        async function init() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+        }
+        init();
+
+        // 2. Gestion Visuelle Upload
+        function handleFileSelect(input) {
             const container = document.getElementById('previewContainer');
-            container.classList.remove('hidden');
-            container.innerHTML = ''; // Reset pour l'exemple
+            container.innerHTML = '';
             
-            // Pour chaque fichier, on crée une vignette
-            Array.from(e.target.files).forEach(file => {
+            if (input.files && input.files[0]) {
+                selectedFile = input.files[0];
+                container.classList.remove('hidden');
+                
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = document.createElement('img');
                     img.src = e.target.result;
-                    img.className = "w-16 h-16 object-cover rounded-lg border border-gray-200";
+                    img.className = "w-16 h-16 object-cover rounded-lg border border-gray-200 flex-shrink-0";
                     container.appendChild(img);
                 }
-                reader.readAsDataURL(file);
-            });
-        });
+                reader.readAsDataURL(selectedFile);
+            }
+        }
 
+        // 3. Envoi Réel des Données
         async function submitCar() {
-            // Récupération des valeurs
-            const model = document.getElementById('carModel').value;
+            const btn = document.getElementById('submit-btn');
+            const msg = document.getElementById('error-msg');
+            
+            // Récupération champs
+            const fullModelName = document.getElementById('carModel').value; // Ex: "Toyota Hilux"
             const price = document.getElementById('carPrice').value;
             const location = document.getElementById('carLocation').value;
 
-            if(!model || !price) {
-                alert("Veuillez remplir les champs obligatoires.");
+            if(!fullModelName || !price) {
+                alert("Veuillez remplir le modèle et le prix.");
                 return;
             }
 
-            // Ici, on enverrait les données à Supabase
-            // const { error } = await supabase.from('cars').insert({ ... });
+            // UI Chargement
+            btn.innerHTML = '<i data-lucide="loader" class="animate-spin w-5 h-5 mx-auto"></i>';
+            btn.disabled = true;
+            lucide.createIcons();
 
-            alert(`✅ Voiture "${model}" prête à être ajoutée à ${location} !\n(Logique Supabase à connecter)`);
-            window.location.href = 'profile.html';
+            try {
+                let imageUrl = null;
+
+                // A. Upload de l'image (si présente)
+                if (selectedFile) {
+                    const fileName = `${currentUser.id}/${Date.now()}.jpg`;
+                    const { error: uploadError } = await supabase.storage
+                        .from('vehicles')
+                        .upload(fileName, selectedFile);
+                    
+                    if (!uploadError) {
+                        const { data } = supabase.storage.from('vehicles').getPublicUrl(fileName);
+                        imageUrl = data.publicUrl;
+                    }
+                }
+
+                // B. Séparation Marque/Modèle (Astuce simple)
+                // Si l'utilisateur tape "Toyota Hilux", on essaie de couper au premier espace
+                const nameParts = fullModelName.split(' ');
+                const brand = nameParts[0] || "Marque";
+                const model = nameParts.slice(1).join(' ') || fullModelName;
+
+                // C. Insertion dans la table 'vehicles'
+                const { error } = await supabase
+                    .from('vehicles')
+                    .insert([{
+                        owner_id: currentUser.id,
+                        brand: brand,
+                        model: model,
+                        category: document.getElementById('carCategory').value,
+                        price_per_day: parseInt(price),
+                        location: location,
+                        image_url: imageUrl,
+                        
+                        // Checkboxes
+                        transmission: document.getElementById('chk-auto').checked ? 'Automatique' : 'Manuelle',
+                        fuel_type: document.getElementById('chk-diesel').checked ? 'Diesel' : 'Essence',
+                        has_air_conditioning: document.getElementById('chk-ac').checked,
+                        
+                        is_driver_included: false,
+                        seats: 5
+                    }]);
+
+                if (error) throw error;
+
+                // Succès
+                alert("🎉 Annonce publiée avec succès !");
+                window.location.href = 'host-stats.html'; // Redirection vers le tableau de bord propriétaire
+
+            } catch (err) {
+                console.error(err);
+                msg.innerText = "Erreur : " + err.message;
+                btn.innerText = "Publier l'annonce";
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
