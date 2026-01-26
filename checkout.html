@@ -3,124 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Paiement</title>
+    <title>Paiement - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="auth-service.js"></script>
+    <script src="db-service.js"></script>
 </head>
-<body class="bg-[#fcfcfd] antialiased">
+<body class="bg-[#fcfcfd] antialiased pb-32">
 
-    <header>
-        <div class="header-left">
-            <button onclick="window.history.back()" class="profile-btn">
-                <i data-lucide="arrow-left" class="header-user-icon"></i>
-            </button>
-        </div>
-        <div class="header-center">
-            <span class="text-[#1d4379] font-black uppercase text-sm">Confirmation</span>
-        </div>
-        <div class="header-right">
-            <i data-lucide="lock" class="w-4 h-4 text-green-500"></i>
-        </div>
+    <header class="p-4 bg-white shadow-sm flex items-center gap-4">
+        <button onclick="history.back()" class="p-2"><i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i></button>
+        <h1 class="text-lg font-black text-[#1d4379] uppercase">Finaliser</h1>
     </header>
 
-    <main class="content-padding pt-6 pb-28">
+    <main class="max-w-md mx-auto px-6 pt-6">
         
-        <div class="bg-white p-4 rounded-2xl border border-gray-100 flex gap-4 mb-6 shadow-sm">
-            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" class="w-20 h-20 rounded-xl object-cover">
+        <div id="vehicle-summary" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 mb-6">
+            <img id="car-img" src="" class="w-20 h-20 rounded-xl object-cover bg-gray-100">
             <div>
-                <h3 class="font-black text-[#1d4379] text-lg">Mercedes GLC</h3>
-                <p class="text-xs font-bold text-gray-400">Sal • Santa Maria</p>
-                <div class="flex items-center gap-1 mt-2">
-                    <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[9px] font-black uppercase">Automatique</span>
-                </div>
+                <h3 id="car-name" class="text-sm font-black text-[#1d4379]">Chargement...</h3>
+                <p id="car-price-unit" class="text-xs text-gray-400 font-bold mt-1">... CVE / jour</p>
             </div>
         </div>
 
-        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2">Votre voyage</h2>
-        <div class="form-section">
-            <div class="relative pl-4 border-l-2 border-gray-100 ml-2 space-y-6">
-                <div class="relative">
-                    <div class="absolute -left-[21px] bg-white border-4 border-blue-500 w-4 h-4 rounded-full"></div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Prise en charge</p>
-                    <p class="text-sm font-black text-[#1d4379]">Jeu. 24 Janv à 10:00</p>
-                    <p class="text-xs text-gray-500">Aéroport Amilcar Cabral (SID)</p>
-                </div>
-                <div class="relative">
-                    <div class="absolute -left-[21px] bg-white border-4 border-[#1d4379] w-4 h-4 rounded-full"></div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Restitution</p>
-                    <p class="text-sm font-black text-[#1d4379]">Dim. 27 Janv à 10:00</p>
-                    <p class="text-xs text-gray-500">Aéroport Amilcar Cabral (SID)</p>
-                </div>
-            </div>
-        </div>
-
-        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2 mt-6">Détail du prix</h2>
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-            <div class="flex justify-between mb-2">
-                <span class="text-xs font-medium text-gray-500">15 000 x 3 Jours</span>
-                <span class="text-xs font-bold text-[#1d4379]">45 000 CVE</span>
-            </div>
-            <div class="flex justify-between mb-2">
-                <span class="text-xs font-medium text-gray-500">Frais de service</span>
-                <span class="text-xs font-bold text-[#1d4379]">1 500 CVE</span>
-            </div>
-            <div class="flex justify-between mb-4">
-                <span class="text-xs font-medium text-green-600">Assurance Base</span>
-                <span class="text-xs font-bold text-green-600">Offert</span>
-            </div>
-            <div class="border-t border-gray-100 pt-3 flex justify-between items-end">
-                <span class="text-sm font-black text-[#1d4379]">TOTAL À PAYER</span>
-                <span class="text-xl font-black text-[#1d4379]">46 500 CVE</span>
-            </div>
-        </div>
-
-        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2 mt-6">Moyen de paiement</h2>
-        <div class="space-y-3">
-            <label class="flex items-center gap-4 bg-white p-4 rounded-2xl border-2 border-blue-500 cursor-pointer shadow-sm relative overflow-hidden">
-                <input type="radio" name="payment" class="w-5 h-5 accent-[#1d4379]" checked>
-                <div class="flex-1">
-                    <p class="text-sm font-black text-[#1d4379]">Carte Vinti4 / Visa</p>
-                    <p class="text-[10px] text-gray-400">Paiement sécurisé SISP</p>
-                </div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-4 opacity-50">
-            </label>
+        <h3 class="text-sm font-black text-[#1d4379] uppercase mb-4">Vos Dates</h3>
+        <div class="bg-white p-6 rounded-[32px] shadow-lg border border-gray-100 space-y-4">
             
-            <label class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 cursor-pointer opacity-60">
-                <input type="radio" name="payment" class="w-5 h-5 accent-[#1d4379]">
-                <div class="flex-1">
-                    <p class="text-sm font-black text-[#1d4379]">Payer sur place</p>
-                    <p class="text-[10px] text-gray-400">Non disponible pour ce véhicule</p>
-                </div>
-            </label>
+            <div>
+                <label class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Départ</label>
+                <input type="date" id="start-date" class="w-full bg-gray-50 p-3 rounded-xl font-bold text-[#1d4379] outline-none">
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Retour</label>
+                <input type="date" id="end-date" class="w-full bg-gray-50 p-3 rounded-xl font-bold text-[#1d4379] outline-none">
+            </div>
+
+            <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
+                <span class="text-xs font-bold text-gray-400">Jours total</span>
+                <span id="total-days" class="text-sm font-black text-[#1d4379]">0 jours</span>
+            </div>
         </div>
+
+        <div class="mt-8 bg-[#1d4379] p-6 rounded-[32px] text-white">
+            <div class="flex justify-between mb-2">
+                <span class="text-xs font-bold opacity-70">Prix journalier</span>
+                <span id="summary-price" class="text-xs font-bold">0 CVE</span>
+            </div>
+            <div class="flex justify-between mb-4 border-b border-white/10 pb-4">
+                <span class="text-xs font-bold opacity-70">Frais de service</span>
+                <span class="text-xs font-bold">0 CVE</span>
+            </div>
+            <div class="flex justify-between items-end">
+                <span class="text-sm font-black uppercase">Total à payer</span>
+                <span id="total-amount" class="text-2xl font-black">0 CVE</span>
+            </div>
+        </div>
+
+        <button id="pay-btn" onclick="processBooking()" class="w-full mt-6 bg-green-500 text-white py-4 rounded-[18px] font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:opacity-50 disabled:bg-gray-400">
+            Confirmer la réservation
+        </button>
+        <p id="error-msg" class="text-center text-xs text-red-500 font-bold mt-2"></p>
 
     </main>
-
-    <div class="fixed-footer">
-        <button onclick="processPayment()" class="btn-action btn-primary shadow-xl flex justify-between items-center px-6">
-            <span>Payer maintenant</span>
-            <span class="bg-white/20 px-2 py-1 rounded text-[10px]">46 500 CVE</span>
-        </button>
-    </div>
 
     <script>
         lucide.createIcons();
 
-        function processPayment() {
-            const btn = document.querySelector('.btn-primary');
-            btn.innerHTML = '<i data-lucide="loader" class="animate-spin w-5 h-5 mx-auto"></i>';
-            lucide.createIcons();
+        let currentCar = null;
+        let totalPrice = 0;
+        let user = null;
+
+        // 1. Initialisation
+        async function initCheckout() {
+            // Vérif connexion
+            user = await DjuntaAuth.getUser();
+            if (!user) {
+                // Sauvegarde l'URL pour revenir après login
+                sessionStorage.setItem('redirect_after_login', window.location.href);
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Récup ID Voiture
+            const params = new URLSearchParams(window.location.search);
+            const carId = params.get('id');
+            if (!carId) return window.location.href = 'index.html';
+
+            // Charge Voiture
+            currentCar = await DjuntaDB.getById(carId);
+            if (!currentCar) return window.location.href = 'search-car.html';
+
+            // Affiche Infos
+            document.getElementById('car-name').innerText = `${currentCar.brand} ${currentCar.model}`;
+            document.getElementById('car-price-unit').innerText = `${currentCar.price_per_day} CVE / jour`;
+            document.getElementById('car-img').src = currentCar.image_url;
+            document.getElementById('summary-price').innerText = `${currentCar.price_per_day} CVE`;
+
+            // Setup dates par défaut (demain -> après-demain)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('start-date').valueAsDate = tomorrow;
+            document.getElementById('start-date').min = new Date().toISOString().split("T")[0]; // Pas de date passée
+
+            const afterTomorrow = new Date(tomorrow);
+            afterTomorrow.setDate(tomorrow.getDate() + 2);
+            document.getElementById('end-date').valueAsDate = afterTomorrow;
             
-            setTimeout(() => {
-                // Simulation succès
-                alert("Paiement accepté ! Votre location est confirmée.");
-                // Redirection vers "Mes Locations" pour voir le ticket
-                window.location.href = 'my-rentals.html';
-            }, 2000);
+            calculateTotal();
         }
+
+        // 2. Calcul du Prix dynamique
+        function calculateTotal() {
+            const start = new Date(document.getElementById('start-date').value);
+            const end = new Date(document.getElementById('end-date').value);
+
+            if (end <= start) {
+                document.getElementById('total-days').innerText = "Date invalide";
+                document.getElementById('pay-btn').disabled = true;
+                return;
+            }
+
+            // Différence en jours
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            document.getElementById('total-days').innerText = `${diffDays} jours`;
+            
+            // Calcul Prix
+            totalPrice = diffDays * currentCar.price_per_day;
+            document.getElementById('total-amount').innerText = `${totalPrice.toLocaleString()} CVE`;
+            
+            document.getElementById('pay-btn').disabled = false;
+        }
+
+        // Écouteurs sur les dates
+        document.getElementById('start-date').addEventListener('change', calculateTotal);
+        document.getElementById('end-date').addEventListener('change', calculateTotal);
+
+        // 3. Envoi à Supabase
+        async function processBooking() {
+            const btn = document.getElementById('pay-btn');
+            btn.innerText = "Traitement...";
+            btn.disabled = true;
+
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+
+            // Insertion dans la table 'bookings'
+            const { error } = await _supabase
+                .from('bookings')
+                .insert([{
+                    vehicle_id: currentCar.id,
+                    renter_id: user.id,
+                    start_date: startDate,
+                    end_date: endDate,
+                    total_price: totalPrice,
+                    status: 'pending' // En attente
+                }]);
+
+            if (error) {
+                console.error(error);
+                document.getElementById('error-msg').innerText = "Erreur lors de la réservation.";
+                btn.innerText = "Réessayer";
+                btn.disabled = false;
+            } else {
+                // Succès -> Redirection vers Mes Locations
+                // (Simule un paiement réussi pour l'instant)
+                alert("Réservation confirmée !");
+                window.location.href = 'my-rentals.html';
+            }
+        }
+
+        initCheckout();
     </script>
 </body>
 </html>
