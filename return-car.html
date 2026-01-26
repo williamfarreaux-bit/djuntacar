@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DjuntaCar - Restitution</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#fcfcfd] antialiased">
+
+    <header>
+        <div class="header-left">
+            <button onclick="window.history.back()" class="profile-btn">
+                <i data-lucide="arrow-left" class="header-user-icon"></i>
+            </button>
+        </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Fin de location</span>
+        </div>
+        <div class="header-right">
+            </div>
+    </header>
+
+    <main class="content-padding pt-6 pb-28">
+        
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2">Restitution Véhicule</h1>
+        <p class="text-xs font-bold text-gray-400 mb-6">Vérification finale avant clôture du contrat.</p>
+
+        <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 mb-6 shadow-sm">
+            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" class="w-16 h-16 rounded-xl object-cover">
+            <div>
+                <h3 class="font-black text-[#1d4379] text-sm">Mercedes GLC</h3>
+                <p class="text-[10px] text-gray-500 font-bold">Retour prévu : Aujourd'hui 10:00</p>
+                <span class="text-[9px] bg-green-100 text-green-700 px-2 py-0.5 rounded font-black uppercase mt-1 inline-block">À l'heure</span>
+            </div>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2">1. Niveau Carburant</h2>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 mb-6 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-xs font-bold text-gray-600">Niveau de départ : <span class="text-[#1d4379]">Plein (F)</span></span>
+            </div>
+            
+            <div class="flex justify-between gap-1">
+                <button onclick="selectFuel(this, 'low')" class="flex-1 py-3 bg-red-50 text-red-500 rounded-lg text-[10px] font-black border border-transparent hover:border-red-200">E</button>
+                <button onclick="selectFuel(this, 'mid')" class="flex-1 py-3 bg-gray-50 text-gray-400 rounded-lg text-[10px] font-black hover:bg-gray-100">1/2</button>
+                <button onclick="selectFuel(this, 'ok')" class="flex-1 py-3 bg-[#1d4379] text-white rounded-lg text-[10px] font-black shadow-md ring-2 ring-offset-2 ring-[#1d4379]">F</button>
+            </div>
+            
+            <div id="fuelAlert" class="hidden mt-3 text-[10px] font-bold text-red-500 bg-red-50 p-2 rounded-lg flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i> Frais de remplissage : +2000 CVE
+            </div>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2">2. Kilométrage</h2>
+        <div class="form-section">
+            <label class="input-label">Compteur actuel</label>
+            <div class="flex gap-2">
+                <input type="number" class="input-field" placeholder="Ex: 45 300">
+                <span class="bg-gray-100 flex items-center px-4 rounded-xl text-xs font-bold text-gray-500">km</span>
+            </div>
+            <p class="text-[9px] text-gray-400 mt-2 text-right">Départ : 45 032 km</p>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2 mt-6">3. Nouveaux Dommages ?</h2>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <label class="cursor-pointer bg-white border border-gray-100 p-4 rounded-2xl flex flex-col items-center gap-2 shadow-sm has-[:checked]:border-red-500 has-[:checked]:bg-red-50">
+                <input type="radio" name="damage" class="hidden" onchange="toggleDamage(true)">
+                <i data-lucide="frown" class="w-8 h-8 text-gray-300"></i>
+                <span class="text-xs font-bold text-gray-600">Oui, dommage</span>
+            </label>
+            
+            <label class="cursor-pointer bg-white border border-gray-100 p-4 rounded-2xl flex flex-col items-center gap-2 shadow-sm has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
+                <input type="radio" name="damage" class="hidden" checked onchange="toggleDamage(false)">
+                <i data-lucide="smile" class="w-8 h-8 text-gray-300"></i>
+                <span class="text-xs font-bold text-gray-600">Rien à signaler</span>
+            </label>
+        </div>
+
+        <div id="damageUpload" class="hidden animate-in fade-in slide-in-from-top-2">
+            <label class="upload-zone cursor-pointer bg-red-50 border-red-200">
+                <i data-lucide="camera" class="w-8 h-8 text-red-300 mb-2"></i>
+                <span class="text-xs font-bold text-red-500">Prendre photo du dégât</span>
+                <input type="file" class="hidden" capture="environment">
+            </label>
+        </div>
+
+    </main>
+
+    <div class="fixed-footer">
+        <div class="flex items-center justify-between mb-4 px-1">
+            <span class="text-xs font-bold text-gray-500">Caution (20.000 CVE)</span>
+            <span class="text-xs font-black text-green-600">Sera libérée</span>
+        </div>
+        <button onclick="finalizeReturn()" class="btn-action btn-primary shadow-xl">
+            Clôturer le contrat
+        </button>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function selectFuel(btn, level) {
+            // Reset styles
+            btn.parentNode.querySelectorAll('button').forEach(b => {
+                b.className = "flex-1 py-3 bg-gray-50 text-gray-400 rounded-lg text-[10px] font-black hover:bg-gray-100";
+            });
+            // Active style
+            if(level === 'ok') {
+                btn.className = "flex-1 py-3 bg-[#1d4379] text-white rounded-lg text-[10px] font-black shadow-md ring-2 ring-offset-2 ring-[#1d4379]";
+                document.getElementById('fuelAlert').classList.add('hidden');
+            } else {
+                btn.className = "flex-1 py-3 bg-red-500 text-white rounded-lg text-[10px] font-black shadow-md ring-2 ring-offset-2 ring-red-500";
+                document.getElementById('fuelAlert').classList.remove('hidden');
+            }
+        }
+
+        function toggleDamage(hasDamage) {
+            const zone = document.getElementById('damageUpload');
+            if(hasDamage) {
+                zone.classList.remove('hidden');
+            } else {
+                zone.classList.add('hidden');
+            }
+        }
+
+        function finalizeReturn() {
+            if(confirm("Confirmer la restitution et générer la facture ?")) {
+                // Redirection vers la notation
+                window.location.href = 'rate-experience.html';
+            }
+        }
+    </script>
+</body>
+</html>
