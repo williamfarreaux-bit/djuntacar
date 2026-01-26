@@ -4,9 +4,8 @@
  * (Settings > API)
  */
 
-const SUPABASE_URL = "VOTRE_URL_SUPABASE_ICI"; // ex: https://xyz.supabase.co
-const SUPABASE_ANON_KEY = "VOTRE_CLE_ANON_ICI"; // ex: eyJhbGciOiJIUzI1NiIsInR...
-
+const SUPABASE_URL = "https://enuiuuwnjzvpfvpklmjw.supabase.co"; // 
+const SUPABASE_ANON_KEY = "'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVudWl1dXduanp2cGZ2cGtsbWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNjIwMzMsImV4cCI6MjA4NDczODAzM30.Ry4beH9ki0sql51XWo5eA1iRluFokVKClaDnbuUGxGA"; // 
 // Initialisation du client Supabase (nécessite le script CDN dans le HTML)
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
