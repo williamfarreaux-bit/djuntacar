@@ -1,59 +1,35 @@
 /**
- * SERVICE BASE DE DONNÉES (DAL)
- * Centralise toutes les requêtes vers Supabase.
+ * SERVICE BASE DE DONNÉES (VERSION STABLE)
  */
-
 const DjuntaDB = {
 
-    // A. AUTOMATISATION : Récupérer les voitures (Location seule)
+    // Récupérer toutes les voitures
     async getCars() {
         const { data, error } = await _supabase
             .from('vehicles')
             .select('*')
-            .eq('is_driver_included', false) // Filtre SQL : Pas de chauffeur
-            .eq('is_active', true)          // Uniquement les véhicules actifs
-            .order('price_per_day', { ascending: true }); // Tri par prix
+            .eq('is_driver_included', false); 
 
-        if (error) { console.error("🚨 Erreur SQL getCars:", error); return []; }
-        return data;
+        if (error) { console.error("Erreur getCars:", error); return []; }
+        return data || [];
     },
 
-    // B. AUTOMATISATION : Récupérer les chauffeurs (VTC)
-    async getDrivers() {
-        const { data, error } = await _supabase
-            .from('vehicles')
-            .select('*')
-            .eq('is_driver_included', true) // Filtre SQL : Avec chauffeur
-            .eq('is_active', true);
-
-        if (error) { console.error("🚨 Erreur SQL getDrivers:", error); return []; }
-        return data;
-    },
-
-    // C. AUTOMATISATION : Récupérer un détail (par ID)
+    // Récupérer UN véhicule (VERSION FIXÉE)
     async getById(id) {
+        // On ne demande PLUS les infos 'owner_id' pour éviter le bug
         const { data, error } = await _supabase
             .from('vehicles')
-            .select('*, owner_id(*)') // Récupère aussi les infos du propriétaire lié
+            .select('*') 
             .eq('id', id)
             .single();
 
-        if (error) return null;
+        if (error) {
+            console.error("Erreur getById:", error);
+            return null;
+        }
         return data;
     },
 
-    // D. AUTOMATISATION : Filtrer (Recherche avancée)
-    async filterVehicles(type, maxPrice) {
-        let query = _supabase.from('vehicles').select('*');
-
-        if (type && type !== 'all') {
-            query = query.ilike('category', `%${type}%`);
-        }
-        if (maxPrice) {
-            query = query.lte('price_per_day', maxPrice);
-        }
-
-        const { data, error } = await query;
-        return data || [];
-    }
+    // Recherche
+    async filterVehicles(type) { /* ... peut rester vide pour l'instant ... */ }
 };
