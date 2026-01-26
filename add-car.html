@@ -3,259 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ajouter un véhicule - DjuntaCar</title>
+    <title>DjuntaCar - Ajouter un véhicule</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; margin: 0; padding-bottom: 40px; }
-
-        .form-card { 
-            background: white; 
-            border-radius: 28px; 
-            border: 1px solid #f0f2f5; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
-        }
-        .input-group { border-bottom: 1px solid #f0f2f5; padding: 18px 24px; }
-        .input-group:last-child { border-bottom: none; }
-        
-        label { 
-            font-size: 10px; 
-            font-weight: 700; 
-            color: #bdc3c7; 
-            text-transform: uppercase; 
-            margin-bottom: 6px; 
-            display: block; 
-            letter-spacing: 0.8px; 
-        }
-        
-        select, input { 
-            width: 100%; 
-            font-weight: 600; 
-            color: #1d4379; 
-            outline: none; 
-            background: transparent; 
-            border: none; 
-            font-size: 15px; 
-        }
-
-        /* ZONE D'UPLOAD */
-        .upload-zone {
-            border: 2px dashed #e5e7eb;
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .upload-zone:hover { border-color: #1d4379; background: #f8fafc; }
-        #image-preview { display: none; width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-top: 10px; }
-
-        .btn-submit {
-            background-color: #1d4379;
-            color: white;
-            width: 100%;
-            padding: 20px;
-            border-radius: 22px;
-            font-weight: 700;
-            box-shadow: 0 12px 24px rgba(29, 67, 121, 0.2);
-        }
-        .loading-spinner { display: none; }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="antialiased text-gray-800">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="h-14 flex items-center px-6 bg-white border-b border-gray-50 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between">
-            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="arrow-left" class="w-6 h-6"></i></a>
-            <span class="font-bold text-sm text-[#1d4379]">Nouveau véhicule</span>
-            <div class="w-10"></div>
+    <header>
+        <div class="header-left">
+            <button onclick="window.history.back()" class="profile-btn">
+                <i data-lucide="arrow-left" class="header-user-icon"></i>
+            </button>
         </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Nouvelle Annonce</span>
+        </div>
+        <div class="header-right">
+            </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-8">
-        <h1 class="text-2xl font-extrabold text-[#1d4379] mb-8 leading-tight text-center">Détails de votre voiture</h1>
+    <main class="content-padding pt-6 pb-24">
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2">Détails du véhicule</h1>
+        <p class="text-xs font-bold text-gray-400 mb-6">Remplissez les informations pour louer votre voiture.</p>
 
-        <form id="add-car-form" class="form-card overflow-hidden">
-            <div class="p-6 border-b border-gray-50">
-                <label>Photo du véhicule</label>
-                <div class="upload-zone" onclick="document.getElementById('file-input').click()">
-                    <div id="upload-placeholder">
-                        <i data-lucide="camera" class="w-8 h-8 mx-auto text-gray-300 mb-2"></i>
-                        <p class="text-xs text-gray-400 font-bold">Cliquez pour ajouter une photo</p>
-                    </div>
-                    <img id="image-preview" alt="Aperçu">
-                    <input type="file" id="file-input" accept="image/*" class="hidden" onchange="previewImage(event)">
+        <form id="addCarForm" onsubmit="event.preventDefault(); submitCar();">
+            
+            <div class="form-section">
+                <label class="input-label">Marque & Modèle</label>
+                <input type="text" id="carModel" class="input-field" placeholder="Ex: Toyota Hilux 4x4" required>
+            </div>
+
+            <div class="form-section">
+                <label class="input-label">Catégorie</label>
+                <div class="relative flex items-center">
+                    <select id="carCategory" class="input-field bg-transparent appearance-none">
+                        <option value="4x4">🚙 4x4 / Pickup</option>
+                        <option value="citadine">🚗 Citadine</option>
+                        <option value="luxe">💎 Luxe / SUV</option>
+                        <option value="utilitaire">🚐 Utilitaire</option>
+                    </select>
+                    <i data-lucide="chevron-down" class="absolute right-0 text-gray-400 w-4 h-4 pointer-events-none"></i>
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>Marque & Modèle</label>
-                <input type="text" id="make_model" placeholder="Ex: Toyota Hilux" required>
-            </div>
-
-            <div class="grid grid-cols-2">
-                <div class="input-group border-r border-gray-100">
-                    <label>Catégorie</label>
-                    <select id="category">
-                        <option value="citadine">Citadine</option>
-                        <option value="4x4">4X4</option>
-                        <option value="monospace">Monospace</option>
-                        <option value="fourgonnette">Fourgonnette</option>
-                        <option value="pickup">Pick-up</option>
-                        <option value="premium">Premium</option>
-                    </select>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-section">
+                    <label class="input-label">Prix / Jour (CVE)</label>
+                    <input type="number" id="carPrice" class="input-field" placeholder="Ex: 6000" required>
                 </div>
-                <div class="input-group">
-                    <label>Île</label>
-                    <select id="island">
-                        <option>Santiago</option>
-                        <option>Sal</option>
-                        <option>São Vicente</option>
-                        <option>Boa Vista</option>
-                    </select>
+                <div class="form-section">
+                    <label class="input-label">Année</label>
+                    <input type="number" id="carYear" class="input-field" placeholder="Ex: 2022">
                 </div>
             </div>
 
-            <div class="grid grid-cols-2">
-                <div class="input-group border-r border-gray-100">
-                    <label>Places</label>
-                    <select id="seats">
-                        <option value="2">2</option>
-                        <option value="5" selected>5</option>
-                        <option value="7">7</option>
-                        <option value="9">9</option>
+            <div class="form-section">
+                <label class="input-label">Localisation (Île)</label>
+                <div class="relative flex items-center">
+                    <select id="carLocation" class="input-field bg-transparent appearance-none">
+                        <option value="Santiago">Santiago</option>
+                        <option value="São Vicente">São Vicente</option>
+                        <option value="Sal">Sal</option>
+                        <option value="Boa Vista">Boa Vista</option>
+                        <option value="Fogo">Fogo</option>
+                        <option value="Santo Antão">Santo Antão</option>
+                        <option value="São Nicolau">São Nicolau</option>
+                        <option value="Maio">Maio</option>
+                        <option value="Brava">Brava</option>
                     </select>
-                </div>
-                <div class="input-group">
-                    <label>Portes</label>
-                    <select id="doors">
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5" selected>5</option>
-                    </select>
+                    <i data-lucide="map-pin" class="absolute right-0 text-gray-400 w-4 h-4 pointer-events-none"></i>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2">
-                <div class="input-group border-r border-gray-100">
-                    <label>Carburant</label>
-                    <select id="fuel_type">
-                        <option>Essence</option>
-                        <option>Diesel</option>
-                        <option>Électrique</option>
-                        <option>Hybride</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Climatisation</label>
-                    <select id="ac">
-                        <option value="true">Oui</option>
-                        <option value="false">Non</option>
-                    </select>
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Photos du véhicule</h2>
+            <div class="form-section">
+                <label class="upload-zone cursor-pointer">
+                    <i data-lucide="image-plus" class="w-8 h-8 text-blue-300 mb-2"></i>
+                    <span class="text-xs font-bold text-[#1d4379]">Ajouter des photos</span>
+                    <span class="text-[9px] text-gray-400 mt-1">Format JPG, PNG (Max 5Mo)</span>
+                    <input type="file" id="carPhotos" class="hidden" multiple accept="image/*">
+                </label>
+                <div id="previewContainer" class="flex gap-2 mt-4 overflow-x-auto hidden"></div>
+            </div>
+
+            <div class="form-section mt-4">
+                <label class="input-label mb-3">Caractéristiques</label>
+                <div class="flex flex-wrap gap-2">
+                    <label class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100">
+                        <input type="checkbox" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Automatique</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100">
+                        <input type="checkbox" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Climatisation</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100">
+                        <input type="checkbox" class="accent-[#1d4379]"> <span class="text-xs font-bold text-gray-600">Diesel</span>
+                    </label>
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>Prix par jour (CVE)</label>
-                <input type="number" id="price" placeholder="Ex: 5000" required>
-            </div>
         </form>
-
-        <button type="submit" form="add-car-form" id="submit-btn" class="btn-submit mt-8 flex justify-center items-center">
-            <span id="btn-text">Enregistrer le véhicule</span>
-            <div id="spinner" class="loading-spinner ml-3">
-                <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
-            </div>
-        </button>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div class="fixed-footer">
+        <button onclick="document.getElementById('addCarForm').dispatchEvent(new Event('submit'))" class="btn-action btn-primary shadow-xl">
+            Publier l'annonce
+        </button>
+    </div>
+
     <script>
         lucide.createIcons();
 
-        // REMPLACER PAR VOS VRAIES CLÉS
-        const supabase = window.supabase.createClient('URL_VOTRE_SUPABASE', 'CLE_ANON_VOTRE_SUPABASE');
+        // Configuration Supabase
+        const SUPABASE_URL = 'VOTRE_URL_ICI';
+        const SUPABASE_KEY = 'VOTRE_CLE_ICI';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const output = document.getElementById('image-preview');
-                const placeholder = document.getElementById('upload-placeholder');
-                output.src = reader.result;
-                output.style.display = 'block';
-                placeholder.style.display = 'none';
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
-
-        document.getElementById('add-car-form').onsubmit = async (e) => {
-            e.preventDefault();
+        // Gestion de l'upload (Simulation visuelle)
+        document.getElementById('carPhotos').addEventListener('change', function(e) {
+            const container = document.getElementById('previewContainer');
+            container.classList.remove('hidden');
+            container.innerHTML = ''; // Reset pour l'exemple
             
-            const btn = document.getElementById('submit-btn');
-            const spinner = document.getElementById('spinner');
-            const btnText = document.getElementById('btn-text');
-            const file = document.getElementById('file-input').files[0];
+            // Pour chaque fichier, on crée une vignette
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = "w-16 h-16 object-cover rounded-lg border border-gray-200";
+                    container.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            });
+        });
 
-            if (!file) return alert("Veuillez sélectionner une photo !");
+        async function submitCar() {
+            // Récupération des valeurs
+            const model = document.getElementById('carModel').value;
+            const price = document.getElementById('carPrice').value;
+            const location = document.getElementById('carLocation').value;
 
-            // 1. Désactiver le bouton pendant le chargement
-            btn.disabled = true;
-            spinner.style.display = 'block';
-            btnText.innerText = "Téléchargement...";
-
-            try {
-                // 2. Upload de l'image dans le Storage
-                const fileName = `${Date.now()}_${file.name}`;
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('car-photos')
-                    .upload(fileName, file);
-
-                if (uploadError) throw uploadError;
-
-                // 3. Récupérer l'URL publique
-                const { data: publicUrlData } = supabase.storage
-                    .from('car-photos')
-                    .getPublicUrl(fileName);
-
-                const finalImageUrl = publicUrlData.publicUrl;
-
-                // 4. Insérer dans la table des véhicules
-                const makeModel = document.getElementById('make_model').value.split(' ');
-                const { error: dbError } = await supabase.from('vehicles').insert([{
-                    make: makeModel[0],
-                    model: makeModel.slice(1).join(' '),
-                    category: document.getElementById('category').value,
-                    seats: parseInt(document.getElementById('seats').value),
-                    doors: parseInt(document.getElementById('doors').value),
-                    fuel_type: document.getElementById('fuel_type').value,
-                    has_air_conditioning: document.getElementById('ac').value === 'true',
-                    price_per_day: parseInt(document.getElementById('price').value),
-                    island: document.getElementById('island').value,
-                    images_url: [finalImageUrl], // On enregistre l'URL ici
-                    is_active: true
-                }]);
-
-                if (dbError) throw dbError;
-
-                alert("Véhicule ajouté avec succès !");
-                window.location.href = 'index.html';
-
-            } catch (err) {
-                alert("Erreur : " + err.message);
-            } finally {
-                btn.disabled = false;
-                spinner.style.display = 'none';
-                btnText.innerText = "Enregistrer le véhicule";
+            if(!model || !price) {
+                alert("Veuillez remplir les champs obligatoires.");
+                return;
             }
-        };
+
+            // Ici, on enverrait les données à Supabase
+            // const { error } = await supabase.from('cars').insert({ ... });
+
+            alert(`✅ Voiture "${model}" prête à être ajoutée à ${location} !\n(Logique Supabase à connecter)`);
+            window.location.href = 'profile.html';
+        }
     </script>
 </body>
 </html>
