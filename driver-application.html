@@ -3,227 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Devenir Chauffeur</title>
+    <title>DjuntaCar - Candidature</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-
-        /* HEADER STANDARD (70px) */
-        header { 
-            height: 70px; 
-            background: white; 
-            display: flex; 
-            align-items: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        body { 
-            background-color: #fcfcfd; 
-            padding-bottom: 120px; /* Espace pour le footer fixe */
-        }
-
-        /* FORM STYLES */
-        .section-title {
-            font-size: 11px;
-            font-weight: 900;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            margin-top: 24px;
-        }
-
-        .form-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            margin-bottom: 16px;
-        }
-
-        .input-line {
-            width: 100%;
-            border-bottom: 2px solid #f1f5f9;
-            padding: 8px 0;
-            font-weight: 700;
-            color: #1d4379;
-            outline: none;
-            font-size: 14px;
-            background: transparent;
-        }
-        .input-line::placeholder { color: #cbd5e1; }
-
-        /* UPLOAD BOX STYLE */
-        .upload-box {
-            border: 2px dashed #bfdbfe; /* blue-200 */
-            background-color: #eff6ff; /* blue-50 */
-            border-radius: 16px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .upload-box:active { transform: scale(0.98); background-color: #dbeafe; }
-
-        .upload-icon {
-            width: 48px;
-            height: 48px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1d4379;
-            margin-bottom: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        /* FOOTER FIXE */
-        .fixed-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 16px 20px;
-            border-top: 1px solid #f1f5f9;
-            z-index: 900;
-        }
-
-        /* SIDEBAR */
-        #mobile-menu {
-            position: fixed; inset: 0; background: white; z-index: 2000;
-            transform: translateX(-100%); transition: transform 0.3s ease;
-            padding: 30px;
-        }
-        #mobile-menu.active { transform: translateX(0); }
-    </style>
 </head>
-<body class="antialiased">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="flex items-center px-4">
-        <div class="w-[20%] flex justify-start">
-            <button onclick="toggleMenu()" class="p-2"><i data-lucide="menu" class="w-7 h-7 text-[#1d4379]"></i></button>
+    <header>
+        <div class="header-left">
+            <button onclick="window.history.back()" class="profile-btn">
+                <i data-lucide="arrow-left" class="header-user-icon"></i>
+            </button>
         </div>
-        <div class="w-[60%] flex justify-center">
-            <img src="logo.png" alt="DjuntaCar" class="w-full max-h-10 object-contain">
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Vérification</span>
         </div>
-        <div class="w-[20%] flex justify-end">
-            <button onclick="window.location.href='profile.html'" class="p-2"><i data-lucide="user" class="w-7 h-7 text-[#1d4379]"></i></button>
+        <div class="header-right">
+            <i data-lucide="shield-check" class="w-5 h-5 text-green-500"></i>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-8">
-        <h1 class="text-2xl font-black text-[#1d4379]">Devenir Chauffeur</h1>
-        <p class="text-xs font-bold text-gray-400 mt-2 mb-8">Vérification de votre identité et permis requis.</p>
+    <main class="content-padding pt-6 pb-24">
+        
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2">Profil Chauffeur</h1>
+        <p class="text-xs font-bold text-gray-400 mb-6">Ces documents sont nécessaires pour assurer les locations.</p>
 
-        <form id="driverForm">
+        <form id="driverForm" onsubmit="event.preventDefault(); submitApplication();">
             
-            <h2 class="section-title">Informations Légales</h2>
-            <div class="form-card">
+            <div class="form-section">
+                <label class="input-label">Nom complet (État Civil)</label>
+                <input type="text" id="fullName" class="input-field" placeholder="Ex: Joao Batista Mendes">
+            </div>
+
+            <div class="form-section">
+                <label class="input-label">Numéro de Téléphone</label>
+                <div class="relative flex items-center">
+                    <span class="absolute left-0 text-sm font-bold text-gray-400">+238</span>
+                    <input type="tel" id="phone" class="input-field pl-10" placeholder="999 99 99">
+                </div>
+            </div>
+
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Pièce d'Identité</h2>
+            <div class="form-section">
+                <label class="upload-zone cursor-pointer" id="dropZoneCNI">
+                    <i data-lucide="scan-face" class="w-8 h-8 text-blue-300 mb-2"></i>
+                    <span class="text-xs font-bold text-[#1d4379]">Scanner CNI ou Passeport</span>
+                    <span class="text-[9px] text-gray-400 mt-1">Recto / Verso lisible</span>
+                    <input type="file" class="hidden" onchange="handleFileSelect(this, 'CNI')">
+                </label>
+                <div id="previewCNI" class="hidden mt-3 flex items-center gap-2 bg-green-50 p-2 rounded-lg">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                    <span class="text-[10px] font-bold text-green-700">Document chargé</span>
+                </div>
+            </div>
+
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Permis de Conduire</h2>
+            <div class="form-section">
                 <div class="mb-4">
-                    <label class="text-[9px] font-black text-gray-400 uppercase">Nom complet (comme sur CNI)</label>
-                    <input type="text" class="input-line" placeholder="Ex: João Silva">
+                    <label class="input-label">Numéro de Permis</label>
+                    <input type="text" class="input-field" placeholder="Ex: S-12345678">
                 </div>
-                <div>
-                    <label class="text-[9px] font-black text-gray-400 uppercase">Numéro de téléphone</label>
-                    <input type="tel" class="input-line" placeholder="+238 ...">
+
+                <label class="upload-zone cursor-pointer" id="dropZonePermis">
+                    <i data-lucide="credit-card" class="w-8 h-8 text-blue-300 mb-2"></i>
+                    <span class="text-xs font-bold text-[#1d4379]">Photo du Permis</span>
+                    <span class="text-[9px] text-gray-400 mt-1">En cours de validité</span>
+                    <input type="file" class="hidden" onchange="handleFileSelect(this, 'Permis')">
+                </label>
+                <div id="previewPermis" class="hidden mt-3 flex items-center gap-2 bg-green-50 p-2 rounded-lg">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                    <span class="text-[10px] font-bold text-green-700">Document chargé</span>
                 </div>
-            </div>
-
-            <h2 class="section-title">Pièce d'Identité (CNI ou Passeport)</h2>
-            <div class="form-card">
-                <input type="file" id="id-upload" class="hidden" onchange="previewFile('id-upload', 'id-preview')">
-                <label for="id-upload" class="upload-box">
-                    <div class="upload-icon"><i data-lucide="scan-face" class="w-6 h-6"></i></div>
-                    <span class="text-xs font-bold text-[#1d4379]">Scanner le document</span>
-                    <span class="text-[9px] font-bold text-gray-400 mt-1">Format JPG, PNG ou PDF</span>
-                    <div id="id-preview" class="mt-2 text-xs text-green-600 font-bold hidden">Fichier sélectionné</div>
-                </label>
-            </div>
-
-            <h2 class="section-title">Permis de Conduire</h2>
-            <div class="form-card">
-                <div class="mb-4">
-                    <label class="text-[9px] font-black text-gray-400 uppercase">Numéro de Permis</label>
-                    <input type="text" class="input-line" placeholder="Ex: CV-12345678">
-                </div>
-                
-                <input type="file" id="license-upload" class="hidden" onchange="previewFile('license-upload', 'license-preview')">
-                <label for="license-upload" class="upload-box">
-                    <div class="upload-icon"><i data-lucide="credit-card" class="w-6 h-6"></i></div>
-                    <span class="text-xs font-bold text-[#1d4379]">Photo du permis (Recto)</span>
-                    <div id="license-preview" class="mt-2 text-xs text-green-600 font-bold hidden">Fichier sélectionné</div>
-                </label>
-            </div>
-
-            <div class="flex items-start gap-3 px-2 mt-6">
-                <input type="checkbox" id="terms" class="mt-1 w-4 h-4 rounded border-gray-300 text-[#1d4379] focus:ring-[#1d4379]">
-                <label for="terms" class="text-[10px] font-bold text-gray-400 leading-tight">
-                    Je certifie que les documents fournis sont authentiques et j'accepte les <a href="#" class="text-[#1d4379] underline">conditions générales</a> des chauffeurs DjuntaCar.
-                </label>
             </div>
 
         </form>
+
     </main>
 
     <div class="fixed-footer">
-        <button onclick="submitApplication()" class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+        <button onclick="submitApplication()" class="btn-action btn-primary shadow-xl">
             Envoyer ma candidature
         </button>
     </div>
 
-    <div id="mobile-menu">
-        <div class="flex justify-between items-center mb-10">
-            <img src="logo.png" class="h-6">
-            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full"><i data-lucide="x" class="w-6 h-6 text-gray-400"></i></button>
-        </div>
-        <nav class="space-y-6">
-            <a href="index.html" class="block text-lg font-black text-[#1d4379] uppercase">Accueil</a>
-            <a href="search-car.html" class="block text-lg font-black text-[#1d4379] uppercase">Recherche</a>
-        </nav>
-    </div>
-
     <script>
         lucide.createIcons();
-        
-        function toggleMenu() { 
-            document.getElementById('mobile-menu').classList.toggle('active'); 
-        }
 
-        // Petit script pour confirmer visuellement qu'un fichier est choisi
-        function previewFile(inputId, previewId) {
-            const input = document.getElementById(inputId);
-            const preview = document.getElementById(previewId);
-            if(input.files && input.files[0]) {
-                preview.innerText = "✅ " + input.files[0].name;
-                preview.classList.remove('hidden');
-            }
-        }
-
-        function submitApplication() {
-            // Simulation d'envoi
-            const btn = document.querySelector('.fixed-footer button');
-            btn.innerHTML = '<i data-lucide="loader" class="animate-spin inline w-4 h-4"></i> Envoi en cours...';
-            setTimeout(() => {
-                alert("Votre dossier a été envoyé ! Nous le traiterons sous 24h.");
-                window.location.href = 'index.html';
-            }, 1500);
-        }
-    </script>
-</body>
-</html>
+        function handleFileSelect(input, type) {
+            if (input.files && input.files[0]) {
+                // Afficher le feedback visuel
+                document.getElementById('preview' + type).classList.remove('hidden');
+                
+                // Changer la bordure de la zone pour montrer le succès
+                const zone = input.
