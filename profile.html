@@ -33,3 +33,110 @@
                 
                 <div class="flex justify-center gap-2 mt-4">
                     <span id="badge-driver" class="hidden bg-green-100 text-green-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">Chauffeur</span>
+                    <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">Membre</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            
+            <a href="profile-edit.html" class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-50 active:scale-95 transition-transform">
+                <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1d4379]">
+                    <i data-lucide="user-cog" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-black text-[#1d4379]">Modifier le profil</h3>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
+            </a>
+
+            <a href="wallet.html" class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-50 active:scale-95 transition-transform">
+                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                    <i data-lucide="wallet" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-black text-[#1d4379]">Portefeuille</h3>
+                    <p class="text-[10px] text-gray-400 font-bold">Solde et Paiements</p>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
+            </a>
+
+            <a href="my-rentals.html" class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-50 active:scale-95 transition-transform">
+                <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                    <i data-lucide="history" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-black text-[#1d4379]">Historique</h3>
+                    <p class="text-[10px] text-gray-400 font-bold">Vos locations passées</p>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
+            </a>
+            
+            <a href="host-stats.html" id="host-link" class="hidden flex items-center gap-4 bg-[#1d4379] p-4 rounded-2xl shadow-lg shadow-blue-900/20 active:scale-95 transition-transform">
+                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-black text-white">Espace Propriétaire</h3>
+                    <p class="text-[10px] text-blue-200 font-bold">Gérer mes voitures</p>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-blue-300"></i>
+            </a>
+        </div>
+
+        <button onclick="DjuntaAuth.signOut()" class="w-full mt-8 flex items-center justify-center gap-2 text-red-500 font-bold text-xs uppercase p-4 hover:bg-red-50 rounded-xl transition-colors">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Se déconnecter
+        </button>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        async function initProfile() {
+            // 1. Vérifier si l'utilisateur est connecté via notre service Auth
+            const user = await DjuntaAuth.getUser();
+            
+            // Si pas connecté, redirection forcée vers Login
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 2. Afficher l'email (donnée Auth de base)
+            document.getElementById('user-email').innerText = user.email;
+
+            // 3. Chercher les infos détaillées dans la table 'profiles'
+            const { data: profile, error } = await _supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            if (profile) {
+                // Construction du nom complet
+                const fullName = (profile.first_name || 'Utilisateur') + ' ' + (profile.last_name || '');
+                document.getElementById('user-name').innerText = fullName;
+                
+                // Gestion Avatar
+                const avatarUrl = profile.avatar_url || `https://ui-avatars.com/api/?name=${fullName}&background=1d4379&color=fff`;
+                document.getElementById('profile-avatar').src = avatarUrl;
+
+                // Si c'est un chauffeur/propriétaire, on affiche le badge et le lien Dashboard
+                if (profile.is_driver) {
+                    document.getElementById('badge-driver').classList.remove('hidden');
+                    const hostLink = document.getElementById('host-link');
+                    hostLink.classList.remove('hidden');
+                    hostLink.classList.add('flex');
+                }
+            } else {
+                // Cas rare : Compte créé mais pas de profil (erreur technique)
+                document.getElementById('user-name').innerText = "Profil incomplet";
+            }
+        }
+
+        // Lancer l'initialisation au chargement
+        document.addEventListener('DOMContentLoaded', initProfile);
+    </script>
+</body>
+</html>
