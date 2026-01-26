@@ -2,119 +2,114 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - DjuntaCar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DjuntaCar - Administration</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #f1f5f9; }
-        .stat-card { background: white; padding: 24px; border-radius: 24px; border: 1px solid #e2e8f0; }
-    </style>
 </head>
-<body class="p-8">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="flex justify-between items-center mb-10">
-        <div>
-            <h1 class="text-2xl font-black text-[#1d4379]">Administration</h1>
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Supervision DjuntaCar Cap-Vert</p>
+    <header>
+        <div class="header-left">
+            <button onclick="window.location.href='index.html'" class="profile-btn">
+                <i data-lucide="home" class="header-user-icon"></i>
+            </button>
         </div>
-        <div class="flex gap-4">
-            <button class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm relative">
-                <i data-lucide="bell" class="text-gray-400"></i>
-                <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Admin Panel</span>
+        </div>
+        <div class="header-right">
+            <button class="profile-btn bg-red-50">
+                <i data-lucide="power" class="w-5 h-5 text-red-500"></i>
             </button>
         </div>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="stat-card">
-            <span class="text-[10px] font-black text-gray-400 uppercase">Volume d'affaires (Total)</span>
-            <div class="flex items-baseline gap-2 mt-2">
-                <h2 id="total-gmv" class="text-2xl font-black text-[#1d4379]">0 CVE</h2>
+    <main class="content-padding pt-6 pb-24">
+        
+        <h1 class="text-xl font-black text-[#1d4379] mb-4">Vue d'ensemble</h1>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
+                <span class="text-2xl font-black text-[#1d4379]">124</span>
+                <span class="text-[9px] font-bold text-gray-400 uppercase mt-1">Utilisateurs</span>
             </div>
-            <p id="total-gmv-eur" class="text-[10px] font-bold text-gray-400 mt-1">≈ 0 EUR</p>
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
+                <span class="text-2xl font-black text-green-500">15</span>
+                <span class="text-[9px] font-bold text-gray-400 uppercase mt-1">Locations actives</span>
+            </div>
         </div>
-        <div class="stat-card border-l-4 border-blue-500">
-            <span class="text-[10px] font-black text-blue-500 uppercase">Revenu Plateforme (15%)</span>
-            <h2 id="rev-platform" class="text-2xl font-black text-[#1d4379] mt-2">0 CVE</h2>
-            <p class="text-[10px] font-bold text-gray-400 mt-1">Fonds de fonctionnement</p>
+
+        <div class="flex justify-between items-end mb-4 px-2">
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">À Valider (3)</h2>
+            <button class="text-[10px] font-bold text-blue-500 underline">Tout voir</button>
         </div>
-        <div class="stat-card border-l-4 border-green-500">
-            <span class="text-[10px] font-black text-green-500 uppercase">Fonds Assurance (10%)</span>
-            <h2 id="rev-insurance" class="text-2xl font-black text-[#1d4379] mt-2">0 CVE</h2>
-            <p class="text-[10px] font-bold text-gray-400 mt-1">Couverture sinistres</p>
+
+        <div class="flex flex-col gap-3">
+            
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="bg-orange-50 p-2 rounded-xl text-orange-500">
+                        <i data-lucide="file-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-[#1d4379] text-sm">Nouveau Chauffeur</h3>
+                        <p class="text-[10px] text-gray-400 font-bold">Joao Mendes • Permis B</p>
+                    </div>
+                </div>
+                <button class="bg-[#1d4379] text-white px-3 py-1 rounded-lg text-[10px] font-bold">Vérifier</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-50 p-2 rounded-xl text-blue-500">
+                        <i data-lucide="car" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-[#1d4379] text-sm">Nouvelle Voiture</h3>
+                        <p class="text-[10px] text-gray-400 font-bold">Renault Duster • Sal</p>
+                    </div>
+                </div>
+                <button class="bg-[#1d4379] text-white px-3 py-1 rounded-lg text-[10px] font-bold">Vérifier</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center justify-between shadow-sm border-l-4 border-l-red-400">
+                <div class="flex items-center gap-3">
+                    <div class="bg-red-50 p-2 rounded-xl text-red-500">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-[#1d4379] text-sm">Litige Paiement</h3>
+                        <p class="text-[10px] text-gray-400 font-bold">Réservation #8821</p>
+                    </div>
+                </div>
+                <button class="bg-red-50 text-red-500 px-3 py-1 rounded-lg text-[10px] font-bold">Gérer</button>
+            </div>
+
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 mt-8 px-2">Trésorerie Plateforme</h2>
+        <div class="wallet-banner m-0">
+            <div>
+                <p class="text-[10px] font-bold opacity-80 uppercase mb-1">Commissions (15%)</p>
+                <p class="text-2xl font-black">245 000 <span class="text-sm">CVE</span></p>
+            </div>
+            <div class="bg-white/20 p-2 rounded-full"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
+        </div>
+
+    </main>
+
+    <div class="fixed-footer">
+        <div class="flex gap-2">
+            <button class="btn-action bg-gray-200 text-gray-600 flex-1">Paramètres</button>
+            <button class="btn-action btn-primary flex-1">Logs Système</button>
         </div>
     </div>
 
-    <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-            <h3 class="font-black text-[#1d4379] text-sm uppercase">Validations de comptes en attente</h3>
-            <span class="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-[10px] font-black" id="kyc-count">0 ATTENTE</span>
-        </div>
-        <table class="w-full text-left">
-            <thead class="bg-gray-50 text-[10px] font-black text-gray-400 uppercase">
-                <tr>
-                    <th class="px-6 py-4">Utilisateur</th>
-                    <th class="px-6 py-4">Rôle</th>
-                    <th class="px-6 py-4">Document</th>
-                    <th class="px-6 py-4 text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="kyc-table" class="text-xs font-bold text-gray-600">
-                </tbody>
-        </table>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
-        const supabase = window.supabase.createClient('URL', 'KEY');
-        const EUR_RATE = 110.265;
-
-        async function loadAdminData() {
-            // 1. Calcul des revenus (Logic 15%/10%)
-            const { data: bookings } = await supabase.from('bookings').select('total_price').eq('status', 'completed');
-            let totalCVE = bookings.reduce((sum, b) => sum + b.total_price, 0);
-            
-            document.getElementById('total-gmv').innerText = totalCVE.toLocaleString() + ' CVE';
-            document.getElementById('total-gmv-eur').innerText = `≈ ${(totalCVE / EUR_RATE).toFixed(2)} EUR`;
-            document.getElementById('rev-platform').innerText = Math.round(totalCVE * 0.15).toLocaleString() + ' CVE';
-            document.getElementById('rev-insurance').innerText = Math.round(totalCVE * 0.10).toLocaleString() + ' CVE';
-
-            // 2. Liste KYC
-            const { data: users } = await supabase.from('profiles').select('*').eq('kyc_status', 'pending');
-            document.getElementById('kyc-count').innerText = `${users.length} EN ATTENTE`;
-
-            const table = document.getElementById('kyc-table');
-            table.innerHTML = users.map(u => `
-                <tr class="border-t border-gray-50">
-                    <td class="px-6 py-4">
-                        <div class="flex flex-col">
-                            <span>${u.full_name}</span>
-                            <span class="text-[10px] text-gray-400">${u.email}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 uppercase text-[10px]">${u.role}</td>
-                    <td class="px-6 py-4">
-                        <button class="text-blue-500 hover:underline">Voir Permis</button>
-                    </td>
-                    <td class="px-6 py-4 text-right flex justify-end gap-2">
-                        <button onclick="verifyUser('${u.id}', 'verified')" class="bg-green-500 text-white p-2 rounded-lg"><i data-lucide="check" class="w-4 h-4"></i></button>
-                        <button onclick="verifyUser('${u.id}', 'rejected')" class="bg-red-500 text-white p-2 rounded-lg"><i data-lucide="x" class="w-4 h-4"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        async function verifyUser(id, status) {
-            await supabase.from('profiles').update({ kyc_status: status }).eq('id', id);
-            loadAdminData();
-        }
-
-        loadAdminData();
     </script>
 </body>
 </html>
