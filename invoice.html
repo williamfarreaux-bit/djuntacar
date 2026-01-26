@@ -2,104 +2,125 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facture - DjuntaCar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DjuntaCar - Facture #INV-2026-001</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        .invoice-box { background: white; max-width: 800px; margin: 20px auto; padding: 40px; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .line-item { border-bottom: 1px solid #f1f5f9; padding: 15px 0; display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; font-size: 11px; }
-        @media print { .no-print { display: none; } body { background: white; padding: 0; } .invoice-box { box-shadow: none; margin: 0; width: 100%; } }
+        /* Style spécifique pour l'impression : on cache le bouton et le header */
+        @media print {
+            .fixed-footer, header, .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .content-padding { padding-top: 0; }
+            .invoice-box { box-shadow: none; border: none; }
+        }
     </style>
 </head>
-<body class="bg-[#f8fafc]">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50 no-print">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
-            <a href="my-rentals.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left"></i></a>
-            <span class="font-bold text-sm text-[#1d4379]">Ma Facture</span>
-            <div class="relative cursor-pointer" onclick="toggleNotifications()">
-                <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
-                <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
-                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
-                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2">Notifications</h4>
-                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2"></div>
-                </div>
-            </div>
+    <header>
+        <div class="header-left">
+            <button onclick="window.history.back()" class="profile-btn">
+                <i data-lucide="x" class="header-user-icon"></i>
+            </button>
+        </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Reçu</span>
+        </div>
+        <div class="header-right">
+            <button onclick="window.print()" class="profile-btn">
+                <i data-lucide="printer" class="header-user-icon"></i>
+            </button>
         </div>
     </header>
 
-    <main class="px-6 py-8">
-        <div class="invoice-box">
-            <div class="flex justify-between mb-12">
-                <img src="logo.png" alt="DjuntaCar" class="h-8">
-                <div class="text-right text-[10px] font-bold text-gray-400 uppercase">
-                    <h1 class="text-2xl font-black text-[#1d4379] mb-1">FACTURE</h1>
-                    <p>N° <span id="inv-id">---</span></p>
-                    <p>Date: <span id="inv-date">--/--/----</span></p>
+    <main class="content-padding pt-6 pb-28">
+        
+        <div class="invoice-box bg-white p-6 rounded-3xl border border-gray-100 shadow-lg relative overflow-hidden">
+            
+            <div class="absolute top-4 right-4 border-2 border-green-500 text-green-500 px-3 py-1 rounded text-xs font-black uppercase transform rotate-12 opacity-30">
+                PAYÉ
+            </div>
+
+            <div class="text-center mb-8 border-b border-gray-100 pb-6">
+                <img src="logo.png" class="h-8 mx-auto mb-4">
+                <p class="text-xs text-gray-400 font-bold uppercase">DjuntaCar Lda.</p>
+                <p class="text-[10px] text-gray-400">Sal, Santa Maria, Cap-Vert</p>
+                <p class="text-[10px] text-gray-400">NIF: 123456789</p>
+            </div>
+
+            <div class="flex justify-between mb-8">
+                <div>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase mb-1">Facturé à</p>
+                    <p class="text-xs font-black text-[#1d4379]">Carlos Semedo</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase mb-1">Date & Réf</p>
+                    <p class="text-xs font-black text-[#1d4379]">24 Jan 2026</p>
+                    <p class="text-[10px] text-gray-500">#INV-001</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-[3fr_1fr_1fr_1fr] text-[9px] font-black text-gray-300 uppercase border-b-2 border-[#1d4379] pb-2 mb-2">
-                <div>Désignation</div><div class="text-center">Qté</div><div class="text-right">EUR</div><div class="text-right">CVE</div>
-            </div>
-            <div id="items-list"></div>
+            <div class="mb-6">
+                <div class="flex justify-between text-[10px] font-bold text-gray-400 uppercase border-b border-gray-100 pb-2 mb-3">
+                    <span>Description</span>
+                    <span>Total</span>
+                </div>
 
-            <div class="mt-10 flex justify-end">
-                <div class="w-64 bg-slate-50 p-6 rounded-2xl space-y-3">
-                    <div class="flex justify-between text-[10px] font-bold text-gray-400"><span>Sous-total</span><span id="sub-cve">0 CVE</span></div>
-                    <div class="flex justify-between text-[10px] font-bold text-gray-400 border-b pb-3"><span>TVA (15%)</span><span id="tva-cve">0 CVE</span></div>
-                    <div class="flex justify-between items-end pt-2">
-                        <span class="text-xs font-black text-[#1d4379]">TOTAL TTC</span>
-                        <div class="text-right"><p class="text-lg font-black text-[#1d4379]" id="total-cve">0 CVE</p><p class="text-[9px] font-bold text-gray-400" id="total-eur">0.00 EUR</p></div>
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="text-xs font-bold text-[#1d4379]">Location Mercedes GLC</p>
+                        <p class="text-[10px] text-gray-400">3 Jours x 15 000 CVE</p>
                     </div>
+                    <p class="text-xs font-bold text-[#1d4379]">45 000</p>
+                </div>
+
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="text-xs font-bold text-[#1d4379]">Frais de service</p>
+                        <p class="text-[10px] text-gray-400">Plateforme (3%)</p>
+                    </div>
+                    <p class="text-xs font-bold text-[#1d4379]">1 500</p>
                 </div>
             </div>
+
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <div class="flex justify-between mb-2">
+                    <span class="text-[10px] font-bold text-gray-500">Sous-total</span>
+                    <span class="text-[10px] font-bold text-[#1d4379]">46 500 CVE</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-[10px] font-bold text-gray-500">TVA (15%)</span>
+                    <span class="text-[10px] font-bold text-[#1d4379]">Incluse</span>
+                </div>
+                <div class="border-t border-gray-200 mt-2 pt-2 flex justify-between items-center">
+                    <span class="text-xs font-black text-[#1d4379] uppercase">Total Payé</span>
+                    <span class="text-lg font-black text-[#1d4379]">46 500 CVE</span>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <p class="text-[9px] text-gray-400 italic">Merci de votre confiance !</p>
+                <p class="text-[8px] text-gray-300 mt-1">Généré électroniquement par DjuntaCar.</p>
+            </div>
+
         </div>
+
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div class="fixed-footer">
+        <button onclick="window.print()" class="btn-action btn-primary shadow-xl flex items-center justify-center gap-2">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            Imprimer / Télécharger PDF
+        </button>
+    </div>
+
     <script>
-        const CVE_RATE = 110.265;
         lucide.createIcons();
-        const supabase = window.supabase.createClient('URL', 'KEY');
-
-        async function loadInvoice() {
-            const params = new URLSearchParams(window.location.search);
-            const { data: b } = await supabase.from('bookings').select('*, vehicles(*)').eq('id', params.get('id')).single();
-            if (b) {
-                const days = Math.max(Math.ceil((new Date(b.end_date) - new Date(b.start_date)) / (1000*60*60*24)), 1);
-                const carTotalCVE = b.vehicles.price_per_day * days;
-                const feeCVE = carTotalCVE * 0.08;
-                const grandTotalCVE = carTotalCVE + feeCVE;
-
-                document.getElementById('inv-id').innerText = b.id.substring(0,8).toUpperCase();
-                document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
-                document.getElementById('items-list').innerHTML = `
-                    <div class="line-item"><div><p class="font-bold text-[#1d4379]">Location Véhicule</p></div><div class="text-center">${days}</div><div class="text-right">${(b.vehicles.price_per_day/CVE_RATE).toFixed(2)}</div><div class="text-right font-black">${carTotalCVE.toLocaleString()}</div></div>
-                    <div class="line-item"><div><p class="font-bold text-[#1d4379]">Frais de service (8%)</p></div><div class="text-center">1</div><div class="text-right">${(feeCVE/CVE_RATE).toFixed(2)}</div><div class="text-right font-black">${Math.round(feeCVE).toLocaleString()}</div></div>
-                `;
-                document.getElementById('total-cve').innerText = Math.round(grandTotalCVE).toLocaleString() + " CVE";
-                document.getElementById('total-eur').innerText = (grandTotalCVE / CVE_RATE).toFixed(2) + " EUR";
-                
-                // ENVOI AUTO MAIL
-                supabase.functions.invoke('send-invoice-email', { body: { id: b.id } });
-            }
-            loadNotifications();
-        }
-
-        async function loadNotifications() {
-            const { data: { user } } = await supabase.auth.getUser();
-            const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', user.id).eq('is_read', false);
-            const badge = document.getElementById('notif-badge');
-            if (notifs && notifs.length > 0) { badge.innerText = notifs.length; badge.classList.remove('hidden'); }
-            document.getElementById('notif-list').innerHTML = notifs.map(n => `<div class="p-3 bg-blue-50 rounded-2xl text-[10px] font-bold text-[#1d4379]">${n.title}</div>`).join('') || '<p class="text-center py-4 text-[9px] font-bold text-gray-300 uppercase">Rien à signaler</p>';
-        }
-
-        function toggleNotifications() { document.getElementById('notif-panel').classList.toggle('hidden'); loadNotifications(); }
-        loadInvoice();
     </script>
 </body>
 </html>
