@@ -3,90 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mes Locations - DjuntaCar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <title>DjuntaCar - Mes Locations</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        .tab-btn.active { color: #1d4379; border-bottom: 3px solid #1d4379; }
-    </style>
 </head>
-<body class="bg-[#f8fafc] pb-20">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
-            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left"></i></a>
-            <span class="font-bold text-sm text-[#1d4379]">Mes Locations</span>
-            <div class="relative cursor-pointer" onclick="toggleNotifications()">
-                <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
-                <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
-                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
-                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2">Notifications</h4>
-                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2"></div>
-                </div>
-            </div>
+    <header>
+        <div class="header-left">
+            <button onclick="toggleMenu()" class="profile-btn">
+                <i data-lucide="menu" class="header-user-icon"></i>
+            </button>
+        </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Mes Voyages</span>
+        </div>
+        <div class="header-right">
+            <button onclick="window.location.href='profile.html'" class="profile-btn">
+                <i data-lucide="user" class="header-user-icon"></i>
+            </button>
         </div>
     </header>
 
-    <div class="bg-white flex border-b border-gray-100 sticky top-16 z-40">
-        <button class="flex-1 py-4 text-[10px] font-black uppercase tab-btn active">Actives</button>
-        <button class="flex-1 py-4 text-[10px] font-black uppercase text-gray-300">Historique</button>
-    </div>
+    <main class="content-padding pt-6 pb-24">
+        
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2">En cours</h1>
+        <p class="text-xs font-bold text-gray-400 mb-6">Vos réservations actives ou à venir.</p>
 
-    <main class="max-w-md mx-auto px-6 pt-6">
-        <div id="rentals-list" class="space-y-4">
-            <div class="animate-pulse bg-white h-32 rounded-3xl"></div>
+        <div class="car-card mb-8 border-l-4 border-l-green-500 shadow-md">
+            <div class="p-4 flex gap-4 cursor-pointer" onclick="window.location.href='checkout.html'"> <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" class="w-20 h-20 rounded-xl object-cover">
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-black text-[#1d4379]">Mercedes GLC</h3>
+                        <span class="text-[8px] bg-green-100 text-green-700 px-2 py-0.5 rounded font-black uppercase">Confirmé</span>
+                    </div>
+                    <p class="text-[10px] font-bold text-gray-400 mt-1 flex items-center gap-1">
+                        <i data-lucide="calendar" class="w-3 h-3"></i> 24 Jan - 27 Jan (3j)
+                    </p>
+                    <p class="text-[10px] font-bold text-[#1d4379] mt-1 flex items-center gap-1">
+                        <i data-lucide="map-pin" class="w-3 h-3"></i> Port de Sal Rei
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 p-3 flex justify-around border-t border-gray-100">
+                <button onclick="window.location.href='chat.html'" class="text-[9px] font-black text-[#1d4379] uppercase flex items-center gap-1">
+                    <i data-lucide="message-circle" class="w-3 h-3"></i> Contacter
+                </button>
+                <div class="w-px h-4 bg-gray-200"></div>
+                <button onclick="window.location.href='check-in.html'" class="text-[9px] font-black text-[#1d4379] uppercase flex items-center gap-1">
+                    <i data-lucide="clipboard-check" class="w-3 h-3"></i> État des lieux
+                </button>
+            </div>
         </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Historique</h2>
+        
+        <div class="space-y-4">
+            <div class="car-card opacity-60 grayscale hover:grayscale-0 transition-all">
+                <div class="p-4 flex gap-4">
+                    <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf" class="w-20 h-20 rounded-xl object-cover">
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-black text-[#1d4379]">Toyota Hilux</h3>
+                            <span class="text-[8px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-black uppercase">Terminé</span>
+                        </div>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1">12 Déc - 15 Déc 2025</p>
+                        <button onclick="window.location.href='rate-experience.html'" class="mt-2 text-[9px] font-black text-blue-500 underline">Laisser un avis</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="car-card opacity-60 grayscale hover:grayscale-0 transition-all">
+                <div class="p-4 flex gap-4">
+                    <img src="https://images.unsplash.com/photo-1503376763036-066120622c74" class="w-20 h-20 rounded-xl object-cover">
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-black text-[#1d4379]">Fiat Panda</h3>
+                            <span class="text-[8px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-black uppercase">Terminé</span>
+                        </div>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1">02 Nov - 03 Nov 2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div id="menu-overlay" onclick="toggleMenu()"></div>
+    <div id="universal-menu">
+        <div class="menu-header">
+            <img src="logo.png" style="height: 32px;">
+            <button onclick="toggleMenu()"><i data-lucide="x" style="width: 24px; color: #1d4379;"></i></button>
+        </div>
+        <nav class="menu-nav">
+            <a href="index.html" class="menu-link"><i data-lucide="home"></i> Accueil</a>
+            <a href="search-car.html" class="menu-link"><i data-lucide="search"></i> Recherche</a>
+            <a href="my-rentals.html" class="menu-link current-page"><i data-lucide="calendar"></i> Mes Locations</a> <a href="wallet.html" class="menu-link"><i data-lucide="wallet"></i> Portefeuille</a>
+            <a href="favorites.html" class="menu-link"><i data-lucide="heart"></i> Favoris</a>
+            <a href="profile.html" class="menu-link"><i data-lucide="user"></i> Profil</a>
+        </nav>
+        <div class="menu-footer">
+            <button onclick="window.location.href='login.html'" class="btn-logout"><i data-lucide="log-out"></i> Déconnexion</button>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
-        const supabase = window.supabase.createClient('URL_SUPABASE', 'CLE_ANON');
-
-        // LOGIQUE NOTIFICATIONS (Identique à index.html)
-        async function loadNotifications() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
-            const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', user.id).eq('is_read', false);
-            const badge = document.getElementById('notif-badge');
-            if (notifs && notifs.length > 0) {
-                badge.innerText = notifs.length;
-                badge.classList.remove('hidden');
-            }
-            document.getElementById('notif-list').innerHTML = notifs.map(n => `<div class="p-3 bg-blue-50 rounded-2xl text-[10px] font-bold text-[#1d4379]">${n.title}</div>`).join('') || '<p class="text-center py-4 text-[9px] font-bold text-gray-300 uppercase">Rien à signaler</p>';
+        function toggleMenu() { 
+            document.getElementById('universal-menu').classList.toggle('open'); 
+            document.getElementById('menu-overlay').classList.toggle('open'); 
         }
-
-        function toggleNotifications() {
-            document.getElementById('notif-panel').classList.toggle('hidden');
-            loadNotifications();
-        }
-
-        // Chargement des locations
-        async function loadRentals() {
-            const { data: { user } } = await supabase.auth.getUser();
-            const { data: bookings } = await supabase.from('bookings').select('*, vehicles(*)').eq('tenant_id', user.id);
-            
-            document.getElementById('rentals-list').innerHTML = bookings.map(b => `
-                <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-50">
-                    <div class="flex gap-4 mb-4">
-                        <img src="${b.vehicles.images_url[0]}" class="w-16 h-16 rounded-2xl object-cover">
-                        <div>
-                            <h3 class="font-black text-sm text-[#1d4379]">${b.vehicles.make} ${b.vehicles.model}</h3>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase mt-1">${b.status}</p>
-                        </div>
-                    </div>
-                    <a href="chat.html?bookingId=${b.id}" class="w-full bg-gray-50 text-[#1d4379] py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2">
-                        <i data-lucide="message-square" class="w-4 h-4"></i> Message au propriétaire
-                    </a>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        loadNotifications();
-        loadRentals();
     </script>
 </body>
 </html>
