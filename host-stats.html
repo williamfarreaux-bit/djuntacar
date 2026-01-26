@@ -3,176 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mes Performances - DjuntaCar</title>
+    <title>DjuntaCar - Statistiques</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #f8fafc; padding-bottom: 40px; }
-
-        .stat-card {
-            background: white;
-            border-radius: 28px;
-            padding: 24px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: #f1f5f9;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: #1d4379;
-            border-radius: 4px;
-            transition: width 1s ease-in-out;
-        }
-
-        .rating-badge {
-            background: #fffbeb;
-            color: #b45309;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 800;
-        }
-    </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
-            <a href="profile.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left" class="w-6 h-6"></i></a>
-            <span class="font-bold text-sm text-[#1d4379]">Performances Hôte</span>
-            
-            <div class="relative cursor-pointer" onclick="toggleNotifications()">
-                <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
-                <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
-                
-                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
-                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2">Notifications</h4>
-                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2"></div>
-                </div>
-            </div>
+    <header>
+        <div class="header-left">
+            <button onclick="window.history.back()" class="profile-btn">
+                <i data-lucide="arrow-left" class="header-user-icon"></i>
+            </button>
+        </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Performances</span>
+        </div>
+        <div class="header-right">
+            <button onclick="window.location.href='automate-payout.html'" class="profile-btn">
+                <i data-lucide="settings" class="header-user-icon"></i>
+            </button>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-8">
+    <main class="content-padding pt-6 pb-24">
         
-        <div class="stat-card mb-6 bg-[#1d4379] text-white border-none shadow-xl shadow-blue-900/20">
-            <span class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Revenus Nets Totaux</span>
-            <div class="flex items-baseline gap-2 mt-1">
-                <h1 id="total-earnings" class="text-3xl font-black">0 CVE</h1>
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2">Janvier 2026</h1>
+        <div class="wallet-banner m-0 mb-6">
+            <div>
+                <p class="text-[10px] font-bold opacity-80 uppercase mb-1">Revenus ce mois</p>
+                <p class="text-3xl font-black">65 000 <span class="text-lg">CVE</span></p>
             </div>
-            <p class="text-[10px] font-bold opacity-60 mt-4 italic">* Commission plateforme (25%) déjà déduite</p>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <div class="stat-card">
-                <i data-lucide="star" class="w-5 h-5 text-amber-500 mb-3"></i>
-                <span class="block text-[9px] font-black text-gray-400 uppercase">Note Moyenne</span>
-                <p id="avg-rating" class="text-xl font-black text-[#1d4379] mt-1">--</p>
-            </div>
-            <div class="stat-card">
-                <i data-lucide="calendar-check" class="w-5 h-5 text-blue-500 mb-3"></i>
-                <span class="block text-[9px] font-black text-gray-400 uppercase">Locations</span>
-                <p id="total-rentals" class="text-xl font-black text-[#1d4379] mt-1">0</p>
+            <div class="bg-white/20 p-2 rounded-full text-green-300">
+                <i data-lucide="trending-up" class="w-6 h-6"></i>
             </div>
         </div>
 
-        <div class="stat-card mb-8">
-            <div class="flex justify-between items-end mb-4">
-                <div>
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Taux d'acceptation</span>
-                    <p id="acceptance-rate" class="text-2xl font-black text-[#1d4379] mt-1">0%</p>
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Évolution (6 mois)</h2>
+        <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm mb-8 flex items-end justify-between h-40">
+            <div class="flex flex-col items-center gap-2 group">
+                <div class="w-2 bg-gray-100 h-10 rounded-full group-hover:bg-blue-200 transition-colors"></div>
+                <span class="text-[9px] font-bold text-gray-300 uppercase">Aoû</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 group">
+                <div class="w-2 bg-gray-100 h-16 rounded-full group-hover:bg-blue-200 transition-colors"></div>
+                <span class="text-[9px] font-bold text-gray-300 uppercase">Sep</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 group">
+                <div class="w-2 bg-gray-100 h-12 rounded-full group-hover:bg-blue-200 transition-colors"></div>
+                <span class="text-[9px] font-bold text-gray-300 uppercase">Oct</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 group">
+                <div class="w-2 bg-blue-200 h-20 rounded-full"></div>
+                <span class="text-[9px] font-bold text-gray-300 uppercase">Nov</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 group">
+                <div class="w-2 bg-[#1d4379] h-24 rounded-full relative">
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#1d4379] text-white text-[8px] font-bold px-1.5 py-0.5 rounded">Top</div>
                 </div>
-                <i data-lucide="trending-up" class="w-6 h-6 text-green-500"></i>
+                <span class="text-[9px] font-bold text-[#1d4379] uppercase">Déc</span>
             </div>
-            <div class="progress-bar">
-                <div id="acceptance-fill" class="progress-fill" style="width: 0%"></div>
+            <div class="flex flex-col items-center gap-2 group">
+                <div class="w-2 bg-blue-400 h-16 rounded-full animate-pulse"></div>
+                <span class="text-[9px] font-bold text-[#1d4379] uppercase">Jan</span>
             </div>
-            <p class="text-[9px] text-gray-400 font-bold mt-4 uppercase">Basé sur vos 50 dernières demandes</p>
         </div>
 
-        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">Derniers retours</h3>
-        <div id="reviews-list" class="space-y-4">
-            <p class="text-center py-10 text-[10px] font-bold text-gray-300 uppercase tracking-widest">Chargement des avis...</p>
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Indicateurs Clés</h2>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="bg-blue-50 p-1.5 rounded-lg text-[#1d4379]"><i data-lucide="eye" class="w-4 h-4"></i></div>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">Vues</span>
+                </div>
+                <p class="text-xl font-black text-[#1d4379]">1,240</p>
+                <p class="text-[9px] text-green-500 font-bold mt-1">+12% vs déc.</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="bg-amber-50 p-1.5 rounded-lg text-amber-500"><i data-lucide="star" class="w-4 h-4"></i></div>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">Note</span>
+                </div>
+                <p class="text-xl font-black text-[#1d4379]">4.9</p>
+                <p class="text-[9px] text-gray-400 font-bold mt-1">Sur 24 avis</p>
+            </div>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Meilleure performance</h2>
+        <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
+            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" class="w-16 h-16 rounded-xl object-cover">
+            <div class="flex-1">
+                <h3 class="font-black text-[#1d4379] text-sm">Mercedes GLC</h3>
+                <div class="w-full bg-gray-100 h-1.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-green-500 h-full rounded-full" style="width: 85%"></div>
+                </div>
+                <p class="text-[9px] text-gray-400 mt-1 font-bold text-right">85% d'occupation</p>
+            </div>
         </div>
 
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div class="fixed-footer">
+        <button onclick="window.location.href='booking-request.html'" class="btn-action btn-primary shadow-xl">
+            Voir les demandes
+        </button>
+    </div>
+
     <script>
         lucide.createIcons();
-        const supabase = window.supabase.createClient('URL', 'KEY');
-        let userId;
-
-        async function initStats() {
-            const { data: { user } } = await supabase.auth.getUser();
-            userId = user.id;
-
-            // 1. Calcul des revenus (75% du total price)
-            const { data: bookings } = await supabase.from('bookings').select('total_price, status').eq('host_id', userId);
-            const finished = bookings.filter(b => b.status === 'completed');
-            const total = finished.reduce((sum, b) => sum + (b.total_price * 0.75), 0);
-            
-            document.getElementById('total-earnings').innerText = Math.round(total).toLocaleString() + ' CVE';
-            document.getElementById('total-rentals').innerText = finished.length;
-
-            // 2. Taux d'acceptation
-            const approved = bookings.filter(b => b.status !== 'pending' && b.status !== 'cancelled').length;
-            const rate = bookings.length > 0 ? Math.round((approved / bookings.length) * 100) : 0;
-            document.getElementById('acceptance-rate').innerText = rate + '%';
-            document.getElementById('acceptance-fill').style.width = rate + '%';
-
-            // 3. Avis et Note Moyenne
-            const { data: reviews } = await supabase.from('reviews').select('*').eq('target_user_id', userId).order('created_at', { ascending: false });
-            
-            if (reviews && reviews.length > 0) {
-                const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-                document.getElementById('avg-rating').innerText = avg.toFixed(1) + ' / 5';
-                
-                document.getElementById('reviews-list').innerHTML = reviews.slice(0, 3).map(r => `
-                    <div class="bg-white p-5 rounded-3xl border border-gray-50">
-                        <div class="flex justify-between items-center mb-3">
-                            <div class="flex gap-1">
-                                ${Array(r.rating).fill('<i data-lucide="star" class="w-3 h-3 text-amber-500 fill-amber-500"></i>').join('')}
-                            </div>
-                            <span class="text-[9px] font-bold text-gray-300">${new Date(r.created_at).toLocaleDateString()}</span>
-                        </div>
-                        <p class="text-xs font-bold text-gray-600 leading-relaxed italic">"${r.comment || 'Aucun commentaire laissé.'}"</p>
-                    </div>
-                `).join('');
-                lucide.createIcons();
-            } else {
-                document.getElementById('reviews-list').innerHTML = `<p class="text-center py-10 text-[9px] font-bold text-gray-300 uppercase">Aucun avis reçu pour le moment</p>`;
-            }
-
-            loadNotifications();
-        }
-
-        async function loadNotifications() {
-            const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', userId).eq('is_read', false);
-            const badge = document.getElementById('notif-badge');
-            if (notifs && notifs.length > 0) {
-                badge.innerText = notifs.length;
-                badge.classList.remove('hidden');
-            }
-            document.getElementById('notif-list').innerHTML = notifs.map(n => `<div class="p-3 bg-blue-50 rounded-2xl text-[10px] font-bold text-[#1d4379]">${n.title}</div>`).join('') || '<p class="text-center py-4 text-[9px] font-bold text-gray-300 uppercase tracking-widest">Rien à signaler</p>';
-        }
-
-        function toggleNotifications() { document.getElementById('notif-panel').classList.toggle('hidden'); }
-        
-        initStats();
     </script>
 </body>
 </html>
