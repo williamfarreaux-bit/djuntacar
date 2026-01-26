@@ -1,27 +1,92 @@
-function applyTranslations() {
-    const lang = localStorage.getItem('djuntacar_lang') || 'fr';
-    
-    // 1. Traduire les textes simples
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (translations[lang][key]) {
-            el.innerText = translations[lang][key];
+/**
+ * DjuntaCar - Moteur d'Internationalisation (i18n)
+ * Gère le changement de langue dynamique (FR, EN, PT)
+ * Nécessite le fichier 'translation.js' chargé avant lui.
+ */
+
+const I18n = {
+    // Langue par défaut
+    currentLang: 'fr',
+
+    /**
+     * Initialisation au chargement de la page
+     */
+    init: function() {
+        // 1. Vérifier s'il y a une préférence sauvegardée
+        const savedLang = localStorage.getItem('djuntacar_lang');
+        
+        if (savedLang) {
+            this.currentLang = savedLang;
+        } else {
+            // 2. Sinon, détecter la langue du navigateur
+            const userLang = navigator.language || navigator.userLanguage; 
+            if (userLang.includes('pt')) this.currentLang = 'pt';
+            else if (userLang.includes('en')) this.currentLang = 'en';
+            else this.currentLang = 'fr'; // Défaut
         }
-    });
+        
+        console.log(`DjuntaCar i18n: Langue définie sur [${this.currentLang}]`);
+        this.apply();
+    },
 
-    // 2. Traduire les placeholders d'inputs
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        if (translations[lang][key]) {
-            el.placeholder = translations[lang][key];
+    /**
+     * Changer la langue manuellement
+     * @param {string} lang - 'fr', 'en', ou 'pt'
+     */
+    setLanguage: function(lang) {
+        this.currentLang = lang;
+        localStorage.setItem('djuntacar_lang', lang); // Sauvegarder le choix
+        this.apply(); // Mettre à jour l'affichage
+        
+        // Optionnel : Recharger la page si nécessaire pour certains scripts
+        // location.reload(); 
+    },
+
+    /**
+     * Appliquer les traductions sur le DOM actuel
+     */
+    apply: function() {
+        // Vérification de sécurité : le dictionnaire existe-t-il ?
+        if (typeof translations === 'undefined') {
+            console.warn("DjuntaCar i18n: Le fichier 'translation.js' est manquant.");
+            return;
         }
-    });
-}
 
-function switchLang(newLang) {
-    localStorage.setItem('djuntacar_lang', newLang);
-    applyTranslations();
-}
+        const dict = translations[this.currentLang];
+        if (!dict) {
+            console.error(`DjuntaCar i18n: Aucune traduction trouvée pour [${this.currentLang}]`);
+            return;
+        }
 
-// Initialisation au chargement de la page
-document.addEventListener('DOMContentLoaded', applyTranslations);
+        // 1. Traduire les textes (attribut data-i18n)
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const translation = dict[key];
+
+            if (translation) {
+                // Si c'est un input (placeholder)
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.placeholder = translation;
+                } 
+                // Si c'est une image (alt text)
+                else if (element.tagName === 'IMG') {
+                    element.alt = translation;
+                } 
+                // Texte normal
+                else {
+                    element.innerHTML = translation; 
+                }
+            } else {
+                console.debug(`Clé manquante : ${key}`);
+            }
+        });
+
+        // 2. Mettre à jour l'attribut lang du HTML (bon pour le SEO)
+        document.documentElement.lang = this.currentLang;
+    }
+};
+
+// Lancer l'initialisation dès que le DOM est prêt
+document.addEventListener('DOMContentLoaded', () => {
+    I18n.init();
+});
