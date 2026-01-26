@@ -3,120 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Devenir Chauffeur - DjuntaCar</title>
-    <link rel="icon" type="image/png" href="sigle.png">
+    <title>DjuntaCar - Devenir Chauffeur</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
-        body { font-family: 'Montserrat', sans-serif; background-color: #F9FAFB; }
-    </style>
 </head>
-<body class="pb-10">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="bg-white border-b sticky top-0 z-50">
-        <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="index.html" class="text-gray-500 font-bold text-sm flex items-center gap-1">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> Annuler
-            </a>
-            <h1 class="text-lg font-extrabold text-[#1d4379]">Profil Chauffeur</h1>
-            <div class="w-10"></div>
+    <header>
+        <div class="header-left">
+            <button onclick="window.history.back()" class="profile-btn">
+                <i data-lucide="arrow-left" class="header-user-icon"></i>
+            </button>
         </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Opportunité</span>
+        </div>
+        <div class="header-right"></div>
     </header>
 
-    <main class="max-w-md mx-auto p-4">
-        <form id="driver-form" class="space-y-4">
-            
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 text-center">
-                <div class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center border-2 border-dashed border-gray-300 relative overflow-hidden" id="photo-preview">
-                    <i data-lucide="user" class="w-10 h-10 text-gray-300"></i>
-                    <input type="file" id="avatar-upload" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+    <main class="content-padding pt-0 pb-24">
+        
+        <div class="relative w-full h-64 -mx-5 mb-6">
+            <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover rounded-b-[40px]">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#1d4379] to-transparent rounded-b-[40px] opacity-90"></div>
+            <div class="absolute bottom-8 left-8 right-8 text-white">
+                <h1 class="text-2xl font-black mb-2">Gagnez de l'argent avec votre véhicule</h1>
+                <p class="text-xs font-medium opacity-90">Louez votre voiture ou devenez chauffeur privé au Cap-Vert.</p>
+            </div>
+        </div>
+
+        <div class="flex justify-between px-4 mb-8">
+            <div class="text-center">
+                <p class="text-2xl font-black text-[#1d4379]">15%</p>
+                <p class="text-[9px] text-gray-400 font-bold uppercase">Commission basse</p>
+            </div>
+            <div class="text-center border-l border-r border-gray-100 px-8">
+                <p class="text-2xl font-black text-[#1d4379]">24h</p>
+                <p class="text-[9px] text-gray-400 font-bold uppercase">Paiement rapide</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-black text-[#1d4379]">100%</p>
+                <p class="text-[9px] text-gray-400 font-bold uppercase">Assuré</p>
+            </div>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Pourquoi nous rejoindre ?</h2>
+        
+        <div class="space-y-3">
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
+                <div class="bg-green-50 p-3 rounded-full text-green-600"><i data-lucide="banknote" class="w-6 h-6"></i></div>
+                <div>
+                    <h3 class="font-black text-[#1d4379] text-sm">Revenus Complémentaires</h3>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">Gagnez jusqu'à 80 000 CVE / mois.</p>
                 </div>
-                <p class="text-[10px] font-bold text-gray-400 uppercase">Ajouter une photo pro</p>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-4">
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
+                <div class="bg-blue-50 p-3 rounded-full text-[#1d4379]"><i data-lucide="calendar-clock" class="w-6 h-6"></i></div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Île principale</label>
-                    <select id="driver-island" class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-[#1d4379]">
-                        <option value="Santiago">Santiago</option>
-                        <option value="Sal">Sal</option>
-                        <option value="SaoVicente">São Vicente</option>
-                        <option value="BoaVista">Boa Vista</option>
-                        <option value="Fogo">Fogo</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Tarif journalier (CVE)</label>
-                    <input type="number" id="driver-price" placeholder="Ex: 2500" class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-[#1d4379]">
-                </div>
-
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Présentation / Expérience</label>
-                    <textarea id="driver-bio" rows="3" placeholder="Parlez de votre expérience de conduite..." class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-gray-700 outline-none focus:border-[#1d4379] text-sm"></textarea>
+                    <h3 class="font-black text-[#1d4379] text-sm">Flexibilité Totale</h3>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">Vous décidez quand vous êtes disponible.</p>
                 </div>
             </div>
 
-            <button type="submit" id="submit-btn" class="w-full bg-[#1d4379] text-white font-extrabold py-4 rounded-2xl shadow-xl flex justify-center items-center gap-2 hover:bg-[#142f55] transition-all">
-                Activer mon profil Chauffeur
-            </button>
-        </form>
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
+                <div class="bg-orange-50 p-3 rounded-full text-orange-500"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+                <div>
+                    <h3 class="font-black text-[#1d4379] text-sm">Sécurité Garantie</h3>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">Locataires vérifiés et caution gérée.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 mt-8 px-2">Comment ça marche ?</h2>
+        <div class="relative pl-4 space-y-6 border-l-2 border-gray-100 ml-4">
+            <div class="relative">
+                <div class="absolute -left-[21px] bg-[#1d4379] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">1</div>
+                <h3 class="font-bold text-[#1d4379] text-sm">Inscription</h3>
+                <p class="text-xs text-gray-400">Créez votre profil en 2 minutes.</p>
+            </div>
+            <div class="relative">
+                <div class="absolute -left-[21px] bg-[#1d4379] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">2</div>
+                <h3 class="font-bold text-[#1d4379] text-sm">Vérification</h3>
+                <p class="text-xs text-gray-400">Envoyez vos documents (CNI, Permis).</p>
+            </div>
+            <div class="relative">
+                <div class="absolute -left-[21px] bg-[#1d4379] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">3</div>
+                <h3 class="font-bold text-[#1d4379] text-sm">Gagnez</h3>
+                <p class="text-xs text-gray-400">Recevez vos premières réservations.</p>
+            </div>
+        </div>
+
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div class="fixed-footer">
+        <button onclick="window.location.href='driver-application.html'" class="btn-action btn-primary shadow-xl">
+            Commencer l'inscription
+        </button>
+    </div>
+
     <script>
         lucide.createIcons();
-        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Preview Photo
-        document.getElementById('avatar-upload').addEventListener('change', function(e) {
-            if(this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('photo-preview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
-                };
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-
-        document.getElementById('driver-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Enregistrement...';
-            lucide.createIcons();
-
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) throw new Error("Non connecté");
-
-                // 1. Update Profile (Info + Ajouter le rôle driver si absent)
-                const { data: currentProfile } = await supabase.from('profiles').select('roles').eq('id', session.user.id).single();
-                let roles = currentProfile.roles || [];
-                if (!roles.includes('driver')) roles.push('driver');
-
-                const { error: updateError } = await supabase
-                    .from('profiles')
-                    .update({
-                        island: document.getElementById('driver-island').value,
-                        price_per_day_driver: document.getElementById('driver-price').value,
-                        bio: document.getElementById('driver-bio').value,
-                        roles: roles
-                    })
-                    .eq('id', session.user.id);
-
-                if (updateError) throw updateError;
-
-                alert("✅ Votre profil chauffeur est actif !");
-                window.location.href = 'profile.html';
-
-            } catch (err) {
-                alert(err.message);
-                btn.innerText = "Activer mon profil Chauffeur";
-            }
-        });
     </script>
 </body>
 </html>
