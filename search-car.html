@@ -12,125 +12,70 @@
 </head>
 <body class="bg-[#fcfcfd] antialiased">
 
-    <header>
-        <div class="header-left">
-            <button onclick="toggleMenu()"><i data-lucide="menu" class="w-7 h-7 text-[#1d4379]"></i></button>
+    <div class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+        <div class="flex items-center justify-between px-4 py-3">
+            <button onclick="window.history.back()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i>
+            </button>
+            <span class="text-[#1d4379] font-black uppercase text-sm">Trouver une voiture</span>
+            <button class="p-2 -mr-2 rounded-full active:bg-gray-100">
+                <i data-lucide="sliders-horizontal" class="w-5 h-5 text-[#1d4379]"></i>
+            </button>
         </div>
-        <div class="header-center">
-            <img src="logo.png" alt="DjuntaCar" class="header-logo">
-        </div>
-        <div class="header-right">
-            <button onclick="window.location.href='profile.html'"><i data-lucide="user" class="w-7 h-7 text-[#1d4379]"></i></button>
-        </div>
-    </header>
 
-    <main class="content-padding pt-8">
-        <h1 class="text-2xl font-black text-[#1d4379] mb-6">Planifier mon trajet</h1>
-
-        <form id="searchForm" onsubmit="event.preventDefault(); goToResults();">
+        <div class="px-4 pb-4">
+            <div class="bg-gray-100 p-1 rounded-xl flex items-center gap-2 mb-2">
+                <div class="bg-white p-2 rounded-lg shadow-sm text-[#1d4379]"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                <select class="bg-transparent text-xs font-bold text-gray-700 w-full outline-none">
+                    <option>Sal (Toute l'île)</option>
+                    <option>Santiago (Praia)</option>
+                    <option>São Vicente (Mindelo)</option>
+                    <option>Boa Vista</option>
+                </select>
+            </div>
             
-            <div class="form-section">
-                <label class="input-label">Lieu de prise en charge</label>
-                <div class="relative flex items-center mb-4">
-                    <i data-lucide="map-pin" class="absolute left-0 text-[#1d4379] w-5 h-5"></i>
-                    
-                    <select id="locationSelect" onchange="checkAddressOption()" class="input-field pl-8 bg-transparent appearance-none">
-                        <option value="" disabled selected>Choisir un point de rendez-vous...</option>
-                        
-                        <optgroup label="🏝️ SANTIAGO">
-                            <option value="rai_airport">✈️ Praia - Aéroport N. Mandela (RAI)</option>
-                            <option value="praia_port">⚓ Port de Praia (Ferry)</option>
-                            <option value=" Santiago_custom">📍 Praia - À l'adresse de votre choix</option>
-                            <option value="tarrafal">🏙️ Tarrafal</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ SÃO VICENTE">
-                            <option value="vxe_airport">✈️ Mindelo - Aéroport C. Évora (VXE)</option>
-                            <option value="mindelo_port">⚓ Porto Grande (Ferry)</option>
-                            <option value="SV_custom">📍 Mindelo - À l'adresse de votre choix</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ SANTO ANTÃO">
-                            <option value="porto_novo_port">⚓ Port de Porto Novo (Ferry)</option>
-                            <option value="SA_custom">📍 À l'adresse de votre choix (Porto Novo)</option>
-                            <option value="ribeira_grande">🏙️ Ribeira Grande</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ SAL">
-                            <option value="sid_airport">✈️ Espargos - Aéroport A. Cabral (SID)</option>
-                            <option value="palmeira_port">⚓ Port de Palmeira</option>
-                            <option value="Sal_custom">📍 Santa Maria - À l'adresse de votre choix</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ BOA VISTA">
-                            <option value="bvc_airport">✈️ Rabil - Aéroport A. Pereira (BVC)</option>
-                            <option value="sal_rei_port">⚓ Port de Sal Rei</option>
-                            <option value="BV_custom">📍 Sal Rei - À l'adresse de votre choix</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ FOGO">
-                            <option value="sfl_airport">✈️ São Filipe - Aéroport (SFL)</option>
-                            <option value="cavaleiros_port">⚓ Port de Vale dos Cavaleiros</option>
-                            <option value="Fogo_custom">📍 São Filipe - À l'adresse de votre choix</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ BRAVA">
-                            <option value="furna_port">⚓ Port de Furna (Ferry)</option>
-                            <option value="Brava_custom">📍 À l'adresse de votre choix</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ SÃO NICOLAU">
-                            <option value="sne_airport">✈️ Preguiça - Aéroport (SNE)</option>
-                            <option value="tarrafal_port">⚓ Port de Tarrafal</option>
-                            <option value="SN_custom">📍 À l'adresse de votre choix</option>
-                        </optgroup>
-
-                        <optgroup label="🏝️ MAIO">
-                            <option value="mmo_airport">✈️ Vila do Maio - Aéroport (MMO)</option>
-                            <option value="porto_ingles_port">⚓ Port de Porto Inglês</option>
-                            <option value="Maio_custom">📍 À l'adresse de votre choix</option>
-                        </optgroup>
-
-                    </select>
-                    <i data-lucide="chevron-down" class="absolute right-0 text-gray-400 w-4 h-4 pointer-events-none"></i>
+            <div class="flex gap-2">
+                <div class="flex-1 bg-gray-100 p-2 rounded-xl flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-4 h-4 text-gray-400 ml-1"></i>
+                    <input type="text" placeholder="Départ" class="bg-transparent text-xs font-bold text-gray-700 w-full outline-none" onfocus="(this.type='date')">
                 </div>
+                <div class="flex-1 bg-gray-100 p-2 rounded-xl flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-4 h-4 text-gray-400 ml-1"></i>
+                    <input type="text" placeholder="Retour" class="bg-transparent text-xs font-bold text-gray-700 w-full outline-none" onfocus="(this.type='date')">
+                </div>
+            </div>
+        </div>
 
-                <div id="customAddressBox" class="hidden animate-in fade-in slide-in-from-top-2 duration-300">
-                    <label class="input-label">Précisez l'adresse (Hôtel, Résidence...)</label>
-                    <div class="relative flex items-center">
-                        <i data-lucide="navigation" class="absolute left-0 text-blue-500 w-4 h-4"></i>
-                        <input type="text" id="customAddressInput" class="input-field pl-8 border-blue-200" placeholder="Ex: Hôtel Hilton, Santa Maria">
+        <div class="flex gap-2 overflow-x-auto px-4 pb-3 no-scrollbar">
+            <button onclick="filterCars('all')" class="chip-active whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-[#1d4379] text-white">Tout</button>
+            <button onclick="filterCars('4x4')" class="chip whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-gray-100 text-gray-400 hover:bg-gray-200">4x4</button>
+            <button onclick="filterCars('eco')" class="chip whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-gray-100 text-gray-400 hover:bg-gray-200">Économique</button>
+            <button onclick="filterCars('suv')" class="chip whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-gray-100 text-gray-400 hover:bg-gray-200">SUV</button>
+            <button onclick="filterCars('util')" class="chip whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-gray-100 text-gray-400 hover:bg-gray-200">Utilitaire</button>
+        </div>
+    </div>
+
+    <main class="content-padding pt-4 pb-24">
+        
+        <p class="text-[10px] font-bold text-gray-400 mb-4 px-2">12 véhicules disponibles</p>
+
+        <div class="space-y-4" id="resultsContainer">
+
+            <div class="car-card group" data-category="suv">
+                <div class="relative h-48 overflow-hidden" onclick="window.location.href='car-detail.html'">
+                    <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" class="w-full h-full object-cover transition-transform group-hover:scale-105">
+                    <div class="location-pill"><i data-lucide="map-pin" class="w-3 h-3"></i> Sal, Santa Maria</div>
+                    <button class="absolute top-3 right-3 bg-white/20 backdrop-blur p-2 rounded-full text-white hover:bg-red-500 hover:text-white transition-colors">
+                        <i data-lucide="heart" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="p-4 flex justify-between items-end">
+                    <div>
+                        <h3 class="font-black text-[#1d4379] text-lg">Mercedes GLC</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[9px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold uppercase">Auto</span>
+                            <span class="text-[9px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold uppercase">Diesel</span>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="form-section">
-                    <label class="input-label">Début</label>
-                    <input type="date" id="dateStart" class="input-field text-sm">
-                </div>
-                <div class="form-section">
-                    <label class="input-label">Fin</label>
-                    <input type="date" id="dateEnd" class="input-field text-sm">
-                </div>
-            </div>
-
-            <div class="form-section flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="icon-rounded bg-blue-light">
-                        <i data-lucide="user-check" class="w-5 h-5"></i>
-                    </div>
-                    <span class="font-bold text-[#1d4379] text-sm">Avec Chauffeur</span>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="driverToggle" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1d4379]"></div>
-                </label>
-            </div>
-
-        </form>
-    </main>
-
-    <div class="fixed-footer">
-        <button onclick="goToResults()" class="btn-action btn-primary flex items-center justify-center gap-2 shadow-xl">
-            <i data-lucide="search
+                    <div class="text-right">
+                        <p class="text-lg font-black text-[#1d4379]">15 0
