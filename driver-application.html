@@ -98,4 +98,26 @@
                 document.getElementById('preview' + type).classList.remove('hidden');
                 
                 // Changer la bordure de la zone pour montrer le succès
-                const zone = input.
+                const zone = input.parentElement;
+                zone.classList.remove('border-blue-200');
+                zone.classList.add('border-green-300', 'bg-green-50/30');
+            }
+        }
+
+        function submitApplication() {
+            const name = document.getElementById('fullName').value;
+            if(!name) { alert("Merci de remplir votre nom."); return; }
+            
+            // Simulation d'envoi
+            const btn = document.querySelector('.btn-primary');
+            btn.innerHTML = '<i data-lucide="loader" class="animate-spin w-5 h-5 mx-auto"></i>';
+            lucide.createIcons();
+
+            setTimeout(() => {
+                alert("Dossier reçu ! Notre équipe va vérifier vos documents sous 24h.");
+                window.location.href = 'profile.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
