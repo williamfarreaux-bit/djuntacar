@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DjuntaCar - Mes Avis</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#fcfcfd] antialiased">
+
+    <header>
+        <div class="header-left">
+            <button onclick="window.history.back()" class="profile-btn">
+                <i data-lucide="arrow-left" class="header-user-icon"></i>
+            </button>
+        </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Évaluations</span>
+        </div>
+        <div class="header-right">
+            </div>
+    </header>
+
+    <main class="content-padding pt-6 pb-24">
+        
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm mb-8 flex items-center gap-6">
+            <div class="text-center">
+                <span class="text-4xl font-black text-[#1d4379]">4.9</span>
+                <div class="flex justify-center text-amber-400 my-1">
+                    <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                    <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                    <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                    <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                    <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                </div>
+                <p class="text-[9px] text-gray-400 font-bold uppercase">124 Avis</p>
+            </div>
+
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="text-[8px] font-bold text-gray-400 w-3">5</span>
+                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="bg-amber-400 h-full w-[80%] rounded-full"></div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[8px] font-bold text-gray-400 w-3">4</span>
+                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="bg-amber-400 h-full w-[15%] rounded-full"></div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[8px] font-bold text-gray-400 w-3">3</span>
+                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="bg-gray-200 h-full w-[3%] rounded-full"></div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[8px] font-bold text-gray-400 w-3">2</span>
+                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="bg-gray-200 h-full w-[1%] rounded-full"></div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[8px] font-bold text-gray-400 w-3">1</span>
+                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="bg-gray-200 h-full w-[1%] rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Récents</h2>
+        <div class="space-y-4">
+            
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/150?img=12" class="w-8 h-8 rounded-full border border-gray-100">
+                        <div>
+                            <p class="text-xs font-black text-[#1d4379]">Marie L.</p>
+                            <p class="text-[9px] text-gray-400">Il y a 2 jours</p>
+                        </div>
+                    </div>
+                    <div class="bg-green-50 px-2 py-1 rounded-lg flex items-center gap-1">
+                        <span class="text-xs font-black text-green-700">5.0</span>
+                        <i data-lucide="star" class="w-3 h-3 text-green-600 fill-current"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-600 font-medium leading-relaxed">
+                    "Super voiture ! Très propre et consomme peu. Le propriétaire était ponctuel à l'aéroport."
+                </p>
+                <div class="mt-3 inline-block bg-gray-50 px-2 py-1 rounded text-[9px] font-bold text-gray-500">
+                    Loué : Mercedes GLC
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/150?img=59" class="w-8 h-8 rounded-full border border-gray-100">
+                        <div>
+                            <p class="text-xs font-black text-[#1d4379]">Pedro G.</p>
+                            <p class="text-[9px] text-gray-400">15 Janvier 2026</p>
+                        </div>
+                    </div>
+                    <div class="bg-green-50 px-2 py-1 rounded-lg flex items-center gap-1">
+                        <span class="text-xs font-black text-green-700">4.8</span>
+                        <i data-lucide="star" class="w-3 h-3 text-green-600 fill-current"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-600 font-medium leading-relaxed">
+                    "Tout s'est bien passé. La clim fonctionne très bien, indispensable à Sal !"
+                </p>
+                <div class="mt-3 inline-block bg-gray-50 px-2 py-1 rounded text-[9px] font-bold text-gray-500">
+                    Loué : Toyota Hilux
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm opacity-70">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400">
+                            JD
+                        </div>
+                        <div>
+                            <p class="text-xs font-black text-[#1d4379]">John Doe</p>
+                            <p class="text-[9px] text-gray-400">Décembre 2025</p>
+                        </div>
+                    </div>
+                    <div class="bg-orange-50 px-2 py-1 rounded-lg flex items-center gap-1">
+                        <span class="text-xs font-black text-orange-500">3.0</span>
+                        <i data-lucide="star" class="w-3 h-3 text-orange-400 fill-current"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-600 font-medium leading-relaxed italic">
+                    "La voiture roule bien mais il manquait le câble USB promis."
+                </p>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
