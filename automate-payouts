@@ -1,35 +1,127 @@
-// Calcul des parts selon le document "Modèle Économique"
-// Commission globale 25% (15% plateforme + 10% assurance)
-
-export async function handlePayouts(booking) {
-  const EUR_RATE = 110.265;
-  const days = calculateDays(booking.start_date, booking.end_date);
-  
-  // 1. PART DU PROPRIÉTAIRE (Payée au Check-in)
-  // Prix du véhicule - 25% de commission
-  const ownerGross = booking.vehicles.price_per_day * days;
-  const ownerNet = ownerGross * 0.75; 
-  
-  await supabase.from('transactions').insert({
-    booking_id: booking.id,
-    recipient_id: booking.host_id,
-    recipient_role: 'host',
-    amount_cve: ownerNet,
-    scheduled_for: booking.start_date // Déclanché au Check-in
-  });
-
-  // 2. PART DU CHAUFFEUR (Payée au Check-out)
-  if (booking.driver_id) {
-    const driverDaily = booking.driver_daily_price || 25;
-    const driverTotalEur = driverDaily * days;
-    // On ajoute les éventuelles heures sup constatées au check-out ici
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DjuntaCar - Paiements</title>
     
-    await supabase.from('transactions').insert({
-      booking_id: booking.id,
-      recipient_id: booking.driver_id,
-      recipient_role: 'driver',
-      amount_cve: driverTotalEur * EUR_RATE,
-      scheduled_for: booking.end_date // Déclanché au Check-out
-    });
-  }
-}
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#fcfcfd] antialiased">
+
+    <header>
+        <div class="header-left">
+            <button onclick="window.history.back()" class="profile-btn">
+                <i data-lucide="arrow-left" class="header-user-icon"></i>
+            </button>
+        </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Versements</span>
+        </div>
+        <div class="header-right"></div>
+    </header>
+
+    <main class="content-padding pt-6 pb-24">
+        
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2">Configuration</h1>
+        <p class="text-xs font-bold text-gray-400 mb-8">Gérez vos virements automatiques vers votre compte bancaire.</p>
+
+        <div class="form-section flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-50 p-2 rounded-full text-[#1d4379]">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-[#1d4379] text-sm">Virement Auto</h3>
+                    <p class="text-[10px] text-gray-400 font-bold">Chaque Lundi</p>
+                </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#22c55e]"></div>
+            </label>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2">Coordonnées Bancaires (Cap-Vert)</h2>
+        
+        <form id="payoutForm" onsubmit="event.preventDefault(); saveSettings();">
+            
+            <div class="form-section">
+                <label class="input-label">Banque</label>
+                <div class="relative flex items-center">
+                    <select class="input-field bg-transparent appearance-none">
+                        <option>BCA (Banco Comercial do Atlântico)</option>
+                        <option>BCN (Banco Caboverdiano de Negócios)</option>
+                        <option>BI (Bank Interatlantico)</option>
+                        <option>Ecobank</option>
+                        <option>IIB</option>
+                    </select>
+                    <i data-lucide="chevron-down" class="absolute right-0 text-gray-400 w-4 h-4 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="input-label">Titulaire du compte</label>
+                <input type="text" class="input-field" placeholder="Nom Prénom" value="Joao Mendes">
+            </div>
+
+            <div class="form-section">
+                <label class="input-label">NIB (Numéro d'Identification Bancaire)</label>
+                <input type="text" class="input-field tracking-widest" placeholder="0001 0000 0000 0000 0000 0" maxlength="21">
+                <p class="text-[9px] text-gray-400 mt-2 flex items-center gap-1">
+                    <i data-lucide="lock" class="w-3 h-3"></i> Données chiffrées et sécurisées
+                </p>
+            </div>
+
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Fréquence</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="form-section flex items-center gap-3 cursor-pointer border-2 border-blue-500 bg-blue-50">
+                    <input type="radio" name="freq" class="hidden" checked>
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span class="text-xs font-black text-[#1d4379]">Hebdomadaire</span>
+                </label>
+                <label class="form-section flex items-center gap-3 cursor-pointer opacity-60">
+                    <input type="radio" name="freq" class="hidden">
+                    <div class="w-3 h-3 rounded-full border border-gray-300"></div>
+                    <span class="text-xs font-black text-gray-500">Mensuel</span>
+                </label>
+            </div>
+
+        </form>
+
+    </main>
+
+    <div class="fixed-footer">
+        <button onclick="saveSettings()" class="btn-action btn-primary shadow-xl">
+            Enregistrer les modifications
+        </button>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function saveSettings() {
+            // Simulation de sauvegarde
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerText;
+            
+            btn.innerText = "Sauvegarde...";
+            btn.classList.add('opacity-75');
+            
+            setTimeout(() => {
+                btn.innerText = "Succès !";
+                btn.classList.remove('bg-[#1d4379]', 'opacity-75');
+                btn.classList.add('bg-green-500');
+                
+                setTimeout(() => {
+                    alert("Vos préférences de paiement ont été mises à jour.");
+                    window.location.href = 'wallet.html';
+                }, 500);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
