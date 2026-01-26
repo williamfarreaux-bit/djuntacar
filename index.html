@@ -6,41 +6,19 @@
     <title>DjuntaCar - Accueil</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <script src="config.js"></script>
-</head>
-<body class="antialiased">
-
-    <header>
-        <div class="header-container">
-            <div class="header-side">
-                <button onclick="toggleMenu()" class="p-2">
-                    <i data-lucide="menu" class="w-8 h-8 text-[#1d4379]"></i>
-                </button>
-            </div>
-            
-            <div class="header-center">
-                <img src="logo.png" alt="DjuntaCar" class="header-logo" onerror="this.style.display='none'">
-            </div>
-            
-            <div class="header-side">
-                <button onclick="window.location.href='profile.html'" class="p-2">
-                    <i data-lucide="user" class="w-8 h-8 text-[#1d4379]"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+    <script src="config.js"></script>     <script src="db-service.js"></script> <script src="layout.js"></script>     </head>
+<body class="antialiased pb-32"> <header></header>
 
     <section class="hero-bg px-6">
         <div class="content-wrapper">
-            <div class="bg-white rounded-2xl shadow-xl flex items-center p-2 border border-gray-100">
+            <div class="bg-white rounded-2xl shadow-xl flex items-center p-2 border border-gray-100 cursor-pointer" onclick="window.location.href='search-car.html'">
                 <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-[#1d4379]">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </div>
-                <input type="text" onclick="window.location.href='search-car.html'" placeholder="Où voulez-vous aller ?" class="flex-1 px-4 text-sm font-bold outline-none text-gray-400" readonly>
+                <input type="text" placeholder="Où voulez-vous aller ?" class="flex-1 px-4 text-sm font-bold outline-none text-gray-400 pointer-events-none" readonly>
             </div>
         </div>
     </section>
@@ -48,16 +26,16 @@
     <div class="px-6 filter-float">
         <div class="content-wrapper">
             <div class="categories-grid">
-                <button onclick="filterType('all', this)" class="cat-chip active">
+                <button onclick="window.location.href='search-car.html'" class="cat-chip active">
                     <i data-lucide="layout-grid"></i> <span>Tous</span>
                 </button>
-                <button onclick="filterType('4x4', this)" class="cat-chip">
+                <button onclick="window.location.href='search-car.html?type=4x4'" class="cat-chip">
                     <i data-lucide="mountain"></i> <span>4x4</span>
                 </button>
-                <button onclick="filterType('citadine', this)" class="cat-chip">
+                <button onclick="window.location.href='search-car.html?type=citadine'" class="cat-chip">
                     <i data-lucide="car"></i> <span>Citas</span>
                 </button>
-                <button onclick="filterType('luxe', this)" class="cat-chip">
+                <button onclick="window.location.href='search-car.html?type=luxe'" class="cat-chip">
                     <i data-lucide="gem"></i> <span>Luxe</span>
                 </button>
             </div>
@@ -65,55 +43,16 @@
     </div>
 
     <main class="max-w-md mx-auto px-6 pt-10">
-        <div id="car-list" class="space-y-6">
-            
-            <div class="car-card" onclick="window.location.href='car-detail.html'">
-                <div class="relative">
-                    <div class="absolute top-4 left-4 flex gap-2 z-10">
-                        <div class="bg-[#84cc16] text-white px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase">Super-Host</div>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800" class="w-full h-56 object-cover">
-                    <div class="location-tag"><i data-lucide="map-pin" class="w-3 h-3 text-pink-500 fill-pink-500"></i> Boa Vista</div>
-                </div>
-                <div class="p-5">
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <h3 class="text-base font-black text-[#1d4379]">Mercedes GLC</h3>
-                            <p class="text-[9px] font-bold text-gray-400 uppercase mt-1">Auto • Diesel • 5 Places</p>
-                        </div>
-                        <div class="flex items-center gap-1 font-black text-amber-500"><i data-lucide="star" class="w-4 h-4 fill-amber-500"></i> 5.0</div>
-                    </div>
-                    <div class="flex justify-between items-end border-t border-gray-50 pt-3">
-                        <span class="text-[10px] font-black text-blue-500 underline uppercase">Plus d'infos</span>
-                        <p class="text-xl font-black text-[#1d4379]">15 000 CVE <span class="text-[9px] text-gray-300">/j</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="car-card" onclick="window.location.href='car-detail.html'">
-                <div class="relative">
-                    <div class="absolute top-4 left-4 flex gap-2 z-10">
-                        <div class="bg-[#f59e0b] text-white px-3 py-1 rounded-lg text-[9px] font-extrabold uppercase">Top Prix</div>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800" class="w-full h-56 object-cover">
-                    <div class="location-tag"><i data-lucide="map-pin" class="w-3 h-3 text-pink-500 fill-pink-500"></i> Sal</div>
-                </div>
-                <div class="p-5">
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <h3 class="text-base font-black text-[#1d4379]">Toyota Hilux</h3>
-                            <p class="text-[9px] font-bold text-gray-400 uppercase mt-1">Manuel • Diesel • 4x4</p>
-                        </div>
-                        <div class="flex items-center gap-1 font-black text-amber-500"><i data-lucide="star" class="w-4 h-4 fill-amber-500"></i> 4.8</div>
-                    </div>
-                    <div class="flex justify-between items-end border-t border-gray-50 pt-3">
-                        <span class="text-[10px] font-black text-blue-500 underline uppercase">Plus d'infos</span>
-                        <p class="text-xl font-black text-[#1d4379]">8 500 CVE <span class="text-[9px] text-gray-300">/j</span></p>
-                    </div>
-                </div>
-            </div>
-
+        <div class="flex justify-between items-end mb-4">
+            <h2 class="text-lg font-black text-[#1d4379] uppercase">En Vedette</h2>
+            <a href="search-car.html" class="text-xs font-bold text-blue-500">Voir tout</a>
         </div>
+
+        <div id="home-loader" class="text-center py-6">
+            <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-gray-300"></i>
+        </div>
+
+        <div id="featured-list" class="space-y-6"></div>
     </main>
 
     <div class="action-bar-fixed">
@@ -121,56 +60,4 @@
             <button onclick="window.location.href='become-driver.html'" class="w-full bg-[#1d4379] text-white py-4 rounded-[18px] font-black text-[11px] uppercase tracking-widest shadow-lg active:scale-95 transition-transform">
                 Ajouter ma voiture
             </button>
-            <button onclick="window.location.href='driver-application.html'" class="w-full bg-[#22c55e] text-white py-4 rounded-[18px] font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-transform">
-                Devenir chauffeur
-            </button>
-        </div>
-    </div>
-
-    <div id="mobile-menu">
-        <div class="flex justify-between items-center mb-10">
-            <img src="logo.png" class="h-8 object-contain" onerror="this.style.display='none'">
-            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full">
-                <i data-lucide="x" class="w-6 h-6 text-gray-400"></i>
-            </button>
-        </div>
-        
-        <nav class="space-y-6 flex-1">
-            <a href="index.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase">
-                <i data-lucide="home" class="w-6 h-6"></i> Accueil
-            </a>
-            <a href="search-car.html?mode=driver" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase">
-                <i data-lucide="user-check" class="w-6 h-6"></i> Mon Chauffeur
-            </a>
-            <a href="search-car.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase">
-                <i data-lucide="car-front" class="w-6 h-6"></i> Ma Voiture
-            </a>
-            <a href="my-rentals.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase">
-                <i data-lucide="calendar" class="w-6 h-6"></i> Mes Locations
-            </a>
-            <a href="profile.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase">
-                <i data-lucide="user-circle" class="w-6 h-6"></i> Mon Compte
-            </a>
-        </nav>
-
-        <button onclick="window.location.href='login.html'" class="flex items-center gap-2 text-xs font-black text-red-400 uppercase w-full p-2 mt-4 hover:bg-red-50 rounded-lg transition-colors">
-            <i data-lucide="log-out" class="w-4 h-4"></i> Déconnexion
-        </button>
-    </div>
-
-    <script>
-        lucide.createIcons();
-        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
-        function filterType(type, btn) {
-            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            // Simulation filtre
-            const cards = document.querySelectorAll('.car-card');
-            cards.forEach(card => {
-                card.style.opacity = '0.5';
-                setTimeout(() => card.style.opacity = '1', 200);
-            });
-        }
-    </script>
-</body>
-</html>
+            <button onclick="window.location.href='driver-application.html'" class="w-full bg-[#22c55e
