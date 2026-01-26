@@ -3,120 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chat - DjuntaCar</title>
+    <title>DjuntaCar - Message</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #f8fafc; height: 100vh; display: flex; flex-direction: column; }
-        .chat-bubble-me { background: #1d4379; color: white; border-radius: 20px 20px 4px 20px; }
-        .chat-bubble-other { background: white; color: #1e293b; border-radius: 20px 20px 20px 4px; border: 1px solid #f1f5f9; }
+        /* Ajustement spécifique pour le chat : fond un peu plus gris */
+        body { background-color: #f0f2f5; }
+        /* Masquer la scrollbar tout en gardant le scroll */
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased h-screen flex flex-col">
 
-    <header class="h-20 bg-white border-b border-gray-100 flex items-center px-6 sticky top-0 z-50">
-        <a href="my-rentals.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left"></i></a>
-        <div class="flex items-center gap-4 ml-2">
-            <div class="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-gray-50">
-                <img id="header-avatar" src="https://via.placeholder.com/100" class="w-full h-full object-cover">
+    <header class="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <button onclick="window.history.back()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i>
+            </button>
+            
+            <div class="relative">
+                <img src="https://i.pravatar.cc/150?img=11" class="w-10 h-10 rounded-full border border-gray-100">
+                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
             </div>
+            
             <div>
-                <h2 id="chat-with-name" class="font-black text-sm text-[#1d4379]">Chargement...</h2>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">En ligne</span>
-                </div>
+                <h1 class="text-sm font-black text-[#1d4379]">Joao Mendes</h1>
+                <p class="text-[10px] font-bold text-gray-400">Propriétaire • En ligne</p>
             </div>
         </div>
+        
+        <button class="p-2 rounded-full active:bg-gray-100">
+            <i data-lucide="phone" class="w-5 h-5 text-[#1d4379]"></i>
+        </button>
     </header>
 
-    <main id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
-        <div class="flex justify-center py-10 opacity-20"><i data-lucide="lock" class="w-4 h-4"></i></div>
+    <main id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar pb-24">
+        
+        <div class="text-center">
+            <span class="text-[9px] font-bold text-gray-400 bg-gray-200 px-3 py-1 rounded-full uppercase">Aujourd'hui</span>
+        </div>
+
+        <div class="flex items-end gap-2">
+            <img src="https://i.pravatar.cc/150?img=11" class="w-6 h-6 rounded-full mb-1">
+            <div class="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm max-w-[80%]">
+                <p class="text-xs font-medium text-gray-700">Bonjour ! Merci pour la réservation.</p>
+                <span class="text-[9px] text-gray-400 block text-right mt-1">10:02</span>
+            </div>
+        </div>
+
+        <div class="flex items-end gap-2">
+            <div class="w-6"></div> <div class="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm max-w-[80%]">
+                <p class="text-xs font-medium text-gray-700">À quelle heure arrive votre vol TP1503 ?</p>
+                <span class="text-[9px] text-gray-400 block text-right mt-1">10:03</span>
+            </div>
+        </div>
+
+        <div class="flex items-end justify-end gap-2">
+            <div class="bg-[#1d4379] p-3 rounded-2xl rounded-br-none shadow-sm max-w-[80%]">
+                <p class="text-xs font-medium text-white">Salut Joao ! Le vol arrive à 14h30.</p>
+                <div class="flex items-center justify-end gap-1 mt-1">
+                    <span class="text-[9px] text-blue-200">10:05</span>
+                    <i data-lucide="check-check" class="w-3 h-3 text-blue-200"></i>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <div class="p-6 bg-white border-t border-gray-50 pb-10">
-        <div class="max-w-md mx-auto flex items-center gap-3 bg-gray-50 p-2 rounded-[24px] border border-gray-100">
-            <input type="text" id="message-input" placeholder="Écrivez votre message..." class="flex-1 bg-transparent px-4 py-2 text-sm font-semibold outline-none text-[#1d4379]">
-            <button onclick="sendMessage()" class="bg-[#1d4379] text-white p-3 rounded-full shadow-lg active:scale-90 transition-all">
-                <i data-lucide="send" class="w-5 h-5"></i>
-            </button>
-        </div>
+    <div class="bg-white border-t border-gray-100 p-3 flex items-center gap-3 sticky bottom-0 w-full pb-6">
+        <button class="p-2 text-gray-400 hover:text-[#1d4379]">
+            <i data-lucide="plus-circle" class="w-6 h-6"></i>
+        </button>
+        
+        <form onsubmit="event.preventDefault(); sendMessage();" class="flex-1 flex items-center">
+            <input type="text" id="messageInput" class="w-full bg-gray-100 border-none rounded-full px-4 py-3 text-xs font-bold text-gray-700 focus:ring-2 focus:ring-[#1d4379] outline-none" placeholder="Écrivez votre message...">
+        </form>
+        
+        <button onclick="sendMessage()" class="bg-[#1d4379] text-white p-3 rounded-full shadow-lg active:scale-95 transition-transform">
+            <i data-lucide="send" class="w-5 h-5 ml-0.5"></i> </button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
-        const supabase = window.supabase.createClient('VOTRE_URL', 'VOTRE_CLE');
-        let currentUserId, bookingId, receiverId;
 
-        async function initChat() {
-            const params = new URLSearchParams(window.location.search);
-            bookingId = params.get('bookingId');
-            
-            const { data: { user } } = await supabase.auth.getUser();
-            currentUserId = user.id;
-
-            // Récupérer les infos de la réservation pour savoir à qui on parle
-            const { data: b } = await supabase.from('bookings').select('*, profiles:tenant_id(full_name), hosts:host_id(full_name)').eq('id', bookingId).single();
-            
-            receiverId = (currentUserId === b.tenant_id) ? b.host_id : b.tenant_id;
-            document.getElementById('chat-with-name').innerText = (currentUserId === b.tenant_id) ? b.hosts.full_name : b.profiles.full_name;
-
-            loadMessages();
-            subscribeToMessages();
-        }
-
-        async function loadMessages() {
-            const { data: msgs } = await supabase.from('messages').select('*').eq('booking_id', bookingId).order('created_at', { ascending: true });
-            renderMessages(msgs);
-        }
-
-        function renderMessages(msgs) {
-            const container = document.getElementById('chat-container');
-            container.innerHTML = msgs.map(m => `
-                <div class="flex ${m.sender_id === currentUserId ? 'justify-end' : 'justify-start'}">
-                    <div class="max-w-[75%] p-4 text-xs font-bold ${m.sender_id === currentUserId ? 'chat-bubble-me' : 'chat-bubble-other'}">
-                        ${m.content}
-                        <span class="block text-[8px] mt-2 opacity-50 ${m.sender_id === currentUserId ? 'text-right' : 'text-left'}">
-                            ${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('message-input');
-            const content = input.value.trim();
-            if (!content) return;
-
-            const { error } = await supabase.from('messages').insert({
-                booking_id: bookingId,
-                sender_id: currentUserId,
-                receiver_id: receiverId,
-                content: content
-            });
-
-            if (!error) {
-                input.value = '';
-                loadMessages();
-            }
-        }
-
-        // REALTIME : Écoute les nouveaux messages en direct
-        function subscribeToMessages() {
-            supabase.channel('custom-all-channel')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `booking_id=eq.${bookingId}` }, (payload) => {
-                loadMessages();
-            })
-            .subscribe();
-        }
-
-        initChat();
-    </script>
-</body>
-</html>
+        // Scroller en bas au chargement
+        window.onload = () => {
+            const container = document.
