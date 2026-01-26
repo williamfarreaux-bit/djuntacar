@@ -3,134 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mon Portefeuille - DjuntaCar</title>
+    <title>DjuntaCar - Portefeuille</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #f8fafc; padding-bottom: 40px; }
-        .balance-card {
-            background: linear-gradient(135deg, #1d4379 0%, #3a5f96 100%);
-            border-radius: 32px;
-            padding: 30px;
-            color: white;
-            box-shadow: 0 20px 40px rgba(29, 67, 121, 0.2);
-        }
-        .transaction-item {
-            background: white;
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid #f1f5f9;
-        }
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-    </style>
 </head>
-<body class="antialiased">
+<body class="bg-[#fcfcfd] antialiased">
 
-    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between">
-            <a href="index.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left" class="w-6 h-6"></i></a>
-            <span class="font-extrabold text-sm text-[#1d4379]">Mes Revenus</span>
-            <div class="w-10"></div>
+    <header>
+        <div class="header-left">
+            <button onclick="toggleMenu()" class="profile-btn">
+                <i data-lucide="menu" class="header-user-icon"></i>
+            </button>
+        </div>
+        <div class="header-center">
+            <span class="text-[#1d4379] font-black uppercase text-sm">Mon Solde</span>
+        </div>
+        <div class="header-right">
+            <button onclick="window.location.href='payment.html'" class="profile-btn">
+                <i data-lucide="credit-card" class="header-user-icon"></i>
+            </button>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 pt-6">
+    <main class="content-padding pt-6 pb-24">
         
-        <div class="balance-card mb-8">
-            <span class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Solde en attente</span>
-            <div class="flex items-baseline gap-2 mt-1">
-                <h1 id="total-balance" class="text-3xl font-black">-- CVE</h1>
+        <div class="wallet-banner">
+            <div>
+                <p class="text-[10px] font-bold opacity-80 uppercase mb-1">Solde disponible</p>
+                <p class="text-3xl font-black">12 500 <span class="text-lg">CVE</span></p>
             </div>
-            <div class="mt-6 flex justify-between items-center bg-white/10 p-4 rounded-2xl">
-                <div class="flex items-center gap-3">
-                    <i data-lucide="banknote" class="w-5 h-5"></i>
-                    <span class="text-[10px] font-bold uppercase">Prochain virement</span>
-                </div>
-                <span id="next-payout-date" class="text-xs font-black">--/--</span>
+            <div class="bg-white/20 p-2 rounded-full">
+                <i data-lucide="wallet" class="w-6 h-6 text-white"></i>
             </div>
         </div>
 
-        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">Historique des paiements</h3>
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <button onclick="addFunds()" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center gap-2 active:scale-95 transition-transform">
+                <div class="bg-green-50 p-3 rounded-full text-green-600">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xs font-black text-[#1d4379]">Recharger</span>
+            </button>
 
-        <div id="transactions-list">
-            <div class="animate-pulse space-y-3">
-                <div class="h-20 bg-gray-200 rounded-2xl"></div>
-                <div class="h-20 bg-gray-200 rounded-2xl"></div>
+            <button onclick="withdrawFunds()" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center gap-2 active:scale-95 transition-transform">
+                <div class="bg-blue-50 p-3 rounded-full text-[#1d4379]">
+                    <i data-lucide="arrow-down-to-line" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xs font-black text-[#1d4379]">Retirer</span>
+            </button>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Transactions récentes</h2>
+        <div class="space-y-3">
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="bg-red-50 p-2.5 rounded-xl text-red-500">
+                        <i data-lucide="car" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-[#1d4379]">Location Mercedes</p>
+                        <p class="text-[9px] text-gray-400 font-bold">24 Jan • 10:30</p>
+                    </div>
+                </div>
+                <span class="text-xs font-black text-red-500">- 45 000 CVE</span>
             </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="bg-green-50 p-2.5 rounded-xl text-green-500">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-[#1d4379]">Rechargement Vinti4</p>
+                        <p class="text-[9px] text-gray-400 font-bold">20 Jan • 14:15</p>
+                    </div>
+                </div>
+                <span class="text-xs font-black text-green-500">+ 50 000 CVE</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-50 p-2.5 rounded-xl text-blue-500">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-[#1d4379]">Caution Libérée</p>
+                        <p class="text-[9px] text-gray-400 font-bold">15 Jan • 09:00</p>
+                    </div>
+                </div>
+                <span class="text-xs font-black text-[#1d4379]">20 000 CVE</span> </div>
+
         </div>
 
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div id="menu-overlay" onclick="toggleMenu()"></div>
+    <div id="universal-menu">
+        <div class="menu-header">
+            <img src="logo.png" style="height: 32px;">
+            <button onclick="toggleMenu()"><i data-lucide="x" style="width: 24px; color: #1d4379;"></i></button>
+        </div>
+        <nav class="menu-nav">
+            <a href="index.html" class="menu-link"><i data-lucide="home"></i> Accueil</a>
+            <a href="search-car.html" class="menu-link"><i data-lucide="search"></i> Recherche</a>
+            <a href="my-rentals.html" class="menu-link"><i data-lucide="calendar"></i> Mes Locations</a>
+            <a href="wallet.html" class="menu-link current-page"><i data-lucide="wallet"></i> Portefeuille</a> <a href="favorites.html" class="menu-link"><i data-lucide="heart"></i> Favoris</a>
+            <a href="profile.html" class="menu-link"><i data-lucide="user"></i> Profil</a>
+        </nav>
+        <div class="menu-footer">
+            <button onclick="window.location.href='login.html'" class="btn-logout"><i data-lucide="log-out"></i> Déconnexion</button>
+        </div>
+    </div>
+
+    <div class="fixed-footer p-0 bg-white border-t border-gray-100">
+        <div class="flex justify-around items-center w-full py-3">
+            <a href="index.html" class="nav-item">
+                <i data-lucide="home" class="w-5 h-5 mb-1"></i>
+                <span class="text-[9px] font-bold">Accueil</span>
+            </a>
+            <a href="search-car.html" class="nav-item">
+                <i data-lucide="search" class="w-5 h-5 mb-1"></i>
+                <span class="text-[9px] font-bold">Recherche</span>
+            </a>
+            <a href="my-rentals.html" class="nav-item">
+                <i data-lucide="calendar" class="w-5 h-5 mb-1"></i>
+                <span class="text-[9px] font-bold">Locations</span>
+            </a>
+            <a href="wallet.html" class="nav-item active text-[#1d4379]">
+                <i data-lucide="wallet" class="w-5 h-5 mb-1"></i>
+                <span class="text-[9px] font-bold">Wallet</span>
+            </a>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
-
-        const supabase = window.supabase.createClient('VOTRE_URL', 'VOTRE_CLE');
-
-        async function loadWallet() {
-            const list = document.getElementById('transactions-list');
-            const { data: { user } } = await supabase.auth.getUser();
-
-            if (!user) return;
-
-            const { data: txs, error } = await supabase
-                .from('transactions')
-                .select('*')
-                .eq('recipient_id', user.id)
-                .order('created_at', { ascending: false });
-
-            if (error || !txs) {
-                list.innerHTML = `<p class="text-center py-10 text-gray-400 font-bold text-[10px]">Aucune transaction</p>`;
-                return;
-            }
-
-            // Calcul du solde en attente
-            const pending = txs.filter(t => t.status === 'scheduled')
-                               .reduce((sum, t) => sum + parseFloat(t.amount_cve), 0);
-            document.getElementById('total-balance').innerText = pending.toLocaleString() + ' CVE';
-
-            list.innerHTML = txs.map(t => `
-                <div class="transaction-item flex justify-between items-center">
-                    <div class="flex items-center gap-4">
-                        <div class="${t.status === 'paid' ? 'bg-green-50 text-green-500' : 'bg-amber-50 text-amber-500'} p-3 rounded-xl">
-                            <i data-lucide="${t.status === 'paid' ? 'check-circle' : 'clock'}" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-extrabold text-[#1d4379] uppercase">
-                                ${t.recipient_role === 'host' ? 'Location Véhicule' : 'Prestation Chauffeur'}
-                            </p>
-                            <p class="text-[9px] text-gray-400 font-bold mt-0.5">
-                                ${new Date(t.scheduled_for).toLocaleDateString()}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-sm font-black text-[#1d4379]">${t.amount_cve.toLocaleString()} CVE</p>
-                        <span class="status-badge ${t.status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}">
-                            ${t.status === 'paid' ? 'Versé' : 'En attente'}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
-
-            lucide.createIcons();
+        function toggleMenu() { 
+            document.getElementById('universal-menu').classList.toggle('open'); 
+            document.getElementById('menu-overlay').classList.toggle('open'); 
         }
 
-        loadWallet();
+        function addFunds() {
+            // Redirige vers la sélection de carte pour payer
+            window.location.href = 'payment.html';
+        }
+
+        function withdrawFunds() {
+            alert("Veuillez configurer un compte bancaire local (BCA, BCN, BAI) pour recevoir les fonds.");
+            window.location.href = 'automate-payout.html';
+        }
     </script>
 </body>
 </html>
