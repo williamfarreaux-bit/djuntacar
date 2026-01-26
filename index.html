@@ -9,15 +9,26 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-[#fcfcfd] antialiased">
 
     <header>
-        <div class="header-left"><button onclick="toggleMenu()"><i data-lucide="menu" class="w-7 h-7 text-[#1d4379]"></i></button></div>
-        <div class="header-center"><img src="logo.png" alt="DjuntaCar" class="header-logo"></div>
-        <div class="header-right"><button onclick="window.location.href='profile.html'"><i data-lucide="user" class="w-7 h-7 text-[#1d4379]"></i></button></div>
+        <div class="header-left">
+            <button onclick="toggleMenu()" class="profile-btn">
+                <i data-lucide="menu" class="header-user-icon"></i>
+            </button>
+        </div>
+        
+        <div class="header-center">
+            <img src="logo.png" alt="DjuntaCar" class="header-logo">
+        </div>
+        
+        <div class="header-right">
+            <button id="header-profile-btn" onclick="handleProfileClick()" class="profile-btn">
+                <i data-lucide="user" class="header-user-icon"></i>
+            </button>
+        </div>
     </header>
 
     <section class="hero-section">
@@ -36,12 +47,12 @@
             <button onclick="filterCars('citadine', this)" class="filter-btn"><i data-lucide="car"></i> Citas</button>
             <button onclick="filterCars('luxe', this)" class="filter-btn"><i data-lucide="gem"></i> Luxe</button>
         </div>
-    </div>
+    </div
 
     <main class="content-padding vertical-list" id="cars-container">
         <div class="text-center py-10">
             <i data-lucide="loader" class="animate-spin w-8 h-8 text-[#1d4379] mx-auto mb-2"></i>
-            <p class="text-xs font-bold text-gray-400">Chargement des véhicules...</p>
+            <p class="text-xs font-bold text-gray-400">Chargement...</p>
         </div>
     </main>
 
@@ -57,13 +68,13 @@
             <button onclick="toggleMenu()"><i data-lucide="x" style="width: 24px; color: #1d4379;"></i></button>
         </div>
         <nav class="menu-nav">
-            <a href="index.html" class="menu-link"><i data-lucide="home"></i> Accueil</a>
+            <a href="index.html" class="menu-link current-page"><i data-lucide="home"></i> Accueil</a>
             <a href="search-car.html" class="menu-link"><i data-lucide="search"></i> Recherche</a>
             <a href="my-rentals.html" class="menu-link"><i data-lucide="calendar"></i> Mes Locations</a>
             <a href="profile.html" class="menu-link"><i data-lucide="user"></i> Profil</a>
         </nav>
         <div class="menu-footer">
-            <button onclick="if(confirm('Déconnexion ?')) window.location.href='login.html'" class="btn-logout"><i data-lucide="log-out"></i> Déconnexion</button>
+            <button onclick="logout()" class="btn-logout"><i data-lucide="log-out"></i> Déconnexion</button>
         </div>
     </div>
 
@@ -71,55 +82,71 @@
         lucide.createIcons();
         function toggleMenu() { document.getElementById('universal-menu').classList.toggle('open'); document.getElementById('menu-overlay').classList.toggle('open'); }
         
-        // ---------------------------------------------------------
-        // 👇 COLLEZ VOS CLÉS ICI (Entre les guillemets '...') 👇
-        // ---------------------------------------------------------
-        const SUPABASE_URL = 'VOTRE_URL_SUPABASE_ICI'; 
-        const SUPABASE_KEY = 'VOTRE_CLE_ANON_ICI';
-        // ---------------------------------------------------------
+      // --- CONFIGURATION ---
+        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVudWl1dXduanp2cGZ2cGtsbWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNjIwMzMsImV4cCI6MjA4NDczODAzM30.Ry4beH9ki0sql51XWo5eA1iRluFokVKClaDnbuUGxGA
+';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let allCars = [];
+        let currentUser = null; // Stocke l'info utilisateur
 
+        // 1. INITIALISATION GLOBALE
         async function init() {
-            try {
-                // Connexion (Exactement comme le test réussi)
-                const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                
-                // Récupération des données
-                const { data, error } = await supabase.from('cars').select('*');
-                
-                if (error) throw error;
+            checkSession(); // Vérifie qui est connecté pour l'icône
+            fetchCars();    // Charge les voitures
+        }
 
-                // Succès : On affiche
-                allCars = data;
-                renderCars(allCars);
+        // 2. GESTION INTELLIGENTE DE L'ICÔNE PROFIL
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            const btn = document.getElementById('header-profile-btn');
 
-            } catch (err) {
-                console.error("Erreur:", err);
-                document.getElementById('cars-container').innerHTML = `
-                    <div class="text-center py-10">
-                        <p class="text-red-500 font-bold text-xs">Erreur de chargement.</p>
-                        <p class="text-gray-400 text-[10px] mt-1">Vérifiez vos clés dans le code.</p>
-                    </div>`;
+            if (session) {
+                // CAS 1 : CONNECTÉ
+                currentUser = session.user;
+                // On remplace l'icône par l'image (avatar par défaut ou google)
+                const avatarUrl = session.user.user_metadata.avatar_url || 'https://i.pravatar.cc/150?img=12'; // Image test si pas d'avatar
+                
+                btn.innerHTML = `<img src="${avatarUrl}" class="header-user-img" alt="Profil">`;
+            } else {
+                // CAS 2 : PAS CONNECTÉ
+                currentUser = null;
+                // On s'assure que c'est l'icône par défaut
+                btn.innerHTML = `<i data-lucide="user" class="header-user-icon"></i>`;
+                lucide.createIcons();
             }
         }
 
+        // 3. CLIC SUR L'ICÔNE PROFIL
+        function handleProfileClick() {
+            if (currentUser) {
+                window.location.href = 'profile.html'; // Si connecté -> Profil
+            } else {
+                window.location.href = 'login.html';   // Si pas connecté -> Connexion
+            }
+        }
+
+        function logout() {
+            supabase.auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            });
+        }
+
+        // --- (Le reste du code fetchCars est identique à avant) ---
+        async function fetchCars() {
+            const { data, error } = await supabase.from('cars').select('*');
+            if(!error) renderCars(data);
+        }
         function renderCars(cars) {
             const container = document.getElementById('cars-container');
+            if(cars.length === 0) { container.innerHTML = '<p class="text-center text-xs mt-10">Aucune voiture.</p>'; return; }
             
-            if (cars.length === 0) {
-                container.innerHTML = '<div class="text-center py-10 text-gray-400 text-xs font-bold">Aucune voiture trouvée.</div>';
-                return;
-            }
-
             container.innerHTML = cars.map(car => `
                 <div class="car-card" onclick="window.location.href='car-detail.html?id=${car.id}'">
                     <div class="card-image-box">
-                        <div class="badge-container">
-                            <span class="badge verified">Vérifié</span>
-                        </div>
-                        <img src="${car.image_url}" onerror="this.src='https://via.placeholder.com/400x300?text=Auto'">
-                        <div class="location-pill"><i data-lucide="map-pin" class="w-3 h-3"></i> ${car.location || 'Cap Vert'}</div>
+                        <div class="badge-container"><span class="badge verified">Vérifié</span></div>
+                        <img src="${car.image_url}" onerror="this.src='https://via.placeholder.com/400'">
+                        <div class="location-pill"><i data-lucide="map-pin" class="w-3 h-3"></i> ${car.location}</div>
                     </div>
                     <div class="card-details">
                         <div class="card-title-row">
@@ -133,20 +160,9 @@
                     </div>
                 </div>
             `).join('');
-            
-            lucide.createIcons(); // Rafraîchir les icônes
+            lucide.createIcons();
         }
 
-        // Filtre simple
-        function filterCars(cat, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            if (cat === 'all') renderCars(allCars);
-            else renderCars(allCars.filter(c => c.category && c.category.toLowerCase().includes(cat)));
-        }
-
-        // Lancement
         init();
     </script>
 </body>
