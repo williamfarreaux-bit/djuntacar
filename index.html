@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DjuntaCar - Accueil</title>
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1d4379">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -17,12 +22,12 @@
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            background-color: #ffffff; 
+            background-color: #f8fafc; 
             padding-bottom: calc(180px + env(safe-area-inset-bottom)); 
             overflow-x: hidden;
         }
 
-        /* HEADER VALIDÉ */
+        /* HEADER DESIGN VALIDÉ */
         header {
             height: 60px;
             display: flex;
@@ -33,6 +38,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         /* BANNIÈRE BLEUE COURBÉE */
@@ -68,25 +74,22 @@
             z-index: 10;
         }
 
-        /* CARDS DÉFILANTES (Horizontal Snap) */
-        .car-carousel {
+        /* LISTE VERTICALE (1 COLONNE) */
+        .car-list-vertical {
             display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 20px;
+            flex-direction: column;
+            gap: 24px;
             padding: 60px 24px 20px 24px;
-            scrollbar-width: none;
         }
-        .car-carousel::-webkit-scrollbar { display: none; }
 
         .car-card {
-            min-width: 280px;
-            height: 380px;
-            border-radius: 35px;
+            width: 100%;
+            height: 320px;
+            border-radius: 30px;
             position: relative;
             overflow: hidden;
-            scroll-snap-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+            background: white;
         }
 
         .car-card img { width: 100%; height: 100%; object-fit: cover; }
@@ -94,15 +97,15 @@
         .car-overlay {
             position: absolute;
             bottom: 0; left: 0; right: 0;
-            padding: 25px;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
             color: white;
         }
 
-        /* BOUTONS FIXES BAS */
+        /* BOUTONS D'ACTION FIXES BAS */
         .fixed-actions {
             position: fixed;
-            bottom: 30px;
+            bottom: calc(20px + env(safe-area-inset-bottom));
             left: 24px;
             right: 24px;
             display: flex;
@@ -112,54 +115,51 @@
         }
 
         .btn-custom {
-            height: 65px;
-            border-radius: 22px;
+            height: 60px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 15px;
+            font-size: 14px;
             color: white;
-            transition: transform 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
-        .btn-custom:active { transform: scale(0.96); }
+        .btn-custom:active { transform: scale(0.97); transition: 0.1s; }
 
-        .dots-container {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; }
-        .dot.active { background: #3b82f6; width: 12px; border-radius: 10px; }
+        #install-app-btn { display: none; }
     </style>
 </head>
 <body>
 
     <header>
-        <button onclick="toggleMenu()"><i data-lucide="menu" class="w-6 h-6 text-gray-700"></i></button>
-        <img src="logo.png" class="h-6" alt="DjuntaCar" onerror="this.src='https://raw.githubusercontent.com/votre-repo/assets/main/logo-text.png'">
-        <button onclick="window.location.href='profile.html'"><i data-lucide="user" class="w-6 h-6 text-[#1d4379]"></i></button>
+        <button><i data-lucide="menu" class="w-6 h-6 text-gray-700"></i></button>
+        <div class="flex items-center" onclick="window.location.reload()">
+            <img src="logo.png" class="h-6" alt="DjuntaCar" onerror="this.outerHTML='<span class=\'font-black text-xl text-[#1d4379] tracking-tighter uppercase italic\'>DjuntaCar</span>'">
+        </div>
+        <div class="flex items-center gap-4">
+            <button id="install-app-btn" class="text-blue-600 bg-blue-50 p-2 rounded-full">
+                <i data-lucide="download-cloud" class="w-5 h-5"></i>
+            </button>
+            <button onclick="window.location.href='profile.html'"><i data-lucide="user" class="w-6 h-6 text-[#1d4379]"></i></button>
+        </div>
     </header>
 
     <section class="hero-section">
         <h1 class="hero-title">Trouvez la voiture parfaite</h1>
-        
         <div class="search-container" onclick="window.location.href='search-car.html'">
             <i data-lucide="search" class="w-5 h-5 text-blue-500 mr-3"></i>
-            <span class="text-gray-400 font-medium text-sm">Commencer ma recherche...</span>
+            <span class="text-gray-400 font-medium text-sm">Où allez-vous ?</span>
         </div>
     </section>
 
-    <div class="car-carousel" id="car-list">
-        <div class="flex items-center justify-center w-full py-20 text-gray-300">
+    <div class="car-list-vertical" id="car-list">
+        <div class="flex flex-col items-center justify-center w-full py-20 text-gray-300 gap-3">
             <i data-lucide="loader" class="animate-spin w-8 h-8"></i>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Chargement de la flotte...</p>
         </div>
-    </div>
-
-    <div class="dots-container">
-        <div class="dot active"></div>
-        <div class="dot"></div>
     </div>
 
     <div class="fixed-actions">
@@ -173,15 +173,32 @@
 
     <script>
         lucide.createIcons();
-        
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
 
-        async function fetchFeaturedCars() {
+        // --- GESTION PWA ---
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-app-btn');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block';
+        });
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') installBtn.style.display = 'none';
+                deferredPrompt = null;
+            }
+        });
+
+        // --- CHARGEMENT DES VOITURES ---
+        async function fetchCars() {
             try {
                 const { data: cars, error } = await supabase
                     .from('vehicles')
                     .select('*')
-                    .limit(5);
+                    .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
@@ -192,36 +209,38 @@
                     cars.forEach(car => {
                         container.insertAdjacentHTML('beforeend', `
                             <div class="car-card" onclick="window.location.href='car-detail.html?id=${car.id}'">
-                                <div class="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-wider z-20">
-                                    ${car.category || 'Véhicule'}
+                                <div class="absolute top-5 left-5 bg-[#1d4379] text-white text-[10px] font-black px-3 py-1.5 rounded-xl uppercase z-20 shadow-lg">
+                                    ${car.category || 'Standard'}
                                 </div>
-                                <div class="absolute top-4 right-4 bg-black/40 backdrop-blur-md text-white text-[11px] font-black px-3 py-1.5 rounded-lg flex items-center gap-1 z-20">
-                                    <i data-lucide="star" class="w-3 h-3 text-yellow-400 fill-yellow-400"></i> 4.9
-                                </div>
-                                <img src="${car.image_url}" alt="${car.brand}">
+                                <img src="${car.image_url}" alt="${car.brand}" loading="lazy">
                                 <div class="car-overlay">
-                                    <h3 class="text-xl font-black">${car.brand} ${car.model}</h3>
-                                    <p class="text-sm font-bold opacity-90">${car.price_per_day.toLocaleString()} CVE / jour</p>
+                                    <div class="flex justify-between items-end">
+                                        <div>
+                                            <h3 class="text-xl font-black">${car.brand} ${car.model}</h3>
+                                            <div class="flex items-center gap-1 opacity-80 text-[10px] font-bold uppercase">
+                                                <i data-lucide="map-pin" class="w-3 h-3"></i> ${car.location}
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-lg font-black text-blue-400">${car.price_per_day.toLocaleString()} <span class="text-[10px] text-white">CVE</span></p>
+                                            <p class="text-[8px] font-bold uppercase opacity-60">Par jour</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         `);
                     });
                     lucide.createIcons();
                 } else {
-                    container.innerHTML = '<p class="text-gray-400 text-xs font-bold text-center w-full py-10">Aucun véhicule disponible</p>';
+                    container.innerHTML = '<p class="text-gray-400 text-center w-full py-20 font-bold uppercase text-[10px] tracking-widest">Aucune voiture disponible</p>';
                 }
             } catch (err) {
                 console.error(err);
-                document.getElementById('car-list').innerHTML = '<p class="text-red-500 text-xs font-bold text-center w-full py-10">Erreur de connexion</p>';
+                document.getElementById('car-list').innerHTML = '<p class="text-red-500 text-center w-full py-20 font-bold uppercase text-[10px]">Erreur de connexion</p>';
             }
         }
 
-        function toggleMenu() {
-            // Logique de menu à implémenter si nécessaire, pour l'instant reste sur l'UI validée
-            alert("Menu à configurer");
-        }
-
-        fetchFeaturedCars();
+        fetchCars();
     </script>
 </body>
 </html>
