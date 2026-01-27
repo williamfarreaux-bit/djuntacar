@@ -2,180 +2,194 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Modifier Profil - DjuntaCar</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="config.js"></script>
+    <script src="layout.js" defer></script>
 
     <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; padding-bottom: 40px; margin: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #fcfcfd; padding-bottom: 120px; }
 
-        /* HEADER */
-        header {
-            padding: 16px 24px; background: white;
-            display: flex; align-items: center; gap: 16px;
-            border-bottom: 1px solid #f1f5f9; position: sticky; top: 0; z-index: 50;
+        .edit-card {
+            background: white; border-radius: 35px;
+            padding: 30px 24px; border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            margin-top: 20px;
         }
 
-        /* INPUTS */
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 24px; }
         .form-label {
             font-size: 10px; font-weight: 800; color: #94a3b8;
-            text-transform: uppercase; margin-bottom: 8px; display: block; padding-left: 4px;
+            text-transform: uppercase; margin-bottom: 8px; display: block;
         }
         .form-input {
-            width: 100%; background: #ffffff;
-            padding: 16px; border-radius: 16px;
+            width: 100%; background: #f8fafc;
+            padding: 16px; border-radius: 18px;
             font-size: 14px; font-weight: 700; color: #1d4379;
             outline: none; border: 1px solid #e2e8f0;
-            transition: all 0.2s;
         }
-        .form-input:focus { border-color: #1d4379; box-shadow: 0 0 0 4px rgba(29, 67, 121, 0.1); }
-        .form-input:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+        .form-input:focus { border-color: #1d4379; background: white; }
 
-        /* AVATAR EDIT */
-        .avatar-section {
-            display: flex; flex-direction: column; align-items: center;
-            margin-bottom: 32px; margin-top: 10px;
+        .avatar-edit-zone {
+            position: relative; width: 110px; height: 110px;
+            margin: 0 auto 30px auto;
         }
         .avatar-preview {
-            width: 100px; height: 100px; border-radius: 50%;
+            width: 100%; height: 100%; border-radius: 40px;
             object-fit: cover; border: 4px solid white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 16px; background-color: #e2e8f0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            background-color: #e2e8f0;
+        }
+        .cam-btn {
+            position: absolute; bottom: -5px; right: -5px;
+            background: #22c55e; color: white; width: 36px; height: 36px;
+            border-radius: 12px; border: 3px solid white;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .save-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; border-top: 1px solid #f1f5f9;
+            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom));
         }
     </style>
 </head>
-<body>
-
-    <header>
-        <button onclick="history.back()" class="p-2 -ml-2 rounded-full hover:bg-gray-50">
-            <i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i>
-        </button>
-        <h1 class="text-lg font-black text-[#1d4379] uppercase">Modifier</h1>
-    </header>
+<body class="antialiased">
 
     <main class="max-w-md mx-auto px-6 pt-6">
+        <button onclick="history.back()" class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i> Retour
+        </button>
 
-        <div class="avatar-section">
-            <img id="avatar-img" src="https://via.placeholder.com/100" class="avatar-preview">
-            <button class="text-xs font-black text-blue-500 uppercase bg-blue-50 px-4 py-2 rounded-xl">
-                Changer la photo
-            </button>
-            <p class="text-[9px] text-gray-400 mt-2 font-bold">(Bientôt disponible)</p>
-        </div>
+        <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-8">Éditer mon profil</h1>
 
-        <form id="edit-form">
-            
-            <div class="form-group">
-                <label class="form-label">Email (Non modifiable)</label>
-                <input type="email" id="email" class="form-input" disabled>
-            </div>
+        <div class="edit-card">
+            <form id="edit-form">
+                <div class="avatar-edit-zone">
+                    <img id="avatar-img" src="https://via.placeholder.com/110" class="avatar-preview">
+                    <label for="avatar-file" class="cam-btn active:scale-90 transition-transform cursor-pointer">
+                        <i data-lucide="camera" class="w-4 h-4"></i>
+                    </label>
+                    <input type="file" id="avatar-file" class="hidden" accept="image/*" onchange="previewAndPrepare(this)">
+                </div>
 
-            <div class="grid grid-cols-2 gap-4">
                 <div class="form-group">
                     <label class="form-label">Prénom</label>
-                    <input type="text" id="first_name" class="form-input" placeholder="Votre prénom">
+                    <input type="text" id="first_name" class="form-input" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Nom</label>
-                    <input type="text" id="last_name" class="form-input" placeholder="Votre nom">
+                    <input type="text" id="last_name" class="form-input" required>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label class="form-label">Téléphone</label>
+                    <input type="tel" id="phone" class="form-input">
+                </div>
 
-            <div class="form-group">
-                <label class="form-label">Téléphone</label>
-                <input type="tel" id="phone" class="form-input" placeholder="+238 ...">
-            </div>
-
-            <p id="msg" class="text-center text-xs font-bold h-5 mt-2 mb-4"></p>
-
-            <button type="submit" id="save-btn" class="w-full bg-[#1d4379] text-white py-4 rounded-[18px] font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-transform">
-                Enregistrer les modifications
-            </button>
-
-        </form>
+                <p id="msg" class="text-center text-[10px] font-black uppercase h-5 mt-2"></p>
+            </form>
+        </div>
     </main>
 
+    <div class="save-bar">
+        <button type="submit" form="edit-form" id="save-btn" class="w-full bg-[#1d4379] text-white py-4 rounded-[20px] font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3">
+            <i data-lucide="save" class="w-4 h-4"></i> Sauvegarder
+        </button>
+    </div>
+
     <script>
-        lucide.createIcons();
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
         let currentUser = null;
+        let selectedFile = null;
 
         async function initEdit() {
-            // 1. Vérif Auth
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
+            if (!user) return window.location.href = 'login.html';
             currentUser = user;
-            document.getElementById('email').value = user.email;
 
-            // 2. Charger les données actuelles
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
+            const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
 
             if (profile) {
                 document.getElementById('first_name').value = profile.first_name || '';
                 document.getElementById('last_name').value = profile.last_name || '';
                 document.getElementById('phone').value = profile.phone || '';
-                
-                // Avatar
-                const fullName = (profile.first_name || 'U') + ' ' + (profile.last_name || '');
-                const avatar = profile.avatar_url || `https://ui-avatars.com/api/?name=${fullName}&background=1d4379&color=fff`;
-                document.getElementById('avatar-img').src = avatar;
+                if (profile.avatar_url) document.getElementById('avatar-img').src = profile.avatar_url;
+            }
+            lucide.createIcons();
+        }
+
+        function previewAndPrepare(input) {
+            if (input.files && input.files[0]) {
+                selectedFile = input.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => document.getElementById('avatar-img').src = e.target.result;
+                reader.readAsDataURL(selectedFile);
             }
         }
 
-        // 3. Sauvegarde
+        async function uploadAvatar(file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${currentUser.id}-${Math.random()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            // 1. Upload vers le bucket 'avatars'
+            const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            // 2. Récupérer l'URL publique
+            const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+            return data.publicUrl;
+        }
+
         document.getElementById('edit-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const btn = document.getElementById('save-btn');
             const msg = document.getElementById('msg');
             
-            btn.innerText = "Enregistrement...";
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Envoi...`;
             btn.disabled = true;
-            msg.innerText = "";
 
-            const updates = {
-                first_name: document.getElementById('first_name').value,
-                last_name: document.getElementById('last_name').value,
-                phone: document.getElementById('phone').value,
-                updated_at: new Date()
-            };
+            try {
+                let avatarUrl = document.getElementById('avatar-img').src;
 
-            const { error } = await supabase
-                .from('profiles')
-                .update(updates)
-                .eq('id', currentUser.id);
+                // Si un nouveau fichier a été choisi, on l'uploade d'abord
+                if (selectedFile) {
+                    avatarUrl = await uploadAvatar(selectedFile);
+                }
 
-            if (error) {
-                console.error(error);
-                msg.className = "text-center text-xs font-bold text-red-500 mb-4";
-                msg.innerText = "Erreur lors de la mise à jour.";
-                btn.innerText = "Enregistrer les modifications";
+                const { error } = await supabase.from('profiles').update({
+                    first_name: document.getElementById('first_name').value,
+                    last_name: document.getElementById('last_name').value,
+                    phone: document.getElementById('phone').value,
+                    avatar_url: avatarUrl,
+                    updated_at: new Date()
+                }).eq('id', currentUser.id);
+
+                if (error) throw error;
+
+                msg.className = "text-center text-[10px] font-black text-green-500 uppercase";
+                msg.innerText = "Profil mis à jour !";
+                setTimeout(() => window.location.href = 'profile.html', 1000);
+
+            } catch (err) {
+                msg.className = "text-center text-[10px] font-black text-red-500 uppercase";
+                msg.innerText = "Erreur : " + err.message;
+                btn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Sauvegarder`;
                 btn.disabled = false;
-            } else {
-                msg.className = "text-center text-xs font-bold text-green-500 mb-4";
-                msg.innerText = "Profil mis à jour avec succès !";
-                setTimeout(() => {
-                    window.location.href = 'profile.html';
-                }, 1000);
             }
+            lucide.createIcons();
         });
 
         document.addEventListener('DOMContentLoaded', initEdit);
