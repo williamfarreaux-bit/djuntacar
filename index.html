@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DjuntaCar - Accueil</title>
     
     <link rel="stylesheet" href="style.css">
@@ -12,24 +12,32 @@
     <script src="config.js"></script>
 
     <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; padding-bottom: 200px; overflow-x: hidden; }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: #fcfcfd; 
+            padding-bottom: calc(180px + env(safe-area-inset-bottom)); 
+            overflow-x: hidden;
+        }
         
         .hero-bg { 
-            background-color: #1d4379; 
+            background: linear-gradient(180deg, #1d4379 0%, #16345d 100%);
             border-bottom-left-radius: 40px; 
             border-bottom-right-radius: 40px;
-            padding: 40px 24px 60px 24px;
+            padding: 40px 24px 70px 24px;
         }
 
+        /* Barre d'action optimisée smartphone */
         .action-bar-fixed {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 16px 24px;
-            border-top: 1px solid #f1f5f9;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 24px calc(16px + env(safe-area-inset-bottom)) 24px;
+            border-top: 1px solid rgba(0,0,0,0.05);
             z-index: 1000;
-            padding-bottom: max(16px, env(safe-area-inset-bottom));
         }
 
         .btn-main {
@@ -39,100 +47,123 @@
             font-weight: 900;
             font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: transform 0.2s;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.1s ease;
         }
-        .btn-main:active { transform: scale(0.96); }
+        .btn-main:active { transform: scale(0.97); }
 
-        /* Menu Latéral */
+        /* Menu Latéral (Drawer) */
         #side-menu {
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateX(-100%);
         }
         #side-menu.open { transform: translateX(0); }
-        .overlay {
-            display: none;
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 1001;
+        
+        .menu-overlay {
+            position: fixed; inset: 0;
+            background: rgba(29, 67, 121, 0.4);
+            backdrop-filter: blur(4px);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1001;
         }
-        .overlay.active { display: block; }
+        .menu-overlay.active { opacity: 1; pointer-events: auto; }
+
+        /* Correction Logo et Header */
+        .header-glass {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
     </style>
 </head>
 <body class="antialiased">
 
-    <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
-
-    <nav id="side-menu" class="fixed top-0 left-0 h-full w-64 bg-white z-[1002] p-8 shadow-2xl">
+    <div id="overlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    <nav id="side-menu" class="fixed top-0 left-0 h-full w-[80%] max-w-[300px] bg-white z-[1002] p-8 flex flex-col shadow-2xl">
         <div class="flex justify-between items-center mb-12">
-            <span class="font-black text-xl text-[#1d4379]">MENU</span>
-            <button onclick="toggleMenu()"><i data-lucide="x" class="w-6 h-6 text-gray-400"></i></button>
+            <span class="font-black text-2xl text-[#1d4379] tracking-tighter italic">DjuntaCar</span>
+            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full text-gray-400">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
         </div>
-        <div class="space-y-6">
-            <a href="index.html" class="flex items-center gap-4 font-black text-[#1d4379] text-xs uppercase tracking-widest">
-                <i data-lucide="home" class="w-5 h-5"></i> Accueil
+        
+        <div class="flex-1 space-y-8">
+            <a href="index.html" class="flex items-center gap-5 font-black text-[#1d4379] text-sm uppercase tracking-widest group">
+                <div class="p-3 bg-blue-50 rounded-2xl group-active:bg-blue-100 transition-colors"><i data-lucide="home" class="w-5 h-5"></i></div>
+                Accueil
             </a>
-            <a href="search-car.html" class="flex items-center gap-4 font-black text-gray-400 text-xs uppercase tracking-widest">
-                <i data-lucide="search" class="w-5 h-5"></i> Rechercher
+            <a href="wallet.html" class="flex items-center gap-5 font-black text-gray-400 text-sm uppercase tracking-widest group">
+                <div class="p-3 bg-gray-50 rounded-2xl group-active:bg-gray-100 transition-colors"><i data-lucide="wallet" class="w-5 h-5"></i></div>
+                Portefeuille
             </a>
-            <a href="wallet.html" class="flex items-center gap-4 font-black text-gray-400 text-xs uppercase tracking-widest">
-                <i data-lucide="wallet" class="w-5 h-5"></i> Mon Portefeuille
+            <a href="history.html" class="flex items-center gap-5 font-black text-gray-400 text-sm uppercase tracking-widest group">
+                <div class="p-3 bg-gray-50 rounded-2xl group-active:bg-gray-100 transition-colors"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+                Réservations
             </a>
-            <div class="pt-6 border-t border-gray-100">
-                <a href="login.html" class="flex items-center gap-4 font-black text-red-500 text-xs uppercase tracking-widest">
-                    <i data-lucide="log-out" class="w-5 h-5"></i> Déconnexion
-                </a>
-            </div>
+        </div>
+
+        <div class="pt-8 border-t border-gray-100">
+            <button onclick="logout()" class="flex items-center gap-5 font-black text-red-500 text-sm uppercase tracking-widest w-full">
+                <div class="p-3 bg-red-50 rounded-2xl"><i data-lucide="log-out" class="w-5 h-5"></i></div>
+                Déconnexion
+            </button>
         </div>
     </nav>
 
-    <header class="p-6 bg-white flex justify-between items-center sticky top-0 z-50 border-b border-gray-50">
-        <button onclick="toggleMenu()" class="p-2 -ml-2">
-            <i data-lucide="menu" class="w-8 h-8 text-[#1d4379]"></i>
+    <header class="p-6 header-glass flex justify-between items-center sticky top-0 z-50 border-b border-gray-50">
+        <button onclick="toggleMenu()" class="p-3 -ml-3 active:scale-90 transition-transform">
+            <i data-lucide="align-left" class="w-8 h-8 text-[#1d4379]"></i>
         </button>
         
-        <div class="flex flex-col items-center" onclick="window.location.href='index.html'">
-            <img src="logo.png" class="h-6 mb-0.5" onerror="this.outerHTML='<span class=\'font-black text-xl text-[#1d4379] tracking-tighter\'>DJUNTACAR</span>'">
+        <div class="flex items-center" onclick="window.location.reload()">
+            <img src="logo.png" class="h-8 w-auto object-contain" alt="Logo" onerror="this.outerHTML='<h1 class=\'font-black text-xl text-[#1d4379] tracking-tighter uppercase italic\'>DjuntaCar</h1>'">
         </div>
 
-        <button onclick="window.location.href='profile.html'" class="p-2 -mr-2 bg-gray-50 rounded-full border border-gray-100">
-            <i data-lucide="user" class="w-6 h-6 text-[#1d4379]"></i>
+        <button onclick="window.location.href='profile.html'" class="p-3 -mr-3 active:scale-90 transition-transform">
+            <div class="w-10 h-10 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100">
+                <i data-lucide="user" class="w-6 h-6 text-[#1d4379]"></i>
+            </div>
         </button>
     </header>
 
     <section class="hero-bg text-white">
-        <h1 class="text-2xl font-black uppercase mb-6 leading-tight">Louez une voiture<br>en toute confiance.</h1>
-        <div class="bg-white rounded-2xl p-2 flex items-center shadow-2xl" onclick="window.location.href='search-car.html'">
-            <div class="bg-blue-50 p-3 rounded-xl text-[#1d4379]">
+        <h1 class="text-[26px] font-black uppercase mb-8 leading-[1.1] tracking-tight">Découvrez<br>votre île en toute liberté.</h1>
+        <div class="bg-white rounded-[24px] p-3 flex items-center shadow-2xl" onclick="window.location.href='search-car.html'">
+            <div class="bg-[#1d4379] p-3.5 rounded-2xl text-white">
                 <i data-lucide="search" class="w-5 h-5"></i>
             </div>
-            <div class="flex-1 px-4 text-sm font-bold text-gray-400">Où allez-vous ?</div>
+            <div class="flex-1 px-5 text-sm font-bold text-gray-400">Rechercher une voiture...</div>
         </div>
     </section>
 
     <main class="max-w-md mx-auto px-6 -mt-8 relative z-10">
-        <div class="flex justify-between items-end mb-4 px-2">
-            <h2 class="text-xs font-black text-white uppercase tracking-widest">En Vedette</h2>
+        <div class="flex justify-between items-center mb-5 px-1">
+            <h2 class="text-[11px] font-black text-white/80 uppercase tracking-[2px]">En Vedette</h2>
+            <button class="text-[9px] font-black text-[#1d4379] bg-white px-3 py-1.5 rounded-full uppercase">Voir tout</button>
         </div>
         
         <div id="car-list" class="space-y-6">
-            <div class="text-center py-20 opacity-20">
-                <i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto"></i>
+            <div id="loader" class="flex flex-col items-center justify-center py-20 gap-4 opacity-30">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-[#1d4379]"></i>
+                <p class="text-[10px] font-black uppercase tracking-widest text-[#1d4379]">Chargement de la flotte...</p>
             </div>
         </div>
     </main>
 
     <div class="action-bar-fixed">
-        <div class="max-w-md mx-auto space-y-3">
+        <div class="max-w-md mx-auto grid grid-cols-1 gap-3">
             <button onclick="window.location.href='add-car.html'" class="btn-main bg-[#1d4379] text-white">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter ma voiture
+                <i data-lucide="plus-square" class="w-4 h-4"></i> Ajouter ma voiture
             </button>
+            
             <button onclick="window.location.href='become-driver.html'" class="btn-main bg-[#22c55e] text-white">
-                <i data-lucide="shield-check" class="w-4 h-4"></i> Devenir chauffeur
+                <i data-lucide="id-card" class="w-4 h-4"></i> Devenir chauffeur
             </button>
         </div>
     </div>
@@ -149,9 +180,11 @@
 
         async function loadFeaturedCars() {
             try {
+                // Utilisation de la table 'vehicles' conformément aux objectifs data
                 const { data: cars, error } = await supabase
                     .from('vehicles')
                     .select('*')
+                    .order('created_at', { ascending: false })
                     .limit(6);
 
                 if (error) throw error;
@@ -162,18 +195,23 @@
                 if (cars && cars.length > 0) {
                     cars.forEach(car => {
                         list.insertAdjacentHTML('beforeend', `
-                            <div class="bg-white rounded-[32px] overflow-hidden border border-gray-50 shadow-sm" onclick="window.location.href='car-detail.html?id=${car.id}'">
+                            <div class="bg-white rounded-[32px] overflow-hidden border border-gray-100 shadow-sm active:scale-[0.98] transition-transform" onclick="window.location.href='car-detail.html?id=${car.id}'">
                                 <div class="relative">
-                                    <img src="${car.image_url}" class="w-full h-48 object-cover">
-                                    <div class="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full text-[10px] font-black text-[#1d4379]">
-                                        ${car.price_per_day} CVE/j
+                                    <img src="${car.image_url}" class="w-full h-52 object-cover" loading="lazy">
+                                    <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-4 py-2 rounded-2xl text-[12px] font-black text-[#1d4379] shadow-lg">
+                                        ${car.price_per_day.toLocaleString()} CVE <span class="text-[8px] opacity-40 italic">/ jour</span>
                                     </div>
                                 </div>
-                                <div class="p-6">
-                                    <h3 class="font-black text-[#1d4379] text-base uppercase">${car.brand} ${car.model}</h3>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <i data-lucide="map-pin" class="w-3 h-3 text-gray-300"></i>
-                                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">${car.location}</span>
+                                <div class="p-6 flex justify-between items-center">
+                                    <div>
+                                        <h3 class="font-black text-[#1d4379] text-[15px] uppercase tracking-tight">${car.brand} ${car.model}</h3>
+                                        <div class="flex items-center gap-1.5 mt-1.5 text-gray-400">
+                                            <i data-lucide="map-pin" class="w-3 h-3"></i>
+                                            <span class="text-[9px] font-bold uppercase tracking-widest">${car.location}</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
+                                        <i data-lucide="chevron-right" class="w-5 h-5 text-[#1d4379]"></i>
                                     </div>
                                 </div>
                             </div>
@@ -181,12 +219,17 @@
                     });
                     lucide.createIcons();
                 } else {
-                    list.innerHTML = '<p class="text-center text-[10px] font-bold text-gray-400 py-10 uppercase">Aucun véhicule disponible</p>';
+                    list.innerHTML = '<div class="bg-white rounded-[32px] p-10 text-center border-2 border-dashed border-gray-100"><p class="text-[10px] font-black text-gray-300 uppercase">Aucun véhicule disponible pour le moment</p></div>';
                 }
             } catch (err) {
-                console.error(err);
-                document.getElementById('car-list').innerHTML = '<p class="text-center text-red-500 text-[10px] font-bold py-10 uppercase">Erreur de chargement</p>';
+                console.error("Erreur:", err);
+                document.getElementById('car-list').innerHTML = '<div class="p-6 bg-red-50 rounded-2xl text-center"><p class="text-red-500 text-[10px] font-black uppercase tracking-widest">Erreur de connexion</p></div>';
             }
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
         }
 
         loadFeaturedCars();
