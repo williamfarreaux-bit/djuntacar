@@ -13,7 +13,7 @@
 
     <style>
         * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; padding-bottom: 180px; }
+        body { background-color: #fcfcfd; padding-bottom: 200px; overflow-x: hidden; }
         
         .hero-bg { 
             background-color: #1d4379; 
@@ -24,38 +24,103 @@
 
         .action-bar-fixed {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 16px 24px;
             border-top: 1px solid #f1f5f9;
             z-index: 1000;
             padding-bottom: max(16px, env(safe-area-inset-bottom));
         }
+
+        .btn-main {
+            width: 100%;
+            padding: 18px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .btn-main:active { transform: scale(0.96); }
+
+        /* Menu Latéral */
+        #side-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        #side-menu.open { transform: translateX(0); }
+        .overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 1001;
+        }
+        .overlay.active { display: block; }
     </style>
 </head>
 <body class="antialiased">
 
+    <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+
+    <nav id="side-menu" class="fixed top-0 left-0 h-full w-64 bg-white z-[1002] p-8 shadow-2xl">
+        <div class="flex justify-between items-center mb-12">
+            <span class="font-black text-xl text-[#1d4379]">MENU</span>
+            <button onclick="toggleMenu()"><i data-lucide="x" class="w-6 h-6 text-gray-400"></i></button>
+        </div>
+        <div class="space-y-6">
+            <a href="index.html" class="flex items-center gap-4 font-black text-[#1d4379] text-xs uppercase tracking-widest">
+                <i data-lucide="home" class="w-5 h-5"></i> Accueil
+            </a>
+            <a href="search-car.html" class="flex items-center gap-4 font-black text-gray-400 text-xs uppercase tracking-widest">
+                <i data-lucide="search" class="w-5 h-5"></i> Rechercher
+            </a>
+            <a href="wallet.html" class="flex items-center gap-4 font-black text-gray-400 text-xs uppercase tracking-widest">
+                <i data-lucide="wallet" class="w-5 h-5"></i> Mon Portefeuille
+            </a>
+            <div class="pt-6 border-t border-gray-100">
+                <a href="login.html" class="flex items-center gap-4 font-black text-red-500 text-xs uppercase tracking-widest">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Déconnexion
+                </a>
+            </div>
+        </div>
+    </nav>
+
     <header class="p-6 bg-white flex justify-between items-center sticky top-0 z-50 border-b border-gray-50">
-        <button class="p-2"><i data-lucide="menu" class="w-8 h-8 text-[#1d4379]"></i></button>
-        <img src="logo.png" class="h-8" onerror="this.style.display='none'">
-        <button onclick="window.location.href='profile.html'" class="p-2">
-            <i data-lucide="user" class="w-8 h-8 text-[#1d4379]"></i>
+        <button onclick="toggleMenu()" class="p-2 -ml-2">
+            <i data-lucide="menu" class="w-8 h-8 text-[#1d4379]"></i>
+        </button>
+        
+        <div class="flex flex-col items-center" onclick="window.location.href='index.html'">
+            <img src="logo.png" class="h-6 mb-0.5" onerror="this.outerHTML='<span class=\'font-black text-xl text-[#1d4379] tracking-tighter\'>DJUNTACAR</span>'">
+        </div>
+
+        <button onclick="window.location.href='profile.html'" class="p-2 -mr-2 bg-gray-50 rounded-full border border-gray-100">
+            <i data-lucide="user" class="w-6 h-6 text-[#1d4379]"></i>
         </button>
     </header>
 
     <section class="hero-bg text-white">
         <h1 class="text-2xl font-black uppercase mb-6 leading-tight">Louez une voiture<br>en toute confiance.</h1>
-        <div class="bg-white rounded-2xl p-2 flex items-center shadow-2xl">
+        <div class="bg-white rounded-2xl p-2 flex items-center shadow-2xl" onclick="window.location.href='search-car.html'">
             <div class="bg-blue-50 p-3 rounded-xl text-[#1d4379]">
                 <i data-lucide="search" class="w-5 h-5"></i>
             </div>
-            <input type="text" onclick="window.location.href='search-car.html'" readonly placeholder="Où allez-vous ?" class="flex-1 px-4 text-sm font-bold text-gray-400 outline-none">
+            <div class="flex-1 px-4 text-sm font-bold text-gray-400">Où allez-vous ?</div>
         </div>
     </section>
 
     <main class="max-w-md mx-auto px-6 -mt-8 relative z-10">
+        <div class="flex justify-between items-end mb-4 px-2">
+            <h2 class="text-xs font-black text-white uppercase tracking-widest">En Vedette</h2>
+        </div>
+        
         <div id="car-list" class="space-y-6">
-            <div id="loader" class="text-center py-20 opacity-20">
+            <div class="text-center py-20 opacity-20">
                 <i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto"></i>
             </div>
         </div>
@@ -63,26 +128,31 @@
 
     <div class="action-bar-fixed">
         <div class="max-w-md mx-auto space-y-3">
-            <button onclick="window.location.href='add-car.html'" class="w-full bg-[#1d4379] text-white py-4 rounded-[20px] font-black text-[11px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-transform">
-                <i data-lucide="car-front" class="w-4 h-4"></i> Ajouter ma voiture
+            <button onclick="window.location.href='add-car.html'" class="btn-main bg-[#1d4379] text-white">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter ma voiture
             </button>
-            
-            <button onclick="window.location.href='become-driver.html'" class="w-full bg-[#22c55e] text-white py-4 rounded-[20px] font-black text-[11px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-transform">
-                <i data-lucide="user-check" class="w-4 h-4"></i> Devenir chauffeur
+            <button onclick="window.location.href='become-driver.html'" class="btn-main bg-[#22c55e] text-white">
+                <i data-lucide="shield-check" class="w-4 h-4"></i> Devenir chauffeur
             </button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
+        
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
 
-        async function loadCars() {
+        function toggleMenu() {
+            document.getElementById('side-menu').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        async function loadFeaturedCars() {
             try {
                 const { data: cars, error } = await supabase
                     .from('vehicles')
                     .select('*')
-                    .limit(10);
+                    .limit(6);
 
                 if (error) throw error;
 
@@ -92,30 +162,34 @@
                 if (cars && cars.length > 0) {
                     cars.forEach(car => {
                         list.insertAdjacentHTML('beforeend', `
-                            <div class="bg-white rounded-[32px] overflow-hidden border border-gray-50 shadow-sm mb-6" onclick="window.location.href='car-detail.html?id=${car.id}'">
-                                <img src="${car.image_url}" class="w-full h-48 object-cover">
-                                <div class="p-6 flex justify-between items-center">
-                                    <div>
-                                        <h3 class="font-black text-[#1d4379] text-base">${car.brand} ${car.model}</h3>
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase mt-1">${car.location}</p>
+                            <div class="bg-white rounded-[32px] overflow-hidden border border-gray-50 shadow-sm" onclick="window.location.href='car-detail.html?id=${car.id}'">
+                                <div class="relative">
+                                    <img src="${car.image_url}" class="w-full h-48 object-cover">
+                                    <div class="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full text-[10px] font-black text-[#1d4379]">
+                                        ${car.price_per_day} CVE/j
                                     </div>
-                                    <div class="text-right">
-                                        <p class="font-black text-[#1d4379]">${car.price_per_day} CVE</p>
-                                        <span class="text-[9px] font-bold text-gray-300 uppercase">/ jour</span>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="font-black text-[#1d4379] text-base uppercase">${car.brand} ${car.model}</h3>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <i data-lucide="map-pin" class="w-3 h-3 text-gray-300"></i>
+                                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">${car.location}</span>
                                     </div>
                                 </div>
                             </div>
                         `);
                     });
+                    lucide.createIcons();
                 } else {
-                    list.innerHTML = '<p class="text-center text-xs font-bold text-gray-400 py-10">Aucune voiture disponible.</p>';
+                    list.innerHTML = '<p class="text-center text-[10px] font-bold text-gray-400 py-10 uppercase">Aucun véhicule disponible</p>';
                 }
             } catch (err) {
-                console.error("Erreur Supabase:", err);
-                document.getElementById('car-list').innerHTML = '<p class="text-center text-red-500 text-xs font-bold py-10">Erreur de connexion à la base de données.</p>';
+                console.error(err);
+                document.getElementById('car-list').innerHTML = '<p class="text-center text-red-500 text-[10px] font-bold py-10 uppercase">Erreur de chargement</p>';
             }
         }
-        loadCars();
+
+        loadFeaturedCars();
     </script>
 </body>
 </html>
