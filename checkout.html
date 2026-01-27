@@ -3,133 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finaliser - DjuntaCar</title>
+    <title>Paiement - DjuntaCar</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="config.js"></script>
 
     <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; padding-bottom: 140px; margin: 0; }
-        
-        /* HEADER SIMPLE */
-        .simple-header {
-            padding: 16px 24px;
-            background: white;
-            display: flex; align-items: center; gap: 16px;
-            position: sticky; top: 0; z-index: 50;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        /* INPUTS DATES */
-        .date-card {
-            background: white; padding: 20px; border-radius: 24px;
-            border: 1px solid #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            margin-bottom: 16px;
-        }
-        .date-input {
-            width: 100%; background: #f8fafc;
-            padding: 16px; border-radius: 16px;
-            font-weight: 700; color: #1d4379;
-            outline: none; border: 1px solid transparent;
+        .option-card {
+            border: 2px solid #f1f5f9;
             transition: all 0.2s;
+            cursor: pointer;
         }
-        .date-input:focus { border-color: #1d4379; background: white; }
-
-        /* RÉSUMÉ PRIX */
-        .price-summary {
-            background: #1d4379; color: white;
-            padding: 24px; border-radius: 32px;
-            margin-top: 32px;
-            box-shadow: 0 10px 30px rgba(29, 67, 121, 0.2);
+        .option-card.active {
+            border-color: #1d4379;
+            background-color: #f8fafc;
         }
-
-        /* FOOTER FIXE */
-        .fixed-footer {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; padding: 16px 24px;
-            border-top: 1px solid #f1f5f9; z-index: 100;
-            padding-bottom: max(16px, env(safe-area-inset-bottom));
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #1d4379;
         }
-
-        /* LOADER */
-        #loader {
-            position: fixed; inset: 0; background: white; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        .toggle-checkbox:checked + .toggle-label .toggle-dot {
+            transform: translateX(100%);
         }
     </style>
 </head>
-<body>
+<body class="bg-[#fcfcfd] pb-40">
 
-    <div id="loader">
-        <i data-lucide="loader-2" class="w-10 h-10 animate-spin text-[#1d4379]"></i>
-    </div>
-
-    <div class="simple-header">
-        <button onclick="history.back()" class="p-2 -ml-2 rounded-full hover:bg-gray-50">
-            <i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i>
-        </button>
-        <h1 class="text-lg font-black text-[#1d4379] uppercase">Réservation</h1>
-    </div>
+    <header class="p-4 bg-white sticky top-0 z-50 border-b border-gray-100 flex items-center gap-4">
+        <button onclick="history.back()" class="p-2"><i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i></button>
+        <h1 class="text-lg font-black text-[#1d4379] uppercase">Finaliser la location</h1>
+    </header>
 
     <main class="max-w-md mx-auto px-6 pt-6">
         
-        <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-8">
-            <img id="car-img" src="" class="w-20 h-20 rounded-xl object-cover bg-gray-100">
+        <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-50 flex gap-4 mb-8">
+            <img id="car-img" src="" class="w-20 h-20 rounded-2xl object-cover bg-gray-100">
             <div>
-                <h3 id="car-title" class="text-sm font-black text-[#1d4379] mb-1">...</h3>
-                <div class="flex items-center gap-1 text-gray-400">
-                    <i data-lucide="tag" class="w-3 h-3"></i>
-                    <span id="car-price-unit" class="text-xs font-bold">...</span>
+                <h3 id="car-name" class="text-sm font-black text-[#1d4379]">Chargement...</h3>
+                <p id="car-base-price" class="text-xs text-gray-400 font-bold mt-1">0 CVE / jour</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="form-group">
+                <label class="text-[10px] font-black text-gray-400 uppercase mb-2 block">Départ</label>
+                <input type="date" id="start-date" class="w-full bg-white p-4 rounded-2xl font-bold text-xs border border-gray-100 outline-none focus:border-[#1d4379]" onchange="updateCalculations()">
+            </div>
+            <div class="form-group">
+                <label class="text-[10px] font-black text-gray-400 uppercase mb-2 block">Retour</label>
+                <input type="date" id="end-date" class="w-full bg-white p-4 rounded-2xl font-bold text-xs border border-gray-100 outline-none focus:border-[#1d4379]" onchange="updateCalculations()">
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-3xl border border-gray-50 flex justify-between items-center mb-6">
+            <div>
+                <h3 class="text-sm font-black text-[#1d4379]">Besoin d'un chauffeur ?</h3>
+                <p class="text-[10px] text-gray-400 font-bold">+ 2,000 CVE / jour</p>
+            </div>
+            <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                <input type="checkbox" id="driver-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10" onchange="updateCalculations()"/>
+                <label for="driver-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors">
+                    <span class="toggle-dot block w-6 h-6 bg-white rounded-full shadow-sm"></span>
+                </label>
+            </div>
+        </div>
+
+        <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 ml-2">Choix de l'assurance</h3>
+        <div class="space-y-3 mb-8">
+            <div class="option-card p-4 rounded-2xl flex justify-between items-center active" onclick="selectInsurance('basic', 0, this)">
+                <div>
+                    <h4 class="text-xs font-black text-[#1d4379]">Basique (Tiers)</h4>
+                    <p class="text-[9px] text-gray-400 font-bold">Inclus par défaut</p>
                 </div>
+                <span class="text-xs font-black text-[#1d4379]">Gratuit</span>
+            </div>
+            <div class="option-card p-4 rounded-2xl flex justify-between items-center" onclick="selectInsurance('standard', 800, this)">
+                <div>
+                    <h4 class="text-xs font-black text-[#1d4379]">Standard</h4>
+                    <p class="text-[9px] text-gray-400 font-bold">Vol & Bris de glace</p>
+                </div>
+                <span class="text-xs font-black text-[#1d4379]">+ 800 CVE/j</span>
+            </div>
+            <div class="option-card p-4 rounded-2xl flex justify-between items-center" onclick="selectInsurance('premium', 1500, this)">
+                <div>
+                    <h4 class="text-xs font-black text-[#1d4379]">Premium (Tous risques)</h4>
+                    <p class="text-[9px] text-gray-400 font-bold">Zéro franchise</p>
+                </div>
+                <span class="text-xs font-black text-[#1d4379]">+ 1,500 CVE/j</span>
             </div>
         </div>
 
-        <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4 ml-2">Vos Dates</h2>
-        
-        <div class="date-card">
-            <label class="text-[10px] font-bold text-gray-400 uppercase mb-2 block pl-1">Date de départ</label>
-            <input type="date" id="start-date" class="date-input">
-        </div>
-
-        <div class="date-card">
-            <label class="text-[10px] font-bold text-gray-400 uppercase mb-2 block pl-1">Date de retour</label>
-            <input type="date" id="end-date" class="date-input">
-        </div>
-
-        <div class="flex justify-between items-center px-4">
-            <span class="text-xs font-bold text-gray-400">Durée totale</span>
-            <span id="total-days" class="text-sm font-black text-[#1d4379]">0 Jours</span>
-        </div>
-
-        <div class="price-summary">
-            <div class="flex justify-between mb-2">
-                <span class="text-xs font-bold opacity-70">Sous-total</span>
-                <span id="sub-total" class="text-xs font-bold">0 CVE</span>
+        <div class="bg-[#1d4379] p-6 rounded-[32px] text-white shadow-xl">
+            <div class="flex justify-between mb-2 opacity-70 text-[10px] font-bold uppercase">
+                <span>Location (<span id="summary-days">0</span> jours)</span>
+                <span id="price-car-total">0 CVE</span>
             </div>
-            <div class="flex justify-between mb-6 border-b border-white/10 pb-4">
-                <span class="text-xs font-bold opacity-70">Frais de service (5%)</span>
-                <span id="fees" class="text-xs font-bold">0 CVE</span>
+            <div id="row-driver" class="hidden flex justify-between mb-2 opacity-70 text-[10px] font-bold uppercase">
+                <span>Option Chauffeur</span>
+                <span id="price-driver-total">0 CVE</span>
             </div>
-            <div class="flex justify-between items-end">
-                <span class="text-sm font-black uppercase">Total à payer</span>
-                <span id="total-price" class="text-2xl font-black">0 CVE</span>
+            <div id="row-insurance" class="hidden flex justify-between mb-6 opacity-70 text-[10px] font-bold uppercase">
+                <span>Option Assurance</span>
+                <span id="price-insurance-total">0 CVE</span>
+            </div>
+            <div class="flex justify-between items-end border-t border-white/10 pt-4">
+                <span class="text-xs font-black uppercase">Total à payer</span>
+                <span id="price-total" class="text-2xl font-black">0 CVE</span>
             </div>
         </div>
-
-        <p id="error-msg" class="text-center text-xs text-red-500 font-bold mt-6 h-4"></p>
 
     </main>
 
-    <div class="fixed-footer">
-        <button id="pay-btn" onclick="processBooking()" class="w-full bg-[#22c55e] text-white py-4 rounded-[18px] font-black text-xs uppercase tracking-widest shadow-lg shadow-green-500/20 active:scale-95 transition-transform disabled:bg-gray-300 disabled:shadow-none">
+    <div class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-100 pb-[max(16px,env(safe-area-inset-bottom))] z-50">
+        <button id="submit-btn" onclick="confirmBooking()" class="w-full bg-[#22c55e] text-white py-4 rounded-[18px] font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:bg-gray-200">
             Confirmer la réservation
         </button>
     </div>
@@ -137,132 +125,113 @@
     <script>
         lucide.createIcons();
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        
+        let car = null;
+        let user = null;
+        let selectedInsurance = { type: 'basic', price: 0 };
+        let driverFeePerDay = 2000;
+        let totalFinal = 0;
 
-        let currentCar = null;
-        let currentUser = null;
-        let totalPrice = 0;
+        async function init() {
+            // 1. Auth Check
+            const { data: { user: authUser } } = await supabase.auth.getUser();
+            if (!authUser) return window.location.href = 'login.html';
+            user = authUser;
 
-        async function initCheckout() {
-            try {
-                // 1. Vérifier Auth
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) {
-                    sessionStorage.setItem('redirect_url', window.location.href);
-                    window.location.href = 'login.html';
-                    return;
-                }
-                currentUser = user;
+            // 2. Car Check
+            const carId = new URLSearchParams(window.location.search).get('id');
+            const { data: carData } = await supabase.from('vehicles').select('*').eq('id', carId).single();
+            if (!carData) return window.location.href = 'index.html';
+            car = carData;
 
-                // 2. Récupérer ID Voiture
-                const params = new URLSearchParams(window.location.search);
-                const carId = params.get('id');
-                if (!carId) throw new Error("Véhicule non spécifié");
+            // 3. UI Fill
+            document.getElementById('car-name').innerText = `${car.brand} ${car.model}`;
+            document.getElementById('car-base-price').innerText = `${car.price_per_day} CVE / jour`;
+            document.getElementById('car-img').src = car.image_url;
 
-                // 3. Charger Voiture
-                const { data: car, error } = await supabase
-                    .from('vehicles')
-                    .select('*')
-                    .eq('id', carId)
-                    .single();
+            // Dates par défaut
+            const start = new Date(); start.setDate(start.getDate() + 1);
+            const end = new Date(); end.setDate(end.getDate() + 3);
+            document.getElementById('start-date').valueAsDate = start;
+            document.getElementById('end-date').valueAsDate = end;
 
-                if (error || !car) throw new Error("Véhicule introuvable");
-                currentCar = car;
-
-                // 4. Afficher Infos
-                document.getElementById('car-img').src = car.image_url || 'https://via.placeholder.com/150';
-                document.getElementById('car-title').innerText = `${car.brand} ${car.model}`;
-                document.getElementById('car-price-unit').innerText = `${car.price_per_day} CVE / jour`;
-
-                // 5. Dates par défaut (Demain -> Après-demain)
-                const today = new Date();
-                const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-                const after = new Date(today); after.setDate(today.getDate() + 3);
-
-                document.getElementById('start-date').valueAsDate = tomorrow;
-                document.getElementById('start-date').min = today.toISOString().split("T")[0];
-                document.getElementById('end-date').valueAsDate = after;
-                document.getElementById('end-date').min = tomorrow.toISOString().split("T")[0];
-
-                calculateTotal();
-
-            } catch (err) {
-                alert(err.message);
-                window.location.href = 'index.html';
-            } finally {
-                document.getElementById('loader').style.display = 'none';
-            }
+            updateCalculations();
         }
 
-        function calculateTotal() {
-            const start = new Date(document.getElementById('start-date').value);
-            const end = new Date(document.getElementById('end-date').value);
-            const btn = document.getElementById('pay-btn');
+        function selectInsurance(type, price, el) {
+            selectedInsurance = { type, price };
+            document.querySelectorAll('.option-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            updateCalculations();
+        }
 
-            if (end <= start) {
-                document.getElementById('total-days').innerText = "Date invalide";
-                btn.disabled = true;
+        function updateCalculations() {
+            const startDate = new Date(document.getElementById('start-date').value);
+            const endDate = new Date(document.getElementById('end-date').value);
+            
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays <= 0) {
+                document.getElementById('submit-btn').disabled = true;
                 return;
             }
+            document.getElementById('submit-btn').disabled = false;
 
-            const diffTime = Math.abs(end - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            
-            const subTotal = diffDays * currentCar.price_per_day;
-            const fees = Math.round(subTotal * 0.05); // 5% frais
-            totalPrice = subTotal + fees;
+            const carTotal = car.price_per_day * diffDays;
+            const insuranceTotal = selectedInsurance.price * diffDays;
+            const withDriver = document.getElementById('driver-toggle').checked;
+            const driverTotal = withDriver ? (driverFeePerDay * diffDays) : 0;
 
-            document.getElementById('total-days').innerText = `${diffDays} Jours`;
-            document.getElementById('sub-total').innerText = `${subTotal.toLocaleString()} CVE`;
-            document.getElementById('fees').innerText = `${fees.toLocaleString()} CVE`;
-            document.getElementById('total-price').innerText = `${totalPrice.toLocaleString()} CVE`;
+            totalFinal = carTotal + insuranceTotal + driverTotal;
+
+            // UI Update
+            document.getElementById('summary-days').innerText = diffDays;
+            document.getElementById('price-car-total').innerText = carTotal.toLocaleString() + " CVE";
             
-            btn.disabled = false;
+            if(withDriver) {
+                document.getElementById('row-driver').classList.remove('hidden');
+                document.getElementById('price-driver-total').innerText = driverTotal.toLocaleString() + " CVE";
+            } else {
+                document.getElementById('row-driver').classList.add('hidden');
+            }
+
+            if(selectedInsurance.price > 0) {
+                document.getElementById('row-insurance').classList.remove('hidden');
+                document.getElementById('price-insurance-total').innerText = insuranceTotal.toLocaleString() + " CVE";
+            } else {
+                document.getElementById('row-insurance').classList.add('hidden');
+            }
+
+            document.getElementById('price-total').innerText = totalFinal.toLocaleString() + " CVE";
         }
 
-        // Écouteurs Dates
-        document.getElementById('start-date').addEventListener('change', calculateTotal);
-        document.getElementById('end-date').addEventListener('change', calculateTotal);
-
-        // Validation Commande
-        async function processBooking() {
-            const btn = document.getElementById('pay-btn');
-            const errorMsg = document.getElementById('error-msg');
-            
-            btn.innerText = "Traitement en cours...";
+        async function confirmBooking() {
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "Traitement...";
             btn.disabled = true;
-            errorMsg.innerText = "";
 
-            try {
-                const startDate = document.getElementById('start-date').value;
-                const endDate = document.getElementById('end-date').value;
+            const { error } = await supabase.from('bookings').insert([{
+                vehicle_id: car.id,
+                renter_id: user.id,
+                start_date: document.getElementById('start-date').value,
+                end_date: document.getElementById('end-date').value,
+                total_price: totalFinal,
+                insurance_type: selectedInsurance.type,
+                with_driver: document.getElementById('driver-toggle').checked,
+                status: 'pending'
+            }]);
 
-                // Insertion Supabase
-                const { error } = await supabase
-                    .from('bookings')
-                    .insert([{
-                        vehicle_id: currentCar.id,
-                        renter_id: currentUser.id,
-                        start_date: startDate,
-                        end_date: endDate,
-                        total_price: totalPrice,
-                        status: 'confirmed' // Direct confirmé pour la démo
-                    }]);
-
-                if (error) throw error;
-
-                // Succès
-                alert("🎉 Réservation réussie !");
-                window.location.href = 'my-rentals.html';
-
-            } catch (err) {
-                console.error(err);
-                errorMsg.innerText = "Erreur technique. Réessayez.";
+            if (error) {
+                alert("Erreur : " + error.message);
                 btn.innerText = "Confirmer la réservation";
                 btn.disabled = false;
+            } else {
+                window.location.href = 'booking-request.html';
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initCheckout);
+        init();
     </script>
 </body>
 </html>
