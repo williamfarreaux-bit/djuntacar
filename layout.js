@@ -1,38 +1,28 @@
 /**
- * DJUNTACAR CORE - LAYOUT SYSTEM
- * Architecture : Injection ciblée et gestion d'état globale.
+ * DJUNTACAR - SYSTEME DE LAYOUT (Sécurisé)
+ * Rôle : Injecter le header uniquement dans le slot prévu, sans toucher au body.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-    initLayoutSystem();
+    // 1. On cible l'élément précis (et pas le body entier)
+    const headerSlot = document.getElementById('header-slot');
+    
+    if (headerSlot) {
+        injectHeaderContent(headerSlot);
+        injectMobileMenu(); // Le menu est en dehors du flux, donc ok pour le body
+        
+        // Init Icônes
+        if (window.lucide) window.lucide.createIcons();
+        
+        // Events
+        setupGlobalEvents();
+    } else {
+        console.error("ERREUR CRITIQUE : <div id='header-slot'> manquant dans index.html");
+    }
 });
 
-function initLayoutSystem() {
-    // 1. Injection des composants globaux
-    renderHeader();
-    renderMobileMenu();
-
-    // 2. Initialisation des icônes (une seule fois pour le layout)
-    if (window.lucide) window.lucide.createIcons();
-
-    // 3. Gestionnaires d'événements globaux
-    setupGlobalEvents();
-
-    // 4. Services d'arrière-plan
-    try { checkUnreadMessages(); } catch (e) { console.warn("Chat service offline"); }
-}
-
-function renderHeader() {
-    // CIBLE PRÉCISE : On cherche l'ID spécifique
-    const target = document.getElementById('app-header');
-    
-    if (!target) {
-        console.error("CRITICAL: <div id='app-header'> missing in HTML.");
-        return;
-    }
-
-    // Le contenu du header
-    target.innerHTML = `
+function injectHeaderContent(targetElement) {
+    targetElement.innerHTML = `
         <header style="height: 80px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid #f1f5f9; position: sticky; top: 0; z-index: 1000;">
             <div style="width: 30%; display: flex; align-items: center; gap: 8px;">
                 <button onclick="toggleMenu()" style="background:none; border:none; padding:4px; cursor:pointer;">
@@ -66,33 +56,29 @@ function renderHeader() {
     `;
 }
 
-function renderMobileMenu() {
+function injectMobileMenu() {
     if (document.getElementById('mobile-menu')) return;
-
     const menuHTML = `
     <div id="menu-overlay" onclick="toggleMenu()" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1999; display:none; backdrop-filter:blur(2px);"></div>
-    <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:24px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:5px 0 25px rgba(0,0,0,0.1);">
+    <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:24px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease; box-shadow:5px 0 25px rgba(0,0,0,0.1);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
             <img src="logo.png" style="height:32px;">
             <button onclick="toggleMenu()" style="background:none; border:none; cursor:pointer;"><i data-lucide="x" style="color:#94a3b8;"></i></button>
         </div>
-        <nav style="display:flex; flex-direction:column; gap:12px; font-weight:800; text-transform:uppercase; font-size:12px; color:#1d4379;">
-            <a href="index.html" style="display:flex; gap:12px; padding:12px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="home"></i> Accueil</a>
-            <a href="search-car.html" style="display:flex; gap:12px; padding:12px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="search"></i> Rechercher</a>
-            <a href="my-rentals.html" style="display:flex; gap:12px; padding:12px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="calendar"></i> Locations</a>
-            <a href="wallet.html" style="display:flex; gap:12px; padding:12px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="wallet"></i> Portefeuille</a>
-            <a href="profile.html" style="display:flex; gap:12px; padding:12px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="user"></i> Profil</a>
+        <nav style="display:flex; flex-direction:column; gap:15px; font-weight:800; color:#1d4379; text-transform:uppercase; font-size:12px;">
+            <a href="index.html" style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="home"></i> Accueil</a>
+            <a href="search-car.html" style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="search"></i> Rechercher</a>
+            <a href="my-rentals.html" style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="calendar"></i> Locations</a>
+            <a href="wallet.html" style="display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit;"><i data-lucide="wallet"></i> Portefeuille</a>
         </nav>
-        <button onclick="handleLogout()" style="margin-top:auto; background:#fef2f2; color:#ef4444; border:none; padding:16px; border-radius:12px; font-weight:900; text-transform:uppercase; font-size:11px; display:flex; justify-content:center; gap:8px;">
+        <button onclick="handleLogout()" style="margin-top:auto; background:#fef2f2; color:#ef4444; border:none; padding:15px; border-radius:12px; font-weight:900; text-transform:uppercase; font-size:12px; display:flex; justify-content:center; gap:8px;">
             <i data-lucide="log-out"></i> Déconnexion
         </button>
     </div>`;
-    
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
-// --- LOGIQUE MÉTIER ---
-
+// --- LOGIQUE ---
 window.toggleMenu = function() {
     const m = document.getElementById('mobile-menu');
     const o = document.getElementById('menu-overlay');
@@ -114,25 +100,16 @@ window.setLang = function(l) {
 };
 
 function setupGlobalEvents() {
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', () => {
         const d = document.getElementById('lang-dropdown');
         if (d && d.style.display === 'block') d.style.display = 'none';
     });
 }
 
 window.handleLogout = async function() {
-    const sb = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-    await sb.auth.signOut();
+    if(window.supabase) {
+        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        await sb.auth.signOut();
+    }
     window.location.href = 'login.html';
 };
-
-async function checkUnreadMessages() {
-    const sb = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-    const { data: { user } } = await sb.auth.getUser();
-    if (!user) return;
-    const { count } = await sb.from('messages').select('*', { count: 'exact', head: true }).eq('is_read', false).neq('sender_id', user.id);
-    if (count > 0) {
-        const d = document.getElementById('unread-dot');
-        if (d) d.style.display = 'block';
-    }
-}
