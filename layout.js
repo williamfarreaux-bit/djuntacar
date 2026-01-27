@@ -1,30 +1,26 @@
 /**
- * DJUNTACAR - HEADER & NAVIGATION CENTRALE
- * Injecte le Header Premium et le Menu Latéral
+ * DJUNTACAR - HEADER & NAVIGATION CENTRALE (Version Bicolore)
  */
 
 document.addEventListener("DOMContentLoaded", function() {
-    // 1. Injection des éléments
     injectDjuntaHeader();
     injectDjuntaMenu();
     
-    // 2. Initialisation des fonctions secondaires
     try { setupPWA(); } catch(e) {}
     try { checkUnreadMessages(); } catch(e) {}
     
-    // 3. Rendu des icônes Lucide
     if (window.lucide) lucide.createIcons();
 });
 
 function injectDjuntaHeader() {
     let headerElement = document.querySelector('header');
     
-    // Sécurité : Crée la balise si elle est absente du HTML
     if (!headerElement) {
         headerElement = document.createElement('header');
         document.body.prepend(headerElement);
     }
 
+    // MISE À JOUR : Logo bicolore (Bleu #1d4379 et Vert #22c55e)
     const headerHTML = `
     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%;">
         <div style="width: 20%; display: flex; justify-content: flex-start;">
@@ -34,7 +30,9 @@ function injectDjuntaHeader() {
         </div>
 
         <div style="width: 40%; display: flex; justify-content: center; align-items: center; cursor:pointer;" onclick="window.location.href='index.html'">
-            <span style="font-weight:900; font-style:italic; font-size:18px; color:#1d4379; text-transform:uppercase; letter-spacing:-1px;">DJUNTACAR</span>
+            <span style="font-weight:900; font-style:italic; font-size:18px; text-transform:uppercase; letter-spacing:-1px;">
+                <span style="color:#1d4379;">Djunta</span><span style="color:#22c55e;">Car</span>
+            </span>
         </div>
 
         <div style="width: 40%; display: flex; justify-content: flex-end; align-items: center; gap: 5px;">
@@ -55,7 +53,6 @@ function injectDjuntaHeader() {
 
     headerElement.innerHTML = headerHTML;
     
-    // Application du style forcé
     Object.assign(headerElement.style, {
         height: '70px',
         backgroundColor: 'white',
@@ -77,7 +74,9 @@ function injectDjuntaMenu() {
 
     <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:24px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease-out; box-shadow:10px 0 30px rgba(0,0,0,0.1);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-            <span style="font-weight:900; color:#1d4379; font-style:italic; font-size:16px; text-transform:uppercase;">Menu</span>
+            <span style="font-weight:900; font-style:italic; font-size:16px; text-transform:uppercase;">
+                <span style="color:#1d4379;">Djunta</span><span style="color:#22c55e;">Car</span>
+            </span>
             <button onclick="toggleMenu()" style="background:#f1f5f9; border:none; padding:8px; border-radius:50%; cursor:pointer; color:#94a3b8;"><i data-lucide="x"></i></button>
         </div>
         
@@ -108,15 +107,11 @@ function injectDjuntaMenu() {
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
-// --- LOGIQUE DE CONTRÔLE ---
-
 window.toggleMenu = function() {
     const menu = document.getElementById('mobile-menu');
     const overlay = document.getElementById('menu-overlay');
     if (!menu) return;
-
     const isOpen = menu.style.transform === 'translateX(0px)';
-    
     if (!isOpen) {
         menu.style.transform = 'translateX(0px)';
         overlay.style.display = 'block';
@@ -139,12 +134,7 @@ async function checkUnreadMessages() {
     const sb = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
     const { data: { user } } = await sb.auth.getUser();
     if (!user) return;
-
-    const { count } = await sb.from('messages')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_read', false)
-        .neq('sender_id', user.id);
-
+    const { count } = await sb.from('messages').select('*', { count: 'exact', head: true }).eq('is_read', false).neq('sender_id', user.id);
     if (count > 0) {
         const badge = document.getElementById('unread-badge');
         if (badge) badge.style.display = 'block';
