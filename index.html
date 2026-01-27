@@ -19,13 +19,11 @@
         
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 40px; }
 
-        /* --- STYLE DU CONTENU --- */
-
-        /* 1. HERO BLEU */
+        /* HERO & RECHERCHE */
         .hero-section {
             background-color: #1d4379;
             padding-top: 20px;
-            padding-bottom: 60px; /* Espace pour l'arrondi et la barre */
+            padding-bottom: 60px;
             border-bottom-left-radius: 40px;
             border-bottom-right-radius: 40px;
             position: relative;
@@ -33,40 +31,43 @@
             z-index: 10;
         }
 
-        /* 2. RECHERCHE FLOTTANTE */
+        /* Conteneur commun pour l'alignement parfait */
+        .aligned-container {
+            width: 90%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .search-wrapper {
             position: absolute;
             bottom: 0;
             left: 50%;
-            transform: translate(-50%, 50%); /* Centrage absolu sur la ligne de coupure */
+            transform: translate(-50%, 50%);
+            z-index: 20;
+            /* Hérite de la largeur via le JS/HTML ou style inline si besoin, ici géré par aligned-container concept */
             width: 90%;
             max-width: 500px;
-            z-index: 20;
         }
 
         .search-bar {
             background: white;
             border-radius: 20px;
             padding: 16px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
             display: flex;
             align-items: center;
             gap: 12px;
             border: 1px solid #f1f5f9;
         }
 
-        /* 3. FILTRES CATÉGORIES (Alignement Parfait) */
+        /* FILTRES */
         .categories-wrapper {
-            margin-top: 45px; /* Espace pour ne pas toucher la barre de recherche */
-            width: 90%; 
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto; /* Centrage du bloc */
-            
+            margin-top: 45px;
             overflow-x: auto;
             display: flex;
-            justify-content: space-between; /* Étalement des boutons */
-            gap: 8px;
+            justify-content: space-between;
+            gap: 10px;
             scrollbar-width: none;
         }
         .categories-wrapper::-webkit-scrollbar { display: none; }
@@ -74,8 +75,8 @@
         .cat-btn {
             background: white;
             border: 1px solid #e2e8f0;
-            padding: 10px 0; /* Padding horizontal auto géré par width */
-            width: 100%; /* Partage équitable de l'espace */
+            padding: 12px 0;
+            width: 100%; /* Prend toute la place dispo */
             border-radius: 100px;
             font-size: 10px;
             font-weight: 800;
@@ -91,11 +92,12 @@
             color: white;
             border-color: #1d4379;
             box-shadow: 0 4px 10px rgba(29, 67, 121, 0.3);
+            transform: scale(1.02);
         }
 
-        /* 4. SLIDER */
+        /* SLIDER */
         .slider-container {
-            margin-top: 15px;
+            margin-top: 20px;
             overflow-x: auto;
             display: flex;
             gap: 20px;
@@ -134,7 +136,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* 5. ACTIONS */
+        /* ACTIONS */
         .action-btns {
             padding: 0 24px 40px 24px;
             display: flex; flex-direction: column; gap: 16px;
@@ -144,9 +146,105 @@
             color: white; font-weight: 800; font-size: 15px;
             text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: transform 0.1s;
         }
-        .btn-main:active { transform: scale(0.98); }
     </style>
 </head>
 <body class="antialiased">
+
+    <div id="app-header"></div>
+
+    <main>
+        <section class="hero-section">
+            <h1 class="text-white text-lg font-black uppercase tracking-wide opacity-90">Trouvez votre véhicule</h1>
+            
+            <div class="search-wrapper">
+                <div class="search-bar" onclick="window.location.href='search-car.html'">
+                    <i data-lucide="search" class="text-blue-500 w-5 h-5"></i>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Rechercher une voiture...</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="aligned-container categories-wrapper">
+            <button onclick="filterCars('Tout', this)" class="cat-btn active">Tout</button>
+            <button onclick="filterCars('4x4', this)" class="cat-btn">🚙 4x4</button>
+            <button onclick="filterCars('Citadine', this)" class="cat-btn">🚗 Ville</button>
+            <button onclick="filterCars('Luxe', this)" class="cat-btn">✨ Luxe</button>
+        </div>
+
+        <div id="slider" class="slider-container">
+            <div class="w-full text-center py-20 opacity-50">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-2 mb-8">
+            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div class="w-2 h-2 bg-gray-200 rounded-full"></div>
+            <div class="w-2 h-2 bg-gray-200 rounded-full"></div>
+        </div>
+
+        <div class="action-btns">
+            <button onclick="window.location.href='add-car.html'" class="btn-main bg-[#1d4379] text-white">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                Ajouter ma voiture
+            </button>
+            <button onclick="window.location.href='become-driver.html'" class="btn-main bg-[#22c55e] text-white">
+                <i data-lucide="user-check" class="w-5 h-5"></i>
+                Devenir chauffeur
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCars('Tout');
+        });
+
+        function filterCars(category, btnElement) {
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            loadCars(category);
+        }
+
+        async function loadCars(category) {
+            const slider = document.getElementById('slider');
+            slider.innerHTML = '<div class="w-full text-center py-20 opacity-30"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i></div>';
+
+            let query = supabase.from('vehicles').select('*');
+            if (category !== 'Tout') query = query.ilike('category', `%${category}%`);
+
+            const { data: vehicles } = await query.limit(10);
+            slider.innerHTML = '';
+
+            if (!vehicles || vehicles.length === 0) {
+                slider.innerHTML = '<p class="text-center w-full py-10 text-gray-400 font-bold text-xs pl-6">Aucun véhicule trouvé.</p>';
+                return;
+            }
+
+            vehicles.forEach(car => {
+                const img = car.image_url || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600';
+                
+                const html = `
+                <div class="car-slide" onclick="window.location.href='car-detail.html?id=${car.id}'">
+                    <img src="${img}" class="car-bg">
+                    <div class="badge-cat">${car.category || 'Auto'}</div>
+                    <div class="car-overlay">
+                        <h3 class="text-2xl font-black uppercase leading-tight">${car.brand} ${car.model}</h3>
+                        <p class="text-sm font-bold opacity-90 mt-1">${car.price_per_day.toLocaleString()} CVE / jour</p>
+                        <div class="flex items-center gap-1 mt-2 text-[10px] font-bold opacity-75">
+                            <i data-lucide="map-pin" class="w-3 h-3"></i> ${car.location || 'Cap-Vert'}
+                        </div>
+                    </div>
+                </div>`;
+                slider.insertAdjacentHTML('beforeend', html);
+            });
+            
+            // On relance Lucide pour les icônes dynamiques du slider
+            if(window.lucide) lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
