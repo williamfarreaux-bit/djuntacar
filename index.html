@@ -17,102 +17,143 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #fcfcfd; padding-bottom: 40px; margin: 0; }
+        body { background-color: #fcfcfd; margin: 0; padding-bottom: 40px; }
 
-        /* HERO SECTION ULTRA-COMPACTE */
-        .hero-bg {
+        /* 1. HERO BLEU ARRONDI */
+        .hero-section {
             background-color: #1d4379;
-            height: 80px; /* Réduit à 80px pour un look plus "App" */
-            border-bottom-left-radius: 35px;
-            border-bottom-right-radius: 35px;
-            display: flex;
-            justify-content: center;
+            padding-top: 20px;
+            padding-bottom: 50px; /* Espace pour l'effet arrondi */
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
             position: relative;
-            margin-bottom: 40px;
+            text-align: center;
+            z-index: 10;
         }
 
-        /* BARRE DE RECHERCHE AFFINÉE */
-        .search-container {
+        /* 2. RECHERCHE FLOTTANTE (Position Absolue) */
+        .search-wrapper {
             position: absolute;
-            bottom: -22px;
-            width: 88%;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 50%); /* Centre verticalement sur la ligne du bas */
+            width: 85%;
+            z-index: 20;
+        }
+
+        .search-bar {
             background: white;
-            border-radius: 18px;
-            padding: 12px 18px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            border: 1px solid #f1f5f9;
-        }
-
-        /* TITRE DE SECTION COMPACT */
-        .section-header {
-            padding: 0 28px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* LISTE VERTICALE */
-        .cars-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 0 24px;
-            margin-bottom: 30px;
-        }
-
-        .car-card {
-            background: white;
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            border: 1px solid #f1f5f9;
-        }
-
-        .car-image-container {
-            width: 100%;
-            height: 180px; /* Plus compact pour voir plus de cartes */
-            position: relative;
-        }
-        .car-img { width: 100%; height: 100%; object-fit: cover; }
-
-        .price-badge {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            background: white;
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-weight: 900;
-            color: #1d4379;
-            font-size: 13px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* BOUTONS D'ACTION BAS DE PAGE */
-        .action-container {
-            padding: 0 24px 30px 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .action-btn {
-            width: 100%;
-            padding: 16px;
             border-radius: 20px;
-            font-weight: 800;
-            font-size: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
+            gap: 12px;
+            border: 1px solid #f1f5f9;
         }
-        .btn-blue { background-color: #1d4379; color: white; }
-        .btn-green { background-color: #22c55e; color: white; }
+
+        /* 3. FILTRES CATÉGORIES (Placement sous la barre de recherche) */
+        .categories-wrapper {
+            margin-top: 45px; /* Marge pour ne pas être caché par la barre de recherche */
+            padding: 10px 24px;
+            overflow-x: auto;
+            display: flex;
+            gap: 10px;
+            scrollbar-width: none;
+        }
+        .categories-wrapper::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #64748b;
+            white-space: nowrap;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .cat-btn.active {
+            background: #1d4379;
+            color: white;
+            border-color: #1d4379;
+            box-shadow: 0 4px 10px rgba(29, 67, 121, 0.3);
+        }
+
+        /* 4. SLIDER HORIZONTAL */
+        .slider-container {
+            margin-top: 10px;
+            overflow-x: auto;
+            display: flex;
+            gap: 20px;
+            padding: 10px 24px 30px 24px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        .slider-container::-webkit-scrollbar { display: none; }
+
+        .car-slide {
+            min-width: 280px;
+            height: 400px;
+            border-radius: 35px;
+            position: relative;
+            scroll-snap-align: center;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+            flex-shrink: 0;
+            background: #f8fafc;
+        }
+
+        .car-bg {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        /* OVERLAY TEXTE SUR PHOTO */
+        .car-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 24px;
+            color: white;
+        }
+
+        /* BADGE CATÉGORIE SUR PHOTO */
+        .badge-cat {
+            position: absolute; top: 20px; left: 20px;
+            background: #2563eb; color: white;
+            font-size: 10px; font-weight: 900;
+            padding: 6px 12px; border-radius: 8px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* 5. BOUTONS D'ACTION */
+        .action-btns {
+            padding: 0 24px 40px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .btn-main {
+            width: 100%;
+            padding: 20px;
+            border-radius: 22px;
+            color: white;
+            font-weight: 800;
+            font-size: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: transform 0.1s;
+        }
+        .btn-main:active { transform: scale(0.98); }
     </style>
 </head>
 <body class="antialiased">
@@ -120,83 +161,112 @@
     <header></header>
 
     <main>
-        <section class="hero-bg">
-            <div class="search-container" onclick="window.location.href='search-car.html'">
-                <i data-lucide="search" class="text-blue-500 w-5 h-5"></i>
-                <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Trouver un véhicule...</span>
+        <section class="hero-section">
+            <h1 class="text-white text-lg font-black uppercase tracking-wide opacity-90">Trouvez votre véhicule</h1>
+            
+            <div class="search-wrapper" onclick="window.location.href='search-car.html'">
+                <div class="search-bar">
+                    <i data-lucide="search" class="text-blue-500 w-5 h-5"></i>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Rechercher une voiture...</span>
+                </div>
             </div>
         </section>
 
-        <div class="section-header">
-            <div>
-                <h2 class="text-base font-black text-[#1d4379] uppercase italic leading-none">Nouveautés</h2>
-                <div class="h-1 w-8 bg-blue-500 rounded-full mt-1"></div>
-            </div>
-            <span class="text-[9px] font-black text-gray-300 uppercase tracking-widest">Tout voir</span>
+        <div class="categories-wrapper">
+            <button onclick="filterCars('Tout', this)" class="cat-btn active">Tout</button>
+            <button onclick="filterCars('4x4', this)" class="cat-btn">🚙 4x4</button>
+            <button onclick="filterCars('Citadine', this)" class="cat-btn">🚗 Citadine</button>
+            <button onclick="filterCars('Luxe', this)" class="cat-btn">✨ Luxe</button>
+            <button onclick="filterCars('Van', this)" class="cat-btn">🚐 Van</button>
         </div>
 
-        <section id="cars-container" class="cars-list">
-            <div class="flex flex-col items-center justify-center py-10 opacity-20">
-                <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-[#1d4379]"></i>
+        <div id="slider" class="slider-container">
+            <div class="w-full text-center py-20 opacity-50">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
             </div>
-        </section>
+        </div>
 
-        <section class="action-container">
-            <button onclick="window.location.href='add-car.html'" class="action-btn btn-blue">
-                <i data-lucide="plus" class="w-5 h-5"></i>
+        <div class="flex justify-center gap-2 mb-8">
+            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div class="w-2 h-2 bg-gray-200 rounded-full"></div>
+            <div class="w-2 h-2 bg-gray-200 rounded-full"></div>
+        </div>
+
+        <div class="action-btns">
+            <button onclick="window.location.href='add-car.html'" class="btn-main bg-[#1d4379]">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
                 Ajouter ma voiture
             </button>
-            <button onclick="window.location.href='become-driver.html'" class="action-btn btn-green">
+            <button onclick="window.location.href='become-driver.html'" class="btn-main bg-[#22c55e]">
                 <i data-lucide="user-check" class="w-5 h-5"></i>
                 Devenir chauffeur
             </button>
-        </section>
+        </div>
     </main>
 
     <script>
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
 
-        async function fetchLatestCars() {
-            const { data: vehicles, error } = await supabase
-                .from('vehicles')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(4);
+        // Au chargement, on lance la catégorie 'Tout'
+        document.addEventListener('DOMContentLoaded', () => loadCars('Tout'));
 
-            const container = document.getElementById('cars-container');
-            container.innerHTML = '';
+        // Fonction de filtrage au clic
+        function filterCars(category, btnElement) {
+            // Gestion visuelle des boutons
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Rechargement des données
+            loadCars(category);
+        }
+
+        async function loadCars(category) {
+            const slider = document.getElementById('slider');
+            // Petit loader visuel pendant le changement de catégorie
+            slider.innerHTML = '<div class="w-full text-center py-20 opacity-30"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i></div>';
+
+            let query = supabase.from('vehicles').select('*');
+
+            if (category !== 'Tout') {
+                // Filtre insensible à la casse (4x4, 4X4, etc.)
+                query = query.ilike('category', `%${category}%`);
+            }
+
+            // On limite à 10 résultats pour le slider
+            const { data: vehicles, error } = await query.limit(10);
+
+            slider.innerHTML = '';
 
             if (error || !vehicles || vehicles.length === 0) {
-                container.innerHTML = `<p class="text-center text-[10px] font-bold text-gray-400 py-10">Aucun véhicule disponible.</p>`;
+                slider.innerHTML = '<p class="text-center w-full py-10 text-gray-400 font-bold text-xs pl-6">Aucun véhicule trouvé.</p>';
                 return;
             }
 
             vehicles.forEach(car => {
+                const img = car.image_url || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600';
+                
                 const html = `
-                    <div class="car-card" onclick="window.location.href='car-detail.html?id=${car.id}'">
-                        <div class="car-image-container">
-                            <img src="${car.image_url}" class="car-img" onerror="this.src='https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800'">
-                            <div class="price-badge">
-                                ${car.price_per_day.toLocaleString()} <span class="text-[8px]">CVE</span>
-                            </div>
-                        </div>
-                        <div class="p-4 flex justify-between items-center">
-                            <div>
-                                <h3 class="text-sm font-black text-[#1d4379] uppercase italic">${car.brand} ${car.model}</h3>
-                                <p class="text-[9px] font-bold text-gray-300 uppercase">${car.location || 'Cap-Vert'}</p>
-                            </div>
-                            <div class="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center text-[#1d4379]">
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </div>
+                <div class="car-slide" onclick="window.location.href='car-detail.html?id=${car.id}'">
+                    <img src="${img}" class="car-bg">
+                    
+                    <div class="badge-cat">
+                        ${car.category || 'Auto'}
+                    </div>
+
+                    <div class="car-overlay">
+                        <h3 class="text-2xl font-black uppercase leading-tight">${car.brand} ${car.model}</h3>
+                        <p class="text-sm font-bold opacity-90 mt-1">${car.price_per_day.toLocaleString()} CVE / jour</p>
+                        <div class="flex items-center gap-1 mt-2 text-[10px] font-bold opacity-75">
+                            <i data-lucide="map-pin" class="w-3 h-3"></i> ${car.location || 'Cap-Vert'}
                         </div>
                     </div>
+                </div>
                 `;
-                container.insertAdjacentHTML('beforeend', html);
+                slider.insertAdjacentHTML('beforeend', html);
             });
-            if (window.lucide) lucide.createIcons();
+            
+            if(window.lucide) lucide.createIcons();
         }
-
-        document.addEventListener('DOMContentLoaded', fetchLatestCars);
     </script>
 </body>
 </html>
