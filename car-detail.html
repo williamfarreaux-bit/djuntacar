@@ -2,154 +2,85 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Détails - DjuntaCar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Détails du véhicule - DjuntaCar</title>
+    
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="config.js"></script>
+    <script src="layout.js" defer></script>
+
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #fcfcfd; padding-bottom: 120px; }
+
+        /* BOUTON COEUR */
         .heart-btn {
             position: absolute; top: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.9);
-            width: 44px; height: 44px; border-radius: 50%;
+            width: 48px; height: 48px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            z-index: 50; transition: all 0.2s;
+            z-index: 50; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .heart-btn.active i { color: #ef4444; fill: #ef4444; }
-        
-        .btn-secondary {
-            background: #f1f5f9; color: #1d4379;
-            padding: 16px; border-radius: 18px;
-            font-weight: 800; font-size: 11px; text-transform: uppercase;
+
+        /* RECAP SEJOUR */
+        .stay-recap {
+            background: #eff6ff; border: 1px solid #dbeafe;
+            border-radius: 20px; padding: 16px;
+            margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+        }
+
+        /* SPEC CARDS */
+        .spec-card {
+            background: #f8fafc; border: 1px solid #f1f5f9;
+            border-radius: 18px; padding: 12px 8px; text-align: center;
+        }
+
+        /* ACTIONS BAS */
+        .fixed-footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; border-top: 1px solid #f1f5f9;
+            padding: 16px 24px; padding-bottom: max(16px, env(safe-area-inset-bottom));
+            z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .btn-reserve {
+            background: #1d4379; color: white;
+            padding: 18px 32px; border-radius: 20px;
+            font-weight: 900; font-size: 13px; text-transform: uppercase;
+            letter-spacing: 1px; box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
         }
     </style>
 </head>
-<body class="bg-[#fcfcfd] pb-32">
+<body class="antialiased">
 
-    <div class="relative h-80 bg-gray-200">
-        <button onclick="history.back()" class="absolute top-5 left-5 z-50 bg-white/90 p-2 rounded-full shadow-lg">
-            <i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i>
+    <div class="relative h-[40vh] bg-gray-100">
+        <button onclick="history.back()" class="absolute top-5 left-5 z-50 bg-white/90 p-3 rounded-full shadow-lg active:scale-90 transition-transform">
+            <i data-lucide="chevron-left" class="w-6 h-6 text-[#1d4379]"></i>
         </button>
 
-        <button id="fav-btn" onclick="toggleFavorite()" class="heart-btn shadow-lg">
+        <button id="fav-btn" onclick="toggleFavorite()" class="heart-btn active:scale-90">
             <i data-lucide="heart" class="w-6 h-6 text-gray-400"></i>
         </button>
 
         <img id="car-img" src="" class="w-full h-full object-cover">
     </div>
 
-    <main class="max-w-md mx-auto px-6 -mt-10 relative z-10">
+    <main class="max-w-md mx-auto px-6 -mt-12 relative z-10">
         <div class="bg-white rounded-[40px] p-8 shadow-xl border border-gray-50">
+            
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h1 id="car-title" class="text-2xl font-black text-[#1d4379]">Chargement...</h1>
-                    <p id="car-loc" class="text-xs font-bold text-gray-400 mt-1 uppercase">...</p>
+                    <h1 id="car-title" class="text-2xl font-black text-[#1d4379] leading-tight uppercase">...</h1>
+                    <div class="flex items-center gap-1.5 mt-2">
+                        <i data-lucide="map-pin" class="w-3 h-3 text-blue-500"></i>
+                        <p id="car-loc" class="text-[10px] font-black text-gray-400 uppercase tracking-widest">...</p>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <p id="car-price" class="text-2xl font-black text-[#1d4379]">0 CVE</p>
-                    <span class="text-[10px] font-bold text-gray-300 uppercase">Par jour</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-4 gap-4 py-6 border-y border-gray-50">
-                <div class="text-center">
-                    <div class="bg-blue-50 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2"><i data-lucide="fuel" class="w-5 h-5 text-[#1d4379]"></i></div>
-                    <span id="spec-fuel" class="text-[9px] font-bold text-gray-400 uppercase">...</span>
-                </div>
-                <div class="text-center">
-                    <div class="bg-blue-50 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2"><i data-lucide="settings-2" class="w-5 h-5 text-[#1d4379]"></i></div>
-                    <span id="spec-trans" class="text-[9px] font-bold text-gray-400 uppercase">...</span>
-                </div>
-                <div class="text-center">
-                    <div class="bg-blue-50 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2"><i data-lucide="users" class="w-5 h-5 text-[#1d4379]"></i></div>
-                    <span id="spec-seats" class="text-[9px] font-bold text-gray-400 uppercase">...</span>
-                </div>
-                <div class="text-center">
-                    <div class="bg-blue-50 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2"><i data-lucide="snowflake" class="w-5 h-5 text-[#1d4379]"></i></div>
-                    <span id="spec-ac" class="text-[9px] font-bold text-gray-400 uppercase">...</span>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <div class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-100 flex gap-3 z-50">
-        <button onclick="addToCart()" class="flex-1 btn-secondary flex items-center justify-center gap-2">
-            <i data-lucide="shopping-cart" class="w-4 h-4"></i> Panier
-        </button>
-        <button onclick="goToBooking()" class="flex-[2] bg-[#1d4379] text-white py-4 rounded-[18px] font-black text-xs uppercase tracking-widest shadow-xl">
-            Réserver maintenant
-        </button>
-    </div>
-
-    <script>
-        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-        let currentCarId = new URLSearchParams(window.location.search).get('id');
-        let user = null;
-        let isFavorite = false;
-
-        async function init() {
-            const { data: { user: authUser } } = await supabase.auth.getUser();
-            user = authUser;
-
-            // Charger les données de la voiture
-            const { data: car } = await supabase.from('vehicles').select('*').eq('id', currentCarId).single();
-            if (car) {
-                document.getElementById('car-title').innerText = `${car.brand} ${car.model}`;
-                document.getElementById('car-img').src = car.image_url;
-                document.getElementById('car-price').innerText = `${car.price_per_day} CVE`;
-                document.getElementById('car-loc').innerText = car.location;
-                document.getElementById('spec-fuel').innerText = car.fuel_type;
-                document.getElementById('spec-trans').innerText = car.transmission;
-                document.getElementById('spec-seats').innerText = `${car.seats} Places`;
-                document.getElementById('spec-ac').innerText = car.has_air_conditioning ? 'Clim' : 'Non';
-            }
-
-            // Vérifier si favori
-            if (user) {
-                const { data } = await supabase.from('favorites')
-                    .select('*').eq('user_id', user.id).eq('vehicle_id', currentCarId).single();
-                if (data) {
-                    isFavorite = true;
-                    document.getElementById('fav-btn').classList.add('active');
-                }
-            }
-            lucide.createIcons();
-        }
-
-        async function toggleFavorite() {
-            if (!user) return window.location.href = 'login.html';
-            
-            const btn = document.getElementById('fav-btn');
-            if (isFavorite) {
-                await supabase.from('favorites').delete().eq('user_id', user.id).eq('vehicle_id', currentCarId);
-                btn.classList.remove('active');
-            } else {
-                await supabase.from('favorites').insert([{ user_id: user.id, vehicle_id: currentCarId }]);
-                btn.classList.add('active');
-            }
-            isFavorite = !isFavorite;
-            lucide.createIcons();
-        }
-
-        function addToCart() {
-            // Logique locale (sessionStorage) pour le panier avant réservation
-            let cart = JSON.parse(sessionStorage.getItem('djunta_cart') || '[]');
-            if (!cart.includes(currentCarId)) {
-                cart.push(currentCarId);
-                sessionStorage.setItem('djunta_cart', JSON.stringify(cart));
-                alert("Véhicule ajouté à votre sélection !");
-            } else {
-                alert("Déjà dans votre sélection.");
-            }
-        }
-
-        function goToBooking() {
-            window.location.href = `checkout.html?id=${currentCarId}`;
-        }
-
-        init();
-    </script>
-</body>
-</html>
+                <div class
