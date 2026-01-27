@@ -1,34 +1,26 @@
 /**
- * DJUNTACAR - LAYOUT CENTRALISÉ v2.0
- * Ce script force l'injection du Header et du Menu Burger
+ * DJUNTACAR - HEADER & NAVIGATION CENTRALE
+ * Injecte le Header Premium et le Menu Latéral
  */
 
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("DjuntaLayout: Lancement de l'injection...");
+    // 1. Injection des éléments
+    injectDjuntaHeader();
+    injectDjuntaMenu();
     
-    // 1. Injection du Header et du Menu
-    const headerReady = injectHeader();
-    injectMenu();
+    // 2. Initialisation des fonctions secondaires
+    try { setupPWA(); } catch(e) {}
+    try { checkUnreadMessages(); } catch(e) {}
     
-    // 2. Initialisation des composants (sans bloquer)
-    if (headerReady) {
-        try { setupPWA(); } catch(e) {}
-        try { checkUnreadMessages(); } catch(e) {}
-    }
-
-    // 3. Activation des icônes Lucide
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+    // 3. Rendu des icônes Lucide
+    if (window.lucide) lucide.createIcons();
 });
 
-// --- INJECTION DU HEADER ---
-function injectHeader() {
+function injectDjuntaHeader() {
     let headerElement = document.querySelector('header');
     
-    // SÉCURITÉ : Si la balise <header> n'existe pas, on la crée de force
+    // Sécurité : Crée la balise si elle est absente du HTML
     if (!headerElement) {
-        console.warn("DjuntaLayout: Balise <header> manquante, création automatique.");
         headerElement = document.createElement('header');
         document.body.prepend(headerElement);
     }
@@ -36,26 +28,26 @@ function injectHeader() {
     const headerHTML = `
     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%;">
         <div style="width: 20%; display: flex; justify-content: flex-start;">
-            <button onclick="toggleMenu()" style="background:none; border:none; padding:8px; cursor:pointer;">
+            <button onclick="toggleMenu()" style="background:none; border:none; padding:8px; cursor:pointer; outline:none;" class="active:scale-90 transition-transform">
                 <i data-lucide="menu" style="width:30px; height:30px; color:#1d4379;"></i>
             </button>
         </div>
 
-        <div style="width: 50%; display: flex; justify-content: center; align-items: center; cursor:pointer;" onclick="window.location.href='index.html'">
+        <div style="width: 40%; display: flex; justify-content: center; align-items: center; cursor:pointer;" onclick="window.location.href='index.html'">
             <span style="font-weight:900; font-style:italic; font-size:18px; color:#1d4379; text-transform:uppercase; letter-spacing:-1px;">DJUNTACAR</span>
         </div>
 
-        <div style="width: 30%; display: flex; justify-content: flex-end; align-items: center; gap: 5px;">
-            <button onclick="window.location.href='chat.html'" style="position:relative; background:none; border:none; padding:8px; cursor:pointer;">
+        <div style="width: 40%; display: flex; justify-content: flex-end; align-items: center; gap: 5px;">
+            <button onclick="window.location.href='chat.html'" style="position:relative; background:none; border:none; padding:8px; cursor:pointer; outline:none;" class="active:scale-90 transition-transform">
                 <i data-lucide="message-circle" style="width:26px; height:26px; color:#1d4379;"></i>
                 <span id="unread-badge" style="display:none; position:absolute; top:5px; right:5px; width:10px; height:10px; background:#ef4444; border:2px solid white; border-radius:50%;"></span>
             </button>
             
-            <button id="pwa-install-btn" style="display:none; background:#eff6ff; color:#1d4379; border:none; padding:8px; border-radius:50%; cursor:pointer;">
+            <button id="pwa-install-btn" style="display:none; background:#eff6ff; color:#1d4379; border:none; padding:8px; border-radius:50%; cursor:pointer; outline:none;">
                 <i data-lucide="download-cloud" style="width:20px; height:20px;"></i>
             </button>
 
-            <button onclick="window.location.href='profile.html'" style="background:none; border:none; padding:8px; cursor:pointer;">
+            <button onclick="window.location.href='profile.html'" style="background:none; border:none; padding:8px; cursor:pointer; outline:none;" class="active:scale-90 transition-transform">
                 <i data-lucide="user" style="width:26px; height:26px; color:#1d4379;"></i>
             </button>
         </div>
@@ -63,7 +55,7 @@ function injectHeader() {
 
     headerElement.innerHTML = headerHTML;
     
-    // Styles forcés (pour écraser tout conflit CSS)
+    // Application du style forcé
     Object.assign(headerElement.style, {
         height: '70px',
         backgroundColor: 'white',
@@ -75,12 +67,9 @@ function injectHeader() {
         borderBottom: '1px solid #f1f5f9',
         padding: '0 16px'
     });
-    
-    return true;
 }
 
-// --- INJECTION DU MENU ---
-function injectMenu() {
+function injectDjuntaMenu() {
     if (document.getElementById('mobile-menu')) return;
 
     const menuHTML = `
@@ -88,8 +77,8 @@ function injectMenu() {
 
     <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:24px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease-out; box-shadow:10px 0 30px rgba(0,0,0,0.1);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-            <span style="font-weight:900; color:#1d4379; font-style:italic;">MENU</span>
-            <button onclick="toggleMenu()" style="background:#f1f5f9; border:none; padding:8px; border-radius:50%; cursor:pointer;"><i data-lucide="x"></i></button>
+            <span style="font-weight:900; color:#1d4379; font-style:italic; font-size:16px; text-transform:uppercase;">Menu</span>
+            <button onclick="toggleMenu()" style="background:#f1f5f9; border:none; padding:8px; border-radius:50%; cursor:pointer; color:#94a3b8;"><i data-lucide="x"></i></button>
         </div>
         
         <nav style="display:flex; flex-direction:column; gap:10px; flex:1;">
@@ -111,7 +100,7 @@ function injectMenu() {
             </a>
         </nav>
 
-        <button onclick="handleLogout()" style="display:flex; align-items:center; justify-content:center; gap:10px; padding:18px; background:#fef2f2; border:none; color:#ef4444; font-weight:900; border-radius:18px; font-size:11px; text-transform:uppercase; cursor:pointer;">
+        <button onclick="handleLogout()" style="display:flex; align-items:center; justify-content:center; gap:10px; padding:18px; background:#fef2f2; border:none; color:#ef4444; font-weight:900; border-radius:18px; font-size:11px; text-transform:uppercase; cursor:pointer; width:100%;">
             <i data-lucide="log-out"></i> Déconnexion
         </button>
     </div>`;
@@ -119,7 +108,8 @@ function injectMenu() {
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
-// --- FONCTIONS DE CONTRÔLE ---
+// --- LOGIQUE DE CONTRÔLE ---
+
 window.toggleMenu = function() {
     const menu = document.getElementById('mobile-menu');
     const overlay = document.getElementById('menu-overlay');
@@ -137,7 +127,7 @@ window.toggleMenu = function() {
 };
 
 window.handleLogout = async function() {
-    if (window.supabase) {
+    if (window.supabase && typeof DJUNTA_CONFIG !== 'undefined') {
         const sb = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
         await sb.auth.signOut();
     }
@@ -150,8 +140,15 @@ async function checkUnreadMessages() {
     const { data: { user } } = await sb.auth.getUser();
     if (!user) return;
 
-    const { count } = await sb.from('messages').select('*', { count: 'exact', head: true }).eq('is_read', false).neq('sender_id', user.id);
-    if (count > 0) document.getElementById('unread-badge').style.display = 'block';
+    const { count } = await sb.from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_read', false)
+        .neq('sender_id', user.id);
+
+    if (count > 0) {
+        const badge = document.getElementById('unread-badge');
+        if (badge) badge.style.display = 'block';
+    }
 }
 
 function setupPWA() {
