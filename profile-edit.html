@@ -37,11 +37,11 @@
             font-size: 14px; font-weight: 700; color: #1d4379;
             outline: none; border: 1px solid #e2e8f0;
         }
-        .form-input:focus { border-color: #1d4379; background: white; }
 
+        /* AVATAR & PROGRESS */
         .avatar-edit-zone {
             position: relative; width: 110px; height: 110px;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 10px auto;
         }
         .avatar-preview {
             width: 100%; height: 100%; border-radius: 40px;
@@ -54,6 +54,18 @@
             background: #22c55e; color: white; width: 36px; height: 36px;
             border-radius: 12px; border: 3px solid white;
             display: flex; align-items: center; justify-content: center;
+        }
+
+        /* BARRE DE PROGRESSION */
+        .progress-container {
+            width: 100%; max-width: 150px; height: 6px;
+            background: #f1f5f9; border-radius: 10px;
+            margin: 0 auto 25px auto; overflow: hidden;
+            display: none; /* Caché par défaut */
+        }
+        .progress-bar {
+            height: 100%; width: 0%;
+            background: #1d4379; transition: width 0.3s ease;
         }
 
         .save-bar {
@@ -82,6 +94,10 @@
                     <input type="file" id="avatar-file" class="hidden" accept="image/*" onchange="previewAndPrepare(this)">
                 </div>
 
+                <div id="upload-progress-container" class="progress-container">
+                    <div id="upload-progress-bar" class="progress-bar"></div>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label">Prénom</label>
                     <input type="text" id="first_name" class="form-input" required>
@@ -101,7 +117,7 @@
     </main>
 
     <div class="save-bar">
-        <button type="submit" form="edit-form" id="save-btn" class="w-full bg-[#1d4379] text-white py-4 rounded-[20px] font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3">
+        <button type="submit" form="edit-form" id="save-btn" class="w-full bg-[#1d4379] text-white py-4 rounded-[20px] font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 transition-all active:scale-95">
             <i data-lucide="save" class="w-4 h-4"></i> Sauvegarder
         </button>
     </div>
@@ -133,22 +149,38 @@
                 const reader = new FileReader();
                 reader.onload = (e) => document.getElementById('avatar-img').src = e.target.result;
                 reader.readAsDataURL(selectedFile);
+                // Réinitialiser la barre de progression si elle était visible
+                document.getElementById('upload-progress-container').style.display = 'none';
+                document.getElementById('upload-progress-bar').style.width = '0%';
             }
         }
 
         async function uploadAvatar(file) {
             const fileExt = file.name.split('.').pop();
-            const fileName = `${currentUser.id}-${Math.random()}.${fileExt}`;
+            const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`;
             const filePath = `${fileName}`;
 
-            // 1. Upload vers le bucket 'avatars'
+            const container = document.getElementById('upload-progress-container');
+            const bar = document.getElementById('upload-progress-bar');
+            
+            container.style.display = 'block';
+
+            // Utilisation de l'API de base Supabase (Fetch) pour l'upload
+            // Note: Supabase JS SDK v2 ne supporte pas nativement les callbacks de progression via XMLHttpRequest
+            // On simule une progression fluide pour l'UX ou on utilise un upload standard
+            
             const { error: uploadError } = await supabase.storage
                 .from('avatars')
-                .upload(filePath, file);
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
 
             if (uploadError) throw uploadError;
 
-            // 2. Récupérer l'URL publique
+            // Une fois fini, on met à 100%
+            bar.style.width = '100%';
+
             const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
             return data.publicUrl;
         }
@@ -158,13 +190,12 @@
             const btn = document.getElementById('save-btn');
             const msg = document.getElementById('msg');
             
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Envoi...`;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Traitement...`;
             btn.disabled = true;
 
             try {
                 let avatarUrl = document.getElementById('avatar-img').src;
 
-                // Si un nouveau fichier a été choisi, on l'uploade d'abord
                 if (selectedFile) {
                     avatarUrl = await uploadAvatar(selectedFile);
                 }
@@ -180,7 +211,7 @@
                 if (error) throw error;
 
                 msg.className = "text-center text-[10px] font-black text-green-500 uppercase";
-                msg.innerText = "Profil mis à jour !";
+                msg.innerText = "Changements enregistrés !";
                 setTimeout(() => window.location.href = 'profile.html', 1000);
 
             } catch (err) {
