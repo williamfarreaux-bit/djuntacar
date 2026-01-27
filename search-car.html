@@ -2,80 +2,203 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DjuntaCar - Recherche</title>
     
+    <meta name="theme-color" content="#1d4379">
+
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="config.js"></script>
+    <script src="layout.js" defer></script>
+
+    <style>
+        body { background-color: #fcfcfd; padding-bottom: 120px; font-family: 'Montserrat', sans-serif; }
+
+        /* HERO HEADER */
+        .search-header {
+            background-color: #1d4379;
+            padding: 20px 24px 40px 24px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        /* FORMULAIRE CONTAINER */
+        .form-container {
+            width: 90%;
+            max-width: 500px;
+            margin: -30px auto 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* INPUTS STYLISÉS */
+        .input-group { margin-bottom: 20px; }
+        .input-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .input-field {
+            width: 100%;
+            height: 55px;
+            border-radius: 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            outline: none;
+            transition: border-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .input-field:focus { border-color: #1d4379; background: white; }
+        .input-icon { color: #1d4379; margin-right: 12px; }
+
+        /* BOUTON FIXE */
+        .fixed-btn-container {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; border-top: 1px solid #f1f5f9;
+            padding: 16px 24px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+        .btn-search {
+            width: 100%;
+            height: 60px;
+            background: #1d4379;
+            color: white;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3);
+            transition: transform 0.1s;
+        }
+        .btn-search:active { transform: scale(0.96); }
+    </style>
 </head>
-<body class="bg-[#fcfcfd] antialiased">
+<body>
 
-    <div class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
-        <div class="flex items-center justify-between px-4 py-3">
-            <button onclick="window.history.back()" class="p-2 -ml-2 rounded-full active:bg-gray-100">
-                <i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i>
-            </button>
-            <span class="text-[#1d4379] font-black uppercase text-sm">Trouver une voiture</span>
-            <button class="p-2 -mr-2 rounded-full active:bg-gray-100">
-                <i data-lucide="sliders-horizontal" class="w-5 h-5 text-[#1d4379]"></i>
-            </button>
-        </div>
+    <div class="search-header">
+        <h1 class="text-xl font-black uppercase tracking-tight">Planifiez votre<br>prochain trajet</h1>
+        <p class="text-xs font-medium text-blue-200 mt-2">Choisissez vos dates et partez tranquille.</p>
+    </div>
 
-        <div class="px-4 pb-4">
-            <div class="bg-gray-100 p-1 rounded-xl flex items-center gap-2 mb-2">
-                <div class="bg-white p-2 rounded-lg shadow-sm text-[#1d4379]"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
-                <select class="bg-transparent text-xs font-bold text-gray-700 w-full outline-none">
-                    <option>Sal (Toute l'île)</option>
-                    <option>Santiago (Praia)</option>
-                    <option>São Vicente (Mindelo)</option>
-                    <option>Boa Vista</option>
+    <div class="form-container">
+        
+        <div class="input-group">
+            <label class="input-label">Lieu de prise en charge</label>
+            <div class="input-field relative">
+                <i data-lucide="map-pin" class="input-icon w-5 h-5"></i>
+                <select id="location" class="w-full bg-transparent outline-none appearance-none font-bold text-[#1d4379]">
+                    <option value="Praia">Praia (Aéroport)</option>
+                    <option value="Mindelo">Mindelo</option>
+                    <option value="Sal">Santa Maria (Sal)</option>
+                    <option value="BoaVista">Boa Vista</option>
                 </select>
-            </div>
-            
-            <div class="flex gap-2">
-                <div class="flex-1 bg-gray-100 p-2 rounded-xl flex items-center gap-2">
-                    <i data-lucide="calendar" class="w-4 h-4 text-gray-400 ml-1"></i>
-                    <input type="text" placeholder="Départ" class="bg-transparent text-xs font-bold text-gray-700 w-full outline-none" onfocus="(this.type='date')">
-                </div>
-                <div class="flex-1 bg-gray-100 p-2 rounded-xl flex items-center gap-2">
-                    <i data-lucide="calendar" class="w-4 h-4 text-gray-400 ml-1"></i>
-                    <input type="text" placeholder="Retour" class="bg-transparent text-xs font-bold text-gray-700 w-full outline-none" onfocus="(this.type='date')">
-                </div>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 absolute right-4 pointer-events-none"></i>
             </div>
         </div>
 
-        <div class="flex gap-2 overflow-x-auto px-4 pb-3 no-scrollbar">
-            <button onclick="filterCars('all')" class="chip-active whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-[#1d4379] text-white">Tout</button>
-            <button onclick="filterCars('4x4')" class="chip whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-gray-100 text-gray-400 hover:bg-gray-200">4x4</button>
-            <button onclick="filterCars('eco')" class="chip whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-gray-100 text-gray-400 hover:bg-gray-200">Économique</button>
-            <button onclick="filterCars('suv')" class="chip whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-gray-100 text-gray-400 hover:bg-gray-200">SUV</button>
-            <button onclick="filterCars('util')" class="chip whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-colors bg-gray-100 text-gray-400 hover:bg-gray-200">Utilitaire</button>
+        <div class="input-group">
+            <label class="input-label">Début de location</label>
+            <div class="input-field">
+                <i data-lucide="calendar" class="input-icon w-5 h-5"></i>
+                <input type="datetime-local" id="start-date" class="w-full bg-transparent outline-none font-bold text-gray-700">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Fin de location</label>
+            <div class="input-field">
+                <i data-lucide="calendar-check" class="input-icon w-5 h-5"></i>
+                <input type="datetime-local" id="end-date" class="w-full bg-transparent outline-none font-bold text-gray-700">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Type de véhicule</label>
+            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar" id="type-selector">
+                <button type="button" onclick="selectType(this, 'all')" class="type-chip active px-4 py-2 bg-[#1d4379] text-white rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-[#1d4379]">Tous</button>
+                <button type="button" onclick="selectType(this, '4x4')" class="type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200">4x4 / SUV</button>
+                <button type="button" onclick="selectType(this, 'citadine')" class="type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200">Citadine</button>
+            </div>
         </div>
     </div>
 
-    <main class="content-padding pt-4 pb-24">
-        
-        <p class="text-[10px] font-bold text-gray-400 mb-4 px-2">12 véhicules disponibles</p>
+    <div class="fixed-btn-container">
+        <button onclick="performSearch()" class="btn-search">
+            Voir les véhicules <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+    </div>
 
-        <div class="space-y-4" id="resultsContainer">
+    <script>
+        // Initialisation dates par défaut (Aujourd'hui + Demain)
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('start-date').value = now.toISOString().slice(0, 16);
 
-            <div class="car-card group" data-category="suv">
-                <div class="relative h-48 overflow-hidden" onclick="window.location.href='car-detail.html'">
-                    <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" class="w-full h-full object-cover transition-transform group-hover:scale-105">
-                    <div class="location-pill"><i data-lucide="map-pin" class="w-3 h-3"></i> Sal, Santa Maria</div>
-                    <button class="absolute top-3 right-3 bg-white/20 backdrop-blur p-2 rounded-full text-white hover:bg-red-500 hover:text-white transition-colors">
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-                </div>
-                <div class="p-4 flex justify-between items-end">
-                    <div>
-                        <h3 class="font-black text-[#1d4379] text-lg">Mercedes GLC</h3>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="text-[9px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold uppercase">Auto</span>
-                            <span class="text-[9px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold uppercase">Diesel</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-lg font-black text-[#1d4379]">15 0
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 2); // Location de 48h par défaut
+        document.getElementById('end-date').value = tomorrow.toISOString().slice(0, 16);
+
+        let selectedCategory = 'all';
+
+        function selectType(btn, type) {
+            // Gestion visuelle
+            document.querySelectorAll('.type-chip').forEach(c => {
+                c.className = 'type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200';
+            });
+            btn.className = 'type-chip px-4 py-2 bg-[#1d4379] text-white rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-[#1d4379]';
+            
+            selectedCategory = type;
+        }
+
+        function performSearch() {
+            const location = document.getElementById('location').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+
+            // Validation basique
+            if (!startDate || !endDate) {
+                alert("Veuillez sélectionner vos dates.");
+                return;
+            }
+
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert("La date de fin doit être après la date de début.");
+                return;
+            }
+
+            // Construction de l'URL vers RESULTS.HTML (C'est ici que la boucle est brisée)
+            const params = new URLSearchParams({
+                location: location,
+                start: startDate,
+                end: endDate,
+                category: selectedCategory
+            });
+
+            // Redirection
+            window.location.href = `results.html?${params.toString()}`;
+        }
+    </script>
+</body>
+</html>
