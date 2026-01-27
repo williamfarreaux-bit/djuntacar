@@ -2,232 +2,187 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Paiement - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="config.js"></script>
+    <script src="layout.js" defer></script>
 
     <style>
-        .option-card {
-            border: 2px solid #f1f5f9;
-            transition: all 0.2s;
-            cursor: pointer;
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #fcfcfd; padding-bottom: 140px; }
+
+        .payment-card {
+            background: white; border-radius: 30px;
+            padding: 24px; border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
         }
-        .option-card.active {
-            border-color: #1d4379;
-            background-color: #f8fafc;
+
+        .input-pay {
+            width: 100%; height: 60px; border-radius: 18px;
+            background: #f8fafc; border: 1px solid #e2e8f0;
+            padding: 0 20px; font-weight: 700; font-size: 14px;
+            outline: none; transition: border-color 0.2s;
         }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #1d4379;
+        .input-pay:focus { border-color: #1d4379; background: white; }
+
+        .method-btn {
+            border: 2px solid #f1f5f9; border-radius: 20px;
+            padding: 16px; flex: 1; display: flex; flex-direction: column;
+            align-items: center; gap: 8px; transition: all 0.2s;
         }
-        .toggle-checkbox:checked + .toggle-label .toggle-dot {
-            transform: translateX(100%);
+        .method-btn.active { border-color: #1d4379; background: #eff6ff; }
+
+        .fixed-confirm {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; border-top: 1px solid #f1f5f9;
+            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom));
+            z-index: 1000;
+        }
+
+        .btn-pay {
+            width: 100%; height: 65px; background: #1d4379;
+            color: white; border-radius: 22px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
         }
     </style>
 </head>
-<body class="bg-[#fcfcfd] pb-40">
+<body class="antialiased">
 
-    <header class="p-4 bg-white sticky top-0 z-50 border-b border-gray-100 flex items-center gap-4">
-        <button onclick="history.back()" class="p-2"><i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i></button>
-        <h1 class="text-lg font-black text-[#1d4379] uppercase">Finaliser la location</h1>
-    </header>
+    <main class="max-w-md mx-auto px-6 pt-8">
+        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-6 italic">Finaliser la réservation</h1>
 
-    <main class="max-w-md mx-auto px-6 pt-6">
-        
-        <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-50 flex gap-4 mb-8">
-            <img id="car-img" src="" class="w-20 h-20 rounded-2xl object-cover bg-gray-100">
+        <div class="payment-card mb-6 flex items-center gap-4">
+            <img id="car-thumb" src="" class="w-20 h-20 rounded-2xl object-cover bg-gray-100">
             <div>
-                <h3 id="car-name" class="text-sm font-black text-[#1d4379]">Chargement...</h3>
-                <p id="car-base-price" class="text-xs text-gray-400 font-bold mt-1">0 CVE / jour</p>
+                <h2 id="car-name" class="font-black text-[#1d4379] uppercase text-sm">Chargement...</h2>
+                <p id="stay-dates" class="text-[10px] font-bold text-gray-400 mt-1 uppercase"></p>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <div class="form-group">
-                <label class="text-[10px] font-black text-gray-400 uppercase mb-2 block">Départ</label>
-                <input type="date" id="start-date" class="w-full bg-white p-4 rounded-2xl font-bold text-xs border border-gray-100 outline-none focus:border-[#1d4379]" onchange="updateCalculations()">
-            </div>
-            <div class="form-group">
-                <label class="text-[10px] font-black text-gray-400 uppercase mb-2 block">Retour</label>
-                <input type="date" id="end-date" class="w-full bg-white p-4 rounded-2xl font-bold text-xs border border-gray-100 outline-none focus:border-[#1d4379]" onchange="updateCalculations()">
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-3xl border border-gray-50 flex justify-between items-center mb-6">
-            <div>
-                <h3 class="text-sm font-black text-[#1d4379]">Besoin d'un chauffeur ?</h3>
-                <p class="text-[10px] text-gray-400 font-bold">+ 2,000 CVE / jour</p>
-            </div>
-            <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                <input type="checkbox" id="driver-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10" onchange="updateCalculations()"/>
-                <label for="driver-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors">
-                    <span class="toggle-dot block w-6 h-6 bg-white rounded-full shadow-sm"></span>
-                </label>
-            </div>
-        </div>
-
-        <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 ml-2">Choix de l'assurance</h3>
-        <div class="space-y-3 mb-8">
-            <div class="option-card p-4 rounded-2xl flex justify-between items-center active" onclick="selectInsurance('basic', 0, this)">
-                <div>
-                    <h4 class="text-xs font-black text-[#1d4379]">Basique (Tiers)</h4>
-                    <p class="text-[9px] text-gray-400 font-bold">Inclus par défaut</p>
+        <div class="payment-card mb-6">
+            <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4">Détails de la facturation</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between text-xs font-bold text-gray-500">
+                    <span>Location (<span id="nb-days">0</span> j)</span>
+                    <span id="subtotal">0 CVE</span>
                 </div>
-                <span class="text-xs font-black text-[#1d4379]">Gratuit</span>
-            </div>
-            <div class="option-card p-4 rounded-2xl flex justify-between items-center" onclick="selectInsurance('standard', 800, this)">
-                <div>
-                    <h4 class="text-xs font-black text-[#1d4379]">Standard</h4>
-                    <p class="text-[9px] text-gray-400 font-bold">Vol & Bris de glace</p>
+                <div class="flex justify-between text-xs font-bold text-gray-500">
+                    <span>Frais de service (10%)</span>
+                    <span id="fee">0 CVE</span>
                 </div>
-                <span class="text-xs font-black text-[#1d4379]">+ 800 CVE/j</span>
-            </div>
-            <div class="option-card p-4 rounded-2xl flex justify-between items-center" onclick="selectInsurance('premium', 1500, this)">
-                <div>
-                    <h4 class="text-xs font-black text-[#1d4379]">Premium (Tous risques)</h4>
-                    <p class="text-[9px] text-gray-400 font-bold">Zéro franchise</p>
+                <div class="h-px bg-gray-100 my-2"></div>
+                <div class="flex justify-between text-lg font-black text-[#1d4379]">
+                    <span>TOTAL</span>
+                    <span id="total-price">0 CVE</span>
                 </div>
-                <span class="text-xs font-black text-[#1d4379]">+ 1,500 CVE/j</span>
             </div>
         </div>
 
-        <div class="bg-[#1d4379] p-6 rounded-[32px] text-white shadow-xl">
-            <div class="flex justify-between mb-2 opacity-70 text-[10px] font-bold uppercase">
-                <span>Location (<span id="summary-days">0</span> jours)</span>
-                <span id="price-car-total">0 CVE</span>
-            </div>
-            <div id="row-driver" class="hidden flex justify-between mb-2 opacity-70 text-[10px] font-bold uppercase">
-                <span>Option Chauffeur</span>
-                <span id="price-driver-total">0 CVE</span>
-            </div>
-            <div id="row-insurance" class="hidden flex justify-between mb-6 opacity-70 text-[10px] font-bold uppercase">
-                <span>Option Assurance</span>
-                <span id="price-insurance-total">0 CVE</span>
-            </div>
-            <div class="flex justify-between items-end border-t border-white/10 pt-4">
-                <span class="text-xs font-black uppercase">Total à payer</span>
-                <span id="price-total" class="text-2xl font-black">0 CVE</span>
-            </div>
+        <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4 ml-2">Mode de paiement</h3>
+        <div class="flex gap-3 mb-6">
+            <button onclick="selectMethod('card')" id="method-card" class="method-btn active">
+                <i data-lucide="credit-card" class="w-6 h-6"></i>
+                <span class="text-[10px] font-black uppercase">Carte</span>
+            </button>
+            <button onclick="selectMethod('mobi')" id="method-mobi" class="method-btn">
+                <i data-lucide="smartphone" class="w-6 h-6"></i>
+                <span class="text-[10px] font-black uppercase">Vinti4</span>
+            </button>
         </div>
 
+        <div id="card-form" class="space-y-4">
+            <input type="text" placeholder="Nom sur la carte" class="input-pay uppercase">
+            <input type="text" placeholder="Numéro de carte" class="input-pay" maxlength="16">
+            <div class="flex gap-3">
+                <input type="text" placeholder="MM/YY" class="input-pay" maxlength="5">
+                <input type="password" placeholder="CVV" class="input-pay" maxlength="3">
+            </div>
+        </div>
     </main>
 
-    <div class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-100 pb-[max(16px,env(safe-area-inset-bottom))] z-50">
-        <button id="submit-btn" onclick="confirmBooking()" class="w-full bg-[#22c55e] text-white py-4 rounded-[18px] font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:bg-gray-200">
-            Confirmer la réservation
+    <div class="fixed-confirm">
+        <button onclick="processPayment()" class="btn-pay active:scale-95 transition-transform flex items-center justify-center gap-3">
+            <i data-lucide="lock" class="w-5 h-5"></i> Confirmer le paiement
         </button>
     </div>
 
     <script>
-        lucide.createIcons();
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
         
-        let car = null;
-        let user = null;
-        let selectedInsurance = { type: 'basic', price: 0 };
-        let driverFeePerDay = 2000;
-        let totalFinal = 0;
+        const params = new URLSearchParams(window.location.search);
+        const carId = params.get('id');
+        const start = params.get('start');
+        const end = params.get('end');
+
+        let dailyPrice = 0;
 
         async function init() {
-            // 1. Auth Check
-            const { data: { user: authUser } } = await supabase.auth.getUser();
-            if (!authUser) return window.location.href = 'login.html';
-            user = authUser;
+            if (!carId) return window.location.href = 'index.html';
 
-            // 2. Car Check
-            const carId = new URLSearchParams(window.location.search).get('id');
-            const { data: carData } = await supabase.from('vehicles').select('*').eq('id', carId).single();
-            if (!carData) return window.location.href = 'index.html';
-            car = carData;
-
-            // 3. UI Fill
-            document.getElementById('car-name').innerText = `${car.brand} ${car.model}`;
-            document.getElementById('car-base-price').innerText = `${car.price_per_day} CVE / jour`;
-            document.getElementById('car-img').src = car.image_url;
-
-            // Dates par défaut
-            const start = new Date(); start.setDate(start.getDate() + 1);
-            const end = new Date(); end.setDate(end.getDate() + 3);
-            document.getElementById('start-date').valueAsDate = start;
-            document.getElementById('end-date').valueAsDate = end;
-
-            updateCalculations();
+            const { data: car } = await supabase.from('vehicles').select('*').eq('id', carId).single();
+            
+            if (car) {
+                dailyPrice = car.price_per_day;
+                document.getElementById('car-thumb').src = car.image_url;
+                document.getElementById('car-name').innerText = `${car.brand} ${car.model}`;
+                calculateBilling();
+            }
+            lucide.createIcons();
         }
 
-        function selectInsurance(type, price, el) {
-            selectedInsurance = { type, price };
-            document.querySelectorAll('.option-card').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            updateCalculations();
+        function calculateBilling() {
+            let days = 1;
+            if (start && end) {
+                const diffTime = Math.abs(new Date(end) - new Date(start));
+                days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+                
+                const opt = { day: 'numeric', month: 'short' };
+                document.getElementById('stay-dates').innerText = `${new Date(start).toLocaleDateString('fr-FR', opt)} - ${new Date(end).toLocaleDateString('fr-FR', opt)}`;
+            }
+
+            const subtotal = dailyPrice * days;
+            const fee = Math.round(subtotal * 0.10);
+            const total = subtotal + fee;
+
+            document.getElementById('nb-days').innerText = days;
+            document.getElementById('subtotal').innerText = `${subtotal.toLocaleString()} CVE`;
+            document.getElementById('fee').innerText = `${fee.toLocaleString()} CVE`;
+            document.getElementById('total-price').innerText = `${total.toLocaleString()} CVE`;
         }
 
-        function updateCalculations() {
-            const startDate = new Date(document.getElementById('start-date').value);
-            const endDate = new Date(document.getElementById('end-date').value);
-            
-            const diffTime = Math.abs(endDate - startDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays <= 0) {
-                document.getElementById('submit-btn').disabled = true;
-                return;
-            }
-            document.getElementById('submit-btn').disabled = false;
-
-            const carTotal = car.price_per_day * diffDays;
-            const insuranceTotal = selectedInsurance.price * diffDays;
-            const withDriver = document.getElementById('driver-toggle').checked;
-            const driverTotal = withDriver ? (driverFeePerDay * diffDays) : 0;
-
-            totalFinal = carTotal + insuranceTotal + driverTotal;
-
-            // UI Update
-            document.getElementById('summary-days').innerText = diffDays;
-            document.getElementById('price-car-total').innerText = carTotal.toLocaleString() + " CVE";
-            
-            if(withDriver) {
-                document.getElementById('row-driver').classList.remove('hidden');
-                document.getElementById('price-driver-total').innerText = driverTotal.toLocaleString() + " CVE";
-            } else {
-                document.getElementById('row-driver').classList.add('hidden');
-            }
-
-            if(selectedInsurance.price > 0) {
-                document.getElementById('row-insurance').classList.remove('hidden');
-                document.getElementById('price-insurance-total').innerText = insuranceTotal.toLocaleString() + " CVE";
-            } else {
-                document.getElementById('row-insurance').classList.add('hidden');
-            }
-
-            document.getElementById('price-total').innerText = totalFinal.toLocaleString() + " CVE";
+        function selectMethod(method) {
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`method-${method}`).classList.add('active');
         }
 
-        async function confirmBooking() {
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = "Traitement...";
-            btn.disabled = true;
+        async function processPayment() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return window.location.href = 'login.html';
 
+            // Simulation de création de réservation
             const { error } = await supabase.from('bookings').insert([{
-                vehicle_id: car.id,
-                renter_id: user.id,
-                start_date: document.getElementById('start-date').value,
-                end_date: document.getElementById('end-date').value,
-                total_price: totalFinal,
-                insurance_type: selectedInsurance.type,
-                with_driver: document.getElementById('driver-toggle').checked,
-                status: 'pending'
+                vehicle_id: carId,
+                user_id: user.id,
+                start_date: start,
+                end_date: end,
+                total_price: parseInt(document.getElementById('total-price').innerText.replace(/\s/g, '')),
+                status: 'confirmed'
             }]);
 
-            if (error) {
-                alert("Erreur : " + error.message);
-                btn.innerText = "Confirmer la réservation";
-                btn.disabled = false;
+            if (!error) {
+                alert("Paiement réussi ! Votre réservation est confirmée.");
+                window.location.href = 'my-rentals.html';
             } else {
-                window.location.href = 'booking-request.html';
+                alert("Erreur lors de la réservation. Veuillez réessayer.");
             }
         }
 
