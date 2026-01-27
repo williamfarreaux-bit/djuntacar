@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Louez un véhicule au Cap-Vert</title>
+    <title>DjuntaCar - Accueil</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,117 +17,192 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #fcfcfd; padding-bottom: 100px; }
+        body { background-color: #fcfcfd; padding-bottom: 40px; margin: 0; }
 
-        /* HERO SEARCH */
-        .hero-search {
-            background: white; border-radius: 30px;
-            padding: 20px; border: 1px solid #f1f5f9;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-            margin-top: -30px; position: relative; z-index: 20;
+        /* HERO SECTION */
+        .hero-bg {
+            background-color: #1d4379;
+            height: 200px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30px;
+            position: relative;
+            margin-bottom: 60px;
         }
 
-        /* CAR CARD - STYLE VERTICAL 1 COLONNE */
+        /* BARRE DE RECHERCHE */
+        .search-container {
+            position: absolute;
+            bottom: -30px;
+            width: 88%;
+            background: white;
+            border-radius: 22px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        /* LISTE VERTICALE (1 COLONNE) */
+        .cars-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding: 0 24px;
+            margin-bottom: 40px;
+        }
+
         .car-card {
-            background: white; border-radius: 35px;
-            overflow: hidden; border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-            margin-bottom: 24px; transition: transform 0.2s;
+            background: white;
+            border-radius: 35px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid #f1f5f9;
+            transition: transform 0.2s;
         }
         .car-card:active { transform: scale(0.98); }
-        .car-img { width: 100%; height: 220px; object-fit: cover; }
+
+        .car-image-container {
+            width: 100%;
+            height: 220px;
+            position: relative;
+        }
+        .car-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .price-badge {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-weight: 900;
+            color: #1d4379;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* BOUTONS D'ACTION BAS DE PAGE */
+        .action-container {
+            padding: 0 24px 40px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .action-btn {
+            width: 100%;
+            padding: 20px;
+            border-radius: 22px;
+            font-weight: 800;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+        }
+        .btn-blue { background-color: #1d4379; color: white; }
+        .btn-green { background-color: #22c55e; color: white; }
     </style>
 </head>
 <body class="antialiased">
 
     <header></header>
 
-    <main class="max-w-md mx-auto px-6">
-        
-        <div class="pt-8 pb-12">
-            <h1 class="text-3xl font-black text-[#1d4379] uppercase italic leading-tight">
-                Découvrez le<br><span class="text-blue-500">Cap-Vert</span> à votre rythme
-            </h1>
-        </div>
-
-        <div class="hero-search" onclick="window.location.href='search-car.html'">
-            <div class="flex items-center gap-4 text-gray-400">
-                <i data-lucide="search" class="w-6 h-6 text-blue-500"></i>
-                <div class="flex-1">
-                    <p class="text-[10px] font-black uppercase tracking-widest text-[#1d4379]">Où allez-vous ?</p>
-                    <p class="text-xs font-bold">Trouver une voiture ou un chauffeur...</p>
-                </div>
-                <div class="bg-gray-50 p-2 rounded-xl">
-                    <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
-                </div>
+    <main>
+        <section class="hero-bg">
+            <h1 class="text-white text-lg font-black uppercase tracking-tight italic">Explorez le Cap-Vert</h1>
+            <div class="search-container" onclick="window.location.href='search-car.html'">
+                <i data-lucide="search" class="text-blue-500 w-5 h-5"></i>
+                <span class="text-sm font-bold text-gray-400">Quelle est votre destination ?</span>
             </div>
+        </section>
+
+        <div class="px-8 mb-6 flex justify-between items-end">
+            <div>
+                <h2 class="text-xl font-black text-[#1d4379] uppercase italic leading-none">Dernières arrivées</h2>
+                <div class="h-1 w-12 bg-blue-500 rounded-full mt-1"></div>
+            </div>
+            <p class="text-[10px] font-black text-gray-300 uppercase">Voir tout</p>
         </div>
 
-        <div class="flex gap-3 overflow-x-auto no-scrollbar py-8">
-            <button class="bg-[#1d4379] text-white px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase whitespace-nowrap">Tout</button>
-            <button class="bg-white text-gray-400 border border-gray-100 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase whitespace-nowrap">🚙 4x4</button>
-            <button class="bg-white text-gray-400 border border-gray-100 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase whitespace-nowrap">🚗 Citadine</button>
-            <button class="bg-white text-gray-400 border border-gray-100 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase whitespace-nowrap">🚐 Van</button>
-        </div>
-
-        <div id="cars-container" class="space-y-2">
+        <section id="cars-container" class="cars-list">
             <div class="flex flex-col items-center justify-center py-20 opacity-20">
-                <i data-lucide="loader-2" class="w-8 h-8 animate-spin"></i>
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-[#1d4379]"></i>
+                <p class="text-[10px] font-black mt-2 uppercase tracking-widest">Chargement du parc...</p>
             </div>
-        </div>
+        </section>
 
+        <section class="action-container">
+            <button onclick="window.location.href='add-car.html'" class="action-btn btn-blue">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                Ajouter ma voiture
+            </button>
+            <button onclick="window.location.href='become-driver.html'" class="action-btn btn-green">
+                <i data-lucide="user-check" class="w-5 h-5"></i>
+                Devenir chauffeur
+            </button>
+        </section>
     </main>
 
     <script>
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
 
-        async function fetchCars() {
+        async function fetchLatestCars() {
+            // On récupère les voitures triées par date de création (descendant)
             const { data: vehicles, error } = await supabase
                 .from('vehicles')
                 .select('*')
-                .limit(10);
+                .order('created_at', { ascending: false })
+                .limit(6);
 
             if (error) {
-                console.error(error);
+                console.error("Erreur Supabase:", error);
                 return;
             }
 
             const container = document.getElementById('cars-container');
             container.innerHTML = '';
 
-            if (vehicles.length === 0) {
-                container.innerHTML = `<p class="text-center text-xs font-bold text-gray-400 py-10">Aucun véhicule disponible pour le moment.</p>`;
+            if (!vehicles || vehicles.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs font-bold text-gray-400 py-10">Aucun véhicule disponible actuellement.</p>`;
                 return;
             }
 
             vehicles.forEach(car => {
                 const html = `
                     <div class="car-card" onclick="window.location.href='car-detail.html?id=${car.id}'">
-                        <img src="${car.image_url}" class="car-img" onerror="this.src='https://via.placeholder.com/400x220?text=DjuntaCar'">
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <h3 class="text-lg font-black text-[#1d4379] uppercase italic leading-none">${car.brand} ${car.model}</h3>
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">${car.location}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-lg font-black text-[#1d4379]">${car.price_per_day.toLocaleString()} <span class="text-[10px]">CVE</span></p>
-                                    <p class="text-[8px] font-bold text-gray-400 uppercase">par jour</p>
-                                </div>
+                        <div class="car-image-container">
+                            <img src="${car.image_url}" class="car-img" onerror="this.src='https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800'">
+                            <div class="price-badge">
+                                ${car.price_per_day.toLocaleString()} <span class="text-[9px] uppercase">CVE/J</span>
                             </div>
-                            
-                            <div class="flex items-center gap-4 mt-4 pt-4 border-t border-gray-50">
-                                <div class="flex items-center gap-1.5">
-                                    <i data-lucide="settings-2" class="w-3.5 h-3.5 text-blue-500"></i>
-                                    <span class="text-[9px] font-black text-gray-500 uppercase">${car.transmission}</span>
+                            <div class="absolute top-4 left-4 bg-[#1d4379] text-white text-[9px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest shadow-lg">
+                                ${car.category || 'Nouveauté'}
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-black text-[#1d4379] uppercase italic leading-tight">${car.brand} ${car.model}</h3>
+                                    <div class="flex items-center gap-1 mt-1 text-gray-400">
+                                        <i data-lucide="map-pin" class="w-3 h-3"></i>
+                                        <span class="text-[10px] font-bold uppercase">${car.location || 'Cap-Vert'}</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-1.5">
-                                    <i data-lucide="fuel" class="w-3.5 h-3.5 text-blue-500"></i>
-                                    <span class="text-[9px] font-black text-gray-500 uppercase">${car.fuel_type}</span>
-                                </div>
-                                <div class="flex items-center gap-1.5">
-                                    <i data-lucide="users" class="w-3.5 h-3.5 text-blue-500"></i>
-                                    <span class="text-[9px] font-black text-gray-500 uppercase">${car.seats} Places</span>
+                                <div class="bg-gray-50 p-2 rounded-xl text-[#1d4379]">
+                                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
                                 </div>
                             </div>
                         </div>
@@ -136,10 +211,10 @@
                 container.insertAdjacentHTML('beforeend', html);
             });
             
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         }
 
-        document.addEventListener('DOMContentLoaded', fetchCars);
+        document.addEventListener('DOMContentLoaded', fetchLatestCars);
     </script>
 </body>
 </html>
