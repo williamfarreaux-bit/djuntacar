@@ -31,7 +31,7 @@
             z-index: 10;
         }
 
-        /* Conteneur commun pour l'alignement parfait */
+        /* Conteneur pour aligner Recherche + Boutons */
         .aligned-container {
             width: 90%;
             max-width: 500px;
@@ -45,7 +45,6 @@
             left: 50%;
             transform: translate(-50%, 50%);
             z-index: 20;
-            /* Hérite de la largeur via le JS/HTML ou style inline si besoin, ici géré par aligned-container concept */
             width: 90%;
             max-width: 500px;
         }
@@ -67,7 +66,7 @@
             overflow-x: auto;
             display: flex;
             justify-content: space-between;
-            gap: 10px;
+            gap: 8px;
             scrollbar-width: none;
         }
         .categories-wrapper::-webkit-scrollbar { display: none; }
@@ -76,7 +75,7 @@
             background: white;
             border: 1px solid #e2e8f0;
             padding: 12px 0;
-            width: 100%; /* Prend toute la place dispo */
+            width: 100%;
             border-radius: 100px;
             font-size: 10px;
             font-weight: 800;
@@ -118,16 +117,13 @@
             flex-shrink: 0;
             background: #f8fafc;
         }
-
         .car-bg { width: 100%; height: 100%; object-fit: cover; }
-
         .car-overlay {
             position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
             background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
             display: flex; flex-direction: column; justify-content: flex-end;
             padding: 24px; color: white;
         }
-
         .badge-cat {
             position: absolute; top: 20px; left: 20px;
             background: #2563eb; color: white;
@@ -151,7 +147,7 @@
 </head>
 <body class="antialiased">
 
-    <div id="app-header"></div>
+    <div id="header-slot"></div>
 
     <main>
         <section class="hero-section">
@@ -241,8 +237,6 @@
                 </div>`;
                 slider.insertAdjacentHTML('beforeend', html);
             });
-            
-            // On relance Lucide pour les icônes dynamiques du slider
             if(window.lucide) lucide.createIcons();
         }
     </script>
