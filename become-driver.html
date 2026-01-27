@@ -3,105 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Devenir Chauffeur</title>
+    <title>Devenir Chauffeur - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-[#fcfcfd] antialiased">
 
-    <header>
-        <div class="header-left">
-            <button onclick="window.history.back()" class="profile-btn">
-                <i data-lucide="arrow-left" class="header-user-icon"></i>
-            </button>
+    <div class="relative h-72 bg-[#1d4379] flex items-center justify-center overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1449960232330-7933629403c6?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover opacity-40">
+        <div class="relative z-10 text-center px-6">
+            <h1 class="text-3xl font-black text-white uppercase leading-tight">Gagnez de l'argent en conduisant</h1>
+            <p class="text-blue-200 text-xs font-bold mt-2 uppercase tracking-widest">Rejoignez la flotte DjuntaCar</p>
         </div>
-        <div class="header-center">
-            <span class="text-[#1d4379] font-black uppercase text-sm">Opportunité</span>
-        </div>
-        <div class="header-right"></div>
-    </header>
+        <button onclick="history.back()" class="absolute top-6 left-6 bg-white/20 backdrop-blur-md p-2 rounded-full text-white">
+            <i data-lucide="arrow-left" class="w-6 h-6"></i>
+        </button>
+    </div>
 
-    <main class="content-padding pt-0 pb-24">
+    <main class="max-w-md mx-auto px-6 -mt-8 relative z-20">
         
-        <div class="relative w-full h-64 -mx-5 mb-6">
-            <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover rounded-b-[40px]">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#1d4379] to-transparent rounded-b-[40px] opacity-90"></div>
-            <div class="absolute bottom-8 left-8 right-8 text-white">
-                <h1 class="text-2xl font-black mb-2">Gagnez de l'argent avec votre véhicule</h1>
-                <p class="text-xs font-medium opacity-90">Louez votre voiture ou devenez chauffeur privé au Cap-Vert.</p>
-            </div>
-        </div>
-
-        <div class="flex justify-between px-4 mb-8">
-            <div class="text-center">
-                <p class="text-2xl font-black text-[#1d4379]">15%</p>
-                <p class="text-[9px] text-gray-400 font-bold uppercase">Commission basse</p>
-            </div>
-            <div class="text-center border-l border-r border-gray-100 px-8">
-                <p class="text-2xl font-black text-[#1d4379]">24h</p>
-                <p class="text-[9px] text-gray-400 font-bold uppercase">Paiement rapide</p>
-            </div>
-            <div class="text-center">
-                <p class="text-2xl font-black text-[#1d4379]">100%</p>
-                <p class="text-[9px] text-gray-400 font-bold uppercase">Assuré</p>
-            </div>
-        </div>
-
-        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Pourquoi nous rejoindre ?</h2>
-        
-        <div class="space-y-3">
-            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
-                <div class="bg-green-50 p-3 rounded-full text-green-600"><i data-lucide="banknote" class="w-6 h-6"></i></div>
+        <div class="bg-white rounded-[32px] p-8 shadow-xl border border-gray-50 space-y-8">
+            
+            <div class="flex items-start gap-4">
+                <div class="bg-blue-50 p-3 rounded-2xl text-[#1d4379]">
+                    <i data-lucide="banknote" class="w-6 h-6"></i>
+                </div>
                 <div>
-                    <h3 class="font-black text-[#1d4379] text-sm">Revenus Complémentaires</h3>
-                    <p class="text-[10px] text-gray-400 font-bold mt-1">Gagnez jusqu'à 80 000 CVE / mois.</p>
+                    <h3 class="text-sm font-black text-[#1d4379] uppercase">Revenus Garantis</h3>
+                    <p class="text-xs text-gray-400 font-medium mt-1">Gagnez 1.700 CVE net par jour de prestation, versés directement sur votre Wallet.</p>
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
-                <div class="bg-blue-50 p-3 rounded-full text-[#1d4379]"><i data-lucide="calendar-clock" class="w-6 h-6"></i></div>
+            <div class="flex items-start gap-4">
+                <div class="bg-green-50 p-3 rounded-2xl text-green-600">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
                 <div>
-                    <h3 class="font-black text-[#1d4379] text-sm">Flexibilité Totale</h3>
-                    <p class="text-[10px] text-gray-400 font-bold mt-1">Vous décidez quand vous êtes disponible.</p>
+                    <h3 class="text-sm font-black text-[#1d4379] uppercase">Sécurité & Assurance</h3>
+                    <p class="text-xs text-gray-400 font-medium mt-1">Toutes vos courses sont couvertes par notre assurance partenaire. Conduisez l'esprit tranquille.</p>
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-sm">
-                <div class="bg-orange-50 p-3 rounded-full text-orange-500"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+            <div class="flex items-start gap-4">
+                <div class="bg-orange-50 p-3 rounded-2xl text-orange-500">
+                    <i data-lucide="clock" class="w-6 h-6"></i>
+                </div>
                 <div>
-                    <h3 class="font-black text-[#1d4379] text-sm">Sécurité Garantie</h3>
-                    <p class="text-[10px] text-gray-400 font-bold mt-1">Locataires vérifiés et caution gérée.</p>
+                    <h3 class="text-sm font-black text-[#1d4379] uppercase">Liberté Totale</h3>
+                    <p class="text-xs text-gray-400 font-medium mt-1">Vous choisissez vos missions. Acceptez uniquement les réservations qui vous conviennent.</p>
                 </div>
             </div>
+
         </div>
 
-        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 mt-8 px-2">Comment ça marche ?</h2>
-        <div class="relative pl-4 space-y-6 border-l-2 border-gray-100 ml-4">
-            <div class="relative">
-                <div class="absolute -left-[21px] bg-[#1d4379] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">1</div>
-                <h3 class="font-bold text-[#1d4379] text-sm">Inscription</h3>
-                <p class="text-xs text-gray-400">Créez votre profil en 2 minutes.</p>
-            </div>
-            <div class="relative">
-                <div class="absolute -left-[21px] bg-[#1d4379] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">2</div>
-                <h3 class="font-bold text-[#1d4379] text-sm">Vérification</h3>
-                <p class="text-xs text-gray-400">Envoyez vos documents (CNI, Permis).</p>
-            </div>
-            <div class="relative">
-                <div class="absolute -left-[21px] bg-[#1d4379] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">3</div>
-                <h3 class="font-bold text-[#1d4379] text-sm">Gagnez</h3>
-                <p class="text-xs text-gray-400">Recevez vos premières réservations.</p>
-            </div>
+        <div class="mt-10 px-2">
+            <h3 class="text-xs font-black text-[#1d4379] uppercase mb-4">Documents nécessaires</h3>
+            <ul class="space-y-3">
+                <li class="flex items-center gap-3 text-[10px] font-bold text-gray-500">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-[#1d4379]"></i> PERMIS DE CONDUIRE VALIDE
+                </li>
+                <li class="flex items-center gap-3 text-[10px] font-bold text-gray-500">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-[#1d4379]"></i> PIÈCE D'IDENTITÉ (CNI)
+                </li>
+                <li class="flex items-center gap-3 text-[10px] font-bold text-gray-500">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-[#1d4379]"></i> PHOTO DE PROFIL PROFESSIONNELLE
+                </li>
+            </ul>
         </div>
 
     </main>
 
-    <div class="fixed-footer">
-        <button onclick="window.location.href='driver-application.html'" class="btn-action btn-primary shadow-xl">
-            Commencer l'inscription
+    <div class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-100 pb-[max(16px,env(safe-area-inset-bottom))] z-50">
+        <button onclick="window.location.href='driver-application.html'" class="w-full bg-[#1d4379] text-white py-4 rounded-[18px] font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-transform">
+            Commencer ma candidature
         </button>
     </div>
 
