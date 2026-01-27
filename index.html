@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Accueil</title>
+    <title>DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,123 +11,77 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="config.js"></script>
-    <script src="layout.js" defer></script>
-
-    <style>
+    <script src="layout.js" defer></script> <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 40px; }
 
-        /* 1. HERO BLEU */
+        /* HERO & SEARCH */
         .hero-section {
             background-color: #1d4379;
-            padding-top: 20px;
-            padding-bottom: 50px;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
-            position: relative;
-            text-align: center;
-            z-index: 10;
+            padding-top: 20px; padding-bottom: 50px;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            position: relative; text-align: center; z-index: 10;
         }
-
-        /* 2. RECHERCHE FLOTTANTE */
         .search-wrapper {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
+            position: absolute; bottom: 0; left: 50%;
             transform: translate(-50%, 50%);
-            width: 85%;
-            z-index: 40; /* Z-Index élevé pour passer au dessus du fond */
+            width: 85%; z-index: 20;
         }
         .search-bar {
-            background: white;
-            border-radius: 20px;
-            padding: 16px 20px;
+            background: white; border-radius: 20px; padding: 16px 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid #f1f5f9;
+            display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9;
         }
 
-        /* 3. FILTRES CATÉGORIES (CORRECTION VISIBILITÉ) */
+        /* CATEGORIES (Avec marge haute pour éviter le chevauchement) */
         .categories-wrapper {
-            /* On pousse fort vers le bas pour éviter le chevauchement */
-            margin-top: 80px; 
-            padding: 10px 24px;
-            overflow-x: auto;
-            display: flex;
-            gap: 12px;
-            /* On force l'affichage au premier plan */
-            position: relative;
-            z-index: 30; 
+            margin-top: 50px; padding: 10px 24px;
+            overflow-x: auto; display: flex; gap: 10px;
             scrollbar-width: none;
         }
         .categories-wrapper::-webkit-scrollbar { display: none; }
-
+        
         .cat-btn {
-            background: white;
-            border: 1px solid #cbd5e1; /* Bordure plus visible */
-            padding: 12px 20px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #64748b;
-            white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.2s;
+            background: white; border: 1px solid #e2e8f0;
+            padding: 10px 18px; border-radius: 100px;
+            font-size: 11px; font-weight: 800; text-transform: uppercase;
+            color: #64748b; white-space: nowrap; transition: all 0.2s;
         }
         .cat-btn.active {
-            background: #1d4379;
-            color: white;
-            border-color: #1d4379;
-            box-shadow: 0 4px 12px rgba(29, 67, 121, 0.4);
-            transform: scale(1.05);
+            background: #1d4379; color: white; border-color: #1d4379;
+            box-shadow: 0 4px 10px rgba(29, 67, 121, 0.3);
         }
 
-        /* 4. SLIDER */
+        /* SLIDER */
         .slider-container {
-            margin-top: 20px;
-            overflow-x: auto;
-            display: flex;
-            gap: 20px;
-            padding: 10px 24px 30px 24px;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
+            margin-top: 10px; padding: 10px 24px 30px 24px;
+            overflow-x: auto; display: flex; gap: 20px;
+            scroll-snap-type: x mandatory; scrollbar-width: none;
         }
         .slider-container::-webkit-scrollbar { display: none; }
-
+        
         .car-slide {
-            min-width: 280px;
-            height: 400px;
-            border-radius: 35px;
-            position: relative;
-            scroll-snap-align: center;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-            flex-shrink: 0;
+            min-width: 280px; height: 400px;
+            border-radius: 35px; position: relative;
+            scroll-snap-align: center; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12); flex-shrink: 0;
             background: #f8fafc;
         }
         .car-bg { width: 100%; height: 100%; object-fit: cover; }
-
         .car-overlay {
             position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
             background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
             display: flex; flex-direction: column; justify-content: flex-end;
             padding: 24px; color: white;
         }
-
         .badge-cat {
             position: absolute; top: 20px; left: 20px;
-            background: #2563eb; color: white;
-            font-size: 10px; font-weight: 900;
+            background: #2563eb; color: white; font-size: 10px; font-weight: 900;
             padding: 6px 12px; border-radius: 8px; text-transform: uppercase;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* 5. ACTIONS */
+        /* ACTIONS */
         .action-btns { padding: 0 24px 40px 24px; display: flex; flex-direction: column; gap: 16px; }
         .btn-main {
             width: 100%; padding: 20px; border-radius: 22px;
@@ -144,11 +98,10 @@
     <main>
         <section class="hero-section">
             <h1 class="text-white text-lg font-black uppercase tracking-wide opacity-90">Trouvez votre véhicule</h1>
-            
             <div class="search-wrapper" onclick="window.location.href='search-car.html'">
                 <div class="search-bar">
                     <i data-lucide="search" class="text-blue-500 w-5 h-5"></i>
-                    <span class="text-xs font-bold text-gray-400 uppercase">Rechercher une voiture...</span>
+                    <span class="text-xs font-bold text-gray-400 uppercase">Rechercher...</span>
                 </div>
             </div>
         </section>
@@ -162,14 +115,13 @@
         </div>
 
         <div id="slider" class="slider-container">
-            <div class="w-full text-center py-20 opacity-50">
-                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
+            <div class="w-full text-center py-20 opacity-40">
+                <i data-lucide="loader-2" class="w-10 h-10 animate-spin mx-auto text-[#1d4379]"></i>
             </div>
         </div>
 
         <div class="flex justify-center gap-2 mb-8">
             <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <div class="w-2 h-2 bg-gray-200 rounded-full"></div>
             <div class="w-2 h-2 bg-gray-200 rounded-full"></div>
         </div>
 
@@ -196,30 +148,36 @@
 
         async function loadCars(category) {
             const slider = document.getElementById('slider');
-            // Loader plus visible
             slider.innerHTML = '<div class="w-full text-center py-20 opacity-40"><i data-lucide="loader-2" class="w-10 h-10 animate-spin mx-auto text-[#1d4379]"></i></div>';
 
             let query = supabase.from('vehicles').select('*');
+            if (category !== 'Tout') query = query.ilike('category', `%${category}%`);
 
-            if (category !== 'Tout') {
-                query = query.ilike('category', `%${category}%`);
-            }
-
-            const { data: vehicles, error } = await query.limit(10);
-
+            const { data: vehicles } = await query.limit(10);
             slider.innerHTML = '';
 
-            if (error || !vehicles || vehicles.length === 0) {
-                slider.innerHTML = '<p class="text-center w-full py-10 text-gray-400 font-bold text-xs pl-6">Aucun résultat.</p>';
+            if (!vehicles || vehicles.length === 0) {
+                slider.innerHTML = '<p class="text-center w-full py-10 text-gray-400 font-bold text-xs pl-6">Aucun véhicule.</p>';
                 return;
             }
 
             vehicles.forEach(car => {
-                const img = car.image_url || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600';
-                
+                const img = car.image_url || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf';
                 const html = `
                 <div class="car-slide" onclick="window.location.href='car-detail.html?id=${car.id}'">
                     <img src="${img}" class="car-bg">
                     <div class="badge-cat">${car.category || 'Auto'}</div>
                     <div class="car-overlay">
-                        <h3 class="text-2xl font-black uppercase
+                        <h3 class="text-2xl font-black uppercase leading-tight">${car.brand} ${car.model}</h3>
+                        <p class="text-sm font-bold opacity-90 mt-1">${car.price_per_day.toLocaleString()} CVE / jour</p>
+                    </div>
+                </div>`;
+                slider.insertAdjacentHTML('beforeend', html);
+            });
+            
+            // On relance Lucide APRES avoir inséré le HTML des voitures
+            if(window.lucide) lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
