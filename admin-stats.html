@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin - DjuntaCar</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+</head>
+<body class="bg-[#fcfcfd] pb-24">
+
+    <header class="p-6 bg-[#1d4379] text-white rounded-b-[40px] shadow-lg">
+        <h1 class="text-xl font-black uppercase tracking-widest">Finance Plateforme</h1>
+        <div class="mt-6">
+            <p class="text-[10px] font-bold opacity-60 uppercase">Chiffre d'Affaires Global</p>
+            <h2 id="total-revenue" class="text-3xl font-black">0 CVE</h2>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 pt-8">
+        
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+                <i data-lucide="percent" class="w-5 h-5 text-blue-500 mb-2"></i>
+                <p id="platform-margin" class="text-lg font-black text-[#1d4379]">0 CVE</p>
+                <p class="text-[9px] font-bold text-gray-400 uppercase">Commissions App</p>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+                <i data-lucide="shield-check" class="w-5 h-5 text-green-500 mb-2"></i>
+                <p id="insurance-fund" class="text-lg font-black text-[#1d4379]">0 CVE</p>
+                <p class="text-[9px] font-bold text-gray-400 uppercase">Fonds Assurance</p>
+            </div>
+        </div>
+
+        <h3 class="text-xs font-black text-[#1d4379] uppercase mb-4">Assurances à reverser</h3>
+        <div id="insurance-list" class="space-y-3">
+            </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+
+        async function loadAdminData() {
+            const { data: bookings } = await supabase.from('bookings').select('*').eq('status', 'confirmed');
+            
+            if (!bookings) return;
+
+            const total = bookings.reduce((sum, b) => sum + b.total_price, 0);
+            // Simulation : 15% commission plateforme, 10% assurance
+            const margin = total * 0.15;
+            const insurance = total * 0.10;
+
+            document.getElementById('total-revenue').innerText = total.toLocaleString() + " CVE";
+            document.getElementById('platform-margin').innerText = margin.toLocaleString() + " CVE";
+            document.getElementById('insurance-fund').innerText = insurance.toLocaleString() + " CVE";
+
+            const list = document.getElementById('insurance-list');
+            bookings.forEach(b => {
+                const part = b.total_price * 0.10;
+                list.insertAdjacentHTML('beforeend', `
+                    <div class="bg-white p-4 rounded-2xl border border-gray-50 flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] font-black text-[#1d4379]">Réf: #${b.id}</p>
+                            <p class="text-[8px] font-bold text-gray-400 uppercase">Type: ${b.insurance_type || 'Basique'}</p>
+                        </div>
+                        <p class="text-xs font-black text-blue-600">+ ${part.toLocaleString()} CVE</p>
+                    </div>
+                `);
+            });
+            lucide.createIcons();
+        }
+        loadAdminData();
+    </script>
+</body>
+</html>
