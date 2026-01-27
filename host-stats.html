@@ -2,111 +2,140 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard Hôte - DjuntaCar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Mon Activité - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="config.js"></script>
+    <script src="layout.js" defer></script>
 
     <style>
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 28px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #f8fafc; padding-bottom: 120px; }
+
+        /* CARTE DE GAINS RÉELS */
+        .revenue-card {
+            background: #1d4379;
+            border-radius: 35px;
+            padding: 30px 24px;
+            color: white;
+            box-shadow: 0 15px 35px rgba(29, 67, 121, 0.2);
+            position: relative; overflow: hidden;
+        }
+        .revenue-card::after {
+            content: ''; position: absolute; top: -30px; right: -30px;
+            width: 120px; height: 120px; background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        /* GRILLE DE STATS */
+        .stat-box {
+            background: white; border-radius: 24px; padding: 20px;
+            border: 1px solid #f1f5f9; text-align: center;
+        }
+
+        /* ITEMS DE RÉSERVATION */
+        .booking-item {
+            background: white; border-radius: 22px; padding: 16px;
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 12px; border: 1px solid #f1f5f9;
+            transition: transform 0.2s;
+        }
+        .booking-item:active { transform: scale(0.98); }
+
+        /* BOUTON D'AJOUT FIXE */
+        .fixed-add-btn {
+            position: fixed; bottom: 30px; right: 24px;
+            background: #1d4379; color: white;
+            width: 60px; height: 60px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3);
+            z-index: 1000;
         }
     </style>
 </head>
-<body class="bg-[#fcfcfd] pb-32">
+<body class="antialiased">
 
-    <header class="p-6 bg-white border-b border-gray-50 flex justify-between items-center sticky top-0 z-50">
-        <div>
-            <h1 class="text-xl font-black text-[#1d4379] uppercase">Mon Activité</h1>
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tableau de bord propriétaire</p>
+    <main class="max-w-md mx-auto px-6 pt-8">
+        <div class="mb-6">
+            <h1 class="text-2xl font-black text-[#1d4379] uppercase italic leading-tight">Mon Activité</h1>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Suivi de vos revenus loueurs</p>
         </div>
-        <button onclick="window.location.href='profile.html'" class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center">
-            <i data-lucide="user" class="w-5 h-5 text-[#1d4379]"></i>
-        </button>
-    </header>
 
-    <main class="max-w-md mx-auto px-6 pt-6">
-
-        <div class="stat-card bg-[#1d4379] text-white border-none mb-6">
-            <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest mb-1">Gains Totaux</p>
-            <h2 id="total-earnings" class="text-3xl font-black">0 CVE</h2>
-            <div class="flex items-center gap-2 mt-4 text-[10px] font-bold text-green-400">
-                <i data-lucide="trending-up" class="w-3 h-3"></i>
-                <span>+12% ce mois-ci</span>
+        <div class="revenue-card mb-6">
+            <p class="text-[10px] font-black opacity-60 uppercase tracking-[2px] mb-2">Revenu Net (Après taxes)</p>
+            <h2 id="total-earnings" class="text-4xl font-black italic">0 CVE</h2>
+            <div class="flex items-center gap-2 mt-4 text-[10px] font-black text-green-400 uppercase">
+                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                <span>+12% vs mois dernier</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <div class="stat-card text-center">
-                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <i data-lucide="calendar-check" class="w-5 h-5 text-[#1d4379]"></i>
+        <div class="grid grid-cols-2 gap-4 mb-10">
+            <div class="stat-box">
+                <div class="w-10 h-10 bg-blue-50 text-[#1d4379] rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="calendar-check" class="w-5 h-5"></i>
                 </div>
                 <p id="count-bookings" class="text-xl font-black text-[#1d4379]">0</p>
-                <p class="text-[9px] font-bold text-gray-400 uppercase">Réservations</p>
+                <p class="text-[9px] font-black text-gray-400 uppercase">Locations</p>
             </div>
-            <div class="stat-card text-center">
-                <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <i data-lucide="car" class="w-5 h-5 text-orange-500"></i>
+            <div class="stat-box">
+                <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="car" class="w-5 h-5"></i>
                 </div>
                 <p id="count-vehicles" class="text-xl font-black text-[#1d4379]">0</p>
-                <p class="text-[9px] font-bold text-gray-400 uppercase">Véhicules</p>
+                <p class="text-[9px] font-black text-gray-400 uppercase">Véhicules</p>
             </div>
         </div>
 
-        <div class="flex justify-between items-center mb-4 px-2">
-            <h3 class="text-xs font-black text-[#1d4379] uppercase">Prochaines Locations</h3>
-            <button class="text-[10px] font-bold text-blue-500 uppercase">Voir tout</button>
+        <div class="flex justify-between items-center mb-6 px-2">
+            <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest">Dernières Activités</h3>
+            <button class="text-[9px] font-black text-blue-500 uppercase">Tout voir</button>
         </div>
 
-        <div id="bookings-list" class="space-y-4">
-            <div class="text-center py-10">
-                <i data-lucide="loader" class="w-6 h-6 animate-spin text-gray-300 mx-auto"></i>
+        <div id="bookings-list">
+            <div class="flex flex-col items-center justify-center py-10 opacity-20">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin"></i>
             </div>
         </div>
-
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-100 flex justify-around pb-[max(16px,env(safe-area-inset-bottom))] z-50">
-        <button onclick="window.location.href='host-stats.html'" class="flex flex-col items-center gap-1 text-[#1d4379]">
-            <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
-            <span class="text-[9px] font-bold uppercase">Stats</span>
-        </button>
-        <button onclick="window.location.href='add-car.html'" class="flex flex-col items-center gap-1 text-gray-400">
-            <i data-lucide="plus-circle" class="w-6 h-6"></i>
-            <span class="text-[9px] font-bold uppercase">Ajouter</span>
-        </button>
-        <button onclick="window.location.href='chat.html'" class="flex flex-col items-center gap-1 text-gray-400">
-            <i data-lucide="message-square" class="w-6 h-6"></i>
-            <span class="text-[9px] font-bold uppercase">Messages</span>
-        </button>
-    </nav>
+    <a href="add-car.html" class="fixed-add-btn active:scale-90 transition-transform">
+        <i data-lucide="plus" class="w-8 h-8"></i>
+    </a>
 
     <script>
-        lucide.createIcons();
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+
+        // RÉGLAGES COMMISSIONS (Règle métier)
+        const TX_COMMISSION = 0.15; // 15% Plateforme
+        const TX_ASSURANCE = 0.10;  // 10% Assurance
 
         async function loadHostData() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return window.location.href = 'login.html';
 
-            // 1. Récupérer les véhicules de cet hôte
+            // 1. Récupérer les véhicules
             const { data: vehicles } = await supabase
                 .from('vehicles')
                 .select('id')
                 .eq('owner_id', user.id);
             
-            const vehicleIds = vehicles.map(v => v.id);
-            document.getElementById('count-vehicles').innerText = vehicles.length;
+            if (!vehicles || vehicles.length === 0) {
+                renderEmpty();
+                return;
+            }
 
-            // 2. Récupérer les bookings liés à ces véhicules
+            document.getElementById('count-vehicles').innerText = vehicles.length;
+            const vehicleIds = vehicles.map(v => v.id);
+
+            // 2. Récupérer les bookings
             const { data: bookings, error } = await supabase
                 .from('bookings')
                 .select('*, vehicles(brand, model, image_url)')
@@ -115,39 +144,64 @@
 
             if (error) return;
 
-            // 3. Calculer les gains totaux
-            const total = bookings.reduce((sum, b) => sum + b.total_price, 0);
-            document.getElementById('total-earnings').innerText = total.toLocaleString() + " CVE";
-            document.getElementById('count-bookings').innerText = bookings.length;
+            renderStats(bookings);
+            renderList(bookings);
+            
+            lucide.createIcons();
+        }
 
-            // 4. Afficher la liste
+        function renderStats(bookings) {
+            // Calcul du Net : Somme des (Prix * (1 - taxes))
+            const totalNet = bookings.reduce((sum, b) => {
+                const taxes = TX_COMMISSION + TX_ASSURANCE;
+                return sum + (b.total_price * (1 - taxes));
+            }, 0);
+
+            document.getElementById('total-earnings').innerText = Math.round(totalNet).toLocaleString() + " CVE";
+            document.getElementById('count-bookings').innerText = bookings.length;
+        }
+
+        function renderList(bookings) {
             const list = document.getElementById('bookings-list');
             list.innerHTML = '';
 
             if (bookings.length === 0) {
-                list.innerHTML = '<p class="text-center text-[10px] font-bold text-gray-400 py-10">Aucune réservation pour le moment.</p>';
-            } else {
-                bookings.forEach(b => {
-                    const html = `
-                        <div class="bg-white p-4 rounded-2xl border border-gray-50 flex items-center gap-4">
-                            <img src="${b.vehicles.image_url}" class="w-12 h-12 rounded-xl object-cover">
-                            <div class="flex-1">
-                                <h4 class="text-[11px] font-black text-[#1d4379]">${b.vehicles.brand} ${b.vehicles.model}</h4>
-                                <p class="text-[9px] font-bold text-gray-400 uppercase">${new Date(b.start_date).toLocaleDateString()} - ${new Date(b.end_date).toLocaleDateString()}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-black text-[#1d4379]">${b.total_price.toLocaleString()} CVE</p>
-                                <span class="text-[8px] font-bold px-2 py-1 rounded bg-green-50 text-green-600 uppercase">${b.status}</span>
-                            </div>
-                        </div>
-                    `;
-                    list.insertAdjacentHTML('beforeend', html);
-                });
+                renderEmpty();
+                return;
             }
+
+            bookings.forEach(b => {
+                const taxes = TX_COMMISSION + TX_ASSURANCE;
+                const net = b.total_price * (1 - taxes);
+
+                list.insertAdjacentHTML('beforeend', `
+                    <div class="booking-item">
+                        <img src="${b.vehicles.image_url}" class="w-14 h-14 rounded-2xl object-cover bg-gray-50">
+                        <div class="flex-1">
+                            <h4 class="text-xs font-black text-[#1d4379] uppercase leading-tight">${b.vehicles.brand} ${b.vehicles.model}</h4>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase mt-1">
+                                ${new Date(b.start_date).toLocaleDateString()}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-black text-[#1d4379]">+ ${Math.round(net).toLocaleString()}</p>
+                            <span class="text-[8px] font-black px-2 py-0.5 rounded-md bg-green-50 text-green-600 uppercase">Net</span>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        function renderEmpty() {
+            document.getElementById('bookings-list').innerHTML = `
+                <div class="text-center py-16 px-8 bg-white rounded-[32px] border-2 border-dashed border-gray-100">
+                    <i data-lucide="car-front" class="w-10 h-10 text-gray-100 mx-auto mb-4"></i>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Aucune activité enregistrée</p>
+                </div>`;
             lucide.createIcons();
         }
 
-        loadHostData();
+        document.addEventListener('DOMContentLoaded', loadHostData);
     </script>
 </body>
 </html>
