@@ -1,40 +1,57 @@
 /**
- * DJUNTACAR - LAYOUT SYSTEM (Correction de l'ordre de chargement)
+ * DJUNTACAR - LAYOUT SYSTEM (Correction Menu Langue)
  */
 
 document.addEventListener("DOMContentLoaded", function() {
-    // 1. Injection prioritaire de la structure
+    // 1. Injection prioritaire
     injectHeader();
     injectMenu();
 
-    // 2. Chargement des icônes UNIQUEMENT après l'injection
+    // 2. Chargement des icônes
     if (window.lucide) {
         lucide.createIcons();
     }
 
-    // 3. Fonctions annexes (PWA, Notifs)
+    // 3. Fonctions annexes
     try { setupPWA(); } catch(e) {}
     try { checkUnreadMessages(); } catch(e) {}
+
+    // 4. Fermeture automatique du menu langue si on clique ailleurs
+    document.addEventListener('click', function(e) {
+        const langMenu = document.getElementById('lang-menu');
+        const langBtn = document.getElementById('lang-btn');
+        // Si on clique ailleurs que sur le bouton ou le menu, on ferme
+        if (langMenu && langBtn && !langBtn.contains(e.target) && !langMenu.contains(e.target)) {
+            langMenu.style.display = 'none';
+        }
+    });
 });
 
 function injectHeader() {
-    // On cible ou on crée le header
     let header = document.querySelector('header');
     if (!header) {
         header = document.createElement('header');
         document.body.prepend(header);
     }
 
-    // Le HTML propre avec les attributs data-lucide
     header.innerHTML = `
         <div class="header-content">
             <div class="header-left">
                 <button onclick="toggleMenu()" class="icon-btn">
                     <i data-lucide="menu" class="icon-lg text-blue"></i>
                 </button>
-                <button class="lang-btn">
-                    FR <i data-lucide="chevron-down" class="icon-sm"></i>
-                </button>
+                
+                <div style="position: relative;">
+                    <button id="lang-btn" onclick="toggleLangMenu(event)" class="lang-btn">
+                        <span id="current-lang">FR</span> 
+                        <i data-lucide="chevron-down" class="icon-sm"></i>
+                    </button>
+                    <div id="lang-menu" class="lang-dropdown">
+                        <div onclick="changeLang('FR')" class="lang-item">Français</div>
+                        <div onclick="changeLang('EN')" class="lang-item">English</div>
+                        <div onclick="changeLang('PT')" class="lang-item">Português</div>
+                    </div>
+                </div>
             </div>
 
             <div class="header-center" onclick="window.location.href='index.html'">
@@ -54,7 +71,7 @@ function injectHeader() {
         </div>
     `;
 
-    // Injection des styles critiques directement en JS pour garantir l'affichage
+    // INJECTION CSS (Avec le Z-Index corrigé)
     const style = document.createElement('style');
     style.innerHTML = `
         header { height: 80px; background: white; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #f1f5f9; padding: 0 16px; display: block; }
@@ -64,13 +81,31 @@ function injectHeader() {
         .header-right { width: 30%; display: flex; justify-content: flex-end; align-items: center; gap: 4px; }
         .header-logo { max-height: 50px; object-fit: contain; }
         .fallback-logo { display: none; font-weight: 900; color: #1d4379; font-style: italic; font-size: 18px; }
+        
         .icon-btn { background: none; border: none; padding: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .lang-btn { background: #f8fafc; border: 1px solid #f1f5f9; padding: 6px 10px; border-radius: 8px; font-size: 10px; font-weight: 900; color: #1d4379; display: flex; align-items: center; gap: 4px; }
         .text-blue { color: #1d4379; }
         .icon-lg { width: 32px; height: 32px; }
         .icon-md { width: 26px; height: 26px; }
         .icon-sm { width: 12px; height: 12px; }
         .badge { display: none; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid white; }
+
+        /* CSS DU MENU LANGUE */
+        .lang-btn { background: #f8fafc; border: 1px solid #f1f5f9; padding: 6px 10px; border-radius: 8px; font-size: 10px; font-weight: 900; color: #1d4379; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+        .lang-dropdown { 
+            display: none; 
+            position: absolute; 
+            top: 40px; left: 0; 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+            min-width: 90px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            overflow: hidden;
+            z-index: 5000 !important; /* C'EST LA CLÉ DU SUCCÈS */
+        }
+        .lang-item { padding: 10px 12px; font-size: 11px; font-weight: 700; color: #1d4379; cursor: pointer; border-bottom: 1px solid #f8fafc; }
+        .lang-item:hover { background: #f1f5f9; }
+        .lang-item:last-child { border-bottom: none; }
     `;
     document.head.appendChild(style);
 }
@@ -104,7 +139,8 @@ function injectMenu() {
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
-// FONCTIONS GLOBALES
+// --- LOGIQUE FONCTIONNELLE ---
+
 window.toggleMenu = function() {
     const menu = document.getElementById('mobile-menu');
     const overlay = document.getElementById('menu-overlay');
@@ -116,6 +152,25 @@ window.toggleMenu = function() {
         overlay.style.display = 'block';
     }
     if(window.lucide) lucide.createIcons();
+};
+
+// Fonction Langue Corrigée
+window.toggleLangMenu = function(event) {
+    if(event) event.stopPropagation(); // Empêche de fermer immédiatement
+    const menu = document.getElementById('lang-menu');
+    if (menu.style.display === 'block') {
+        menu.style.display = 'none';
+    } else {
+        menu.style.display = 'block';
+    }
+};
+
+window.changeLang = function(lang) {
+    document.getElementById('current-lang').innerText = lang;
+    document.getElementById('lang-menu').style.display = 'none';
+    
+    // Ici, vous ajouteriez la logique réelle de traduction
+    // console.log("Langue changée : " + lang);
 };
 
 window.handleLogout = async function() {
