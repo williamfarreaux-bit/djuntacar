@@ -1,75 +1,104 @@
 /**
- * LAYOUT AUTOMATIQUE
- * Injecte le Header et le Menu Burger sur toutes les pages au chargement.
+ * LAYOUT AUTOMATIQUE (Version Fusionnée)
+ * - Injecte le Header (avec bouton Install PWA)
+ * - Injecte le Menu Burger (avec vos liens spécifiques)
+ * - Gère la logique PWA
  */
+
+let deferredPrompt; // Variable pour stocker l'événement d'installation
 
 document.addEventListener("DOMContentLoaded", function() {
     injectHeader();
     injectMenu();
+    setupPWA(); // Initialise l'écouteur pour l'installation
     
-    // Initialise les icônes après injection
+    // Initialise les icônes Lucide
     if (window.lucide) window.lucide.createIcons();
 });
 
-// 1. COMMANDE : Créer le Header
+// 1. HEADER (Design Validé + Bouton Install)
 function injectHeader() {
     const headerHTML = `
-    <div class="header-container">
-        <div class="header-side">
-            <button onclick="toggleMenu()" class="p-2">
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%;">
+        <div style="width: 20%; display: flex; justify-content: flex-start;">
+            <button onclick="toggleMenu()" class="p-2 -ml-2">
                 <i data-lucide="menu" class="w-8 h-8 text-[#1d4379]"></i>
             </button>
         </div>
-        <div class="header-center">
-            <img src="logo.png" alt="DjuntaCar" class="header-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <span style="display:none; font-weight:900; color:#1d4379; font-size:20px;">DJUNTACAR</span>
+
+        <div style="width: 60%; display: flex; justify-content: center; align-items: center;">
+            <img src="logo.png" alt="DjuntaCar" style="max-height: 40px; object-fit: contain;" onerror="this.outerHTML='<span class=\'font-black text-xl text-[#1d4379] uppercase italic\'>DJUNTACAR</span>'">
         </div>
-        <div class="header-side">
-            <button onclick="window.location.href='profile.html'" class="p-2">
+
+        <div style="width: 20%; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+            <button id="pwa-install-btn" class="hidden bg-blue-50 text-blue-600 p-2 rounded-full active:scale-90 transition-transform">
+                <i data-lucide="download-cloud" class="w-5 h-5"></i>
+            </button>
+            
+            <button onclick="window.location.href='profile.html'" class="p-2 -mr-2">
                 <i data-lucide="user" class="w-8 h-8 text-[#1d4379]"></i>
             </button>
         </div>
     </div>`;
 
-    // Cherche la balise <header> existante et la remplit
+    // Cible la balise <header> existante dans le HTML
     const headerElement = document.querySelector('header');
-    if (headerElement) headerElement.innerHTML = headerHTML;
+    if (headerElement) {
+        headerElement.innerHTML = headerHTML;
+        // On applique le style validé directement à la balise header pour garantir le rendu
+        headerElement.style.height = '70px';
+        headerElement.style.background = 'white';
+        headerElement.style.display = 'flex';
+        headerElement.style.alignItems = 'center';
+        headerElement.style.position = 'sticky';
+        headerElement.style.top = '0';
+        headerElement.style.zIndex = '1000';
+        headerElement.style.borderBottom = '1px solid #f1f5f9';
+        headerElement.style.padding = '0 16px';
+    }
 }
 
-// 2. COMMANDE : Créer le Menu Burger
+// 2. MENU LATÉRAL (Vos liens conservés)
 function injectMenu() {
-    // Supprime l'ancien menu s'il existe (nettoyage)
+    // Nettoyage préventif
     const oldMenu = document.getElementById('mobile-menu');
+    const oldOverlay = document.getElementById('menu-overlay');
     if (oldMenu) oldMenu.remove();
+    if (oldOverlay) oldOverlay.remove();
 
     const menuHTML = `
-    <div id="mobile-menu" class="fixed inset-0 bg-white z-[2000] p-8 flex flex-col transform -translate-x-full transition-transform duration-300">
+    <div id="menu-overlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-[1999] hidden backdrop-blur-sm transition-opacity"></div>
+
+    <div id="mobile-menu" class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[300px] bg-white z-[2000] p-6 flex flex-col transform -translate-x-full transition-transform duration-300 shadow-2xl">
         <div class="flex justify-between items-center mb-10">
-            <img src="logo.png" class="h-8 object-contain" onerror="this.style.display='none'">
-            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full">
-                <i data-lucide="x" class="w-6 h-6 text-gray-400"></i>
+            <span class="font-black text-[#1d4379] text-xl italic">DJUNTACAR</span>
+            <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full text-gray-400">
+                <i data-lucide="x" class="w-6 h-6"></i>
             </button>
         </div>
         
-        <nav class="space-y-6 flex-1">
-            <a href="index.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase hover:text-green-500 transition-colors">
-                <i data-lucide="home" class="w-6 h-6"></i> Accueil
+        <nav class="space-y-4 flex-1 overflow-y-auto">
+            <a href="index.html" class="flex items-center gap-4 text-sm font-black text-[#1d4379] uppercase p-3 hover:bg-gray-50 rounded-xl transition-colors">
+                <i data-lucide="home" class="w-5 h-5"></i> Accueil
             </a>
-            <a href="search-driver.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase hover:text-green-500 transition-colors">
-                <i data-lucide="user-check" class="w-6 h-6"></i> Mon Chauffeur
+            <a href="search-driver.html" class="flex items-center gap-4 text-sm font-black text-[#1d4379] uppercase p-3 hover:bg-gray-50 rounded-xl transition-colors">
+                <i data-lucide="user-check" class="w-5 h-5"></i> Mon Chauffeur
             </a>
-            <a href="search-car.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase hover:text-green-500 transition-colors">
-                <i data-lucide="car-front" class="w-6 h-6"></i> Ma Voiture
+            <a href="search-car.html" class="flex items-center gap-4 text-sm font-black text-[#1d4379] uppercase p-3 hover:bg-gray-50 rounded-xl transition-colors">
+                <i data-lucide="car-front" class="w-5 h-5"></i> Louer une voiture
             </a>
-            <a href="my-rentals.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase hover:text-green-500 transition-colors">
-                <i data-lucide="calendar" class="w-6 h-6"></i> Mes Locations
+            <a href="my-rentals.html" class="flex items-center gap-4 text-sm font-black text-[#1d4379] uppercase p-3 hover:bg-gray-50 rounded-xl transition-colors">
+                <i data-lucide="calendar" class="w-5 h-5"></i> Mes Locations
             </a>
-            <a href="profile.html" class="flex items-center gap-4 text-lg font-black text-[#1d4379] uppercase hover:text-green-500 transition-colors">
-                <i data-lucide="user-circle" class="w-6 h-6"></i> Mon Compte
+            <a href="wallet.html" class="flex items-center gap-4 text-sm font-black text-[#1d4379] uppercase p-3 hover:bg-gray-50 rounded-xl transition-colors">
+                <i data-lucide="wallet" class="w-5 h-5"></i> Portefeuille
+            </a>
+            <a href="profile.html" class="flex items-center gap-4 text-sm font-black text-[#1d4379] uppercase p-3 hover:bg-gray-50 rounded-xl transition-colors">
+                <i data-lucide="user-circle" class="w-5 h-5"></i> Mon Compte
             </a>
         </nav>
 
-        <button onclick="window.location.href='login.html'" class="flex items-center gap-2 text-xs font-black text-red-400 uppercase w-full p-2 mt-4 hover:bg-red-50 rounded-lg transition-colors">
+        <button onclick="handleLogout()" class="flex items-center gap-2 text-xs font-black text-red-500 uppercase w-full p-4 bg-red-50 rounded-xl mt-4 justify-center">
             <i data-lucide="log-out" class="w-4 h-4"></i> Déconnexion
         </button>
     </div>`;
@@ -77,10 +106,54 @@ function injectMenu() {
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
-// Fonction globale pour ouvrir/fermer
+// 3. LOGIQUE PWA (Installation App)
+function setupPWA() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Empêche la bannière par défaut de Chrome
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Affiche notre bouton personnalisé
+        const installBtn = document.getElementById('pwa-install-btn');
+        if (installBtn) {
+            installBtn.classList.remove('hidden');
+            
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        installBtn.classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                }
+            });
+        }
+    });
+}
+
+// 4. FONCTIONS GLOBALES
 window.toggleMenu = function() {
     const menu = document.getElementById('mobile-menu');
-    if (menu) menu.classList.toggle('translate-x-0');
-    // Note: on utilise translate-x-0 car Tailwind gère la classe active ainsi
-    // Si vous préférez votre ancien CSS, remplacez par menu.classList.toggle('active');
+    const overlay = document.getElementById('menu-overlay');
+    
+    if (menu) {
+        const isOpen = !menu.classList.contains('-translate-x-full');
+        if (isOpen) {
+            menu.classList.add('-translate-x-full'); // Fermer
+            overlay.classList.add('hidden');
+        } else {
+            menu.classList.remove('-translate-x-full'); // Ouvrir
+            overlay.classList.remove('hidden');
+        }
+    }
+};
+
+window.handleLogout = async function() {
+    // Si Supabase est chargé, on déconnecte proprement
+    if (window.supabase) {
+        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        await sb.auth.signOut();
+    }
+    window.location.href = 'login.html';
 };
