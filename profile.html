@@ -46,6 +46,21 @@
             object-fit: cover; background: white;
         }
 
+        /* --- NOUVEAU : BOUTON CAMERA --- */
+        .camera-btn {
+            position: absolute;
+            bottom: -5px; right: -5px;
+            width: 36px; height: 36px;
+            background: #1d4379; color: white;
+            border-radius: 50%;
+            border: 3px solid white;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .camera-btn:active { transform: scale(0.9); }
+
         /* ACTIONS MENU */
         .menu-link {
             display: flex; align-items: center; gap: 16px;
@@ -72,15 +87,21 @@
 </head>
 <body class="antialiased">
 
-    <header></header>
+    <div id="header-slot"></div>
 
     <main class="max-w-md mx-auto px-6 pt-6">
         
         <div class="profile-card mb-8">
             <div class="profile-card-header"></div>
+            
             <div class="avatar-wrapper">
-                <img id="profile-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="avatar-img shadow-lg">
-                <div class="absolute -bottom-1 -right-1 bg-[#22c55e] w-5 h-5 rounded-full border-2 border-white"></div>
+                <img id="profile-avatar" src="" class="avatar-img shadow-lg">
+                
+                <input type="file" id="avatar-input" hidden accept="image/*" onchange="uploadAvatar(this)">
+                
+                <label for="avatar-input" class="camera-btn">
+                    <i id="cam-icon" data-lucide="camera" class="w-4 h-4"></i>
+                </label>
             </div>
             
             <h1 id="user-name" class="text-xl font-black text-[#1d4379] uppercase tracking-tight">Chargement...</h1>
@@ -131,7 +152,7 @@
             </a>
         </div>
 
-        <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-3 text-red-500 font-black text-xs uppercase p-5 bg-red-50 rounded-[22px] transition-all active:scale-95">
+        <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-3 text-red-500 font-black text-xs uppercase p-5 bg-red-50 rounded-[22px] transition-all active:scale-95 mb-8">
             <i data-lucide="log-out" class="w-5 h-5"></i> Déconnexion
         </button>
 
@@ -140,6 +161,7 @@
     <script>
         // Initialisation Supabase
         const _supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        let globalUser = null; // Pour stocker l'ID utilisateur globalement
 
         async function initProfile() {
             // 1. Récupération session Auth
@@ -149,6 +171,7 @@
                 window.location.href = 'login.html';
                 return;
             }
+            globalUser = user; // Sauvegarde pour l'upload
 
             document.getElementById('user-email').innerText = user.email;
 
@@ -164,7 +187,7 @@
                     const fullName = `${profile.first_name || 'Utilisateur'} ${profile.last_name || ''}`;
                     document.getElementById('user-name').innerText = fullName;
                     
-                    // Avatar dynamique
+                    // Avatar dynamique (Ajout d'un timestamp pour éviter le cache navigateur)
                     const avatarUrl = profile.avatar_url || `https://ui-avatars.com/api/?name=${fullName}&background=1d4379&color=fff`;
                     document.getElementById('profile-avatar').src = avatarUrl;
 
@@ -180,6 +203,64 @@
             }
 
             if (window.lucide) window.lucide.createIcons();
+        }
+
+        // --- NOUVELLE FONCTION D'UPLOAD ---
+        async function uploadAvatar(input) {
+            const file = input.files[0];
+            if (!file || !globalUser) return;
+
+            const icon = document.getElementById('cam-icon');
+            
+            // 1. Feedback Visuel (Spinner)
+            icon.setAttribute('data-lucide', 'loader-2');
+            icon.classList.add('animate-spin');
+            lucide.createIcons();
+
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${globalUser.id}-${Date.now()}.${fileExt}`; // Nom unique avec timestamp
+                const filePath = `${fileName}`;
+
+                // 2. Upload vers Supabase Storage
+                const { error: uploadError } = await _supabase.storage
+                    .from('avatars')
+                    .upload(filePath, file);
+
+                if (uploadError) throw uploadError;
+
+                // 3. Récupérer l'URL publique
+                const { data: { publicUrl } } = _supabase.storage
+                    .from('avatars')
+                    .getPublicUrl(filePath);
+
+                // 4. Mettre à jour la base de données
+                const { error: updateError } = await _supabase
+                    .from('profiles')
+                    .update({ avatar_url: publicUrl })
+                    .eq('id', globalUser.id);
+
+                if (updateError) throw updateError;
+
+                // 5. Mettre à jour l'image immédiatement
+                document.getElementById('profile-avatar').src = publicUrl;
+                
+            } catch (error) {
+                console.error("Erreur Upload:", error);
+                alert("Erreur lors de l'envoi de la photo.");
+            } finally {
+                // Remettre l'icône normale
+                icon.setAttribute('data-lucide', 'camera');
+                icon.classList.remove('animate-spin');
+                lucide.createIcons();
+                // Reset de l'input pour permettre de ré-uploader le même fichier si besoin
+                input.value = '';
+            }
+        }
+
+        async function handleLogout() {
+            await _supabase.auth.signOut();
+            window.location.href = 'login.html';
         }
 
         document.addEventListener('DOMContentLoaded', initProfile);
