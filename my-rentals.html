@@ -4,194 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mes Locations - DjuntaCar</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="config.js"></script>
-
+    <script src="layout.js" defer></script>
     <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #fcfcfd; padding-bottom: 100px; margin: 0; }
-
-        /* HEADER */
-        header {
-            padding: 20px 24px; background: white;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #f1f5f9; position: sticky; top: 0; z-index: 50;
-        }
-
-        /* CARD LOCATION */
-        .rental-card {
-            background: white; border-radius: 24px;
-            padding: 16px; margin-bottom: 16px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            display: flex; gap: 16px; align-items: center;
-            transition: transform 0.2s;
-        }
-        .rental-card:active { transform: scale(0.98); }
-        
-        .rental-img {
-            width: 80px; height: 80px;
-            border-radius: 16px; object-fit: cover;
-            background-color: #f1f5f9;
-        }
-
-        /* STATUS BADGES */
-        .status-badge {
-            font-size: 9px; font-weight: 800; text-transform: uppercase;
-            padding: 4px 8px; border-radius: 8px; display: inline-block; margin-bottom: 4px;
-        }
-        .status-pending { background: #fef3c7; color: #d97706; } /* Jaune */
-        .status-confirmed { background: #dcfce7; color: #16a34a; } /* Vert */
-        .status-completed { background: #f1f5f9; color: #64748b; } /* Gris */
-        .status-cancelled { background: #fee2e2; color: #dc2626; } /* Rouge */
-
-        /* MENU BAS */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; padding: 12px 24px;
-            border-top: 1px solid #f1f5f9;
-            display: flex; justify-content: space-between;
-            padding-bottom: max(12px, env(safe-area-inset-bottom));
-            z-index: 100;
-        }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8; }
-        .nav-item.active { color: #1d4379; }
-        .nav-item i { width: 24px; height: 24px; }
-        .nav-item span { font-size: 9px; font-weight: 700; }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #fcfcfd; padding-bottom: 120px; }
+        .rental-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.02); display: flex; gap: 16px; }
+        .rental-img { width: 80px; height: 80px; border-radius: 16px; object-fit: cover; background: #f8fafc; }
+        .status-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; }
+        .status-pending { background: #fff7ed; color: #ea580c; }
+        .status-confirmed { background: #f0fdf4; color: #16a34a; }
+        .status-completed { background: #f1f5f9; color: #64748b; }
     </style>
 </head>
-<body>
-
-    <header>
-        <h1 class="text-xl font-black text-[#1d4379] uppercase">Mes Locations</h1>
-        <button onclick="window.location.href='profile.html'" class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-[#1d4379]">
-            <i data-lucide="user" class="w-5 h-5"></i>
-        </button>
-    </header>
-
+<body class="antialiased">
+    <div id="header-slot"></div>
     <main class="max-w-md mx-auto px-6 pt-6">
+        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-6">Mes Voyages</h1>
         
-        <div id="loader" class="text-center py-10">
-            <i data-lucide="loader-2" class="w-8 h-8 animate-spin text-[#1d4379] mx-auto mb-2"></i>
-            <p class="text-xs font-bold text-gray-400">Chargement de l'historique...</p>
-        </div>
-
-        <div id="rentals-list" class="space-y-4 hidden">
+        <div id="rentals-list">
+            <div class="text-center py-20 opacity-40">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
             </div>
-
-        <div id="empty-state" class="hidden text-center py-20">
-            <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i data-lucide="calendar-x" class="w-8 h-8 text-[#1d4379]"></i>
-            </div>
-            <h3 class="text-lg font-black text-[#1d4379]">Aucune location</h3>
-            <p class="text-xs text-gray-400 font-medium mt-2 max-w-[200px] mx-auto">Vous n'avez pas encore réservé de véhicule.</p>
-            <button onclick="window.location.href='search-car.html'" class="mt-6 bg-[#1d4379] text-white px-6 py-3 rounded-xl font-black text-xs uppercase shadow-lg">
-                Trouver une voiture
-            </button>
         </div>
-
     </main>
 
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <i data-lucide="home"></i>
-            <span>Accueil</span>
-        </a>
-        <a href="search-car.html" class="nav-item">
-            <i data-lucide="search"></i>
-            <span>Trouver</span>
-        </a>
-        <a href="my-rentals.html" class="nav-item active">
-            <i data-lucide="calendar"></i>
-            <span>Locations</span>
-        </a>
-        <a href="profile.html" class="nav-item">
-            <i data-lucide="user"></i>
-            <span>Compte</span>
-        </a>
-    </nav>
-
     <script>
-        lucide.createIcons();
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
 
-        async function initRentals() {
-            // 1. Auth Check
+        async function loadRentals() {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
+            if (!user) return window.location.href = 'login.html';
 
-            // 2. Fetch Data (Bookings + info Voiture)
-            // On utilise la syntaxe select '*, vehicles(*)' pour faire une jointure automatique
+            // Récupérer les réservations + infos véhicule
             const { data: bookings, error } = await supabase
                 .from('bookings')
-                .select('*, vehicles(*)') 
-                .eq('renter_id', user.id)
-                .order('created_at', { ascending: false });
+                .select('*, vehicles(brand, model, image_url, is_driver_included)')
+                .eq('user_id', user.id)
+                .order('start_date', { ascending: false });
 
-            // Cacher Loader
-            document.getElementById('loader').style.display = 'none';
+            const container = document.getElementById('rentals-list');
+            container.innerHTML = '';
 
-            if (error) {
-                console.error(error);
-                alert("Erreur de chargement.");
+            if (!bookings || bookings.length === 0) {
+                container.innerHTML = `<div class="text-center py-10"><p class="text-xs font-bold text-gray-400">Aucune location trouvée.</p></div>`;
                 return;
             }
 
-            const list = document.getElementById('rentals-list');
-            const empty = document.getElementById('empty-state');
+            bookings.forEach(b => {
+                let statusClass = 'status-pending';
+                let statusText = 'En attente';
+                if(b.status === 'confirmed') { statusClass = 'status-confirmed'; statusText = 'Confirmé'; }
+                if(b.status === 'completed') { statusClass = 'status-completed'; statusText = 'Terminé'; }
 
-            // 3. Affichage
-            if (!bookings || bookings.length === 0) {
-                empty.classList.remove('hidden');
-            } else {
-                list.classList.remove('hidden');
-                
-                bookings.forEach(booking => {
-                    const car = booking.vehicles; // Données de la voiture jointe
-                    const startDate = new Date(booking.start_date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
-                    const endDate = new Date(booking.end_date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
+                // Gestion image (si c'est un chauffeur ou une voiture)
+                let img = b.vehicles.image_url;
+                if(!img && b.vehicles.is_driver_included) {
+                    const initials = (b.vehicles.brand[0] + b.vehicles.model[0]).toUpperCase();
+                    img = `https://ui-avatars.com/api/?name=${initials}&background=22c55e&color=fff`;
+                }
 
-                    // Gestion couleur statut
-                    let statusClass = 'status-pending';
-                    let statusText = 'En attente';
-                    
-                    if (booking.status === 'confirmed') { statusClass = 'status-confirmed'; statusText = 'Confirmée'; }
-                    if (booking.status === 'completed') { statusClass = 'status-completed'; statusText = 'Terminée'; }
-                    if (booking.status === 'cancelled') { statusClass = 'status-cancelled'; statusText = 'Annulée'; }
-
-                    const html = `
-                    <div class="rental-card">
-                        <img src="${car ? car.image_url : ''}" class="rental-img" onerror="this.src='https://via.placeholder.com/150'">
-                        <div class="flex-1">
-                            <div class="${statusClass} status-badge">${statusText}</div>
-                            <h3 class="text-sm font-black text-[#1d4379] truncate">${car ? car.brand + ' ' + car.model : 'Voiture supprimée'}</h3>
-                            <div class="flex items-center gap-2 mt-1">
-                                <i data-lucide="calendar-days" class="w-3 h-3 text-gray-400"></i>
-                                <span class="text-xs font-bold text-gray-500">${startDate} - ${endDate}</span>
-                            </div>
-                            <p class="text-sm font-black text-[#1d4379] mt-2 text-right">${booking.total_price} CVE</p>
+                const html = `
+                <div class="rental-card" onclick="alert('Détails de la réservation #${b.id}')">
+                    <img src="${img || 'https://via.placeholder.com/150'}" class="rental-img">
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="text-sm font-black text-[#1d4379] uppercase">${b.vehicles.brand} ${b.vehicles.model}</h3>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
                         </div>
-                    </div>`;
-                    
-                    list.insertAdjacentHTML('beforeend', html);
-                });
-                
-                lucide.createIcons();
-            }
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">
+                            Du ${new Date(b.start_date).toLocaleDateString()} au ${new Date(b.end_date).toLocaleDateString()}
+                        </p>
+                        <p class="text-sm font-black text-[#1d4379] mt-3">${b.total_price.toLocaleString()} CVE</p>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+            });
         }
-
-        document.addEventListener('DOMContentLoaded', initRentals);
+        document.addEventListener('DOMContentLoaded', loadRentals);
     </script>
 </body>
 </html>
