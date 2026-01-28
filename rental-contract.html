@@ -2,116 +2,64 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrat de Location - DjuntaCar</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Contrat Location - DjuntaCar</title>
+    
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
-    <style>
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #f8fafc; }
-        .contract-page { background: white; padding: 40px; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 800px; margin: 20px auto; }
-        .section-title { background: #1d4379; color: white; padding: 6px 12px; font-weight: 800; font-size: 10px; text-transform: uppercase; margin: 20px 0 10px 0; }
-        .signature-pad { border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; height: 150px; cursor: crosshair; }
-        @media print { .no-print { display: none; } body { background: white; padding: 0; } .contract-page { box-shadow: none; margin: 0; width: 100%; } }
-    </style>
-</head>
-<body class="antialiased">
-
-    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-100 sticky top-0 z-50 no-print">
-        <div class="max-w-md mx-auto w-full flex items-center justify-between relative">
-            <a href="my-rentals.html" class="p-2 -ml-2 text-gray-400"><i data-lucide="chevron-left"></i></a>
-            <span class="font-bold text-sm text-[#1d4379]">Contrat de Location</span>
-            <div class="relative cursor-pointer" onclick="toggleNotifications()">
-                <i data-lucide="bell" class="w-6 h-6 text-gray-400"></i>
-                <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
-                <div id="notif-panel" class="absolute top-12 right-0 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 hidden z-[100] p-4">
-                    <h4 class="text-[10px] font-black text-[#1d4379] uppercase mb-4 px-2">Notifications</h4>
-                    <div id="notif-list" class="max-h-64 overflow-y-auto space-y-2"></div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="px-6 py-8">
-        <div class="contract-page">
-            <div class="flex justify-between items-start border-b pb-6 mb-6">
-                <img src="logo.png" alt="DjuntaCar" class="h-8">
-                <div class="text-right">
-                    <h1 class="text-xl font-black text-[#1d4379]">CONTRAT #<span id="c-id">---</span></h1>
-                    <p class="text-[10px] font-bold text-gray-400 uppercase">Document Officiel P2P</p>
-                </div>
-            </div>
-
-            <div class="section-title">1. Parties / Partes</div>
-            <div class="grid grid-cols-2 gap-4 text-[11px] mb-6">
-                <div><span class="font-bold block text-gray-400 uppercase text-[9px]">Propriétaire (Host)</span><p id="c-host">---</p></div>
-                <div><span class="font-bold block text-gray-400 uppercase text-[9px]">Locataire (Tenant)</span><p id="c-tenant">---</p></div>
-            </div>
-
-            <div class="section-title">2. Véhicule & Dates</div>
-            <div class="grid grid-cols-2 gap-4 text-[11px] mb-6">
-                <div><span class="font-bold block text-gray-400 uppercase text-[9px]">Véhicule</span><p id="c-car">---</p></div>
-                <div><span class="font-bold block text-gray-400 uppercase text-[9px]">Période</span><p id="c-dates">---</p></div>
-            </div>
-
-            <div class="section-title">3. Clauses / Cláusulas</div>
-            <div class="space-y-3 text-[10px] leading-relaxed text-gray-600">
-                <p><strong>FR:</strong> Le locataire s'engage à rendre le véhicule dans le même état de propreté et avec le même niveau de carburant.</p>
-                <p><strong>PT:</strong> O locatário compromete-se a devolver o veículo no mesmo estado de limpeza e com o mesmo nível de combustível.</p>
-                <p><strong>CV:</strong> Kel ki aluga ta dja konprometi na debolbi kaminhon na mésmu stadu di linpeza i ku mésmu nível di konbustível.</p>
-            </div>
-
-            <div class="mt-12 no-print">
-                <p class="text-[10px] font-bold text-[#1d4379] uppercase mb-4">Signature tactile / Assinatura</p>
-                <div class="signature-pad"><canvas id="sig-canvas" class="w-full h-full"></canvas></div>
-                <button onclick="saveContract()" class="w-full bg-[#1d4379] text-white py-4 rounded-2xl font-bold mt-6 shadow-lg">Signer et Valider</button>
-            </div>
-        </div>
-    </main>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        lucide.createIcons();
-        const supabase = window.supabase.createClient('URL', 'KEY');
-        const canvas = document.getElementById('sig-canvas');
-        const signaturePad = new SignaturePad(canvas);
+    
+    <script src="config.js"></script>
+    <script src="layout.js" defer></script>
 
-        function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-        }
-        window.onresize = resizeCanvas; resizeCanvas();
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #f8fafc; padding-bottom: 140px; }
 
-        async function loadContract() {
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id');
-            const { data: b } = await supabase.from('bookings').select('*, vehicles(*), profiles:tenant_id(full_name), hosts:host_id(full_name)').eq('id', id).single();
-            if (b) {
-                document.getElementById('c-id').innerText = b.id.substring(0,8).toUpperCase();
-                document.getElementById('c-host').innerText = b.hosts.full_name;
-                document.getElementById('c-tenant').innerText = b.profiles.full_name;
-                document.getElementById('c-car').innerText = `${b.vehicles.make} ${b.vehicles.model}`;
-                document.getElementById('c-dates').innerText = `${new Date(b.start_date).toLocaleDateString()} - ${new Date(b.end_date).toLocaleDateString()}`;
-            }
-            loadNotifications();
+        /* HEADER CONTRAT BLEU */
+        .contract-header {
+            background: #1d4379;
+            color: white; padding: 24px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 24px; text-align: center;
         }
 
-        async function loadNotifications() {
-            const { data: { user } } = await supabase.auth.getUser();
-            const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', user.id).eq('is_read', false);
-            const badge = document.getElementById('notif-badge');
-            if (notifs && notifs.length > 0) { badge.innerText = notifs.length; badge.classList.remove('hidden'); }
-            document.getElementById('notif-list').innerHTML = notifs.map(n => `<div class="p-3 bg-blue-50 rounded-2xl text-[10px] font-bold text-[#1d4379]">${n.title}</div>`).join('') || '<p class="text-center py-4 text-[9px] font-bold text-gray-300 uppercase">Rien à signaler</p>';
+        .paper-card {
+            background: white; margin: 0 20px;
+            padding: 30px 24px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            font-size: 11px; color: #334155; line-height: 1.6;
         }
 
-        function toggleNotifications() { document.getElementById('notif-panel').classList.toggle('hidden'); loadNotifications(); }
-        loadContract();
-    </script>
-</body>
-</html>
+        .clause-title {
+            background: #f1f5f9; color: #1d4379;
+            padding: 8px 12px; border-radius: 8px;
+            font-weight: 900; text-transform: uppercase;
+            margin-top: 20px; margin-bottom: 8px; font-size: 10px;
+        }
+
+        .lang-text {
+            font-size: 10px; margin-bottom: 6px;
+            border-left: 2px solid #cbd5e1; padding-left: 8px;
+        }
+
+        .signature-pad {
+            background: #f8fafc; border: 2px dashed #94a3b8;
+            border-radius: 16px; height: 150px; width: 100%;
+            margin-top: 20px; touch-action: none; cursor: crosshair;
+        }
+
+        .fixed-footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; padding: 20px 24px;
+            border-top: 1px solid #f1f5f9; z-index: 1000;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
+
+        .btn-sign {
+            width: 100%; height: 56px;
