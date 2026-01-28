@@ -4,32 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mes Locations - DjuntaCar</title>
+    
     <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="config.js"></script>
     <script src="layout.js" defer></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
         body { background-color: #fcfcfd; padding-bottom: 120px; }
-        .rental-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.02); display: flex; gap: 16px; }
-        .rental-img { width: 80px; height: 80px; border-radius: 16px; object-fit: cover; background: #f8fafc; }
-        .status-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; }
-        .status-pending { background: #fff7ed; color: #ea580c; }
-        .status-confirmed { background: #f0fdf4; color: #16a34a; }
-        .status-completed { background: #f1f5f9; color: #64748b; }
+
+        /* CARTE DE RÉSERVATION */
+        .rental-card {
+            background: white; border-radius: 24px;
+            padding: 20px; margin-bottom: 20px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        .rental-card:active { transform: scale(0.98); }
+
+        .rental-header {
+            display: flex; gap: 16px; margin-bottom: 16px;
+        }
+
+        .rental-img {
+            width: 70px; height: 70px; border-radius: 18px;
+            object-fit: cover; background: #f8fafc;
+            border: 1px solid #f1f5f9;
+        }
+
+        /* BADGES STATUT */
+        .status-badge {
+            font-size: 9px; font-weight: 800; text-transform: uppercase;
+            padding: 6px 10px; border-radius: 8px; display: inline-block;
+        }
+        .status-pending { background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5; }
+        .status-confirmed { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
+        .status-completed { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+        .status-cancelled { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; }
+
+        /* BOUTONS D'ACTION */
+        .btn-contract-driver {
+            width: 100%; padding: 12px;
+            background: #f0fdf4; color: #16a34a;
+            border: 1px solid #dcfce7; border-radius: 14px;
+            font-size: 11px; font-weight: 800; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .btn-contract-car {
+            width: 100%; padding: 12px;
+            background: #eff6ff; color: #1d4379;
+            border: 1px solid #dbeafe; border-radius: 14px;
+            font-size: 11px; font-weight: 800; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 12px;
+        }
     </style>
 </head>
 <body class="antialiased">
+
     <div id="header-slot"></div>
+
     <main class="max-w-md mx-auto px-6 pt-6">
-        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-6">Mes Voyages</h1>
+        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-2">Mes Voyages</h1>
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">Historique et Contrats</p>
         
         <div id="rentals-list">
             <div class="text-center py-20 opacity-40">
                 <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
+                <p class="text-[10px] font-bold text-gray-400 mt-2 uppercase">Chargement des réservations...</p>
             </div>
         </div>
     </main>
@@ -38,54 +90,120 @@
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
 
         async function loadRentals() {
+            // 1. Vérification Auth
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return window.location.href = 'login.html';
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
 
-            // Récupérer les réservations + infos véhicule
+            // 2. Récupérer les réservations + infos véhicule
             const { data: bookings, error } = await supabase
                 .from('bookings')
-                .select('*, vehicles(brand, model, image_url, is_driver_included)')
+                .select('*, vehicles(brand, model, image_url, is_driver_included, location)')
                 .eq('user_id', user.id)
                 .order('start_date', { ascending: false });
 
             const container = document.getElementById('rentals-list');
             container.innerHTML = '';
 
-            if (!bookings || bookings.length === 0) {
-                container.innerHTML = `<div class="text-center py-10"><p class="text-xs font-bold text-gray-400">Aucune location trouvée.</p></div>`;
+            if (error) {
+                console.error(error);
+                container.innerHTML = `<p class="text-center text-xs text-red-400 font-bold">Erreur de chargement.</p>`;
                 return;
             }
 
+            if (!bookings || bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 opacity-60">
+                        <i data-lucide="calendar-x" class="w-12 h-12 mx-auto text-gray-300 mb-4"></i>
+                        <p class="text-sm font-bold text-[#1d4379]">Aucune location</p>
+                        <p class="text-xs text-gray-400 mt-1">Vous n'avez pas encore réservé de véhicule.</p>
+                        <button onclick="window.location.href='index.html'" class="mt-6 bg-[#1d4379] text-white px-6 py-3 rounded-xl text-xs font-black uppercase">
+                            Trouver un véhicule
+                        </button>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            // 3. Boucle d'affichage
             bookings.forEach(b => {
+                // Gestion du statut (Couleur & Texte)
                 let statusClass = 'status-pending';
                 let statusText = 'En attente';
+                
                 if(b.status === 'confirmed') { statusClass = 'status-confirmed'; statusText = 'Confirmé'; }
                 if(b.status === 'completed') { statusClass = 'status-completed'; statusText = 'Terminé'; }
+                if(b.status === 'cancelled') { statusClass = 'status-cancelled'; statusText = 'Annulé'; }
 
-                // Gestion image (si c'est un chauffeur ou une voiture)
+                // Gestion de l'image (Si Chauffeur, on met une avatar si pas d'image)
                 let img = b.vehicles.image_url;
-                if(!img && b.vehicles.is_driver_included) {
+                if (!img) {
                     const initials = (b.vehicles.brand[0] + b.vehicles.model[0]).toUpperCase();
-                    img = `https://ui-avatars.com/api/?name=${initials}&background=22c55e&color=fff`;
+                    // Vert pour chauffeur, Bleu pour voiture
+                    const bgCol = b.vehicles.is_driver_included ? '22c55e' : '1d4379'; 
+                    img = `https://ui-avatars.com/api/?name=${initials}&background=${bgCol}&color=fff`;
                 }
 
+                // Logique BOUTON CONTRAT
+                // Si statut confirmé ou terminé -> On affiche le bouton contrat
+                let contractBtn = '';
+                if (b.status === 'confirmed' || b.status === 'completed') {
+                    if (b.vehicles.is_driver_included) {
+                        // Lien vers le contrat CHAUFFEUR
+                        contractBtn = `
+                        <button onclick="window.location.href='driver-contract.html?id=${b.id}'" class="btn-contract-driver active:scale-95 transition-transform">
+                            <i data-lucide="file-signature" class="w-4 h-4"></i> Contrat Chauffeur
+                        </button>`;
+                    } else {
+                        // Lien vers le contrat LOCATION (Si vous n'avez pas ce fichier, il faudra le créer ou utiliser une page générique)
+                        // Pour l'instant, je pointe vers driver-contract aussi ou une page "rental-contract.html" si vous l'avez
+                        contractBtn = `
+                        <button onclick="alert('Le contrat de location standard sera généré ici.')" class="btn-contract-car active:scale-95 transition-transform">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> Contrat Location
+                        </button>`;
+                    }
+                }
+
+                // Formatage Dates
+                const start = new Date(b.start_date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
+                const end = new Date(b.end_date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
+
                 const html = `
-                <div class="rental-card" onclick="alert('Détails de la réservation #${b.id}')">
-                    <img src="${img || 'https://via.placeholder.com/150'}" class="rental-img">
-                    <div class="flex-1">
-                        <div class="flex justify-between items-start mb-1">
-                            <h3 class="text-sm font-black text-[#1d4379] uppercase">${b.vehicles.brand} ${b.vehicles.model}</h3>
-                            <span class="status-badge ${statusClass}">${statusText}</span>
+                <div class="rental-card">
+                    <div class="rental-header">
+                        <img src="${img}" class="rental-img">
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-sm font-black text-[#1d4379] uppercase leading-tight">
+                                    ${b.vehicles.brand} ${b.vehicles.model}
+                                </h3>
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase mt-1">
+                                <i data-lucide="map-pin" class="w-3 h-3"></i> ${b.vehicles.location}
+                            </div>
+                            
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="text-[10px] bg-gray-50 px-2 py-1 rounded text-gray-500 font-bold">
+                                    ${start} - ${end}
+                                </span>
+                                <span class="text-xs font-black text-[#1d4379]">${b.total_price.toLocaleString()} CVE</span>
+                            </div>
                         </div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase">
-                            Du ${new Date(b.start_date).toLocaleDateString()} au ${new Date(b.end_date).toLocaleDateString()}
-                        </p>
-                        <p class="text-sm font-black text-[#1d4379] mt-3">${b.total_price.toLocaleString()} CVE</p>
                     </div>
+                    
+                    ${contractBtn}
                 </div>`;
+                
                 container.insertAdjacentHTML('beforeend', html);
             });
+            
+            lucide.createIcons();
         }
+
         document.addEventListener('DOMContentLoaded', loadRentals);
     </script>
 </body>
