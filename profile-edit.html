@@ -2,14 +2,15 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Modifier Profil - DjuntaCar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mon Profil - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    
     <script src="config.js"></script>
     <script src="layout.js" defer></script>
 
@@ -19,213 +20,158 @@
         
         body { background-color: #fcfcfd; padding-bottom: 120px; }
 
-        .edit-card {
-            background: white; border-radius: 35px;
-            padding: 30px 24px; border: 1px solid #f1f5f9;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-            margin-top: 20px;
+        /* HEADER PROFIL DESIGN */
+        .profile-header-bg {
+            background: #1d4379;
+            padding-top: 20px;
+            padding-bottom: 80px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            position: relative;
         }
 
-        .form-group { margin-bottom: 24px; }
-        .form-label {
-            font-size: 10px; font-weight: 800; color: #94a3b8;
-            text-transform: uppercase; margin-bottom: 8px; display: block;
-        }
-        .form-input {
-            width: 100%; background: #f8fafc;
-            padding: 16px; border-radius: 18px;
-            font-size: 14px; font-weight: 700; color: #1d4379;
-            outline: none; border: 1px solid #e2e8f0;
+        .avatar-wrapper {
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translate(-50%, 50%);
+            width: 110px; height: 110px;
         }
 
-        .avatar-edit-zone {
-            position: relative; width: 110px; height: 110px;
-            margin: 0 auto 10px auto;
-        }
-        .avatar-preview {
-            width: 100%; height: 100%; border-radius: 40px;
-            object-fit: cover; border: 4px solid white;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            background-color: #e2e8f0;
-        }
-        .cam-btn {
-            position: absolute; bottom: -5px; right: -5px;
-            background: #22c55e; color: white; width: 36px; height: 36px;
-            border-radius: 12px; border: 3px solid white;
-            display: flex; align-items: center; justify-content: center;
+        .profile-avatar {
+            width: 100%; height: 100%;
+            border-radius: 35px;
+            border: 6px solid #fcfcfd;
+            object-fit: cover;
+            background: #f1f5f9;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        .progress-container {
-            width: 100%; max-width: 150px; height: 6px;
-            background: #f1f5f9; border-radius: 10px;
-            margin: 0 auto 25px auto; overflow: hidden;
-            display: none;
+        /* BOUTONS MENU */
+        .menu-btn {
+            background: white; border: 1px solid #f1f5f9;
+            padding: 16px 20px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            transition: transform 0.1s;
         }
-        .progress-bar {
-            height: 100%; width: 0%;
-            background: #1d4379; transition: width 0.3s ease;
+        .menu-btn:active { transform: scale(0.98); background: #f8fafc; }
+
+        .badge-verified {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(34, 197, 94, 0.1); color: #22c55e;
+            padding: 4px 10px; border-radius: 100px;
+            font-size: 10px; font-weight: 800; text-transform: uppercase;
+            margin-top: 8px;
         }
 
-        .save-bar {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; border-top: 1px solid #f1f5f9;
-            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom));
+        /* BANNIÈRE HÔTE */
+        .host-banner {
+            background: linear-gradient(135deg, #1d4379 0%, #2563eb 100%);
+            border-radius: 24px; padding: 20px;
+            color: white; margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+        
+        .become-host-banner {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 24px; padding: 20px;
+            color: white; margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <main class="max-w-md mx-auto px-6 pt-6">
-        <button onclick="history.back()" class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">
-            <i data-lucide="chevron-left" class="w-4 h-4"></i> Retour
-        </button>
+    <div id="header-slot"></div>
 
-        <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-8">Profil & Sécurité</h1>
-
-        <div class="edit-card">
-            <form id="edit-form">
-                <div class="avatar-edit-zone">
-                    <img id="avatar-img" src="https://via.placeholder.com/110" class="avatar-preview">
-                    <label for="avatar-file" class="cam-btn active:scale-90 transition-transform cursor-pointer">
-                        <i data-lucide="camera" class="w-4 h-4"></i>
-                    </label>
-                    <input type="file" id="avatar-file" class="hidden" accept="image/*" onchange="previewAndPrepare(this)">
-                </div>
-
-                <div id="upload-progress-container" class="progress-container">
-                    <div id="upload-progress-bar" class="progress-bar"></div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Prénom</label>
-                    <input type="text" id="first_name" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Nom</label>
-                    <input type="text" id="last_name" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Téléphone</label>
-                    <input type="tel" id="phone" class="form-input">
-                </div>
-
-                <p id="msg" class="text-center text-[10px] font-black uppercase h-5 mt-2"></p>
-            </form>
+    <div class="profile-header-bg">
+        <div class="text-center">
+            <h1 class="text-white text-lg font-black uppercase tracking-widest opacity-80">Mon Profil</h1>
         </div>
-    </main>
-
-    <div class="save-bar">
-        <button type="submit" form="edit-form" id="save-btn" class="w-full bg-[#1d4379] text-white py-4 rounded-[20px] font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
-            <i data-lucide="save" class="w-4 h-4"></i> Mettre à jour
-        </button>
+        
+        <div class="avatar-wrapper">
+            <img id="user-avatar" src="" class="profile-avatar">
+            <button class="absolute -bottom-2 -right-2 bg-white text-[#1d4379] p-2 rounded-full border border-gray-100 shadow-md">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+            </button>
+        </div>
     </div>
+
+    <main class="max-w-md mx-auto px-6 pt-20">
+        
+        <div class="text-center mb-8">
+            <h2 id="user-name" class="text-2xl font-black text-[#1d4379] uppercase">Chargement...</h2>
+            <p id="user-email" class="text-xs font-bold text-gray-400 mt-1">...</p>
+            
+            <div id="verified-badge" class="hidden mx-auto mt-3 w-fit">
+                <div class="badge-verified">
+                    <i data-lucide="shield-check" class="w-3 h-3"></i> Identité Vérifiée
+                </div>
+            </div>
+        </div>
+
+        <div id="host-section">
+            <div class="animate-pulse h-20 bg-gray-100 rounded-3xl mb-6"></div>
+        </div>
+
+        <div class="space-y-2">
+            <button onclick="window.location.href='wallet.html'" class="menu-btn">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#1d4379]">
+                        <i data-lucide="wallet" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs font-black text-[#1d4379] uppercase">Portefeuille</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
+            </button>
+
+            <button onclick="window.location.href='my-rentals.html'" class="menu-btn">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500">
+                        <i data-lucide="history" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs font-black text-[#1d4379] uppercase">Historique</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
+            </button>
+
+            <button onclick="window.location.href='settings.html'" class="menu-btn">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs font-black text-[#1d4379] uppercase">Paramètres</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
+            </button>
+        </div>
+
+        <button onclick="handleLogout()" class="w-full mt-8 py-4 text-xs font-black text-red-400 uppercase bg-red-50 rounded-2xl border border-red-100 active:scale-95 transition-transform flex justify-center items-center gap-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Se déconnecter
+        </button>
+
+        <p class="text-center text-[9px] font-bold text-gray-300 uppercase mt-8">DjuntaCar v1.0.0</p>
+
+    </main>
 
     <script>
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-        let currentUser = null;
-        let selectedFile = null;
-        let oldAvatarPath = null;
 
-        async function initEdit() {
+        async function initProfile() {
+            // 1. Vérifier Auth
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return window.location.href = 'login.html';
-            currentUser = user;
-
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-
-            if (profile) {
-                document.getElementById('first_name').value = profile.first_name || '';
-                document.getElementById('last_name').value = profile.last_name || '';
-                document.getElementById('phone').value = profile.phone || '';
-                
-                if (profile.avatar_url) {
-                    document.getElementById('avatar-img').src = profile.avatar_url;
-                    // On extrait le chemin relatif pour la future suppression
-                    if (profile.avatar_url.includes('/avatars/')) {
-                        oldAvatarPath = profile.avatar_url.split('/avatars/').pop();
-                    }
-                }
-            }
-            lucide.createIcons();
-        }
-
-        function previewAndPrepare(input) {
-            if (input.files && input.files[0]) {
-                selectedFile = input.files[0];
-                const reader = new FileReader();
-                reader.onload = (e) => document.getElementById('avatar-img').src = e.target.result;
-                reader.readAsDataURL(selectedFile);
-                document.getElementById('upload-progress-container').style.display = 'none';
-                document.getElementById('upload-progress-bar').style.width = '0%';
-            }
-        }
-
-        async function uploadAvatar(file) {
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`;
-            
-            document.getElementById('upload-progress-container').style.display = 'block';
-            document.getElementById('upload-progress-bar').style.width = '30%';
-
-            // 1. Suppression de l'ancienne image si elle existe
-            if (oldAvatarPath) {
-                await supabase.storage.from('avatars').remove([oldAvatarPath]);
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
             }
 
-            document.getElementById('upload-progress-bar').style.width = '60%';
+            // 2. Récupérer le Profil Public
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
 
-            // 2. Upload de la nouvelle
-            const { error: uploadError } = await supabase.storage
-                .from('avatars')
-                .upload(fileName, file, { upsert: true });
-
-            if (uploadError) throw uploadError;
-
-            document.getElementById('upload-progress-bar').style.width = '100%';
-
-            const { data } = supabase.storage.from('avatars').getPublicUrl(fileName);
-            return data.publicUrl;
-        }
-
-        document.getElementById('edit-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('save-btn');
-            const msg = document.getElementById('msg');
-            
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Nettoyage...`;
-            btn.disabled = true;
-
-            try {
-                let avatarUrl = document.getElementById('avatar-img').src;
-
-                if (selectedFile) {
-                    avatarUrl = await uploadAvatar(selectedFile);
-                }
-
-                const { error } = await supabase.from('profiles').update({
-                    first_name: document.getElementById('first_name').value,
-                    last_name: document.getElementById('last_name').value,
-                    phone: document.getElementById('phone').value,
-                    avatar_url: avatarUrl,
-                    updated_at: new Date()
-                }).eq('id', currentUser.id);
-
-                if (error) throw error;
-
-                msg.className = "text-center text-[10px] font-black text-green-500 uppercase";
-                msg.innerText = "Profil nettoyé et mis à jour !";
-                setTimeout(() => window.location.href = 'profile.html', 1000);
-
-            } catch (err) {
-                msg.className = "text-center text-[10px] font-black text-red-500 uppercase";
-                msg.innerText = "Erreur : " + err.message;
-                btn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Réessayer`;
-                btn.disabled = false;
-            }
-            lucide.createIcons();
-        });
-
-        document.addEventListener('DOMContentLoaded', initEdit);
-    </script>
-</body>
-</html>
+            if (
