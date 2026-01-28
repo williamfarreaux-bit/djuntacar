@@ -106,7 +106,7 @@
 
             <h3 class="clause-title">4. Prestation et Horaires</h3>
             <p>Période : Du <strong id="start-date">...</strong> au <strong id="end-date">...</strong>.<br>
-            Le carburant est à la charge du <span class="font-bold">Chauffeur</span> (sauf accord contraire écrit).</p>
+            Le carburant est à la charge exclusive du <span class="font-bold text-red-500">CLIENT</span>. Le véhicule est fourni avec le plein (ou niveau convenu) et le client doit payer le carburant consommé durant le trajet.</p>
 
             <h3 class="clause-title">5. Signature Client</h3>
             <p class="mb-2">Veuillez signer dans la case ci-dessous pour accepter les conditions :</p>
@@ -197,8 +197,6 @@
                 document.getElementById('contract-date').innerText = new Date().toLocaleDateString();
                 
                 // Client (User connecté ou celui de la résa)
-                // Note: profiles est un tableau si join, ou objet si single. Ici on simplifie.
-                // Dans la réalité, on récupèrerait le profil connecté.
                 const { data: { user } } = await supabase.auth.getUser();
                 const { data: userProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
                 
@@ -213,7 +211,6 @@
 
         async function signContract() {
             // Dans une vraie app, on upload l'image de la signature vers Supabase Storage
-            // Ici, on simule la validation
             const btn = document.querySelector('.btn-sign');
             btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Validation...';
             
