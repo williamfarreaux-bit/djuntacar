@@ -36,6 +36,7 @@
             -webkit-appearance: none;
             background: #22c55e;
             height: 16px; width: 16px; border-radius: 50%;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -84,11 +85,12 @@
         let allDrivers = [];
 
         async function loadDrivers() {
-            // Récupère les véhicules marqués comme "chauffeur inclus" ou catégorie spéciale
+            // Récupère les véhicules marqués comme "chauffeur inclus"
+            // Note : Dans notre modèle, on considère que si is_driver_included est true, c'est un profil Chauffeur
             const { data: drivers, error } = await supabase
                 .from('vehicles')
                 .select('*')
-                .eq('is_driver_included', true); // Assurez-vous que cette colonne existe ou filtrez par category='driver'
+                .eq('is_driver_included', true);
 
             if (error) {
                 console.error("Erreur:", error);
@@ -115,13 +117,13 @@
             }
 
             driversList.forEach(driver => {
-                // Pour la démo, on utilise les initiales du modèle/marque comme avatar si pas d'image
+                // Pour la démo : si pas d'image, on génère des initiales
                 const initials = (driver.brand[0] + (driver.model[0] || '')).toUpperCase();
                 const avatarUrl = driver.image_url; 
                 
-                // HTML de VOTRE carte (adapté dynamiquement)
+                // HTML de la carte chauffeur
                 const html = `
-                <div class="driver-card shadow-sm flex items-center justify-between cursor-pointer" onclick="window.location.href='car-detail.html?id=${driver.id}'">
+                <div class="driver-card shadow-sm flex items-center justify-between cursor-pointer" onclick="window.location.href='driver-detail.html?id=${driver.id}'">
                     <div class="flex items-center gap-4">
                         ${avatarUrl ? 
                             `<img src="${avatarUrl}" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">` : 
