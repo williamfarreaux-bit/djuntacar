@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Contrat Chauffeur - DjuntaCar</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="config.js"></script>
+    <script src="layout.js" defer></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #fcfcfd; padding-bottom: 140px; }
+
+        /* HEADER CONTRAT VERT */
+        .contract-header {
+            background: #22c55e;
+            color: white; padding: 24px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 24px; text-align: center;
+        }
+
+        .paper-card {
+            background: white; margin: 0 20px;
+            padding: 24px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #f1f5f9;
+            font-size: 11px; color: #334155; line-height: 1.6;
+        }
+
+        .clause-title {
+            font-weight: 900; color: #1d4379;
+            text-transform: uppercase; margin-top: 16px;
+            margin-bottom: 4px; font-size: 10px;
+        }
+
+        .signature-pad {
+            background: #f8fafc; border: 2px dashed #cbd5e1;
+            border-radius: 16px; height: 150px; width: 100%;
+            margin-top: 20px; touch-action: none;
+        }
+
+        .fixed-footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; padding: 20px 24px;
+            border-top: 1px solid #f1f5f9; z-index: 1000;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
+
+        .btn-sign {
+            width: 100%; height: 56px;
+            background: #22c55e; color: white;
+            border-radius: 18px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="header-slot"></div>
+
+    <div class="contract-header">
+        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
+            <i data-lucide="file-check" class="w-6 h-6 text-white"></i>
+        </div>
+        <h1 class="text-xl font-black uppercase tracking-wide">Contrat de Service</h1>
+        <p class="text-xs font-bold opacity-90 mt-1">Prestation de Chauffeur Privé</p>
+    </div>
+
+    <main class="max-w-md mx-auto">
+        
+        <div class="paper-card">
+            <div class="flex justify-between border-b border-gray-100 pb-4 mb-4">
+                <div>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">Numéro de réservation</p>
+                    <p id="booking-ref" class="text-sm font-black text-[#1d4379]">...</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">Date</p>
+                    <p id="contract-date" class="text-xs font-bold text-[#1d4379]">...</p>
+                </div>
+            </div>
+
+            <p class="mb-4">
+                Entre le client <strong id="client-name" class="uppercase">...</strong> et le prestataire <strong id="driver-name" class="uppercase text-green-600">...</strong>.
+            </p>
+
+            <h3 class="clause-title">1. Objet du contrat</h3>
+            <p>Le prestataire s'engage à transporter le client et ses accompagnants selon l'itinéraire convenu ou à disposition pour la durée définie.</p>
+
+            <h3 class="clause-title">2. Sécurité et Conformité</h3>
+            <p>Le chauffeur déclare être titulaire d'un permis de conduire valide et s'engage à respecter le code de la route. Le véhicule est assuré pour le transport de personnes.</p>
+
+            <h3 class="clause-title">3. Responsabilité</h3>
+            <p>Le chauffeur est seul responsable du véhicule. Le client n'est pas responsable des dommages causés au véhicule, sauf en cas de dégradation volontaire à l'intérieur de l'habitacle.</p>
+
+            <h3 class="clause-title">4. Prestation et Horaires</h3>
+            <p>Période : Du <strong id="start-date">...</strong> au <strong id="end-date">...</strong>.<br>
+            Le carburant est à la charge du <span class="font-bold">Chauffeur</span> (sauf accord contraire écrit).</p>
+
+            <h3 class="clause-title">5. Signature Client</h3>
+            <p class="mb-2">Veuillez signer dans la case ci-dessous pour accepter les conditions :</p>
+            
+            <canvas id="signature-pad" class="signature-pad"></canvas>
+            <button onclick="clearPad()" class="text-[9px] font-bold text-red-400 uppercase mt-2 underline">Effacer la signature</button>
+        </div>
+
+    </main>
+
+    <div class="fixed-footer">
+        <button onclick="signContract()" class="btn-sign active:scale-95 transition-transform">
+            <i data-lucide="pen-tool" class="w-5 h-5"></i> Signer le contrat
+        </button>
+    </div>
+
+    <script>
+        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        
+        // Gestion du Canvas de signature
+        const canvas = document.getElementById('signature-pad');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        // Ajuster la taille du canvas au CSS
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        // Événements Tactiles et Souris
+        function startDraw(e) {
+            isDrawing = true;
+            ctx.beginPath();
+            const pos = getPos(e);
+            ctx.moveTo(pos.x, pos.y);
+        }
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+        function endDraw() { isDrawing = false; }
+        
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', endDraw);
+        canvas.addEventListener('touchstart', startDraw);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', endDraw);
+
+        function clearPad() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Chargement des données
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const bookingId = params.get('id'); // ID de la réservation
+
+            if (!bookingId) {
+                alert("Aucune réservation spécifiée.");
+                window.location.href = 'my-rentals.html';
+                return;
+            }
+
+            // Récupérer la résa + le chauffeur (vehicle) + le client
+            const { data: booking, error } = await supabase
+                .from('bookings')
+                .select('*, vehicles(brand, model), profiles:user_id(first_name, last_name)')
+                .eq('id', bookingId)
+                .single();
+
+            if (booking) {
+                // Remplissage
+                document.getElementById('booking-ref').innerText = `#DJ-${booking.id}`;
+                document.getElementById('contract-date').innerText = new Date().toLocaleDateString();
+                
+                // Client (User connecté ou celui de la résa)
+                // Note: profiles est un tableau si join, ou objet si single. Ici on simplifie.
+                // Dans la réalité, on récupèrerait le profil connecté.
+                const { data: { user } } = await supabase.auth.getUser();
+                const { data: userProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+                
+                document.getElementById('client-name').innerText = `${userProfile.first_name} ${userProfile.last_name}`;
+                document.getElementById('driver-name').innerText = `${booking.vehicles.brand} ${booking.vehicles.model}`;
+                
+                document.getElementById('start-date').innerText = new Date(booking.start_date).toLocaleDateString();
+                document.getElementById('end-date').innerText = new Date(booking.end_date).toLocaleDateString();
+            }
+            lucide.createIcons();
+        }
+
+        async function signContract() {
+            // Dans une vraie app, on upload l'image de la signature vers Supabase Storage
+            // Ici, on simule la validation
+            const btn = document.querySelector('.btn-sign');
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Validation...';
+            
+            setTimeout(() => {
+                alert("✅ Contrat signé électroniquement !");
+                window.location.href = 'my-rentals.html';
+            }, 1500);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
