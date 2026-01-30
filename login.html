@@ -2,97 +2,191 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Connexion - DjuntaCar</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@700;900&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/app.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #f8fafc; }
+
+        .login-card {
+            background: white;
+            border-radius: 35px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+            border: 1px solid #f1f5f9;
+        }
+
+        .brand-logo {
+            height: 50px;
+            margin: 0 auto 30px auto;
+        }
+
+        .input-label {
+            font-size: 10px;
+            font-weight: 900;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            margin-left: 4px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            background-color: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 18px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1d4379;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #1d4379;
+            background-color: white;
+        }
+
+        .btn-login {
+            background: #1d4379;
+            color: white;
+            width: 100%;
+            padding: 20px;
+            border-radius: 22px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-login:active {
+            transform: scale(0.96);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body class="antialiased">
 
     <div id="header-slot"></div>
 
-    <main class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <img src="logo.png" class="auth-logo" alt="DjuntaCar" onerror="this.style.display='none'">
-                <h1 class="font-brand">Bon retour !</h1>
-                <p class="auth-subtitle">Connectez-vous pour gérer vos locations</p>
+    <main class="max-w-md mx-auto px-6 flex flex-col justify-center min-h-[80vh]">
+        
+        <div class="login-card">
+            <div class="text-center">
+                <img src="logo.png" alt="DjuntaCar" class="brand-logo" onerror="this.style.display='none'">
+                <h1 class="text-2xl font-black text-[#1d4379] uppercase tracking-tight mb-2">Bon retour !</h1>
+                <p class="text-xs text-gray-400 font-bold mb-10">Connectez-vous pour accéder à votre espace.</p>
             </div>
 
-            <form id="login-form" class="auth-form">
-                <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" id="email" placeholder="votre@email.com" required>
-                </div>
-                
-                <div class="input-group">
-                    <label>Mot de passe</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="input-label">Adresse Email</label>
+                    <input type="email" id="email" class="input-field" placeholder="votre@email.com" required>
                 </div>
 
-                <div class="auth-options">
-                    <a href="forgot-password.html" class="link-alt">Mot de passe oublié ?</a>
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="input-label mb-0">Mot de passe</label>
+                        <a href="forgot-password.html" class="text-[9px] font-black text-gray-400 uppercase hover:text-[#1d4379]">Oublié ?</a>
+                    </div>
+                    <input type="password" id="password" class="input-field" placeholder="••••••••" required>
                 </div>
 
-                <p id="msg" class="error-text"></p>
-
-                <button type="submit" id="btn-submit" class="btn-primary">
-                    Se connecter
-                </button>
+                <div class="pt-4">
+                    <button type="submit" id="submit-btn" class="btn-login">
+                        <span>Se connecter</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
             </form>
 
-            <p class="auth-footer">
-                Pas encore de compte ? <a href="signup.html" class="link-primary">S'inscrire</a>
-            </p>
+            <div class="mt-10 text-center">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                    Pas encore de membre ? <a href="signup.html" class="text-[#1d4379] underline">Créer un compte</a>
+                </p>
+            </div>
         </div>
+
     </main>
 
     <script>
+        // Initialisation des icônes
+        if (window.lucide) lucide.createIcons();
+
+        // Gestion de la soumission
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btn-submit');
-            const msg = document.getElementById('msg');
             
-            btn.innerText = "CONNEXION...";
-            btn.disabled = true;
-            msg.innerText = "";
-
+            const btn = document.getElementById('submit-btn');
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
+            // Feedback visuel
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>';
+            if (window.lucide) lucide.createIcons();
+            btn.disabled = true;
+
             try {
+                // Appel Supabase via l'instance globale 'supabase'
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
-                    password: password,
+                    password: password
                 });
 
                 if (error) throw error;
 
-                if (typeof showToast === "function") {
-                    showToast("Bienvenue !", "success");
-                }
+                // Succès
+                if (window.showToast) showToast("Connexion réussie", "success");
                 
+                // Redirection vers la page profil que tu as créée
                 setTimeout(() => {
                     window.location.href = 'profile.html';
-                }, 800);
+                }, 1000);
 
-            } catch (error) {
-                msg.innerText = "Email ou mot de passe incorrect.";
-                btn.innerText = "SE CONNECTER";
-                btn.disabled = false;
-                if (typeof showToast === "function") {
-                    showToast("Erreur de connexion", "error");
+            } catch (err) {
+                // Erreur
+                if (window.showToast) {
+                    showToast(err.message === "Invalid login credentials" ? "Email ou mot de passe incorrect" : err.message, "error");
                 }
+                btn.innerHTML = originalContent;
+                if (window.lucide) lucide.createIcons();
+                btn.disabled = false;
             }
         });
+
+        // Vérification si déjà connecté
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                window.location.href = 'profile.html';
+            }
+        }
+        checkSession();
     </script>
 </body>
 </html>
