@@ -11,7 +11,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script src="js/config.js"></script>
-    <script src="js/app.js"></script> <style>
+    <script src="js/app.js"></script>
+
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
@@ -91,8 +93,10 @@
             <div class="profile-card-header"></div>
             
             <div class="avatar-wrapper">
-                <img id="profile-avatar" src="" class="avatar-img shadow-lg">
+                <img id="profile-avatar" src="" class="avatar-img shadow-lg" onerror="this.src='https://ui-avatars.com/api/?background=1d4379&color=fff'">
+                
                 <input type="file" id="avatar-input" hidden accept="image/*" onchange="uploadAvatar(this)">
+                
                 <label for="avatar-input" class="camera-btn">
                     <i id="cam-icon" data-lucide="camera" class="w-4 h-4"></i>
                 </label>
@@ -103,7 +107,7 @@
             
             <div class="flex justify-center gap-2 mt-4">
                 <span class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">Membre Vérifié</span>
-                <span id="badge-driver" class="hidden bg-green-50 text-green-600 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">Chauffeur</span>
+                <span id="badge-driver" class="hidden bg-green-50 text-green-600 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">Hôte</span>
             </div>
         </div>
 
@@ -153,15 +157,13 @@
     </main>
 
     <script>
-        // Utilisation du client Supabase global (config.js)
         let globalUser = null;
 
         async function initProfile() {
-            // 1. VERROU DE SÉCURITÉ : On vérifie la session immédiatement
+            // Vérification immédiate de la session
             const { data: { session } } = await supabase.auth.getSession();
             
             if (!session) {
-                // Redirection forcée si pas de session active
                 window.location.replace('login.html');
                 return;
             }
@@ -169,7 +171,6 @@
             globalUser = session.user;
             document.getElementById('user-email').innerText = globalUser.email;
 
-            // 2. Récupération des données du profil
             try {
                 const { data: profile, error } = await supabase
                     .from('profiles')
@@ -180,19 +181,15 @@
                 if (profile) {
                     const fullName = profile.full_name || `${profile.first_name || 'Explorateur'} ${profile.last_name || ''}`;
                     document.getElementById('user-name').innerText = fullName;
-                    
-                    // Avatar avec fallback propre
-                    const avatarUrl = profile.avatar_url || `https://ui-avatars.com/api/?name=${fullName}&background=1d4379&color=fff`;
-                    document.getElementById('profile-avatar').src = avatarUrl;
+                    document.getElementById('profile-avatar').src = profile.avatar_url || `https://ui-avatars.com/api/?name=${fullName}&background=1d4379&color=fff`;
 
-                    // Rôle Propriétaire / Chauffeur
                     if (profile.is_driver) {
                         document.getElementById('badge-driver').classList.remove('hidden');
                         document.getElementById('host-link').style.display = 'flex';
                     }
                 }
             } catch (err) {
-                console.error("Erreur chargement profil:", err);
+                console.error("Erreur profil:", err);
             }
 
             if (window.lucide) window.lucide.createIcons();
@@ -222,30 +219,24 @@
                     .getPublicUrl(filePath);
 
                 await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', globalUser.id);
-                
                 document.getElementById('profile-avatar').src = publicUrl;
-                if (typeof showToast === 'function') showToast("Photo mise à jour", "success");
+                showToast("Photo mise à jour", "success");
                 
             } catch (error) {
-                if (typeof showToast === 'function') showToast("Erreur d'envoi", "error");
+                showToast("Erreur lors de l'envoi", "error");
             } finally {
                 icon.setAttribute('data-lucide', 'camera');
                 icon.classList.remove('animate-spin');
                 lucide.createIcons();
-                input.value = '';
             }
         }
 
         async function handleLogout() {
             try {
-                // Déconnexion propre via Supabase
-                const { error } = await supabase.auth.signOut();
-                if (error) throw error;
-                
-                // Redirection immédiate
+                await supabase.auth.signOut();
                 window.location.replace('login.html');
             } catch (err) {
-                if (typeof showToast === 'function') showToast("Erreur de déconnexion", "error");
+                showToast("Erreur déconnexion", "error");
             }
         }
 
