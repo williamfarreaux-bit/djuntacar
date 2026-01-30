@@ -10,25 +10,19 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="config.js"></script>
-    <script src="layout.js" defer></script>
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
-        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        * { font-family: 'Montserrat', sans-serif !important; }
         
-        body { background-color: #f8fafc; padding-bottom: 40px; }
+        body { background-color: #f8fafc; }
 
-        /* CARTE PROFIL PREMIUM */
         .profile-card {
-            background: white;
-            border-radius: 35px;
-            padding: 30px 24px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
-            border: 1px solid #f1f5f9;
-            position: relative;
-            overflow: hidden;
+            background: white; border-radius: 35px; padding: 30px 24px;
+            text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+            border: 1px solid #f1f5f9; position: relative; overflow: hidden;
         }
         .profile-card-header {
             position: absolute; top: 0; left: 0; right: 0;
@@ -36,70 +30,48 @@
         }
 
         .avatar-wrapper {
-            position: relative; z-index: 10;
-            width: 110px; height: 110px;
+            position: relative; z-index: 10; width: 110px; height: 110px;
             margin: 30px auto 16px auto;
         }
         .avatar-img {
-            width: 100%; height: 100%;
-            border-radius: 40px; border: 4px solid white;
-            object-fit: cover; background: white;
+            width: 100%; height: 100%; border-radius: 40px; 
+            border: 4px solid white; object-fit: cover; background: white;
         }
 
-        /* --- NOUVEAU : BOUTON CAMERA --- */
         .camera-btn {
-            position: absolute;
-            bottom: -5px; right: -5px;
-            width: 36px; height: 36px;
-            background: #1d4379; color: white;
-            border-radius: 50%;
-            border: 3px solid white;
+            position: absolute; bottom: -5px; right: -5px;
+            width: 36px; height: 36px; background: #1d4379; color: white;
+            border-radius: 50%; border: 3px solid white;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
         }
-        .camera-btn:active { transform: scale(0.9); }
 
-        /* ACTIONS MENU */
+        .stat-box { text-align: center; flex: 1; }
+        .stat-value { font-weight: 900; color: #1d4379; font-size: 16px; }
+        .stat-label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+
         .menu-link {
             display: flex; align-items: center; gap: 16px;
             background: white; padding: 18px; border-radius: 22px;
             border: 1px solid #f1f5f9; transition: all 0.2s;
             margin-bottom: 12px;
         }
-        .menu-link:active { transform: scale(0.97); background: #f8fafc; }
-        
-        .icon-box {
-            width: 44px; height: 44px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* BOUTON PROPRIÉTAIRE SPÉCIAL */
-        .host-banner {
-            background: #1d4379; color: white;
-            padding: 20px; border-radius: 24px;
-            display: none; align-items: center; gap: 16px;
-            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
-            margin-bottom: 24px;
-        }
+        .menu-link:active { transform: scale(0.97); }
     </style>
 </head>
 <body class="antialiased">
 
     <div id="header-slot"></div>
 
-    <main class="max-w-md mx-auto px-6 pt-6">
+    <main class="max-w-md mx-auto px-6 pt-6 pb-24">
         
-        <div class="profile-card mb-8">
+        <div class="profile-card mb-6">
             <div class="profile-card-header"></div>
             
             <div class="avatar-wrapper">
                 <img id="profile-avatar" src="" class="avatar-img shadow-lg">
-                
                 <input type="file" id="avatar-input" hidden accept="image/*" onchange="uploadAvatar(this)">
-                
-                <label for="avatar-input" class="camera-btn">
+                <label for="avatar-input" class="camera-btn active:scale-90 transition-transform">
                     <i id="cam-icon" data-lucide="camera" class="w-4 h-4"></i>
                 </label>
             </div>
@@ -107,159 +79,159 @@
             <h1 id="user-name" class="text-xl font-black text-[#1d4379] uppercase tracking-tight">Chargement...</h1>
             <p id="user-email" class="text-[11px] font-bold text-gray-400 mt-1 uppercase opacity-60">...</p>
             
-            <div class="flex justify-center gap-2 mt-4">
-                <span class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">Membre Vérifié</span>
-                <span id="badge-driver" class="hidden bg-green-50 text-green-600 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">Chauffeur</span>
+            <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-50">
+                <div class="stat-box">
+                    <div id="stat-trips" class="stat-value">0</div>
+                    <div class="stat-label">Trajets</div>
+                </div>
+                <div class="stat-box border-x border-gray-100">
+                    <div class="stat-value">5.0 <span class="text-yellow-400 text-xs">★</span></div>
+                    <div class="stat-label">Note</div>
+                </div>
+                <div class="stat-box">
+                    <div id="stat-years" class="stat-value">0</div>
+                    <div class="stat-label">An(s) membre</div>
+                </div>
             </div>
         </div>
 
-        <a href="host-stats.html" id="host-link" class="host-banner active:scale-95 transition-transform">
-            <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-white">
-                <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
-            </div>
+        <a href="host-dashboard.html" id="host-link" class="hidden bg-[#1d4379] text-white p-5 rounded-[24px] mb-6 flex items-center gap-4 shadow-lg active:scale-95 transition-transform">
+            <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="car" class="w-6 h-6"></i></div>
             <div class="flex-1">
-                <h3 class="text-sm font-black uppercase tracking-wide">Tableau de bord Hôte</h3>
-                <p class="text-[10px] font-bold text-blue-200">Gérer mes véhicules et revenus</p>
+                <h3 class="text-sm font-black uppercase tracking-wide">Mode Propriétaire</h3>
+                <p class="text-[10px] font-bold text-blue-200">Gérer ma flotte et mes revenus</p>
             </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-blue-300"></i>
+            <i data-lucide="chevron-right" class="w-5 h-5"></i>
         </a>
 
-        <div class="space-y-3 mb-10">
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-2 mb-4">Général</h2>
+        <div class="space-y-3">
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-2 mb-2">Mon Compte</h2>
 
             <a href="profile-edit.html" class="menu-link">
-                <div class="icon-box bg-blue-50 text-blue-600"><i data-lucide="user-cog" class="w-5 h-5"></i></div>
-                <div class="flex-1 text-sm font-black text-[#1d4379] uppercase tracking-tight">Modifier le profil</div>
+                <div class="icon-box w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="user-cog" class="w-5 h-5"></i></div>
+                <div class="flex-1 text-sm font-black text-[#1d4379] uppercase tracking-tight">Informations Personnelles</div>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
             </a>
 
             <a href="wallet.html" class="menu-link">
-                <div class="icon-box bg-green-50 text-green-600"><i data-lucide="wallet" class="w-5 h-5"></i></div>
+                <div class="icon-box w-11 h-11 rounded-xl bg-green-50 text-green-600 flex items-center justify-center"><i data-lucide="wallet" class="w-5 h-5"></i></div>
                 <div class="flex-1">
                     <h3 class="text-sm font-black text-[#1d4379] uppercase tracking-tight">Portefeuille</h3>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase mt-0.5">Solde & Paiements</p>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">Solde & Transactions</p>
                 </div>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
             </a>
 
-            <a href="my-rentals.html" class="menu-link">
-                <div class="icon-box bg-purple-50 text-purple-600"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-2 mt-6 mb-2">Sécurité & Légal</h2>
+
+            <a href="verification.html" class="menu-link">
+                <div class="icon-box w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
                 <div class="flex-1">
-                    <h3 class="text-sm font-black text-[#1d4379] uppercase tracking-tight">Mes Trajets</h3>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase mt-0.5">Historique des locations</p>
+                    <h3 class="text-sm font-black text-[#1d4379] uppercase tracking-tight">Vérification</h3>
+                    <p id="verification-status" class="text-[9px] font-bold text-red-400 uppercase">Documents requis</p>
                 </div>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
             </a>
         </div>
 
-        <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-3 text-red-500 font-black text-xs uppercase p-5 bg-red-50 rounded-[22px] transition-all active:scale-95 mb-8">
+        <button onclick="handleLogout()" class="w-full mt-10 flex items-center justify-center gap-3 text-red-500 font-black text-xs uppercase p-5 bg-red-50 rounded-[22px] active:scale-95 transition-all">
             <i data-lucide="log-out" class="w-5 h-5"></i> Déconnexion
         </button>
 
     </main>
 
     <script>
-        // Initialisation Supabase
-        const _supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-        let globalUser = null; // Pour stocker l'ID utilisateur globalement
-
         async function initProfile() {
-            // 1. Récupération session Auth
-            const { data: { user } } = await _supabase.auth.getUser();
+            // Utilisation du client global déjà initialisé
+            const { data: { user } } = await supabase.auth.getUser();
             
             if (!user) {
                 window.location.href = 'login.html';
                 return;
             }
-            globalUser = user; // Sauvegarde pour l'upload
 
             document.getElementById('user-email').innerText = user.email;
 
-            // 2. Fetch du profil détaillé
             try {
-                const { data: profile, error } = await _supabase
+                const { data: profile } = await supabase
                     .from('profiles')
                     .select('*')
                     .eq('id', user.id)
                     .single();
 
                 if (profile) {
-                    const fullName = `${profile.first_name || 'Utilisateur'} ${profile.last_name || ''}`;
+                    const fullName = `${profile.first_name || 'Explorateur'} ${profile.last_name || ''}`;
                     document.getElementById('user-name').innerText = fullName;
                     
-                    // Avatar dynamique (Ajout d'un timestamp pour éviter le cache navigateur)
+                    // Avatar avec fallback
                     const avatarUrl = profile.avatar_url || `https://ui-avatars.com/api/?name=${fullName}&background=1d4379&color=fff`;
                     document.getElementById('profile-avatar').src = avatarUrl;
 
-                    // Affichage conditionnel Propriétaire / Chauffeur
+                    // Stats (Simulation ou réelles si colonnes existent)
+                    document.getElementById('stat-years').innerText = getYearsSince(profile.created_at) || 1;
+
+                    // Rôle Propriétaire
                     if (profile.is_driver) {
-                        document.getElementById('badge-driver').classList.remove('hidden');
-                        const hostLink = document.getElementById('host-link');
-                        hostLink.style.display = 'flex';
+                        document.getElementById('host-link').classList.remove('hidden');
+                        document.getElementById('host-link').classList.add('flex');
+                    }
+
+                    // Check éligibilité pour le statut de vérification
+                    const age = getYearsSince(profile.birth_date);
+                    const license = getYearsSince(profile.license_issue_date);
+                    if (age >= 19 && license >= 1) {
+                        const vStatus = document.getElementById('verification-status');
+                        vStatus.innerText = "Compte Approuvé";
+                        vStatus.classList.replace('text-red-400', 'text-green-500');
                     }
                 }
             } catch (err) {
-                console.error("Erreur profil:", err);
+                console.error("Erreur initialisation:", err);
             }
 
             if (window.lucide) window.lucide.createIcons();
         }
 
-        // --- NOUVELLE FONCTION D'UPLOAD ---
         async function uploadAvatar(input) {
             const file = input.files[0];
-            if (!file || !globalUser) return;
+            if (!file) return;
 
             const icon = document.getElementById('cam-icon');
-            
-            // 1. Feedback Visuel (Spinner)
             icon.setAttribute('data-lucide', 'loader-2');
             icon.classList.add('animate-spin');
             lucide.createIcons();
 
             try {
+                const { data: { user } } = await supabase.auth.getUser();
                 const fileExt = file.name.split('.').pop();
-                const fileName = `${globalUser.id}-${Date.now()}.${fileExt}`; // Nom unique avec timestamp
-                const filePath = `${fileName}`;
+                const filePath = `${user.id}/${Math.random()}.${fileExt}`;
 
-                // 2. Upload vers Supabase Storage
-                const { error: uploadError } = await _supabase.storage
+                const { error: uploadError } = await supabase.storage
                     .from('avatars')
                     .upload(filePath, file);
 
                 if (uploadError) throw uploadError;
 
-                // 3. Récupérer l'URL publique
-                const { data: { publicUrl } } = _supabase.storage
+                const { data: { publicUrl } } = supabase.storage
                     .from('avatars')
                     .getPublicUrl(filePath);
 
-                // 4. Mettre à jour la base de données
-                const { error: updateError } = await _supabase
-                    .from('profiles')
-                    .update({ avatar_url: publicUrl })
-                    .eq('id', globalUser.id);
+                await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
 
-                if (updateError) throw updateError;
-
-                // 5. Mettre à jour l'image immédiatement
                 document.getElementById('profile-avatar').src = publicUrl;
+                showToast("Photo mise à jour !", "success");
                 
             } catch (error) {
-                console.error("Erreur Upload:", error);
-                alert("Erreur lors de l'envoi de la photo.");
+                showToast("Erreur lors de l'envoi", "error");
             } finally {
-                // Remettre l'icône normale
                 icon.setAttribute('data-lucide', 'camera');
                 icon.classList.remove('animate-spin');
                 lucide.createIcons();
-                // Reset de l'input pour permettre de ré-uploader le même fichier si besoin
-                input.value = '';
             }
         }
 
         async function handleLogout() {
-            await _supabase.auth.signOut();
+            await supabase.auth.signOut();
             window.location.href = 'login.html';
         }
 
