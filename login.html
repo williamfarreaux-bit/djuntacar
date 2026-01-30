@@ -14,7 +14,6 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/auth-service.js"></script>
 </head>
 <body class="bg-light">
 
@@ -23,7 +22,7 @@
     <main class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
-                <img src="logo.png" class="auth-logo" alt="DjuntaCar">
+                <img src="logo.png" class="auth-logo" alt="DjuntaCar" onerror="this.style.display='none'">
                 <h1 class="font-brand">Bon retour !</h1>
                 <p class="auth-subtitle">Connectez-vous pour gérer vos locations</p>
             </div>
@@ -57,7 +56,6 @@
     </main>
 
     <script>
-        // Gestion du formulaire de connexion
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
@@ -71,21 +69,28 @@
             const password = document.getElementById('password').value;
 
             try {
-                const result = await DjuntaAuth.signIn(email, password);
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
 
-                if (result.success) {
-                    showToast("Bienvenue sur DjuntaCar !", "success");
-                    setTimeout(() => {
-                        window.location.href = 'profile.html';
-                    }, 1000);
-                } else {
-                    throw new Error("Email ou mot de passe incorrect.");
+                if (error) throw error;
+
+                if (typeof showToast === "function") {
+                    showToast("Bienvenue !", "success");
                 }
+                
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 800);
+
             } catch (error) {
-                msg.innerText = error.message;
+                msg.innerText = "Email ou mot de passe incorrect.";
                 btn.innerText = "SE CONNECTER";
                 btn.disabled = false;
-                showToast(error.message, "error");
+                if (typeof showToast === "function") {
+                    showToast("Erreur de connexion", "error");
+                }
             }
         });
     </script>
