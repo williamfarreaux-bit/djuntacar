@@ -1,14 +1,70 @@
 /**
- * CONFIGURATION SUPABASE
+ * CONFIGURATION OFFICIELLE DJUNTACAR - PRODUCTION
+ * Version : 1.3.0 (Multi-Subdomains & Service Mapping)
  */
 
-// 1. Collez l'URL ici (gardez les guillemets "")
-const SUPABASE_URL = "https://enuiuuwnjzvpfvpklmjw.supabase.co"; 
+const DJUNTA_CONFIG = {
+    // 1. ENVIRONNEMENT (Détection automatique)
+    isProduction: window.location.hostname === "djuntacar.com",
 
-// 2. Collez la clé 'anon public' ici (gardez les guillemets "")
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVudWl1dXduanp2cGZ2cGtsbWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNjIwMzMsImV4cCI6MjA4NDczODAzM30.Ry4beH9ki0sql51XWo5eA1iRluFokVKClaDnbuUGxGA"; 
+    // 2. CONNEXION SUPABASE
+    supabase: {
+        url: "https://TON_ID_PROJET.supabase.co", 
+        anonKey: "TA_CLE_ANON_PUBLIQUE"
+    },
 
-// Ne touchez pas à la suite
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // 3. ARCHITECTURE EMAIL (Mapping par Service)
+    emailing: {
+        // Flux Sécurité (Via Resend/Supabase Auth)
+        auth: {
+            service: "Resend",
+            sender: "noreply@auth.djuntacar.com",
+            name: "DjuntaCar Sécurité",
+            templateId: null // Géré directement dans l'interface Supabase
+        },
+        // Flux Documents (Via Brevo)
+        legal: {
+            service: "Brevo",
+            sender: "contracts@legal.djuntacar.com",
+            name: "DjuntaCar Legal",
+            templateId: 1 // À remplacer par l'ID créé dans Brevo
+        },
+        // Flux Marketing/Info (Via Brevo)
+        info: {
+            service: "Brevo",
+            sender: "contact@info.djuntacar.com",
+            name: "DjuntaCar Info",
+            templateId: 2 // À remplacer par l'ID créé dans Brevo
+        },
+        // Flux Support (Via Cloudflare Routing)
+        support: {
+            service: "Cloudflare",
+            sender: "help@support.djuntacar.com",
+            name: "DjuntaCar Support"
+        }
+    },
 
-console.log("✅ Config chargée");
+    // 4. PARAMÈTRES RÉGIONAUX (Cabo Verde)
+    settings: {
+        currency: "CVE",
+        symbol: "Esc",
+        timezone: "Atlantic/Cape_Verde",
+        brandName: "DjuntaCar",
+        supportUrl: "https://support.djuntacar.com"
+    },
+
+    // 5. NAVIGATION & ROUTES
+    routes: {
+        home: "/",
+        login: "/login",
+        profile: "/profile",
+        bookings: "/bookings",
+        legalTerms: "/legal-terms"
+    }
+};
+
+// 6. SÉCURITÉ : Freeze pour empêcher toute modification accidentelle en cours de route
+Object.freeze(DJUNTA_CONFIG);
+
+// Exposition globale
+window.DJUNTA_CONFIG = DJUNTA_CONFIG;
