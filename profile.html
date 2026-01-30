@@ -16,8 +16,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; }
-        
-        body { background-color: #f8fafc; }
+        body { background-color: #f8fafc; opacity: 0; transition: opacity 0.3s; } /* Évite le flash de contenu */
+        .visible { opacity: 1; }
 
         .profile-card {
             background: white; border-radius: 35px; padding: 30px 24px;
@@ -28,7 +28,6 @@
             position: absolute; top: 0; left: 0; right: 0;
             height: 100px; background: #1d4379;
         }
-
         .avatar-wrapper {
             position: relative; z-index: 10; width: 110px; height: 110px;
             margin: 30px auto 16px auto;
@@ -37,7 +36,6 @@
             width: 100%; height: 100%; border-radius: 40px; 
             border: 4px solid white; object-fit: cover; background: white;
         }
-
         .camera-btn {
             position: absolute; bottom: -5px; right: -5px;
             width: 36px; height: 36px; background: #1d4379; color: white;
@@ -45,18 +43,12 @@
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
-        .stat-box { text-align: center; flex: 1; }
-        .stat-value { font-weight: 900; color: #1d4379; font-size: 16px; }
-        .stat-label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
-
         .menu-link {
             display: flex; align-items: center; gap: 16px;
             background: white; padding: 18px; border-radius: 22px;
             border: 1px solid #f1f5f9; transition: all 0.2s;
             margin-bottom: 12px;
         }
-        .menu-link:active { transform: scale(0.97); }
     </style>
 </head>
 <body class="antialiased">
@@ -71,7 +63,7 @@
             <div class="avatar-wrapper">
                 <img id="profile-avatar" src="" class="avatar-img shadow-lg">
                 <input type="file" id="avatar-input" hidden accept="image/*" onchange="uploadAvatar(this)">
-                <label for="avatar-input" class="camera-btn active:scale-90 transition-transform">
+                <label for="avatar-input" class="camera-btn active:scale-90 transition-transform cursor-pointer">
                     <i id="cam-icon" data-lucide="camera" class="w-4 h-4"></i>
                 </label>
             </div>
@@ -79,119 +71,94 @@
             <h1 id="user-name" class="text-xl font-black text-[#1d4379] uppercase tracking-tight">Chargement...</h1>
             <p id="user-email" class="text-[11px] font-bold text-gray-400 mt-1 uppercase opacity-60">...</p>
             
-            <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-50">
-                <div class="stat-box">
-                    <div id="stat-trips" class="stat-value">0</div>
-                    <div class="stat-label">Trajets</div>
-                </div>
-                <div class="stat-box border-x border-gray-100">
-                    <div class="stat-value">5.0 <span class="text-yellow-400 text-xs">★</span></div>
-                    <div class="stat-label">Note</div>
-                </div>
-                <div class="stat-box">
-                    <div id="stat-years" class="stat-value">0</div>
-                    <div class="stat-label">An(s) membre</div>
-                </div>
+            <div class="flex justify-center gap-2 mt-4">
+                <span id="badge-status" class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">Membre</span>
             </div>
         </div>
 
-        <a href="host-dashboard.html" id="host-link" class="hidden bg-[#1d4379] text-white p-5 rounded-[24px] mb-6 flex items-center gap-4 shadow-lg active:scale-95 transition-transform">
-            <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="car" class="w-6 h-6"></i></div>
-            <div class="flex-1">
-                <h3 class="text-sm font-black uppercase tracking-wide">Mode Propriétaire</h3>
-                <p class="text-[10px] font-bold text-blue-200">Gérer ma flotte et mes revenus</p>
-            </div>
-            <i data-lucide="chevron-right" class="w-5 h-5"></i>
-        </a>
-
         <div class="space-y-3">
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-2 mb-2">Mon Compte</h2>
-
             <a href="profile-edit.html" class="menu-link">
-                <div class="icon-box w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="user-cog" class="w-5 h-5"></i></div>
-                <div class="flex-1 text-sm font-black text-[#1d4379] uppercase tracking-tight">Informations Personnelles</div>
+                <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="user-cog" class="w-5 h-5"></i></div>
+                <div class="flex-1 text-sm font-black text-[#1d4379] uppercase tracking-tight">Modifier le profil</div>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
             </a>
 
             <a href="wallet.html" class="menu-link">
-                <div class="icon-box w-11 h-11 rounded-xl bg-green-50 text-green-600 flex items-center justify-center"><i data-lucide="wallet" class="w-5 h-5"></i></div>
-                <div class="flex-1">
-                    <h3 class="text-sm font-black text-[#1d4379] uppercase tracking-tight">Portefeuille</h3>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase">Solde & Transactions</p>
-                </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-            </a>
-
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-2 mt-6 mb-2">Sécurité & Légal</h2>
-
-            <a href="verification.html" class="menu-link">
-                <div class="icon-box w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
-                <div class="flex-1">
-                    <h3 class="text-sm font-black text-[#1d4379] uppercase tracking-tight">Vérification</h3>
-                    <p id="verification-status" class="text-[9px] font-bold text-red-400 uppercase">Documents requis</p>
-                </div>
+                <div class="w-11 h-11 rounded-xl bg-green-50 text-green-600 flex items-center justify-center"><i data-lucide="wallet" class="w-5 h-5"></i></div>
+                <div class="flex-1 text-sm font-black text-[#1d4379] uppercase tracking-tight">Portefeuille</div>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
             </a>
         </div>
 
-        <button onclick="handleLogout()" class="w-full mt-10 flex items-center justify-center gap-3 text-red-500 font-black text-xs uppercase p-5 bg-red-50 rounded-[22px] active:scale-95 transition-all">
+        <button id="logout-btn" class="w-full mt-10 flex items-center justify-center gap-3 text-red-500 font-black text-xs uppercase p-5 bg-red-50 rounded-[22px] active:scale-95 transition-all">
             <i data-lucide="log-out" class="w-5 h-5"></i> Déconnexion
         </button>
 
     </main>
 
     <script>
-        async function initProfile() {
-            // Utilisation du client global déjà initialisé
-            const { data: { user } } = await supabase.auth.getUser();
+        // Utilisation de l'instance 'supabase' de config.js
+        async function checkSession() {
+            // 1. On vérifie la session TRÈS vite
+            const { data: { session }, error } = await supabase.auth.getSession();
             
-            if (!user) {
-                window.location.href = 'login.html';
+            if (!session || error) {
+                console.log("Accès refusé : Redirection login");
+                window.location.replace('login.html');
                 return;
             }
 
+            // Si session OK, on affiche le corps de la page
+            document.body.classList.add('visible');
+            initProfile(session.user);
+        }
+
+        async function initProfile(user) {
             document.getElementById('user-email').innerText = user.email;
 
-            try {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
 
-                if (profile) {
-                    const fullName = `${profile.first_name || 'Explorateur'} ${profile.last_name || ''}`;
-                    document.getElementById('user-name').innerText = fullName;
-                    
-                    // Avatar avec fallback
-                    const avatarUrl = profile.avatar_url || `https://ui-avatars.com/api/?name=${fullName}&background=1d4379&color=fff`;
-                    document.getElementById('profile-avatar').src = avatarUrl;
-
-                    // Stats (Simulation ou réelles si colonnes existent)
-                    document.getElementById('stat-years').innerText = getYearsSince(profile.created_at) || 1;
-
-                    // Rôle Propriétaire
-                    if (profile.is_driver) {
-                        document.getElementById('host-link').classList.remove('hidden');
-                        document.getElementById('host-link').classList.add('flex');
-                    }
-
-                    // Check éligibilité pour le statut de vérification
-                    const age = getYearsSince(profile.birth_date);
-                    const license = getYearsSince(profile.license_issue_date);
-                    if (age >= 19 && license >= 1) {
-                        const vStatus = document.getElementById('verification-status');
-                        vStatus.innerText = "Compte Approuvé";
-                        vStatus.classList.replace('text-red-400', 'text-green-500');
-                    }
-                }
-            } catch (err) {
-                console.error("Erreur initialisation:", err);
+            if (profile) {
+                const name = profile.full_name || profile.first_name || "Explorateur";
+                document.getElementById('user-name').innerText = name;
+                document.getElementById('profile-avatar').src = profile.avatar_url || `https://ui-avatars.com/api/?name=${name}&background=1d4379&color=fff`;
             }
 
             if (window.lucide) window.lucide.createIcons();
         }
 
+        // --- DÉCONNEXION (CORRIGÉE) ---
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('logout-btn');
+            btn.innerHTML = "Déconnexion...";
+            btn.disabled = true;
+
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+
+                // Nettoyage manuel au cas où le navigateur résiste
+                localStorage.removeItem('supabase.auth.token'); 
+                
+                showToast("À bientôt !", "success");
+                
+                setTimeout(() => {
+                    window.location.replace('login.html');
+                }, 1000);
+
+            } catch (err) {
+                console.error("Erreur Logout:", err);
+                showToast("Erreur de déconnexion", "error");
+                btn.innerHTML = '<i data-lucide="log-out" class="w-5 h-5"></i> Déconnexion';
+                btn.disabled = false;
+            }
+        });
+
+        // --- UPLOAD AVATAR ---
         async function uploadAvatar(input) {
             const file = input.files[0];
             if (!file) return;
@@ -203,8 +170,7 @@
 
             try {
                 const { data: { user } } = await supabase.auth.getUser();
-                const fileExt = file.name.split('.').pop();
-                const filePath = `${user.id}/${Math.random()}.${fileExt}`;
+                const filePath = `avatars/${user.id}-${Date.now()}`;
 
                 const { error: uploadError } = await supabase.storage
                     .from('avatars')
@@ -217,12 +183,11 @@
                     .getPublicUrl(filePath);
 
                 await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
-
                 document.getElementById('profile-avatar').src = publicUrl;
-                showToast("Photo mise à jour !", "success");
-                
-            } catch (error) {
-                showToast("Erreur lors de l'envoi", "error");
+                showToast("Photo mise à jour", "success");
+
+            } catch (err) {
+                showToast("Erreur d'envoi", "error");
             } finally {
                 icon.setAttribute('data-lucide', 'camera');
                 icon.classList.remove('animate-spin');
@@ -230,12 +195,8 @@
             }
         }
 
-        async function handleLogout() {
-            await supabase.auth.signOut();
-            window.location.href = 'login.html';
-        }
-
-        document.addEventListener('DOMContentLoaded', initProfile);
+        // Lancement de la vérification
+        checkSession();
     </script>
 </body>
 </html>
