@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Suppression des Données - DjuntaCar</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="config.js"></script>
+    <script src="layout.js" defer></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f8fafc; color: #1e293b; }
+        
+        .delete-card {
+            background: white; border-radius: 35px; padding: 40px 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
+            margin: 20px 0 40px 0;
+        }
+        h2 { color: #1d4379; font-weight: 900; text-transform: uppercase; font-size: 13px; margin-top: 30px; margin-bottom: 12px; }
+        p { font-size: 13px; line-height: 1.6; color: #64748b; font-weight: 500; margin-bottom: 15px; }
+        
+        .btn-delete-request {
+            background: #ef4444; color: white; width: 100%; padding: 18px;
+            border-radius: 20px; font-weight: 900; text-transform: uppercase;
+            font-size: 11px; letter-spacing: 1px; display: flex;
+            align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.15);
+        }
+        .highlight-email { color: #1d4379; font-weight: 800; border-bottom: 2px solid #3b82f6; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="header-slot"></div>
+
+    <main class="max-w-md mx-auto px-6 py-4">
+        <div class="delete-card">
+            <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-2">Suppression</h1>
+            <p class="text-[10px] font-bold text-red-500 uppercase tracking-widest mb-8">Instructions de suppression des données</p>
+            
+            <p>Conformément au RGPD et aux politiques de Meta/Google, vous avez le droit de demander la suppression intégrale de vos informations personnelles de la plateforme DjuntaCar.</p>
+
+            <h2>Comment faire ?</h2>
+            <p>Pour supprimer votre compte et toutes les données associées (profil, historique, documents), veuillez envoyer un e-mail à :</p>
+            
+            <div class="my-6 p-4 bg-slate-50 rounded-2xl text-center">
+                <span class="highlight-email text-sm">help@support.djuntacar.com</span>
+            </div>
+
+            <h2>Délai de traitement</h2>
+            <p>Une fois votre demande reçue, notre équipe technique procédera à la suppression définitive de vos données sous <span class="highlight">48 heures</span>. Un e-mail de confirmation vous sera envoyé.</p>
+
+            <h2>Données conservées</h2>
+            <p>Veuillez noter que nous sommes légalement tenus de conserver les copies des contrats de location signés pendant une durée de 10 ans pour des raisons fiscales et juridiques, même après la suppression de votre compte utilisateur.</p>
+
+            <div class="mt-10 pt-6 border-t border-slate-100">
+                <a href="mailto:help@support.djuntacar.com?subject=Demande de suppression de compte DjuntaCar" class="btn-delete-request no-underline">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> Demander la suppression
+                </a>
+            </div>
+            
+            <button onclick="window.history.back()" class="w-full mt-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                Retour
+            </button>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
