@@ -1,10 +1,10 @@
 /**
  * CONFIGURATION OFFICIELLE DJUNTACAR - PRODUCTION
- * Version : 1.3.0 (Multi-Subdomains & Service Mapping)
+ * Version : 1.6.0 (Global Logic, Multi-Language & Multi-Currency)
  */
 
 const DJUNTA_CONFIG = {
-    // 1. ENVIRONNEMENT (Détection automatique)
+    // 1. ENVIRONNEMENT
     isProduction: window.location.hostname === "djuntacar.com",
 
     // 2. CONNEXION SUPABASE
@@ -13,47 +13,73 @@ const DJUNTA_CONFIG = {
         anonKey: "TA_CLE_ANON_PUBLIQUE"
     },
 
-    // 3. ARCHITECTURE EMAIL (Mapping par Service)
-    emailing: {
-        // Flux Sécurité (Via Resend/Supabase Auth)
-        auth: {
-            service: "Resend",
-            sender: "noreply@auth.djuntacar.com",
-            name: "DjuntaCar Sécurité",
-            templateId: null // Géré directement dans l'interface Supabase
-        },
-        // Flux Documents (Via Brevo)
-        legal: {
-            service: "Brevo",
-            sender: "contracts@legal.djuntacar.com",
-            name: "DjuntaCar Legal",
-            templateId: 1 // À remplacer par l'ID créé dans Brevo
-        },
-        // Flux Marketing/Info (Via Brevo)
-        info: {
-            service: "Brevo",
-            sender: "contact@info.djuntacar.com",
-            name: "DjuntaCar Info",
-            templateId: 2 // À remplacer par l'ID créé dans Brevo
-        },
-        // Flux Support (Via Cloudflare Routing)
-        support: {
-            service: "Cloudflare",
-            sender: "help@support.djuntacar.com",
-            name: "DjuntaCar Support"
+    // 3. LE CERVEAU DES LANGUES (i18n)
+    langBrain: {
+        // Détecte la langue sauvegardée ou utilise le français par défaut
+        current: localStorage.getItem('djunta_lang') || 'fr',
+        translations: {
+            fr: {
+                find_driver: "Trouver un Chauffeur",
+                search_placeholder: "VILLE OU ÎLE...",
+                budget_label: "Tarif Journalier Max (8h)",
+                duration_label: "Durée de la course",
+                total_text: "Total estimé",
+                currency_info: "Prix affichés en"
+            },
+            pt: {
+                find_driver: "Encontrar um Motorista",
+                search_placeholder: "CIDADE OU ILHA...",
+                budget_label: "Orçamento Diário Máx (8h)",
+                duration_label: "Duração da viagem",
+                total_text: "Total estimado",
+                currency_info: "Preços exibidos em"
+            },
+            en: {
+                find_driver: "Find a Driver",
+                search_placeholder: "CITY OR ISLAND...",
+                budget_label: "Max Daily Rate (8h)",
+                duration_label: "Trip duration",
+                total_text: "Estimated total",
+                currency_info: "Prices shown in"
+            }
         }
     },
 
-    // 4. PARAMÈTRES RÉGIONAUX (Cabo Verde)
+    // 4. LE CERVEAU DES DEVISES (Calculs & Taux)
+    currencyBrain: {
+        current: localStorage.getItem('djunta_curr') || 'EUR',
+        rates: {
+            'EUR': 1,
+            'CVE': 110.265, // Taux fixe Euro/Escudo
+            'USD': 1.08
+        },
+        symbols: {
+            'EUR': '€',
+            'CVE': 'Esc',
+            'USD': '$'
+        },
+        // Règle métier : minimum 25€ (8h) + 5€/h supplémentaire
+        rules: {
+            min_base: 25,
+            extra_hour: 5,
+            base_hours: 8
+        }
+    },
+
+    // 5. ARCHITECTURE EMAIL (Conservée de votre original)
+    emailing: {
+        auth: { service: "Resend", sender: "noreply@auth.djuntacar.com", name: "DjuntaCar Sécurité" },
+        legal: { service: "Brevo", sender: "contracts@legal.djuntacar.com", name: "DjuntaCar Legal", templateId: 1 },
+        info: { service: "Brevo", sender: "contact@info.djuntacar.com", name: "DjuntaCar Info", templateId: 2 },
+        support: { service: "Cloudflare", sender: "help@support.djuntacar.com", name: "DjuntaCar Support" }
+    },
+
+    // 6. PARAMÈTRES RÉGIONAUX & ROUTES
     settings: {
-        currency: "CVE",
-        symbol: "Esc",
         timezone: "Atlantic/Cape_Verde",
         brandName: "DjuntaCar",
         supportUrl: "https://support.djuntacar.com"
     },
-
-    // 5. NAVIGATION & ROUTES
     routes: {
         home: "/",
         login: "/login",
@@ -63,8 +89,5 @@ const DJUNTA_CONFIG = {
     }
 };
 
-// 6. SÉCURITÉ : Freeze pour empêcher toute modification accidentelle en cours de route
 Object.freeze(DJUNTA_CONFIG);
-
-// Exposition globale
 window.DJUNTA_CONFIG = DJUNTA_CONFIG;
