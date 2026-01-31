@@ -30,15 +30,17 @@
 </head>
 <body class="antialiased">
 
+    <div id="header-slot"></div>
+
     <main class="max-w-md mx-auto px-6 pt-6">
         <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-8">Vérification</h1>
 
         <div class="verification-card">
             <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4">Photo de profil (Selfie)</h2>
-            <p class="text-[10px] text-gray-400 font-bold uppercase mb-4">Prenez une photo de vous de face</p>
+            <p class="text-[10px] text-gray-400 font-bold uppercase mb-4 text-center">Prenez une photo de vous de face</p>
             <label for="selfie-file" class="upload-zone cursor-pointer" id="selfie-zone">
-                <div class="upload-content">
-                    <i data-lucide="user-square-2" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
+                <div class="upload-content text-center">
+                    <i data-lucide="camera" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
                     <p class="text-[10px] font-black text-gray-400 uppercase">Prendre mon selfie</p>
                 </div>
                 <img id="selfie-preview" class="preview-img" src="#" alt="Aperçu Selfie">
@@ -49,8 +51,8 @@
         <div class="verification-card">
             <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4">CNI ou Passeport</h2>
             <label for="id-file" class="upload-zone cursor-pointer" id="id-zone">
-                <div class="upload-content">
-                    <i data-lucide="camera" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
+                <div class="upload-content text-center">
+                    <i data-lucide="id-card" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
                     <p class="text-[10px] font-black text-gray-400 uppercase">Scanner la pièce</p>
                 </div>
                 <img id="id-preview" class="preview-img" src="#" alt="Aperçu CNI">
@@ -61,8 +63,8 @@
         <div class="verification-card">
             <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4">Permis de conduire</h2>
             <label for="license-file" class="upload-zone cursor-pointer" id="license-zone">
-                <div class="upload-content">
-                    <i data-lucide="id-card" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
+                <div class="upload-content text-center">
+                    <i data-lucide="user-check" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
                     <p class="text-[10px] font-black text-gray-400 uppercase">Scanner le permis</p>
                 </div>
                 <img id="license-preview" class="preview-img" src="#" alt="Aperçu Permis">
@@ -72,10 +74,11 @@
     </main>
 
     <div class="fixed-save">
-        <button onclick="startUpload()" id="submit-btn" class="btn-submit active:scale-95">Soumettre le dossier</button>
+        <button onclick="startUpload()" id="submit-btn" class="btn-submit active:scale-95 w-full">Soumettre le dossier</button>
     </div>
 
     <script>
+        // Initialisation avec la structure exacte de votre config.js
         const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
         let files = { selfie: null, id: null, license: null };
 
@@ -96,8 +99,16 @@
             const { data: auth, error: authError } = await sb.auth.getUser();
             const user = auth?.user;
 
-            if (!user) return window.location.href = 'login.html';
-            if (!files.selfie || !files.id) return alert("Le selfie et la pièce d'identité sont obligatoires.");
+            if (!user) {
+                alert("Session expirée. Veuillez vous reconnecter.");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (!files.selfie || !files.id) {
+                alert("Le selfie et la pièce d'identité sont obligatoires.");
+                return;
+            }
             
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
@@ -107,43 +118,45 @@
                 // 1. Upload Selfie
                 const selfiePath = `${user.id}/selfie_${Date.now()}`;
                 await sb.storage.from('identity-docs').upload(selfiePath, files.selfie);
-                const { data: selfieData } = sb.storage.from('identity-docs').getPublicUrl(selfiePath);
+                const selfieUrl = sb.storage.from('identity-docs').getPublicUrl(selfiePath).data.publicUrl;
 
                 // 2. Upload CNI
                 const idPath = `${user.id}/cni_${Date.now()}`;
                 await sb.storage.from('identity-docs').upload(idPath, files.id);
-                const { data: idData } = sb.storage.from('identity-docs').getPublicUrl(idPath);
+                const idUrl = sb.storage.from('identity-docs').getPublicUrl(idPath).data.publicUrl;
 
                 // 3. Upload Permis (Optionnel)
                 let licenseUrl = null;
                 if (files.license) {
                     const licPath = `${user.id}/permis_${Date.now()}`;
                     await sb.storage.from('identity-docs').upload(licPath, files.license);
-                    const { data: licData } = sb.storage.from('identity-docs').getPublicUrl(licPath);
-                    licenseUrl = licData.publicUrl;
+                    licenseUrl = sb.storage.from('identity-docs').getPublicUrl(licPath).data.publicUrl;
                 }
 
                 // 4. Mise à jour Profil
                 const { error: dbError } = await sb.from('profiles').update({
-                    selfie_url: selfieData.publicUrl,
-                    id_card_url: idData.publicUrl,
+                    selfie_url: selfieUrl,
+                    id_card_url: idUrl,
                     driver_license_url: licenseUrl,
                     verification_status: 'pending'
                 }).eq('id', user.id);
 
                 if (dbError) throw dbError;
 
-                alert("Dossier soumis ! Vérification sous 24h.");
+                alert("Dossier soumis avec succès !");
                 window.location.href = 'profile.html';
 
             } catch (err) {
-                alert("Erreur : " + err.message);
+                console.error("Erreur d'upload:", err);
+                alert("Une erreur est survenue lors de l'envoi.");
                 btn.disabled = false;
                 btn.innerText = "RÉESSAYER";
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
     </script>
 </body>
 </html>
