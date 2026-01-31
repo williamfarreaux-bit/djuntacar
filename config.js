@@ -1,6 +1,6 @@
 /**
  * CONFIGURATION OFFICIELLE DJUNTACAR - PRODUCTION
- * Version : 1.6.0 (Global Logic, Multi-Language & Multi-Currency)
+ * Version : 1.6.1 (Harmonisation des libellés d'origine)
  */
 
 const DJUNTA_CONFIG = {
@@ -15,10 +15,16 @@ const DJUNTA_CONFIG = {
 
     // 3. LE CERVEAU DES LANGUES (i18n)
     langBrain: {
-        // Détecte la langue sauvegardée ou utilise le français par défaut
         current: localStorage.getItem('djunta_lang') || 'fr',
         translations: {
             fr: {
+                nav_home: "Accueil",
+                nav_driver: "Mon Chauffeur",
+                nav_car: "Ma Voiture",
+                nav_rentals: "Mes Locations",
+                nav_wallet: "Portefeuille",
+                nav_account: "Mon Compte",
+                logout: "Déconnexion",
                 find_driver: "Trouver un Chauffeur",
                 search_placeholder: "VILLE OU ÎLE...",
                 budget_label: "Tarif Journalier Max (8h)",
@@ -27,6 +33,13 @@ const DJUNTA_CONFIG = {
                 currency_info: "Prix affichés en"
             },
             pt: {
+                nav_home: "Início",
+                nav_driver: "Meu Motorista",
+                nav_car: "Meu Carro",
+                nav_rentals: "Minhas Reservas",
+                nav_wallet: "Carteira",
+                nav_account: "Minha Conta",
+                logout: "Sair",
                 find_driver: "Encontrar um Motorista",
                 search_placeholder: "CIDADE OU ILHA...",
                 budget_label: "Orçamento Diário Máx (8h)",
@@ -35,6 +48,13 @@ const DJUNTA_CONFIG = {
                 currency_info: "Preços exibidos em"
             },
             en: {
+                nav_home: "Home",
+                nav_driver: "My Driver",
+                nav_car: "My Car",
+                nav_rentals: "My Bookings",
+                nav_wallet: "Wallet",
+                nav_account: "My Account",
+                logout: "Logout",
                 find_driver: "Find a Driver",
                 search_placeholder: "CITY OR ISLAND...",
                 budget_label: "Max Daily Rate (8h)",
@@ -50,7 +70,7 @@ const DJUNTA_CONFIG = {
         current: localStorage.getItem('djunta_curr') || 'EUR',
         rates: {
             'EUR': 1,
-            'CVE': 110.265, // Taux fixe Euro/Escudo
+            'CVE': 110.265, 
             'USD': 1.08
         },
         symbols: {
@@ -58,7 +78,6 @@ const DJUNTA_CONFIG = {
             'CVE': 'Esc',
             'USD': '$'
         },
-        // Règle métier : minimum 25€ (8h) + 5€/h supplémentaire
         rules: {
             min_base: 25,
             extra_hour: 5,
@@ -66,7 +85,7 @@ const DJUNTA_CONFIG = {
         }
     },
 
-    // 5. ARCHITECTURE EMAIL (Conservée de votre original)
+    // 5. ARCHITECTURE EMAIL
     emailing: {
         auth: { service: "Resend", sender: "noreply@auth.djuntacar.com", name: "DjuntaCar Sécurité" },
         legal: { service: "Brevo", sender: "contracts@legal.djuntacar.com", name: "DjuntaCar Legal", templateId: 1 },
