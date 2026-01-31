@@ -18,13 +18,14 @@
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         body { background-color: #fcfcfd; padding-bottom: 120px; }
         .verification-card { background: white; border-radius: 35px; padding: 24px; border: 1px solid #f1f5f9; margin-bottom: 20px; }
-        .upload-zone { border: 2px dashed #e2e8f0; border-radius: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; background: #f8fafc; }
-        .preview-img { width: 100%; height: 150px; object-fit: cover; display: none; border-radius: 18px; }
+        .upload-zone { border: 2px dashed #e2e8f0; border-radius: 20px; min-height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; background: #f8fafc; transition: 0.2s; }
+        .upload-zone.has-file { border-style: solid; border-color: #22c55e; }
+        .preview-img { width: 100%; height: 140px; object-fit: cover; display: none; border-radius: 18px; }
         .upload-content { text-align: center; }
         .upload-zone.has-file .upload-content { display: none; }
         .upload-zone.has-file .preview-img { display: block; }
-        .btn-submit { background: #1d4379; color: white; width: 100%; padding: 20px; border-radius: 22px; font-weight: 900; text-transform: uppercase; font-size: 12px; }
-        .fixed-save { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px 24px; border-top: 1px solid #f1f5f9; }
+        .btn-submit { background: #1d4379; color: white; width: 100%; padding: 20px; border-radius: 22px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .fixed-save { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px 24px; border-top: 1px solid #f1f5f9; z-index: 50; }
     </style>
 </head>
 <body class="antialiased">
@@ -33,14 +34,27 @@
         <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-8">Vérification</h1>
 
         <div class="verification-card">
+            <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4">Photo de profil (Selfie)</h2>
+            <p class="text-[10px] text-gray-400 font-bold uppercase mb-4">Prenez une photo de vous de face</p>
+            <label for="selfie-file" class="upload-zone cursor-pointer" id="selfie-zone">
+                <div class="upload-content">
+                    <i data-lucide="user-square-2" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
+                    <p class="text-[10px] font-black text-gray-400 uppercase">Prendre mon selfie</p>
+                </div>
+                <img id="selfie-preview" class="preview-img" src="#" alt="Aperçu Selfie">
+                <input type="file" id="selfie-file" class="hidden" accept="image/*" capture="user" onchange="previewFile(this, 'selfie')">
+            </label>
+        </div>
+
+        <div class="verification-card">
             <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4">CNI ou Passeport</h2>
             <label for="id-file" class="upload-zone cursor-pointer" id="id-zone">
                 <div class="upload-content">
                     <i data-lucide="camera" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
-                    <p class="text-[10px] font-black text-gray-400 uppercase">Scanner ou Uploader</p>
+                    <p class="text-[10px] font-black text-gray-400 uppercase">Scanner la pièce</p>
                 </div>
                 <img id="id-preview" class="preview-img" src="#" alt="Aperçu CNI">
-                <input type="file" id="id-file" class="hidden" accept="image/*" onchange="previewFile(this, 'id')">
+                <input type="file" id="id-file" class="hidden" accept="image/*" capture="environment" onchange="previewFile(this, 'id')">
             </label>
         </div>
 
@@ -48,22 +62,22 @@
             <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4">Permis de conduire</h2>
             <label for="license-file" class="upload-zone cursor-pointer" id="license-zone">
                 <div class="upload-content">
-                    <i data-lucide="camera" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
-                    <p class="text-[10px] font-black text-gray-400 uppercase">Scanner ou Uploader</p>
+                    <i data-lucide="id-card" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
+                    <p class="text-[10px] font-black text-gray-400 uppercase">Scanner le permis</p>
                 </div>
                 <img id="license-preview" class="preview-img" src="#" alt="Aperçu Permis">
-                <input type="file" id="license-file" class="hidden" accept="image/*" onchange="previewFile(this, 'license')">
+                <input type="file" id="license-file" class="hidden" accept="image/*" capture="environment" onchange="previewFile(this, 'license')">
             </label>
         </div>
     </main>
 
     <div class="fixed-save">
-        <button onclick="startUpload()" id="submit-btn" class="btn-submit active:scale-95">Soumettre les documents</button>
+        <button onclick="startUpload()" id="submit-btn" class="btn-submit active:scale-95">Soumettre le dossier</button>
     </div>
 
     <script>
         const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
-        let files = { id: null, license: null };
+        let files = { selfie: null, id: null, license: null };
 
         function previewFile(input, type) {
             if (input.files && input.files[0]) {
@@ -79,41 +93,39 @@
         }
 
         async function startUpload() {
-            // Vérification de session sécurisée
             const { data: auth, error: authError } = await sb.auth.getUser();
             const user = auth?.user;
 
-            if (!user || authError) {
-                alert("Session expirée. Veuillez vous reconnecter.");
-                window.location.href = 'login.html';
-                return;
-            }
-
-            if (!files.id) return alert("La pièce d'identité est obligatoire.");
+            if (!user) return window.location.href = 'login.html';
+            if (!files.selfie || !files.id) return alert("Le selfie et la pièce d'identité sont obligatoires.");
             
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerText = "CHARGEMENT...";
+            btn.innerText = "ENVOI SÉCURISÉ...";
 
             try {
-                // Upload CNI
+                // 1. Upload Selfie
+                const selfiePath = `${user.id}/selfie_${Date.now()}`;
+                await sb.storage.from('identity-docs').upload(selfiePath, files.selfie);
+                const { data: selfieData } = sb.storage.from('identity-docs').getPublicUrl(selfiePath);
+
+                // 2. Upload CNI
                 const idPath = `${user.id}/cni_${Date.now()}`;
-                const { error: err1 } = await sb.storage.from('identity-docs').upload(idPath, files.id);
-                if (err1) throw err1;
+                await sb.storage.from('identity-docs').upload(idPath, files.id);
                 const { data: idData } = sb.storage.from('identity-docs').getPublicUrl(idPath);
 
-                // Upload Permis
+                // 3. Upload Permis (Optionnel)
                 let licenseUrl = null;
                 if (files.license) {
                     const licPath = `${user.id}/permis_${Date.now()}`;
-                    const { error: err2 } = await sb.storage.from('identity-docs').upload(licPath, files.license);
-                    if (err2) throw err2;
+                    await sb.storage.from('identity-docs').upload(licPath, files.license);
                     const { data: licData } = sb.storage.from('identity-docs').getPublicUrl(licPath);
                     licenseUrl = licData.publicUrl;
                 }
 
-                // Mise à jour Profil
+                // 4. Mise à jour Profil
                 const { error: dbError } = await sb.from('profiles').update({
+                    selfie_url: selfieData.publicUrl,
                     id_card_url: idData.publicUrl,
                     driver_license_url: licenseUrl,
                     verification_status: 'pending'
@@ -121,7 +133,7 @@
 
                 if (dbError) throw dbError;
 
-                alert("Documents soumis avec succès !");
+                alert("Dossier soumis ! Vérification sous 24h.");
                 window.location.href = 'profile.html';
 
             } catch (err) {
@@ -131,9 +143,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.lucide) lucide.createIcons();
-        });
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
     </script>
 </body>
 </html>
