@@ -22,32 +22,65 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
             margin: 20px 0 40px 0;
         }
-        h2 { color: #1d4379; font-weight: 900; text-transform: uppercase; font-size: 13px; margin-top: 35px; margin-bottom: 15px; letter-spacing: 0.5px; border-left: 4px solid #1d4379; padding-left: 12px; }
-        p, li { font-size: 13px; line-height: 1.7; color: #64748b; font-weight: 500; margin-bottom: 12px; }
-        ul { padding-left: 20px; list-style-type: none; }
-        ul li::before { content: "•"; color: #1d4379; font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
+        h2 { color: #1d4379; font-weight: 900; text-transform: uppercase; font-size: 13px; margin-top: 30px; margin-bottom: 12px; border-left: 4px solid #1d4379; padding-left: 12px; }
+        p, li { font-size: 13px; line-height: 1.6; color: #64748b; font-weight: 500; margin-bottom: 10px; }
         
-        .highlight { color: #1d4379; font-weight: 700; }
-        .rule-box { background: #f1f5f9; border-radius: 20px; padding: 20px; margin: 15px 0; border: 1px solid #e2e8f0; }
-        .badge { font-size: 9px; font-weight: 900; padding: 3px 10px; border-radius: 8px; text-transform: uppercase; }
-        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .highlight { color: #1d4379; font-weight: 800; }
+        .warning-box { background: #fefce8; border: 1px solid #fef08a; border-radius: 22px; padding: 20px; margin: 20px 0; }
+        .badge-verif { font-size: 9px; font-weight: 900; background: #ef4444; color: white; padding: 3px 10px; border-radius: 8px; text-transform: uppercase; }
     </style>
 </head>
 <body class="antialiased">
 
     <div id="header-slot"></div>
 
-    <main class="max-w-md mx-auto px-6 py-6">
+    <main class="max-w-md mx-auto px-6 py-4">
         <div class="terms-card">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-black text-[#1d4379] uppercase leading-tight">Conditions<br>de Service</h1>
-                <span class="badge badge-blue">V1.4</span>
+                <span class="badge-verif">Protection v1.6</span>
             </div>
             
-            <p>L'utilisation de <span class="highlight">DjuntaCar</span> implique l'acceptation des règles financières et opérationnelles suivantes pour garantir la sécurité des propriétaires et des locataires.</p>
+            <div class="warning-box">
+                <p class="text-yellow-800 font-black text-[11px] uppercase mb-2">⚠️ Avertissement Important :</p>
+                <p class="text-yellow-700 text-[12px] leading-relaxed">
+                    <span class="font-bold">DjuntaCar n'est ni un loueur de voitures, ni une compagnie d'assurance.</span> Nous agissons exclusivement en tant qu'intermédiaire technique facilitant la mise en relation entre propriétaires, locataires et chauffeurs.
+                </p>
+            </div>
 
-            <h2>1. Gestion de la Caution</h2>
-            <p>Une caution (dépôt de garantie) est systématiquement requise pour toute location. Cette somme est bloquée sur le compte du <span class="highlight">Locataire</span>.</p>
+            <h2>1. Statut et Responsabilité Limité</h2>
+            <p>La responsabilité de DjuntaCar est strictement limitée à la fourniture de la plateforme. Nous ne sommes pas partie au contrat de location qui lie les utilisateurs. </p>
             <ul>
-                <li>La caution sert à couvrir les franchises d'assurance, les dégradations non couvertes et les frais de restitution (nettoyage, retard).</li>
-                <li>Elle est libérée après inspection du véhicule, déduction faite des frais éventuels via <span class="
+                <li>• DjuntaCar n'assume aucune responsabilité pour les dommages, vols ou accidents.</li>
+                <li>• La plateforme ne garantit pas la solvabilité des utilisateurs.</li>
+            </ul>
+
+            <h2>2. Obligation de Vérification Physique</h2>
+            <p>Bien que DjuntaCar propose une validation numérique des documents sur <span class="highlight">auth.djuntacar.com</span>, <span class="font-bold text-red-600 uppercase">il appartient aux utilisateurs de vérifier physiquement</span> l'identité et la validité du permis de conduire original de chaque partie lors de la rencontre pour la remise des clés.</p>
+
+            <h2>3. Admissibilité au Service</h2>
+            <p>L'accès aux services est conditionné par :</p>
+            <ul>
+                <li>• Âge minimum : <span class="highlight">19 ans révolus</span>.</li>
+                <li>• Ancienneté du permis : <span class="highlight">1 an minimum</span>.</li>
+                <li>• <span class="highlight">Signature du Contrat</span> numérique avant le début de la location.</li>
+                <li>• <span class="highlight">Assurance Journalière</span> spécifique et obligatoire, à sélectionner lors de la réservation.</li>
+            </ul>
+
+            <h2>4. Carburant et Gestion Financière</h2>
+            <p>L'essence est toujours à la charge du <span class="highlight">Locataire</span>. Le véhicule doit être rendu avec le plein effectué. Les amendes sont redirigées vers le <span class="highlight">Chauffeur</span>, tandis que les cautions sont gérées via notre interface sécurisée.</p>
+
+            <h2>5. Utilisation de l'Application</h2>
+            <p>Toute utilisation frauduleuse de l'application ou contournement du système de réservation entraînera un bannissement définitif et la nullité des garanties d'assurance.</p>
+
+            <div class="mt-10 pt-6 border-t border-slate-100">
+                <p class="text-[10px] text-center font-bold text-slate-400 uppercase mb-6 italic">En cliquant, vous reconnaissez que DjuntaCar n'intervient qu'en qualité d'intermédiaire.</p>
+                <button onclick="window.history.back()" class="w-full py-5 rounded-[22px] bg-[#1d4379] text-white font-black uppercase text-[11px] tracking-widest shadow-lg active:scale-95 transition-all">
+                    J'accepte ces conditions
+                </button>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
