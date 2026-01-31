@@ -1,13 +1,13 @@
 /**
  * DJUNTACAR - LAYOUT MASTER
- * Remplace menu.js et gère toute la navigation (Header + Burger + PWA)
+ * Gère l'injection du Header, du Menu Mobile et la Navigation Intelligente
  */
 
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Cibler le slot du header
     const headerSlot = document.getElementById('header-slot');
     
-    // Si le slot existe, on injecte. Sinon on crée le header en haut du body (Sécurité)
+    // Si le slot existe, on injecte. Sinon on crée le header en haut du body
     if (headerSlot) {
         injectHeaderContent(headerSlot);
     } else {
@@ -37,13 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- 1. INJECTION HEADER ---
 function injectHeaderContent(targetElement) {
-    // On force le style du conteneur pour garantir l'affichage
     targetElement.style.position = 'sticky';
     targetElement.style.top = '0';
     targetElement.style.zIndex = '1000';
     targetElement.style.backgroundColor = 'white';
     targetElement.style.borderBottom = '1px solid #f1f5f9';
 
+    // Remplacement de la redirection directe par handleProfileNavigation()
     targetElement.innerHTML = `
         <div style="height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; max-width: 600px; margin: 0 auto;">
             
@@ -64,7 +64,7 @@ function injectHeaderContent(targetElement) {
                 </div>
             </div>
 
-            <div style="width: 40%; display: flex; justify-content: center;" onclick="window.location.href='index.html'">
+            <div style="width: 40%; display: flex; justify-content: center; cursor:pointer;" onclick="window.location.href='index.html'">
                 <img src="logo.png" alt="DjuntaCar" style="max-height: 40px; object-fit: contain;" onerror="this.outerHTML='<h1 class=\'text-xl font-black text-[#1d4379]\'>DJUNTACAR</h1>'">
             </div>
 
@@ -78,7 +78,7 @@ function injectHeaderContent(targetElement) {
                     <i data-lucide="download-cloud" style="width:18px; height:18px;"></i>
                 </button>
 
-                <button onclick="window.location.href='profile.html'" style="background:none; border:none; padding:4px; cursor:pointer;">
+                <button onclick="handleProfileNavigation(event)" style="background:none; border:none; padding:4px; cursor:pointer;">
                     <i data-lucide="user" style="color:#1d4379; width:26px; height:26px;"></i>
                 </button>
             </div>
@@ -86,7 +86,7 @@ function injectHeaderContent(targetElement) {
     `;
 }
 
-// --- 2. INJECTION MENU (Intègre tout le contenu de menu.js) ---
+// --- 2. INJECTION MENU MOBILE ---
 function injectMobileMenu() {
     if (document.getElementById('mobile-menu')) return;
     
@@ -100,32 +100,32 @@ function injectMobileMenu() {
         </div>
         
         <nav style="display:flex; flex-direction:column; gap:15px; font-weight:800; color:#1d4379; text-transform:uppercase; font-size:12px;">
-            <a href="index.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px; transition:background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+            <a href="index.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px;">
                 <i data-lucide="home"></i> Accueil
             </a>
             
-            <a href="search-driver.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px; transition:background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+            <a href="search-driver.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px;">
                 <i data-lucide="user-check"></i> Mon Chauffeur
             </a>
 
-            <a href="search-car.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px; transition:background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+            <a href="search-car.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px;">
                 <i data-lucide="car-front"></i> Ma Voiture
             </a>
 
-            <a href="my-rentals.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px; transition:background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+            <a href="my-rentals.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px;">
                 <i data-lucide="calendar"></i> Mes Locations
             </a>
 
-            <a href="wallet.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px; transition:background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+            <a href="wallet.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px;">
                 <i data-lucide="wallet"></i> Portefeuille
             </a>
 
-            <a href="profile.html" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px; transition:background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+            <a href="#" onclick="handleProfileNavigation(event)" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; padding:8px; border-radius:8px;">
                 <i data-lucide="user-circle"></i> Mon Compte
             </a>
         </nav>
 
-        <button onclick="handleLogout()" style="margin-top:auto; background:#fef2f2; color:#ef4444; border:none; padding:15px; border-radius:12px; font-weight:900; text-transform:uppercase; font-size:12px; display:flex; justify-content:center; gap:8px;">
+        <button onclick="handleLogout()" style="margin-top:auto; background:#fef2f2; color:#ef4444; border:none; padding:15px; border-radius:12px; font-weight:900; text-transform:uppercase; font-size:12px; display:flex; justify-content:center; gap:8px; cursor:pointer;">
             <i data-lucide="log-out"></i> Déconnexion
         </button>
     </div>`;
@@ -133,7 +133,29 @@ function injectMobileMenu() {
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
-// --- FONCTIONS GLOBALES ---
+// --- FONCTIONS DE NAVIGATION ET AUTH ---
+
+/**
+ * Gère le clic sur le bouton Profil/Compte
+ * Vérifie la session Supabase avant de rediriger
+ */
+window.handleProfileNavigation = async function(e) {
+    if(e) e.preventDefault();
+    
+    if(window.supabase && typeof DJUNTA_CONFIG !== 'undefined') {
+        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
+        const { data: { session } } = await sb.auth.getSession();
+
+        if (session) {
+            window.location.href = 'profile.html';
+        } else {
+            window.location.href = 'login.html';
+        }
+    } else {
+        // Fallback par sécurité vers login
+        window.location.href = 'login.html';
+    }
+};
 
 window.toggleMenu = function() {
     const m = document.getElementById('mobile-menu');
@@ -160,7 +182,7 @@ window.setLang = function(l) {
 
 window.handleLogout = async function() {
     if(window.supabase && typeof DJUNTA_CONFIG !== 'undefined') {
-        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
         await sb.auth.signOut();
     }
     window.location.href = 'login.html';
@@ -168,11 +190,14 @@ window.handleLogout = async function() {
 
 async function checkUnreadMessages() {
     if(!window.supabase || typeof DJUNTA_CONFIG === 'undefined') return;
-    const sb = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+    const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
     const { data: { user } } = await sb.auth.getUser();
     if(user) {
         const { count } = await sb.from('messages').select('*', { count: 'exact', head: true }).eq('is_read', false).neq('sender_id', user.id);
-        if(count > 0) document.getElementById('unread-dot').style.display = 'block';
+        if(count > 0) {
+            const dot = document.getElementById('unread-dot');
+            if(dot) dot.style.display = 'block';
+        }
     }
 }
 
