@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Gestion des Cookies - DjuntaCar</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="config.js"></script>
+    <script src="layout.js" defer></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; }
+
+        /* Style du Bandeau Cookies */
+        #cookie-banner {
+            position: fixed; bottom: 20px; left: 20px; right: 20px;
+            background: white; border-radius: 30px; padding: 25px;
+            box-shadow: 0 20px 50px rgba(29, 67, 121, 0.15);
+            border: 1px solid #f1f5f9; z-index: 9999;
+            display: none; transform: translateY(100px);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #cookie-banner.show { display: block; transform: translateY(0); }
+
+        .btn-cookie-accept {
+            background: #1d4379; color: white; padding: 14px 24px;
+            border-radius: 18px; font-weight: 900; text-transform: uppercase;
+            font-size: 11px; letter-spacing: 1px; flex: 1;
+        }
+
+        .btn-cookie-settings {
+            background: #f1f5f9; color: #1d4379; padding: 14px 24px;
+            border-radius: 18px; font-weight: 900; text-transform: uppercase;
+            font-size: 11px; letter-spacing: 1px; flex: 1;
+        }
+
+        .cookie-text { font-size: 13px; color: #64748b; line-height: 1.5; font-weight: 500; }
+        .cookie-title { font-size: 16px; color: #1d4379; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+    </style>
+</head>
+<body class="antialiased bg-slate-50">
+
+    <div id="header-slot"></div>
+
+    <main class="max-w-md mx-auto px-6 py-10">
+        <div class="bg-white p-8 rounded-[35px] shadow-sm border border-slate-100">
+            <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-4">Préférences</h1>
+            <p class="text-sm text-slate-500 font-medium">Gérez ici vos préférences en matière de traceurs et de cookies pour l'expérience DjuntaCar.</p>
+            <button onclick="resetCookieConsent()" class="mt-6 text-[10px] font-black text-blue-500 uppercase underline">Réinitialiser mes choix</button>
+        </div>
+    </main>
+
+    <div id="cookie-banner">
+        <div class="flex flex-col gap-4">
+            <div class="flex items-start gap-4">
+                <div class="p-3 bg-blue-50 rounded-2xl">
+                    <i data-lucide="cookie" class="text-[#1d4379]"></i>
+                </div>
+                <div>
+                    <h3 class="cookie-title">Cookies & Vie Privée</h3>
+                    <p class="cookie-text">
+                        Nous utilisons des cookies pour optimiser votre connexion via <span class="font-bold">Google/Facebook</span> et sécuriser vos locations.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 mt-2">
+                <button onclick="acceptCookies('all')" class="btn-cookie-accept active:scale-95 transition-all">Tout accepter</button>
+                <button onclick="acceptCookies('essential')" class="btn-cookie-settings active:scale-95 transition-all">Essentiels</button>
+            </div>
+            <p class="text-[9px] text-center text-slate-400 font-bold uppercase mt-1">
+                En savoir plus sur notre <a href="privacy.html" class="underline">Politique de confidentialité</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation des icônes Lucide
+            if (window.lucide) lucide.createIcons();
+
+            // Vérifier si l'utilisateur a déjà fait un choix
+            const consent = localStorage.getItem('djuntacar_cookie_consent');
+            if (!consent) {
+                setTimeout(() => {
+                    document.getElementById('cookie-banner').classList.add('show');
+                }, 1000);
+            }
+        });
+
+        function acceptCookies(type) {
+            localStorage.setItem('djuntacar_cookie_consent', type);
+            localStorage.setItem('djuntacar_cookie_date', new Date().toISOString());
+            
+            // Animation de sortie
+            const banner = document.getElementById('cookie-banner');
+            banner.style.transform = 'translateY(100px)';
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 500);
+
+            console.log(`Consentement enregistré : ${type}`);
+        }
+
+        function resetCookieConsent() {
+            localStorage.removeItem('djuntacar_cookie_consent');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
