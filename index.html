@@ -19,22 +19,14 @@
         
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 140px; }
 
+        /* HERO SECTION */
         .hero-section {
             background-color: #1d4379;
-            padding-top: 20px;
-            padding-bottom: 60px;
+            padding: 40px 0 80px 0;
             border-bottom-left-radius: 40px;
             border-bottom-right-radius: 40px;
             position: relative;
             text-align: center;
-            z-index: 10;
-        }
-
-        .aligned-container {
-            width: 90%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         .search-wrapper {
@@ -42,9 +34,9 @@
             bottom: 0;
             left: 50%;
             transform: translate(-50%, 50%);
-            z-index: 20;
             width: 90%;
             max-width: 500px;
+            z-index: 30;
         }
 
         .search-bar {
@@ -58,50 +50,48 @@
             border: 1px solid #f1f5f9;
         }
 
+        /* CATEGORIES */
         .categories-wrapper {
-            margin-top: 45px;
+            margin-top: 50px;
             overflow-x: auto;
             display: flex;
             justify-content: space-between;
-            gap: 8px;
+            gap: 10px;
+            padding: 0 20px;
             scrollbar-width: none;
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
         }
         .categories-wrapper::-webkit-scrollbar { display: none; }
 
         .cat-btn {
             background: white;
             border: 1px solid #e2e8f0;
-            padding: 12px 0;
-            width: 100%;
+            padding: 12px 20px;
+            min-width: 80px;
             border-radius: 100px;
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
             color: #64748b;
             text-align: center;
-            transition: all 0.2s;
         }
         .cat-btn.active {
             background: #1d4379;
             color: white;
             border-color: #1d4379;
-            box-shadow: 0 4px 10px rgba(29, 67, 121, 0.3);
         }
 
+        /* FEED VOITURES */
         .cars-column {
-            margin-top: 20px;
+            margin-top: 24px;
             display: flex;
             flex-direction: column;
             gap: 24px;
-            padding: 10px 24px 30px 24px;
+            padding: 0 24px 30px 24px;
         }
 
         .car-card {
             width: 100%;
-            height: 340px;
+            height: 320px;
             border-radius: 35px;
             position: relative;
             overflow: hidden;
@@ -118,6 +108,7 @@
             padding: 24px; color: white;
         }
 
+        /* BOUTONS ACTIONS FIXES */
         .action-btns {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -144,7 +135,6 @@
             display: flex; 
             flex-direction: column;
             align-items: center; 
-            justify-content: center; 
             gap: 6px;
         }
     </style>
@@ -155,11 +145,11 @@
 
     <main>
         <section class="hero-section">
-            <h1 class="text-white text-lg font-black uppercase tracking-wide">Trouvez votre véhicule</h1>
+            <h1 class="text-white text-lg font-black uppercase italic italic" data-i18n="nav_home">Accueil</h1>
             <div class="search-wrapper">
                 <div class="search-bar" onclick="window.location.href='search-car.html'">
                     <i data-lucide="search" class="text-blue-500 w-5 h-5"></i>
-                    <span class="text-xs font-bold text-gray-400 uppercase">Rechercher une voiture...</span>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase" data-i18n="search_placeholder">Rechercher...</span>
                 </div>
             </div>
         </section>
@@ -172,27 +162,76 @@
         </div>
 
         <div id="cars-feed" class="cars-column">
-            <div class="w-full text-center py-20 opacity-50">
-                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
-            </div>
+            <div class="text-center py-20 opacity-20"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i></div>
         </div>
 
         <div class="action-btns">
-            <button onclick="secureAccess('add-car.html', 'car')" class="btn-main bg-[#1d4379]">
+            <button onclick="secureAccess('add-car.html')" class="btn-main bg-[#1d4379]">
                 <i data-lucide="plus-circle" class="w-6 h-6"></i>
-                Ajouter voiture
+                Voiture
             </button>
-            <button onclick="secureAccess('become-driver.html', 'driver')" class="btn-main bg-[#22c55e]">
+            <button onclick="secureAccess('become-driver.html')" class="btn-main bg-[#22c55e]">
                 <i data-lucide="user-check" class="w-6 h-6"></i>
-                Devenir chauffeur
+                Chauffeur
             </button>
         </div>
     </main>
 
-    <div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] hidden items-center justify-center p-6">
-        <div class="bg-white w-full max-w-xs rounded-[35px] p-8 text-center shadow-2xl">
-            <div id="modal-icon-container" class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i id="modal-icon" data-lucide="lock" class="w-8 h-8 text-[#1d4379]"></i>
-            </div>
-            <h3 id="modal-title" class="text-lg font-black text-[#1d4379] uppercase italic mb-2">Connexion requise</h3>
-            <p id="modal-desc" class="text-[9px] font-bold text-gray-400 uppercase leading-relaxed mb
+    <script>
+        // Initialisation Supabase via le Cerveau
+        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
+
+        async function loadCars(category = 'Tout') {
+            const feed = document.getElementById('cars-feed');
+            
+            let query = sb.from('vehicles').select('*');
+            if (category !== 'Tout') query = query.ilike('category', `%${category}%`);
+
+            const { data: vehicles, error } = await query;
+
+            if (error || !vehicles || vehicles.length === 0) {
+                feed.innerHTML = `<p class="text-center text-[10px] font-bold text-slate-400 uppercase py-10">Aucun véhicule trouvé</p>`;
+                return;
+            }
+
+            feed.innerHTML = vehicles.map(v => `
+                <div class="car-card" onclick="window.location.href='car-detail.html?id=${v.id}'">
+                    <img src="${v.image_url}" class="car-bg" onerror="this.src='https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=60&w=800'">
+                    <div class="car-overlay">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-black uppercase text-white">${v.brand} ${v.model}</h3>
+                                <p class="text-[9px] font-bold text-white opacity-70 uppercase">${v.location || 'Cabo Verde'}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-black text-white">${DjuntaFormat(v.price_per_day, DJUNTA_CONFIG.currencyBrain.current)}</p>
+                                <p class="text-[8px] font-bold text-gray-300 uppercase">/ JOUR</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function filterCars(cat, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadCars(cat);
+        }
+
+        async function secureAccess(target) {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                window.location.href = target;
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Chargement initial
+        document.addEventListener('DOMContentLoaded', () => loadCars());
+    </script>
+</body>
+</html>
