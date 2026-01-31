@@ -17,10 +17,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        /* AJOUT IMPORTANT : Marge en bas pour ne pas cacher la dernière voiture derrière les boutons fixes */
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 140px; }
 
-        /* HERO & RECHERCHE */
         .hero-section {
             background-color: #1d4379;
             padding-top: 20px;
@@ -60,7 +58,6 @@
             border: 1px solid #f1f5f9;
         }
 
-        /* FILTRES */
         .categories-wrapper {
             margin-top: 45px;
             overflow-x: auto;
@@ -94,18 +91,17 @@
             transform: scale(1.02);
         }
 
-        /* --- MODIFICATION : LISTE VERTICALE (PLUS DE SLIDER) --- */
         .cars-column {
             margin-top: 20px;
             display: flex;
-            flex-direction: column; /* Vertical */
+            flex-direction: column;
             gap: 24px;
             padding: 10px 24px 30px 24px;
         }
 
         .car-card {
             width: 100%;
-            height: 340px; /* Hauteur fixe pour l'image */
+            height: 340px;
             border-radius: 35px;
             position: relative;
             overflow: hidden;
@@ -114,7 +110,6 @@
             transition: transform 0.1s;
         }
         .car-card:active { transform: scale(0.98); }
-
         .car-bg { width: 100%; height: 100%; object-fit: cover; }
 
         .car-overlay {
@@ -131,15 +126,14 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* --- MODIFICATION : BARRE D'ACTION FIXE EN BAS --- */
         .action-btns {
-            position: fixed; /* Reste fixe */
+            position: fixed;
             bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.95); /* Fond semi-transparent */
-            backdrop-filter: blur(10px); /* Flou iOS */
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 20px 24px 35px 24px;
             display: flex; 
-            flex-direction: row; /* Côte à côte */
+            flex-direction: row;
             gap: 12px;
             border-top-left-radius: 30px;
             border-top-right-radius: 30px;
@@ -149,7 +143,7 @@
         }
 
         .btn-main {
-            width: 50%; /* 50% de la largeur chacun */
+            width: 50%;
             padding: 16px;
             border-radius: 20px;
             color: white; 
@@ -159,11 +153,13 @@
             text-align: center; 
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             display: flex; 
-            flex-direction: column; /* Icône au-dessus du texte */
+            flex-direction: column;
             align-items: center; 
             justify-content: center; 
             gap: 6px;
         }
+
+        #auth-modal.flex { display: flex; }
     </style>
 </head>
 <body class="antialiased">
@@ -196,16 +192,33 @@
         </div>
 
         <div class="action-btns">
-            <button onclick="window.location.href='add-car.html'" class="btn-main bg-[#1d4379]">
+            <button onclick="secureAccess('add-car.html', 'car')" class="btn-main bg-[#1d4379]">
                 <i data-lucide="plus-circle" class="w-6 h-6"></i>
                 Ajouter voiture
             </button>
-            <button onclick="window.location.href='become-driver.html'" class="btn-main bg-[#22c55e]">
+            <button onclick="secureAccess('become-driver.html', 'driver')" class="btn-main bg-[#22c55e]">
                 <i data-lucide="user-check" class="w-6 h-6"></i>
                 Devenir chauffeur
             </button>
         </div>
     </main>
+
+    <div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] hidden items-center justify-center p-6">
+        <div class="bg-white w-full max-w-xs rounded-[35px] p-8 shadow-2xl text-center">
+            <div id="modal-icon-container" class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i id="modal-icon" data-lucide="lock" class="w-8 h-8"></i>
+            </div>
+            <h3 id="modal-title" class="text-lg font-black text-[#1d4379] uppercase italic mb-2">Connexion requise</h3>
+            <p id="modal-desc" class="text-[9px] font-bold text-gray-400 uppercase leading-relaxed mb-8">
+                Connectez-vous pour continuer sur DjuntaCar.
+            </p>
+            <div class="space-y-3">
+                <a href="login.html" class="block w-full bg-[#1d4379] text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Se connecter</a>
+                <a href="signup.html" class="block w-full border-2 border-slate-100 text-[#1d4379] py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Créer un compte</a>
+                <button onclick="closeAuthModal()" class="text-[9px] font-black text-gray-300 uppercase mt-4">Plus tard</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
@@ -214,6 +227,45 @@
             loadCars('Tout');
         });
 
+        /* --- LOGIQUE POPUP PERSONNALISÉ --- */
+        const authModal = document.getElementById('auth-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalIcon = document.getElementById('modal-icon');
+
+        async function secureAccess(targetUrl, type) {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                window.location.href = targetUrl;
+            } else {
+                // Personnalisation du contenu
+                if (type === 'car') {
+                    modalTitle.innerText = "Ajouter un véhicule";
+                    modalDesc.innerText = "Connectez-vous pour enregistrer votre voiture et commencer à gagner de l'argent.";
+                    modalIcon.setAttribute('data-lucide', 'plus-circle');
+                } else if (type === 'driver') {
+                    modalTitle.innerText = "Devenir chauffeur";
+                    modalDesc.innerText = "Rejoignez notre équipe de chauffeurs partenaires en vous connectant à votre compte.";
+                    modalIcon.setAttribute('data-lucide', 'user-check');
+                }
+                
+                if (window.lucide) lucide.createIcons(); // Rafraîchir l'icône
+                authModal.classList.remove('hidden');
+                authModal.classList.add('flex');
+            }
+        }
+
+        function closeAuthModal() {
+            authModal.classList.add('hidden');
+            authModal.classList.remove('flex');
+        }
+
+        authModal.addEventListener('click', (e) => {
+            if(e.target === authModal) closeAuthModal();
+        });
+
+        /* --- LOGIQUE FILTRES & CHARGEMENT --- */
         function filterCars(category, btnElement) {
             document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
@@ -221,26 +273,22 @@
         }
 
         async function loadCars(category) {
-            // On cible la liste verticale
             const feed = document.getElementById('cars-feed');
             feed.innerHTML = '<div class="w-full text-center py-20 opacity-30"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i></div>';
 
             let query = supabase.from('vehicles').select('*');
             if (category !== 'Tout') query = query.ilike('category', `%${category}%`);
 
-            // On charge plus de véhicules car le scroll vertical est plus facile
             const { data: vehicles } = await query.limit(20);
             feed.innerHTML = '';
 
             if (!vehicles || vehicles.length === 0) {
-                feed.innerHTML = '<p class="text-center w-full py-10 text-gray-400 font-bold text-xs pl-6">Aucun véhicule trouvé.</p>';
+                feed.innerHTML = '<p class="text-center w-full py-10 text-gray-400 font-bold text-xs">Aucun véhicule trouvé.</p>';
                 return;
             }
 
             vehicles.forEach(car => {
                 const img = car.image_url || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600';
-                
-                // Nouvelle structure HTML (Carte large)
                 const html = `
                 <div class="car-card" onclick="window.location.href='car-detail.html?id=${car.id}'">
                     <img src="${img}" class="car-bg">
@@ -248,7 +296,7 @@
                     <div class="car-overlay">
                         <div class="flex justify-between items-end">
                             <div>
-                                <h3 class="text-2xl font-black uppercase leading-tight text-white shadow-sm">${car.brand} ${car.model}</h3>
+                                <h3 class="text-2xl font-black uppercase leading-tight text-white">${car.brand} ${car.model}</h3>
                                 <div class="flex items-center gap-1 mt-2 text-[10px] font-bold opacity-90 text-white">
                                     <i data-lucide="map-pin" class="w-3 h-3"></i> ${car.location || 'Cap-Vert'}
                                 </div>
