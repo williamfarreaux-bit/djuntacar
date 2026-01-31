@@ -1,143 +1,117 @@
 /**
- * DJUNTACAR - LAYOUT MASTER (Intelligence Intégrée)
- * Gère l'injection dynamique, la traduction et les devises via le "Cerveau"
+ * DJUNTACAR - LAYOUT MASTER V1.9.0
+ * Injection Header, Footer et Logique i18n/Currency
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Initialisation des aides globales (Traductions & Prix)
-    window.DjuntaT = (key) => {
-        const brain = DJUNTA_CONFIG.langBrain;
-        return brain.translations[brain.current][key] || key;
-    };
-
-    window.DjuntaPrice = (amountInEUR, targetCurr) => {
-        const brain = DJUNTA_CONFIG.currencyBrain;
-        const converted = amountInEUR * brain.rates[targetCurr];
-        const symbol = brain.symbols[targetCurr];
-        return `${Math.round(converted)} ${symbol}`;
-    };
-
-    // 2. Gestion de l'injection du Header
-    const headerSlot = document.getElementById('header-slot');
-    if (headerSlot) {
-        injectHeaderContent(headerSlot);
-    } else {
-        let header = document.createElement('header');
-        document.body.prepend(header);
-        injectHeaderContent(header);
-    }
-
-    injectMobileMenu(); 
-    injectFooter();
+    // Initialisation des outils du Cerveau
+    window.DjuntaT = (k) => DJUNTA_CONFIG.langBrain.translations[DJUNTA_CONFIG.langBrain.current][k] || k;
     
-    // 3. Traduction automatique des éléments marqués [data-i18n]
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        el.innerText = DjuntaT(el.getAttribute('data-i18n'));
-    });
+    window.DjuntaFormat = (val, curr) => {
+        const brain = DJUNTA_CONFIG.currencyBrain;
+        const symbol = brain.symbols[curr];
+        // Note: Si la base du chauffeur est différente de la base client, conversion nécessaire ici
+        return `${Math.round(val)} ${symbol}`;
+    };
+
+    // Injection
+    const headerSlot = document.getElementById('header-slot') || document.body.prepend(document.createElement('header'));
+    injectHeaderContent(document.getElementById('header-slot') || document.querySelector('header'));
+    injectMobileMenu();
+    injectFooter();
 
     if (window.lucide) window.lucide.createIcons();
-    
-    try { setupPWA(); } catch(e) {}
-    try { checkUnreadMessages(); } catch(e) {}
-    
-    // Fermeture auto des menus
-    document.addEventListener('click', (e) => {
-        const langMenu = document.getElementById('lang-dropdown');
-        const langBtn = document.getElementById('lang-btn');
-        if (langMenu && langBtn && !langBtn.contains(e.target)) {
-            langMenu.style.display = 'none';
-        }
+
+    // Fermeture des menus
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.dropdown-content').forEach(d => d.style.display = 'none');
     });
 });
 
-// --- 1. INJECTION HEADER (Dynamique) ---
-function injectHeaderContent(targetElement) {
-    const currentLang = DJUNTA_CONFIG.langBrain.current.toUpperCase();
-    const currentCurr = DJUNTA_CONFIG.currencyBrain.current;
+function injectHeaderContent(target) {
+    const lang = DJUNTA_CONFIG.langBrain.current.toUpperCase();
+    const curr = DJUNTA_CONFIG.currencyBrain.current;
 
-    targetElement.style.cssText = "position:sticky; top:0; z-index:1000; background:white; border-bottom:1px solid #f1f5f9;";
-
-    targetElement.innerHTML = `
-        <div style="height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; max-width: 600px; margin: 0 auto;">
+    target.style.cssText = "position:sticky; top:0; z-index:1000; background:white; border-bottom:1px solid #f1f5f9;";
+    target.innerHTML = `
+        <div style="height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; max-width: 600px; margin: 0 auto;">
             
-            <div style="width: 35%; display: flex; align-items: center; gap: 8px;">
-                <button onclick="toggleMenu()" style="background:none; border:none; padding:4px; cursor:pointer;">
-                    <i data-lucide="menu" style="color:#1d4379; width:28px; height:28px;"></i>
+            <div style="display: flex; align-items: center; gap: 8px; width: 35%;">
+                <button onclick="toggleMenu()" style="background:none; border:none; cursor:pointer;">
+                    <i data-lucide="menu" style="color:#1d4379; width:22px;"></i>
                 </button>
                 
-                <div style="position:relative;">
-                    <button id="lang-btn" onclick="toggleLang(event)" style="background:#f8fafc; border:1px solid #e2e8f0; padding:6px 10px; border-radius:12px; font-weight:900; font-size:9px; color:#1d4379; display:flex; align-items:center; gap:4px; cursor:pointer; text-transform:uppercase;">
-                        ${currentLang} | ${currentCurr} <i data-lucide="chevron-down" style="width:10px; height:10px;"></i>
+                <div style="position:relative;" onclick="event.stopPropagation()">
+                    <button onclick="showDrop('lang-drop')" style="background:#f8fafc; border:1px solid #e2e8f0; padding:6px 8px; border-radius:10px; font-weight:900; font-size:9px; color:#1d4379; display:flex; gap:4px; align-items:center;">
+                        <i data-lucide="globe" style="width:10px;"></i> ${lang}
                     </button>
-                    <div id="lang-dropdown" style="display:none; position:absolute; top:40px; left:0; background:white; border:1px solid #e2e8f0; border-radius:15px; box-shadow:0 10px 25px rgba(0,0,0,0.1); overflow:hidden; z-index:5000; min-width:120px; padding:8px;">
-                        <p style="font-size:8px; font-weight:900; color:#cbd5e1; padding:8px; text-transform:uppercase;">Langue</p>
-                        <div onclick="setDjuntaLang('fr')" style="padding:10px; font-size:11px; font-weight:700; color:#1d4379; cursor:pointer;">Français</div>
-                        <div onclick="setDjuntaLang('pt')" style="padding:10px; font-size:11px; font-weight:700; color:#1d4379; cursor:pointer;">Português</div>
-                        <div onclick="setDjuntaLang('en')" style="padding:10px; font-size:11px; font-weight:700; color:#1d4379; cursor:pointer;">English</div>
-                        <hr style="border:0; border-top:1px solid #f1f5f9; margin:4px 0;">
-                        <p style="font-size:8px; font-weight:900; color:#cbd5e1; padding:8px; text-transform:uppercase;">Devise</p>
-                        <div onclick="setDjuntaCurr('EUR')" style="padding:10px; font-size:11px; font-weight:700; color:#1d4379; cursor:pointer;">EUR (€)</div>
-                        <div onclick="setDjuntaCurr('CVE')" style="padding:10px; font-size:11px; font-weight:700; color:#1d4379; cursor:pointer;">CVE (Esc)</div>
+                    <div id="lang-drop" class="dropdown-content" style="display:none; position:absolute; top:35px; left:0; background:white; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1); border:1px solid #f1f5f9; min-width:110px;">
+                        <div onclick="setDjuntaLang('fr')" style="padding:12px; font-size:11px; font-weight:700; color:#1d4379;">Français</div>
+                        <div onclick="setDjuntaLang('pt')" style="padding:12px; font-size:11px; font-weight:700; color:#1d4379;">Português</div>
+                        <div onclick="setDjuntaLang('en')" style="padding:12px; font-size:11px; font-weight:700; color:#1d4379;">English</div>
                     </div>
                 </div>
             </div>
 
-            <div style="width: 30%; display: flex; justify-content: center; cursor:pointer;" onclick="window.location.href='index.html'">
-                <img src="logo.png" style="max-height:35px;" onerror="this.outerHTML='<h1 style=\'font-weight:900; color:#1d4379; font-size:14px;\'>DJUNTACAR</h1>'">
+            <div style="width: 30%; display: flex; justify-content: center;" onclick="window.location.href='index.html'">
+                <img src="logo.png" style="max-height:28px;" onerror="this.outerHTML='<b style=\'color:#1d4379; font-size:12px\'>DJUNTA</b>'">
             </div>
 
-            <div style="width: 35%; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
-                <button onclick="window.location.href='chat.html'" style="background:none; border:none; position:relative; cursor:pointer;">
-                    <i data-lucide="message-circle" style="color:#1d4379; width:24px; height:24px;"></i>
-                    <span id="unread-dot" style="display:none; position:absolute; top:0; right:0; width:8px; height:8px; background:#ef4444; border-radius:50%; border:2px solid white;"></span>
-                </button>
+            <div style="display: flex; align-items: center; gap: 8px; width: 35%; justify-content: flex-end;">
+                <div style="position:relative;" onclick="event.stopPropagation()">
+                    <button onclick="showDrop('curr-drop')" style="background:#f0f9ff; border:1px solid #e0f2fe; padding:6px 8px; border-radius:10px; font-weight:900; font-size:9px; color:#0369a1; display:flex; gap:4px; align-items:center;">
+                        ${curr}
+                    </button>
+                    <div id="curr-drop" class="dropdown-content" style="display:none; position:absolute; top:35px; right:0; background:white; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1); border:1px solid #f1f5f9; min-width:90px;">
+                        <div onclick="setDjuntaCurr('CVE')" style="padding:12px; font-size:11px; font-weight:700; color:#0369a1;">CVE (Esc)</div>
+                        <div onclick="setDjuntaCurr('EUR')" style="padding:12px; font-size:11px; font-weight:700; color:#0369a1;">EUR (€)</div>
+                        <div onclick="setDjuntaCurr('USD')" style="padding:12px; font-size:11px; font-weight:700; color:#0369a1;">USD ($)</div>
+                    </div>
+                </div>
                 <button onclick="handleProfileNavigation(event)" style="background:none; border:none; cursor:pointer;">
-                    <i data-lucide="user" style="color:#1d4379; width:24px; height:24px;"></i>
+                    <i data-lucide="user" style="color:#1d4379; width:22px;"></i>
                 </button>
             </div>
         </div>
     `;
 }
 
-// --- 2. INJECTION MENU MOBILE (Traduit) ---
+window.showDrop = (id) => {
+    document.querySelectorAll('.dropdown-content').forEach(d => d.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+};
+
+window.setDjuntaLang = (l) => { localStorage.setItem('djunta_lang', l); window.location.reload(); };
+window.setDjuntaCurr = (c) => { localStorage.setItem('djunta_curr', c); window.location.reload(); };
+
 function injectMobileMenu() {
     if (document.getElementById('mobile-menu')) return;
     const menuHTML = `
     <div id="menu-overlay" onclick="toggleMenu()" style="position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1999; display:none; backdrop-filter:blur(4px);"></div>
-    <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:30px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease; box-shadow:10px 0 40px rgba(0,0,0,0.1);">
+    <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:30px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease;">
         <div style="display:flex; justify-content:space-between; margin-bottom:40px;">
-            <img src="logo.png" style="height:30px;">
+            <img src="logo.png" style="height:25px;">
             <button onclick="toggleMenu()"><i data-lucide="x" style="color:#94a3b8;"></i></button>
         </div>
         <nav style="display:flex; flex-direction:column; gap:20px; font-weight:800; color:#1d4379; text-transform:uppercase; font-size:11px;">
-            <a href="index.html" style="display:flex; gap:12px; align-items:center;"><i data-lucide="home"></i> Accueil</a>
-            <a href="find-driver.html" style="display:flex; gap:12px; align-items:center;"><i data-lucide="user-check"></i> Chauffeurs</a>
-            <a href="search-car.html" style="display:flex; gap:12px; align-items:center;"><i data-lucide="car-front"></i> Voitures</a>
-            <a href="wallet.html" style="display:flex; gap:12px; align-items:center;"><i data-lucide="wallet"></i> Portefeuille</a>
+            <a href="index.html" style="display:flex; gap:12px; align-items:center;"><i data-lucide="home"></i> ${DjuntaT('nav_home')}</a>
+            <a href="find-driver.html" style="display:flex; gap:12px; align-items:center;"><i data-lucide="user-check"></i> ${DjuntaT('nav_drivers')}</a>
+            <a href="search-car.html" style="display:flex; gap:12px; align-items:center;"><i data-lucide="car-front"></i> ${DjuntaT('nav_cars')}</a>
         </nav>
-        <button onclick="handleLogout()" style="margin-top:auto; background:#fef2f2; color:#ef4444; padding:18px; border-radius:20px; font-weight:900; text-transform:uppercase; font-size:10px; display:flex; justify-content:center; gap:8px;">
-            <i data-lucide="log-out"></i> Déconnexion
+        <button onclick="handleLogout()" style="margin-top:auto; background:#fef2f2; color:#ef4444; padding:15px; border-radius:15px; font-weight:900; text-transform:uppercase; font-size:10px; display:flex; justify-content:center; gap:8px;">
+            <i data-lucide="log-out"></i> ${DjuntaT('logout')}
         </button>
     </div>`;
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
-// --- FONCTIONS DU CERVEAU ---
-window.setDjuntaLang = function(l) {
-    localStorage.setItem('djunta_lang', l);
-    window.location.reload();
-};
-
-window.setDjuntaCurr = function(c) {
-    localStorage.setItem('djunta_curr', c);
-    window.location.reload();
-};
-
-window.toggleLang = function(e) {
-    e.stopPropagation();
-    const d = document.getElementById('lang-dropdown');
-    d.style.display = d.style.display === 'block' ? 'none' : 'block';
-};
+function injectFooter() {
+    if (document.getElementById('master-footer')) return;
+    document.body.insertAdjacentHTML('beforeend', `
+    <footer id="master-footer" style="margin:40px auto; padding:20px; text-align:center; border-top:1px solid #f1f5f9;">
+        <p style="font-size:9px; color:#cbd5e1; font-weight:800; text-transform:uppercase;">© 2026 DjuntaCar • Cabo Verde</p>
+    </footer>`);
+}
 
 window.toggleMenu = function() {
     const m = document.getElementById('mobile-menu');
@@ -160,14 +134,3 @@ window.handleLogout = async function() {
     await sb.auth.signOut();
     window.location.href = 'login.html';
 };
-
-function injectFooter() {
-    if (document.getElementById('master-footer')) return;
-    const footerHTML = `
-    <footer id="master-footer" style="max-width:500px; margin:60px auto 20px; padding:20px; text-align:center; border-top:1px solid #f1f5f9;">
-        <p style="font-size:9px; color:#cbd5e1; font-weight:800; text-transform:uppercase;">
-            © 2026 DjuntaCar • Cabo Verde
-        </p>
-    </footer>`;
-    document.body.insertAdjacentHTML('beforeend', footerHTML);
-}
