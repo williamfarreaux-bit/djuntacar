@@ -72,18 +72,15 @@
             <input type="email" id="email" placeholder="Adresse e-mail" class="w-full p-5 bg-slate-50 rounded-2xl font-bold text-sm outline-none border border-transparent focus:border-[#1d4379]" required>
             <input type="password" id="password" placeholder="Mot de passe" class="w-full p-5 bg-slate-50 rounded-2xl font-bold text-sm outline-none border border-transparent focus:border-[#1d4379]" required>
 
-            <div class="space-y-4 pt-4 px-1">
+            <div class="pt-4 px-1">
                 <label class="flex gap-4 cursor-pointer">
-                    <input type="checkbox" required class="custom-checkbox">
-                    <span class="text-[11px] font-medium text-slate-500 leading-snug">
-                        J'ai au moins <span class="text-[#1d4379] font-black">19 ans</span> et <span class="text-[#1d4379] font-black">1 an de permis</span>. J'accepte les <a href="terms.html" class="text-[#1d4379] font-black underline">Conditions de Service</a>.
-                    </span>
-                </label>
-
-                <label class="flex gap-4 cursor-pointer">
-                    <input type="checkbox" required class="custom-checkbox">
-                    <span class="text-[11px] font-medium text-slate-500 leading-snug">
-                        Je reconnais que DjuntaCar est un <span class="text-[#1d4379] font-black">simple intermédiaire</span> et j'accepte les <a href="app-terms.html" class="text-[#1d4379] font-black underline">Conditions de l'App</a>.
+                    <input type="checkbox" id="accept-terms" required class="custom-checkbox">
+                    <span class="text-[11px] font-medium text-slate-500 leading-snug uppercase">
+                        En cochant cette case, je certifie avoir pris connaissance et accepter les 
+                        <a href="terms.html" class="text-[#1d4379] font-black underline">conditions de service</a>, 
+                        les <a href="cgu.html" class="text-[#1d4379] font-black underline">conditions générales d'utilisation</a> 
+                        et la <a href="privacy.html" class="text-[#1d4379] font-black underline">politique de confidentialité</a> 
+                        de la plateforme DjuntaCar.
                     </span>
                 </label>
             </div>
@@ -103,6 +100,15 @@
     <script>
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Vérification de sécurité pour la case à cocher
+            if (!document.getElementById('accept-terms').checked) {
+                const msg = document.getElementById('msg');
+                msg.className = "text-xs font-bold text-center text-red-500";
+                msg.innerText = "Veuillez accepter les conditions.";
+                return;
+            }
+
             const btn = document.getElementById('btn-submit');
             const msg = document.getElementById('msg');
             
@@ -114,7 +120,6 @@
             const prenom = document.getElementById('prenom').value;
             const nom = document.getElementById('nom').value;
 
-            // Appel au service DjuntaAuth (via auth-service.js)
             const result = await DjuntaAuth.signUp(email, password, prenom, nom);
 
             if (result.success) {
@@ -129,8 +134,13 @@
             }
         });
 
-        // Gestion du Social Signup (Google / Facebook)
         async function handleSocialSignup(provider) {
+            // Sécurité : Forcer l'acceptation pour le social signup également
+            if (!document.getElementById('accept-terms').checked) {
+                alert("Veuillez accepter les conditions de service avant de continuer.");
+                return;
+            }
+
             if(!window.supabase || typeof DJUNTA_CONFIG === 'undefined') return;
             
             const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
