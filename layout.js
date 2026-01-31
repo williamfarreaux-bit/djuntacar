@@ -1,6 +1,6 @@
 /**
  * DJUNTACAR - LAYOUT MASTER
- * Gère l'injection du Header, du Menu Mobile et la Navigation Intelligente
+ * Gère l'injection du Header, du Menu Mobile, du Footer Légal et la Navigation
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,10 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
         injectHeaderContent(header);
     }
 
-    // 2. Injecter le menu (caché par défaut)
+    // 2. Injecter le menu mobile (caché par défaut)
     injectMobileMenu(); 
+
+    // 3. Injecter le Footer Légal (Nouveau)
+    injectFooter();
     
-    // 3. Lancer les icônes et services
+    // 4. Lancer les icônes et services
     if (window.lucide) window.lucide.createIcons();
     
     try { setupPWA(); } catch(e) {}
@@ -43,7 +46,6 @@ function injectHeaderContent(targetElement) {
     targetElement.style.backgroundColor = 'white';
     targetElement.style.borderBottom = '1px solid #f1f5f9';
 
-    // Remplacement de la redirection directe par handleProfileNavigation()
     targetElement.innerHTML = `
         <div style="height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; max-width: 600px; margin: 0 auto;">
             
@@ -133,12 +135,28 @@ function injectMobileMenu() {
     document.body.insertAdjacentHTML('beforeend', menuHTML);
 }
 
+// --- 3. INJECTION FOOTER LÉGAL ---
+function injectFooter() {
+    if (document.getElementById('master-footer')) return;
+
+    const footerHTML = `
+    <footer id="master-footer" style="max-width: 500px; margin: 40px auto 20px; padding: 20px; text-align: center; border-top: 1px solid #f1f5f9;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 15px;">
+            <a href="terms.html" style="text-decoration: none; font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Conditions Service</a>
+            <a href="app-terms.html" style="text-decoration: none; font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Conditions App</a>
+            <a href="privacy.html" style="text-decoration: none; font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Confidentialité</a>
+        </div>
+        <p style="font-size: 9px; color: #cbd5e1; font-weight: 700; text-transform: uppercase; line-height: 1.4;">
+            DjuntaCar est un intermédiaire de confiance.<br>
+            © 2026 DjuntaCar • Tous droits réservés.
+        </p>
+    </footer>`;
+
+    document.body.insertAdjacentHTML('beforeend', footerHTML);
+}
+
 // --- FONCTIONS DE NAVIGATION ET AUTH ---
 
-/**
- * Gère le clic sur le bouton Profil/Compte
- * Vérifie la session Supabase avant de rediriger
- */
 window.handleProfileNavigation = async function(e) {
     if(e) e.preventDefault();
     
@@ -152,7 +170,6 @@ window.handleProfileNavigation = async function(e) {
             window.location.href = 'login.html';
         }
     } else {
-        // Fallback par sécurité vers login
         window.location.href = 'login.html';
     }
 };
