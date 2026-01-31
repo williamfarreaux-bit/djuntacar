@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Vérification d'identité - DjuntaCar</title>
+    <title>Vérification - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,187 +16,116 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        
         body { background-color: #fcfcfd; padding-bottom: 120px; }
-
-        .verification-card {
-            background: white; border-radius: 35px;
-            padding: 24px; border: 1px solid #f1f5f9;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-            margin-bottom: 20px;
-        }
-
-        /* ZONE D'UPLOAD STYLISÉE */
-        .upload-zone {
-            border: 2px dashed #e2e8f0; border-radius: 20px;
-            padding: 24px; text-align: center;
-            transition: all 0.2s; position: relative;
-            background: #f8fafc;
-        }
+        .verification-card { background: white; border-radius: 35px; padding: 24px; border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 20px; }
+        .upload-zone { border: 2px dashed #e2e8f0; border-radius: 20px; padding: 24px; text-align: center; transition: all 0.2s; position: relative; background: #f8fafc; }
         .upload-zone.has-file { border-color: #22c55e; background: #f0fdf4; }
-        .upload-zone:active { transform: scale(0.98); }
-
-        .progress-bar {
-            height: 4px; width: 0%; background: #1d4379;
-            border-radius: 10px; transition: width 0.3s;
-            margin-top: 10px;
-        }
-
-        .fixed-save {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; border-top: 1px solid #f1f5f9;
-            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom));
-        }
+        .progress-bar { height: 4px; width: 0%; background: #1d4379; border-radius: 10px; transition: width 0.3s; margin-top: 10px; }
+        .fixed-save { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #f1f5f9; padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
     </style>
 </head>
 <body class="antialiased">
 
     <main class="max-w-md mx-auto px-6 pt-6">
-        <button onclick="history.back()" class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">
+        <button onclick="history.back()" class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase mb-6">
             <i data-lucide="chevron-left" class="w-4 h-4"></i> Retour
         </button>
 
-        <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-2">Vérification</h1>
-        <p class="text-xs font-bold text-gray-400 mb-8 uppercase tracking-tighter">Documents officiels obligatoires</p>
+        <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-8">Vérification</h1>
 
         <div class="verification-card">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-[#1d4379]">
-                    <i data-lucide="contact-2" class="w-5 h-5"></i>
-                </div>
-                <h2 class="text-sm font-black text-[#1d4379] uppercase">CNI ou Passeport</h2>
-            </div>
-            
+            <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4">CNI ou Passeport</h2>
             <label for="id-file" class="upload-zone block cursor-pointer" id="id-zone">
                 <i data-lucide="upload-cloud" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest" id="id-status">Cliquez pour scanner ou uploader</p>
+                <p class="text-[10px] font-black text-gray-400 uppercase" id="id-status">Cliquer pour uploader</p>
                 <input type="file" id="id-file" class="hidden" accept="image/*,application/pdf" onchange="handleFileSelection(this, 'id')">
                 <div class="progress-bar" id="id-progress"></div>
             </label>
         </div>
 
-        <div class="verification-card" id="license-section">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-[#1d4379]">
-                    <i data-lucide="id-card" class="w-5 h-5"></i>
-                </div>
-                <h2 class="text-sm font-black text-[#1d4379] uppercase">Permis de conduire</h2>
-            </div>
-            
+        <div class="verification-card">
+            <h2 class="text-sm font-black text-[#1d4379] uppercase mb-4">Permis de conduire</h2>
             <label for="license-file" class="upload-zone block cursor-pointer" id="license-zone">
                 <i data-lucide="upload-cloud" class="w-8 h-8 text-gray-300 mx-auto mb-2"></i>
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest" id="license-status">Cliquez pour scanner ou uploader</p>
+                <p class="text-[10px] font-black text-gray-400 uppercase" id="license-status">Cliquer pour uploader</p>
                 <input type="file" id="license-file" class="hidden" accept="image/*,application/pdf" onchange="handleFileSelection(this, 'license')">
                 <div class="progress-bar" id="license-progress"></div>
             </label>
         </div>
-
-        <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3">
-            <i data-lucide="alert-circle" class="w-5 h-5 text-amber-500 shrink-0"></i>
-            <p class="text-[9px] font-bold text-amber-700 leading-relaxed uppercase">
-                Vos documents sont cryptés et stockés de manière sécurisée. Ils ne seront jamais partagés avec des tiers sans votre accord.
-            </p>
-        </div>
     </main>
 
     <div class="fixed-save">
-        <button onclick="startFinalUpload()" id="submit-btn" class="w-full bg-[#1d4379] text-white py-4 rounded-[20px] font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
-            <i data-lucide="check-circle" class="w-4 h-4"></i> Soumettre mes documents
+        <button onclick="startFinalUpload()" id="submit-btn" class="w-full bg-[#1d4379] text-white py-4 rounded-[20px] font-black text-xs uppercase shadow-xl flex items-center justify-center gap-3">
+            Soumettre les documents
         </button>
     </div>
 
     <script>
-        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        // CORRECTION : Utilisation des clés exactes de config.js
+        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
         let filesToUpload = { id: null, license: null };
-        let userRole = 'renter'; // Par défaut
 
         async function init() {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return window.location.href = 'login.html';
-
-            // On vérifie le profil pour savoir si on cache le permis
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-            
-            // Si c'est un pur propriétaire (pas chauffeur ni locataire), on peut masquer le permis. 
-            // Mais selon votre règle, locataires et chauffeurs en ont besoin.
-            if (profile && profile.role === 'owner_only') {
-                // document.getElementById('license-section').style.display = 'none';
-            }
+            if (!user) window.location.href = 'login.html';
             lucide.createIcons();
         }
 
         function handleFileSelection(input, type) {
             if (input.files && input.files[0]) {
                 filesToUpload[type] = input.files[0];
-                const zone = document.getElementById(`${type}-zone`);
-                const status = document.getElementById(`${type}-status`);
-                
-                zone.classList.add('has-file');
-                status.innerText = `Fichier sélectionné : ${input.files[0].name}`;
-                status.classList.replace('text-gray-400', 'text-green-600');
+                document.getElementById(`${type}-zone`).classList.add('has-file');
+                document.getElementById(`${type}-status`).innerText = "Fichier prêt";
+                document.getElementById(`${type}-status`).style.color = "#22c55e";
             }
         }
 
-        async function uploadFile(file, folder) {
-            const { data: { user } } = await supabase.auth.getUser();
-            const fileName = `${user.id}/${folder}_${Date.now()}.${file.name.split('.').pop()}`;
-            
-            const progressField = document.getElementById(`${folder}-progress`);
-            progressField.style.width = '50%'; // Simulation début
+        async function uploadFile(file, folder, userId) {
+            const fileName = `${userId}/${folder}_${Date.now()}.${file.name.split('.').pop()}`;
+            const progress = document.getElementById(`${folder}-progress`);
+            progress.style.width = '30%';
 
-            const { error } = await supabase.storage
+            const { data, error } = await supabase.storage
                 .from('identity-docs')
-                .upload(fileName, file, { upsert: true });
+                .upload(fileName, file);
 
             if (error) throw error;
+            progress.style.width = '100%';
             
-            progressField.style.width = '100%';
-            const { data } = supabase.storage.from('identity-docs').getPublicUrl(fileName);
-            return data.publicUrl;
+            return supabase.storage.from('identity-docs').getPublicUrl(fileName).data.publicUrl;
         }
 
         async function startFinalUpload() {
-            if (!filesToUpload.id) {
-                alert("La pièce d'identité est obligatoire pour tous.");
-                return;
-            }
+            if (!filesToUpload.id) return alert("Pièce d'identité obligatoire");
 
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Envoi sécurisé...`;
-            lucide.createIcons();
+            btn.innerText = "Chargement...";
 
             try {
                 const { data: { user } } = await supabase.auth.getUser();
                 
-                const idUrl = await uploadFile(filesToUpload.id, 'id');
+                const idUrl = await uploadFile(filesToUpload.id, 'id', user.id);
                 let licenseUrl = null;
-                
                 if (filesToUpload.license) {
-                    licenseUrl = await uploadFile(filesToUpload.license, 'license');
+                    licenseUrl = await uploadFile(filesToUpload.license, 'license', user.id);
                 }
 
-                // Mise à jour du profil avec les URLs et passage en statut "En attente de vérification"
-                const { error } = await supabase.from('profiles').update({
+                await supabase.from('profiles').update({
                     id_card_url: idUrl,
                     driver_license_url: licenseUrl,
-                    verification_status: 'pending',
-                    updated_at: new Date()
+                    verification_status: 'pending'
                 }).eq('id', user.id);
 
-                if (error) throw error;
-
-                alert("Documents soumis avec succès ! Notre équipe va les vérifier sous 24h.");
+                alert("Documents envoyés !");
                 window.location.href = 'profile.html';
 
             } catch (err) {
                 alert("Erreur : " + err.message);
                 btn.disabled = false;
-                btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> Soumettre à nouveau`;
-                lucide.createIcons();
+                btn.innerText = "Réessayer";
             }
         }
-
         init();
     </script>
 </body>
