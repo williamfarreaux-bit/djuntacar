@@ -16,75 +16,28 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        
         body { background-color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
-
-        .login-card {
-            background: white; border-radius: 35px; padding: 40px 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
-        }
-
-        .input-label {
-            font-size: 10px; font-weight: 900; color: #94a3b8;
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block;
-        }
-
-        .input-field {
-            width: 100%; background-color: #f1f5f9; border: 2px solid transparent;
-            border-radius: 20px; padding: 18px; font-size: 14px; font-weight: 700;
-            color: #1d4379; outline: none; transition: 0.2s;
-        }
+        .login-card { background: white; border-radius: 35px; padding: 40px 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .input-label { font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+        .input-field { width: 100%; background-color: #f1f5f9; border: 2px solid transparent; border-radius: 20px; padding: 18px; font-size: 14px; font-weight: 700; color: #1d4379; outline: none; transition: 0.2s; }
         .input-field:focus { border-color: #1d4379; background-color: white; }
-
-        .btn-login {
-            background: #1d4379; color: white; width: 100%; padding: 20px;
-            border-radius: 22px; font-weight: 900; text-transform: uppercase;
-            font-size: 12px; letter-spacing: 1px; box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
-            display: flex; align-items: center; justify-content: center; gap: 10px; border: none;
-            transition: all 0.2s;
-        }
+        .btn-login { background: #1d4379; color: white; width: 100%; padding: 20px; border-radius: 22px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2); display: flex; align-items: center; justify-content: center; gap: 10px; border: none; transition: all 0.2s; }
         .btn-login:disabled { background: #cbd5e1; box-shadow: none; transform: none; cursor: not-allowed; }
-
-        /* CHECKBOX STYLE */
-        .checkbox-container {
-            display: flex; align-items: flex-start; gap: 12px; margin: 10px 0 20px 0;
-            padding: 10px; border-radius: 15px; transition: background 0.2s;
-        }
-        .custom-checkbox {
-            width: 20px; height: 20px; border-radius: 6px; border: 2px solid #e2e8f0;
-            accent-color: #1d4379; cursor: pointer; margin-top: 2px;
-        }
-
-        /* BOUTONS SOCIAUX */
-        .social-btn {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            gap: 10px; padding: 16px; border-radius: 18px; border: 1px solid #e2e8f0;
-            background: white; transition: all 0.2s; font-size: 11px; font-weight: 800;
-            text-transform: uppercase; color: #1d4379;
-        }
-        .social-btn:active { background: #f8fafc; transform: scale(0.96); }
-        .social-icon { width: 18px; height: 18px; }
-
-        .divider {
-            display: flex; align-items: center; text-align: center;
-            margin: 30px 0; color: #cbd5e1; font-size: 10px; font-weight: 800; text-transform: uppercase;
-        }
+        .social-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; border-radius: 18px; border: 1px solid #e2e8f0; background: white; transition: all 0.2s; font-size: 11px; font-weight: 800; text-transform: uppercase; color: #1d4379; }
+        .divider { display: flex; align-items: center; text-align: center; margin: 30px 0; color: #cbd5e1; font-size: 10px; font-weight: 800; text-transform: uppercase; }
         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #f1f5f9; }
         .divider:not(:empty)::before { margin-right: 15px; }
         .divider:not(:empty)::after { margin-left: 15px; }
     </style>
 </head>
 <body class="antialiased">
-
     <div id="header-slot"></div>
-
     <main class="max-w-md mx-auto px-6 flex-grow flex flex-col justify-center w-full py-10">
         <div class="login-card">
             <div class="text-center mb-8">
                 <img src="logo.png" style="height: 40px; margin: 0 auto 15px auto;" onerror="this.style.display='none'">
                 <h1 class="text-2xl font-black text-[#1d4379] uppercase">Connexion</h1>
             </div>
-
             <form id="login-form" class="space-y-5">
                 <div>
                     <label class="input-label">Email</label>
@@ -94,34 +47,17 @@
                     <label class="input-label">Mot de passe</label>
                     <input type="password" id="password" class="input-field" placeholder="••••••••" required>
                 </div>
-
-                <div class="checkbox-container">
-                    <input type="checkbox" id="accept-terms" class="custom-checkbox" required>
-                    <label for="accept-terms" class="text-[10px] font-bold text-gray-500 leading-relaxed uppercase">
-                        En cochant cette case, je certifie avoir pris connaissance et accepter les 
-                        <a href="terms.html" class="text-[#1d4379] underline">conditions de service</a>, 
-                        les <a href="cgu.html" class="text-[#1d4379] underline">conditions générales d'utilisation</a> 
-                        et la <a href="privacy.html" class="text-[#1d4379] underline">politique de confidentialité</a> 
-                        de la plateforme DjuntaCar.
-                    </label>
-                </div>
-
                 <button type="submit" id="submit-btn" class="btn-login active:scale-95">Se connecter</button>
             </form>
-
             <div class="divider">Ou continuer avec</div>
-
             <div class="flex gap-4">
                 <button onclick="handleSocialLogin('google')" class="social-btn">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="social-icon">
-                    Google
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4"> Google
                 </button>
                 <button onclick="handleSocialLogin('facebook')" class="social-btn">
-                    <svg class="social-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                    Facebook
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook
                 </button>
             </div>
-
             <div class="mt-8 text-center">
                 <p class="text-[10px] font-bold text-gray-400 uppercase">
                     Nouveau ici ? <a href="signup.html" class="text-[#1d4379] underline">Créer un compte</a>
@@ -129,57 +65,27 @@
             </div>
         </div>
     </main>
-
     <script>
-        // Initialisation Supabase via config.js
         const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
-
-        // --- AUTH CLASSIQUE ---
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Vérification de la checkbox
-            if (!document.getElementById('accept-terms').checked) {
-                if (window.showToast) showToast("Veuillez accepter les conditions", "error");
-                return;
-            }
-
             const btn = document.getElementById('submit-btn');
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
             btn.innerText = "CONNEXION...";
             btn.disabled = true;
-
-            const { error } = await sb.auth.signInWithPassword({ email, password });
-
+            const { error } = await sb.auth.signInWithPassword({ 
+                email: document.getElementById('email').value, 
+                password: document.getElementById('password').value 
+            });
             if (error) {
-                if (window.showToast) showToast("Erreur d'identifiants", "error");
+                alert("Erreur d'identifiants");
                 btn.innerText = "SE CONNECTER";
                 btn.disabled = false;
             } else {
                 window.location.href = 'profile.html';
             }
         });
-
-        // --- AUTH SOCIALE ---
-        async function handleSocialLogin(provider) {
-            // Optionnel : Forcer l'acceptation des termes même pour le social login
-            if (!document.getElementById('accept-terms').checked) {
-                alert("Veuillez accepter les conditions de service avant de continuer.");
-                return;
-            }
-
-            const { error } = await sb.auth.signInWithOAuth({
-                provider: provider,
-                options: {
-                    redirectTo: window.location.origin + '/profile.html'
-                }
-            });
-
-            if (error && window.showToast) {
-                showToast(`Erreur ${provider}`, "error");
-            }
+        async function handleSocialLogin(p) {
+            await sb.auth.signInWithOAuth({ provider: p, options: { redirectTo: window.location.origin + '/profile.html' } });
         }
     </script>
 </body>
