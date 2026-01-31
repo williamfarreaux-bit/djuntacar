@@ -38,7 +38,7 @@
         <div class="terms-card">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-black text-[#1d4379] uppercase leading-tight">Conditions<br>de Service</h1>
-                <span class="badge-verif">Protection v1.6</span>
+                <span class="badge-verif">Protection v1.7</span>
             </div>
             
             <div class="warning-box">
@@ -59,10 +59,10 @@
             <p>Bien que DjuntaCar propose une validation numérique des documents sur <span class="highlight">auth.djuntacar.com</span>, <span class="font-bold text-red-600 uppercase">il appartient aux utilisateurs de vérifier physiquement</span> l'identité et la validité du permis de conduire original de chaque partie lors de la rencontre pour la remise des clés.</p>
 
             <h2>3. Admissibilité au Service</h2>
-            <p>L'accès aux services est conditionné par :</p>
+            <p>L'accès aux services est conditionné par les critères suivants :</p>
             <ul>
-                <li>• Âge minimum : <span class="highlight">19 ans révolus</span>.</li>
-                <li>• Ancienneté du permis : <span class="highlight">1 an minimum</span>.</li>
+                <li>• <span class="font-bold">Location sans chauffeur :</span> Être âgé de <span class="highlight">19 ans révolus</span> et justifier d'un <span class="highlight">permis de conduire d'au moins 1 an</span>.</li>
+                <li>• <span class="font-bold">Location avec chauffeur :</span> Être âgé de <span class="highlight">18 ans révolus</span> (aucune condition de permis de conduire n'est requise pour le locataire).</li>
                 <li>• <span class="highlight">Signature du Contrat</span> numérique avant le début de la location.</li>
                 <li>• <span class="highlight">Assurance Journalière</span> spécifique et obligatoire, à sélectionner lors de la réservation.</li>
             </ul>
