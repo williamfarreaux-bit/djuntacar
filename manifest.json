@@ -1,5 +1,5 @@
 {
-  "name": "DjuntaCar - Location & VTC",
+  "name": "DjuntaCar",
   "short_name": "DjuntaCar",
   "description": "Réservez votre voiture ou votre chauffeur au Cap-Vert en un clic.",
   "start_url": "/index.html",
@@ -10,13 +10,13 @@
   "scope": "/",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "sigle.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "logo.png",
+      "src": "sigle.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
