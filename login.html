@@ -4,45 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Connexion - DjuntaCar</title>
+    
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="config.js"></script>
     <script src="layout.js" defer></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
-        * { font-family: 'Montserrat', sans-serif !important; }
-        body { background-color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-        .login-card { background: white; border-radius: 35px; padding: 40px 30px; width: 90%; max-width: 400px; margin: auto; }
-        .input-field { width: 100%; background-color: #f1f5f9; border-radius: 20px; padding: 18px; font-weight: 700; outline: none; margin-bottom: 15px; }
-        .btn-login { background: #1d4379; color: white; width: 100%; padding: 20px; border-radius: 22px; font-weight: 900; text-transform: uppercase; font-size: 12px; }
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: #f8fafc; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .login-card { 
+            background: white; 
+            border-radius: 35px; 
+            padding: 40px 30px; 
+            width: 90%; 
+            max-width: 400px; 
+            margin: auto; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
+            border: 1px solid #f1f5f9; 
+        }
+
+        .input-field { 
+            width: 100%; 
+            background-color: #f1f5f9; 
+            border: 2px solid transparent;
+            border-radius: 20px; 
+            padding: 18px; 
+            font-size: 14px;
+            font-weight: 700; 
+            color: #1d4379;
+            outline: none; 
+            margin-bottom: 15px; 
+            transition: 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #1d4379;
+            background-color: white;
+        }
+
+        .btn-login { 
+            background: #1d4379; 
+            color: white; 
+            width: 100%; 
+            padding: 20px; 
+            border-radius: 22px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            font-size: 12px; 
+            letter-spacing: 1px;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-login:active {
+            transform: scale(0.95);
+        }
+
+        .btn-login:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
     </style>
 </head>
-<body>
+<body class="antialiased">
     <div id="header-slot"></div>
-    <div class="login-card">
-        <h1 class="text-2xl font-black text-[#1d4379] uppercase text-center mb-8">Connexion</h1>
-        <form id="login-form">
-            <input type="email" id="email" class="input-field" placeholder="Email" required>
-            <input type="password" id="password" class="input-field" placeholder="Mot de passe" required>
-            <button type="submit" id="submit-btn" class="btn-login">Se connecter</button>
-        </form>
-        <p class="mt-8 text-center text-[10px] font-bold text-gray-400 uppercase">
-            Nouveau ? <a href="signup.html" class="text-[#1d4379] underline">Créer un compte</a>
-        </p>
-    </div>
+
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="login-card">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-black text-[#1d4379] uppercase italic tracking-tighter">Connexion</h1>
+            </div>
+
+            <form id="login-form">
+                <input type="email" id="email" class="input-field" placeholder="Email" required>
+                <input type="password" id="password" class="input-field" placeholder="Mot de passe" required>
+                <button type="submit" id="submit-btn" class="btn-login">Se connecter</button>
+            </form>
+
+            <p class="mt-8 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                Nouveau ? <a href="signup.html" class="text-[#1d4379] underline">Créer un compte</a>
+            </p>
+        </div>
+    </main>
+
     <script>
+        // Initialisation Supabase avec les données du "Cerveau"
         const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
+
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
             btn.innerText = "CONNEXION...";
-            const { error } = await sb.auth.signInWithPassword({ 
-                email: document.getElementById('email').value, 
-                password: document.getElementById('password').value 
-            });
-            if (error) { alert("Erreur d'identifiants"); btn.innerText = "SE CONNECTER"; }
-            else window.location.href = 'profile.html';
+            btn.disabled = true;
+
+            try {
+                const { error } = await sb.auth.signInWithPassword({ email, password });
+
+                if (error) {
+                    alert("Erreur d'identifiants : " + error.message);
+                    btn.innerText = "SE CONNECTER";
+                    btn.disabled = false;
+                } else {
+                    window.location.href = 'profile.html';
+                }
+            } catch (err) {
+                alert("Une erreur technique est survenue.");
+                btn.innerText = "SE CONNECTER";
+                btn.disabled = false;
+            }
         });
     </script>
 </body>
