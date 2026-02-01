@@ -3,249 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mon Profil - DjuntaCar</title>
+    <title>DjuntaCar - Profil v1.8.2</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <script src="translations.js"></script>
     <script src="config.js"></script>
-    <script src="js/app.js"></script>
     <script src="layout.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #f8fafc; padding-bottom: 40px; }
+        body { background-color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
 
-        /* CARTE PROFIL PREMIUM */
-        .profile-card {
-            background: white;
-            border-radius: 35px;
-            padding: 30px 24px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
-            border: 1px solid #f1f5f9;
-            position: relative;
-            overflow: hidden;
-        }
-        .profile-card-header {
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 100px; background: #1d4379;
+        .profile-card { 
+            background: white; border-radius: 35px; padding: 30px; 
+            width: 95%; max-width: 500px; margin: 20px auto; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; 
         }
 
-        .avatar-wrapper {
-            position: relative; z-index: 10;
-            width: 110px; height: 110px;
-            margin: 30px auto 16px auto;
-        }
-        .avatar-img {
-            width: 100%; height: 100%;
-            border-radius: 40px; border: 4px solid white;
-            object-fit: cover; background: white;
-        }
-
-        .camera-btn {
-            position: absolute;
-            bottom: -5px; right: -5px;
-            width: 36px; height: 36px;
-            background: #1d4379; color: white;
-            border-radius: 50%;
-            border: 3px solid white;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-        }
-        .camera-btn:active { transform: scale(0.9); }
-
-        /* ACTIONS MENU */
-        .menu-link {
-            display: flex; align-items: center; gap: 16px;
-            background: white; padding: 18px; border-radius: 22px;
-            border: 1px solid #f1f5f9; transition: all 0.2s;
-            margin-bottom: 12px;
-        }
-        .menu-link:active { transform: scale(0.97); background: #f8fafc; }
+        .label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin: 0 0 4px 10px; display: block; }
         
-        .icon-box {
-            width: 44px; height: 44px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
+        .field { 
+            width: 100%; background-color: #f1f5f9; border: 2px solid transparent;
+            border-radius: 18px; padding: 14px 18px; font-size: 13px;
+            font-weight: 700; color: #1d4379; outline: none; margin-bottom: 12px;
+        }
+        .field:focus { border-color: #1d4379; background-color: white; }
+        .field:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .role-badge {
+            background: #eff6ff; color: #1d4379; padding: 6px 12px; 
+            border-radius: 10px; font-size: 9px; font-weight: 900; 
+            text-transform: uppercase; border: 1px solid #dbeafe;
         }
 
-        .host-banner {
-            background: #1d4379; color: white;
-            padding: 20px; border-radius: 24px;
-            display: none; align-items: center; gap: 16px;
-            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
-            margin-bottom: 24px;
+        .btn-update { 
+            background: #1d4379; color: white; width: 100%; padding: 18px; 
+            border-radius: 20px; font-weight: 900; text-transform: uppercase; 
+            font-size: 12px; box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
+            border: none; margin-top: 15px; cursor: pointer;
         }
     </style>
 </head>
 <body class="antialiased">
-
     <div id="header-slot"></div>
 
-    <main class="max-w-md mx-auto px-6 pt-6">
-        
-        <div class="profile-card mb-8">
-            <div class="profile-card-header"></div>
-            
-            <div class="avatar-wrapper">
-                <img id="profile-avatar" src="" class="avatar-img shadow-lg" onerror="this.src='https://ui-avatars.com/api/?background=1d4379&color=fff'">
-                
-                <input type="file" id="avatar-input" hidden accept="image/*" onchange="uploadAvatar(this)">
-                
-                <label for="avatar-input" class="camera-btn">
-                    <i id="cam-icon" data-lucide="camera" class="w-4 h-4"></i>
-                </label>
-            </div>
-            
-            <h1 id="user-name" class="text-xl font-black text-[#1d4379] uppercase tracking-tight">Chargement...</h1>
-            <p id="user-email" class="text-[11px] font-bold text-gray-400 mt-1 uppercase opacity-60">...</p>
-            
-            <div class="flex justify-center gap-2 mt-4">
-                <span class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">Membre Vérifié</span>
-                <span id="badge-driver" class="hidden bg-green-50 text-green-600 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">Chauffeur</span>
-            </div>
-        </div>
+    <main class="flex-grow p-4">
+        <div class="profile-card">
+            <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-6 text-center" id="title_profile"></h1>
 
-        <a href="host-stats.html" id="host-link" class="host-banner active:scale-95 transition-transform">
-            <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-white">
-                <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
-            </div>
-            <div class="flex-1">
-                <h3 class="text-sm font-black uppercase tracking-wide">Tableau de bord Hôte</h3>
-                <p class="text-[10px] font-bold text-blue-200">Gérer mes véhicules et revenus</p>
-            </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-blue-300"></i>
-        </a>
-
-        <div class="space-y-3 mb-10">
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-2 mb-4">Général</h2>
-
-            <a href="profile-edit.html" class="menu-link">
-                <div class="icon-box bg-blue-50 text-blue-600"><i data-lucide="user-cog" class="w-5 h-5"></i></div>
-                <div class="flex-1 text-sm font-black text-[#1d4379] uppercase tracking-tight">Modifier le profil</div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-            </a>
-
-            <a href="wallet.html" class="menu-link">
-                <div class="icon-box bg-green-50 text-green-600"><i data-lucide="wallet" class="w-5 h-5"></i></div>
-                <div class="flex-1">
-                    <h3 class="text-sm font-black text-[#1d4379] uppercase tracking-tight">Portefeuille</h3>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase mt-0.5">Solde & Paiements</p>
+            <div id="roles-container" class="flex flex-wrap gap-2 justify-center mb-8">
                 </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-            </a>
 
-            <a href="my-rentals.html" class="menu-link">
-                <div class="icon-box bg-purple-50 text-purple-600"><i data-lucide="calendar" class="w-5 h-5"></i></div>
-                <div class="flex-1">
-                    <h3 class="text-sm font-black text-[#1d4379] uppercase tracking-tight">Mes Trajets</h3>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase mt-0.5">Historique des locations</p>
+            <form id="profile-form">
+                <div class="flex gap-3">
+                    <div class="w-1/2">
+                        <label class="label" id="label_fname"></label>
+                        <input type="text" id="first_name" class="field" required>
+                    </div>
+                    <div class="w-1/2">
+                        <label class="label" id="label_lname"></label>
+                        <input type="text" id="last_name" class="field" required>
+                    </div>
                 </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-            </a>
+
+                <label class="label" id="label_email"></label>
+                <input type="email" id="email" class="field" disabled>
+
+                <label class="label" id="label_dob"></label>
+                <input type="date" id="dob" class="field" required>
+
+                <label class="label" id="label_address"></label>
+                <input type="text" id="address" class="field" required>
+
+                <label class="label" id="label_phone"></label>
+                <input type="tel" id="phone" class="field" required>
+
+                <div id="iban-section" class="hidden">
+                    <label class="label" id="label_iban"></label>
+                    <input type="text" id="iban" class="field">
+                </div>
+
+                <button type="submit" id="btn_update" class="btn-update active:scale-95"></button>
+            </form>
         </div>
-
-        <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-3 text-red-500 font-black text-xs uppercase p-5 bg-red-50 rounded-[22px] transition-all active:scale-95 mb-8">
-            <i data-lucide="log-out" class="w-5 h-5"></i> Déconnexion
-        </button>
-
     </main>
 
     <script>
-        // Instance Supabase (utilisant les clés de config.js)
-        const _supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-        let globalUser = null;
+        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
 
-        async function initProfile() {
-            // 1. Vérification de la session
-            const { data: { user }, error: authError } = await _supabase.auth.getUser();
-            
-            if (!user || authError) {
-                window.location.replace('login.html');
-                return;
-            }
+        /**
+         * CHARGEMENT DU PROFIL
+         */
+        async function loadProfile() {
+            // Traduction initiale
+            const keys = ['title_profile', 'label_fname', 'label_lname', 'label_email', 'label_dob', 'label_address', 'label_phone', 'label_iban', 'btn_update'];
+            keys.forEach(k => { if(document.getElementById(k)) document.getElementById(k).innerText = DjuntaT(k); });
 
-            globalUser = user;
-            document.getElementById('user-email').innerText = user.email;
+            const { data: { user } } = await sb.auth.getUser();
+            if (!user) { window.location.href = 'login.html'; return; }
 
-            // 2. Fetch du profil détaillé
-            try {
-                const { data: profile, error } = await _supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
+            // Récupération des données dans la table public.profiles
+            const { data: profile, error } = await sb.from('profiles').select('*').eq('id', user.id).single();
 
-                if (profile) {
-                    const fullName = profile.full_name || `${profile.first_name || 'Explorateur'} ${profile.last_name || ''}`;
-                    document.getElementById('user-name').innerText = fullName;
-                    document.getElementById('profile-avatar').src = profile.avatar_url || `https://ui-avatars.com/api/?name=${fullName}&background=1d4379&color=fff`;
-
-                    if (profile.is_driver) {
-                        document.getElementById('badge-driver').classList.remove('hidden');
-                        document.getElementById('host-link').style.display = 'flex';
-                    }
+            if (profile) {
+                document.getElementById('email').value = user.email;
+                document.getElementById('first_name').value = profile.first_name || '';
+                document.getElementById('last_name').value = profile.last_name || '';
+                document.getElementById('dob').value = profile.dob || '';
+                document.getElementById('address').value = profile.address || '';
+                document.getElementById('phone').value = profile.phone || '';
+                
+                // Gestion de l'IBAN si Chauffeur ou Propriétaire
+                const roles = profile.roles || [];
+                if (roles.includes('owner') || roles.includes('driver')) {
+                    document.getElementById('iban-section').classList.remove('hidden');
+                    document.getElementById('iban').value = profile.iban || '';
                 }
-            } catch (err) {
-                console.error("Erreur profil:", err);
-            }
 
-            if (window.lucide) window.lucide.createIcons();
-        }
-
-        async function uploadAvatar(input) {
-            const file = input.files[0];
-            if (!file || !globalUser) return;
-
-            const icon = document.getElementById('cam-icon');
-            icon.setAttribute('data-lucide', 'loader-2');
-            icon.classList.add('animate-spin');
-            lucide.createIcons();
-
-            try {
-                const fileExt = file.name.split('.').pop();
-                const filePath = `avatars/${globalUser.id}-${Date.now()}.${fileExt}`;
-
-                const { error: uploadError } = await _supabase.storage
-                    .from('avatars')
-                    .upload(filePath, file);
-
-                if (uploadError) throw uploadError;
-
-                const { data: { publicUrl } } = _supabase.storage
-                    .from('avatars')
-                    .getPublicUrl(filePath);
-
-                await _supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', globalUser.id);
-                document.getElementById('profile-avatar').src = publicUrl;
-                
-                if (window.showToast) showToast("Photo mise à jour", "success");
-                
-            } catch (error) {
-                if (window.showToast) showToast("Erreur d'envoi", "error");
-            } finally {
-                icon.setAttribute('data-lucide', 'camera');
-                icon.classList.remove('animate-spin');
-                lucide.createIcons();
+                // Affichage des badges de rôles
+                const rolesContainer = document.getElementById('roles-container');
+                rolesContainer.innerHTML = roles.map(r => `<span class="role-badge">${DjuntaT('role_'+r)}</span>`).join('');
             }
         }
 
-        async function handleLogout() {
-            try {
-                await _supabase.auth.signOut();
-                window.location.replace('login.html');
-            } catch (err) {
-                console.error("Erreur déconnexion:", err);
-            }
-        }
+        /**
+         * MISE À JOUR DU PROFIL
+         */
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn_update');
+            btn.innerText = "...";
 
-        document.addEventListener('DOMContentLoaded', initProfile);
+            const { data: { user } } = await sb.auth.getUser();
+            
+            const updates = {
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value,
+                dob: document.getElementById('dob').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value,
+                iban: document.getElementById('iban').value,
+                updated_at: new Date()
+            };
+
+            const { error } = await sb.from('profiles').update(updates).eq('id', user.id);
+
+            if (error) {
+                alert(DjuntaT('msg_error') + " : " + error.message);
+                btn.innerText = DjuntaT('btn_update');
+            } else {
+                alert(DjuntaT('msg_update_success'));
+                btn.innerText = DjuntaT('btn_update');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadProfile);
     </script>
 </body>
 </html>
