@@ -1,13 +1,12 @@
 /**
  * DJUNTACAR - LAYOUT MASTER
- * @version 1.8.1
- * @description Injection Header/Footer, Menu Mobile, Traduction et Services.
+ * @version 1.8.5
+ * @description Correction du bug d'affichage du menu mobile (unification des clés).
  */
 
-console.log("DjuntaCar Layout Loaded - v1.8.1");
+console.log("DjuntaCar Layout Loaded - v1.8.5");
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Fonction de Traduction Globalisée
     window.DjuntaT = (key) => {
         const lang = DJUNTA_CONFIG.langBrain.current;
         if (typeof DJUNTA_TRANSLATIONS !== 'undefined' && DJUNTA_TRANSLATIONS[lang]) {
@@ -16,26 +15,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return key;
     };
 
-    // 2. Formateur de Devises
     window.DjuntaFormat = (val, curr) => {
         const brain = DJUNTA_CONFIG.currencyBrain;
         const rate = brain.rates[curr] || 1;
         return `${Math.round(val * rate)} ${brain.symbols[curr]}`;
     };
 
-    // 3. Injection des composants visuels
     const headerSlot = document.getElementById('header-slot') || document.body.prepend(document.createElement('header'));
     injectHeaderContent(document.getElementById('header-slot') || document.querySelector('header'));
     injectMobileMenu(); 
     injectFooter();
     
-    // 4. Initialisation Lucide Icons
     if (window.lucide) window.lucide.createIcons();
     
-    // 5. Services Système (PWA & Messages)
     try { setupPWA(); checkUnreadMessages(); } catch(e) { console.warn("Layout Services Error:", e); }
     
-    // 6. Gestionnaire de clics (Fermeture menus)
     document.addEventListener('click', (e) => {
         const langMenu = document.getElementById('lang-dropdown');
         const langBtn = document.getElementById('lang-btn');
@@ -45,9 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-/**
- * COMPOSANT : HEADER
- */
 function injectHeaderContent(targetElement) {
     const langLabel = DJUNTA_CONFIG.langBrain.current.toUpperCase();
     targetElement.style.cssText = "position:sticky; top:0; z-index:1000; background:white; border-bottom:1px solid #f1f5f9;";
@@ -78,13 +69,9 @@ function injectHeaderContent(targetElement) {
                 <button id="pwa-install-btn" style="display:none; background:#eff6ff; color:#2563eb; border:none; padding:6px; border-radius:50%; cursor:pointer;"><i data-lucide="download-cloud" style="width:18px;"></i></button>
                 <button onclick="handleProfileNavigation(event)" style="background:none; border:none; cursor:pointer;"><i data-lucide="user" style="color:#1d4379; width:26px;"></i></button>
             </div>
-        </div>
-    `;
+        </div>`;
 }
 
-/**
- * COMPOSANT : MENU MOBILE
- */
 function injectMobileMenu() {
     if (document.getElementById('mobile-menu')) return;
     document.body.insertAdjacentHTML('beforeend', `
@@ -100,7 +87,7 @@ function injectMobileMenu() {
             <a href="search-car.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="car-front"></i> ${DjuntaT('nav_car')}</a>
             <a href="my-rentals.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="calendar"></i> ${DjuntaT('nav_rentals')}</a>
             <a href="wallet.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="wallet"></i> ${DjuntaT('nav_wallet')}</a>
-            <a href="#" onclick="handleProfileNavigation(event)" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="user-circle"></i> ${DjuntaT('nav_profile')}</a>
+            <a href="#" onclick="handleProfileNavigation(event)" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="user-circle"></i> ${DjuntaT('nav_account')}</a>
         </nav>
         <button onclick="handleLogout()" style="margin-top:auto; background:#fef2f2; color:#ef4444; border:none; padding:15px; border-radius:15px; font-weight:900; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
             <i data-lucide="log-out"></i> ${DjuntaT('btn_logout')}
@@ -108,9 +95,6 @@ function injectMobileMenu() {
     </div>`);
 }
 
-/**
- * COMPOSANT : FOOTER
- */
 function injectFooter() {
     if (document.getElementById('master-footer')) return;
     document.body.insertAdjacentHTML('beforeend', `
@@ -119,16 +103,12 @@ function injectFooter() {
             <a href="terms.html" style="text-decoration: none; font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase;">Conditions</a>
             <a href="privacy.html" style="text-decoration: none; font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase;">Confidentialité</a>
         </div>
-        <p style="font-size:9px; color:#cbd5e1; font-weight:700; text-transform:uppercase;">© 2026 DjuntaCar • v${DJUNTA_CONFIG.version || '1.8.1'}</p>
+        <p style="font-size:9px; color:#cbd5e1; font-weight:700; text-transform:uppercase;">© 2026 DjuntaCar • v${DJUNTA_CONFIG.version || '1.8.5'}</p>
     </footer>`);
 }
 
-/**
- * LOGIQUE D'INTERFACE
- */
 window.toggleMenu = () => {
-    const m = document.getElementById('mobile-menu');
-    const o = document.getElementById('menu-overlay');
+    const m = document.getElementById('mobile-menu'); const o = document.getElementById('menu-overlay');
     if(!m || !o) return;
     const isOpen = m.style.transform === 'translateX(0px)';
     m.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0px)';
@@ -136,20 +116,9 @@ window.toggleMenu = () => {
     if (!isOpen && window.lucide) lucide.createIcons();
 };
 
-window.toggleLang = (e) => { 
-    e.stopPropagation(); 
-    const d = document.getElementById('lang-dropdown'); 
-    if(d) d.style.display = d.style.display === 'block' ? 'none' : 'block'; 
-};
+window.toggleLang = (e) => { e.stopPropagation(); const d = document.getElementById('lang-dropdown'); if(d) d.style.display = d.style.display === 'block' ? 'none' : 'block'; };
+window.setDjuntaLang = (l) => { localStorage.setItem('djunta_lang', l); window.location.reload(); };
 
-window.setDjuntaLang = (l) => { 
-    localStorage.setItem('djunta_lang', l); 
-    window.location.reload(); 
-};
-
-/**
- * AUTH & NAVIGATION
- */
 window.handleProfileNavigation = async (e) => {
     if(e) e.preventDefault();
     const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
@@ -163,9 +132,6 @@ window.handleLogout = async () => {
     window.location.href = 'login.html'; 
 };
 
-/**
- * SERVICES BACKEND
- */
 async function checkUnreadMessages() {
     if(!window.supabase || typeof DJUNTA_CONFIG === 'undefined') return;
     const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
@@ -181,7 +147,6 @@ function setupPWA() {
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault(); 
         window.deferredPrompt = e;
-        const b = document.getElementById('pwa-install-btn'); 
-        if(b) b.style.display = 'block';
+        const b = document.getElementById('pwa-install-btn'); if(b) b.style.display = 'block';
     });
 }
