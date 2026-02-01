@@ -1,6 +1,6 @@
 /** PAGE: translations.js | VERSION: 1.9.6 */
-/** * DESCRIPTION: Dictionnaire centralisé. 
- * Définit DjuntaT globalement pour une disponibilité immédiate.
+/** * DESCRIPTION: Dictionnaire centralisé incluant les instructions 
+ * spécifiques pour le nouveau Popup Modal PWA.
  */
 
 const DJUNTA_TRANSLATIONS = {
@@ -9,11 +9,12 @@ const DJUNTA_TRANSLATIONS = {
         "nav_rentals": "Mes Locations", "nav_wallet": "Portefeuille", "nav_account": "Mon Compte",
         "btn_logout": "Déconnexion", "btn_add_car": "Ajouter ma voiture", "btn_become_driver": "Devenir chauffeur",
         "footer_terms": "Conditions", "footer_privacy": "Confidentialité",
-        "pwa_title": "DjuntaCar sur votre écran",
+        "pwa_title": "Installer DjuntaCar",
         "pwa_desc": "Ajoutez l'application à votre écran d'accueil pour une expérience optimale.",
         "pwa_ios_guide": "Appuyez sur le bouton 'Partager' [icon] puis sur 'Sur l'écran d'accueil'.",
         "pwa_btn_install": "Installer maintenant", "pwa_btn_close": "Plus tard",
-        "hero_title": "Louez une voiture au Cap-Vert", "search_placeholder": "Où voulez-vous aller ?"
+        "hero_title": "Louez une voiture au Cap-Vert", "search_placeholder": "Où voulez-vous aller ?",
+        "msg_error": "Erreur survenue", "msg_success": "Opération réussie !"
     },
     en: {
         "nav_home": "Home", "nav_driver": "Driver", "nav_car": "Car",
