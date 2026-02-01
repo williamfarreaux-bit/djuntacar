@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Accueil v1.8.4</title>
+    <title>DjuntaCar - Accueil v1.8.5</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,79 +17,23 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 160px; }
-
-        .hero-section {
-            background-color: #1d4379;
-            padding: 40px 0 80px 0;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
-            position: relative;
-            text-align: center;
-        }
-
-        .search-wrapper {
-            position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%);
-            width: 90%; max-width: 500px; z-index: 30;
-        }
-
-        .search-bar {
-            background: white; border-radius: 20px; padding: 16px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-            display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9;
-        }
-
-        .categories-wrapper {
-            margin-top: 50px; overflow-x: auto; display: flex;
-            justify-content: space-between; gap: 10px; padding: 0 20px;
-            scrollbar-width: none;
-        }
-        .categories-wrapper::-webkit-scrollbar { display: none; }
-
-        .cat-btn {
-            background: white; border: 1px solid #e2e8f0; padding: 12px 20px;
-            min-width: 80px; border-radius: 100px; font-size: 10px;
-            font-weight: 800; text-transform: uppercase; color: #64748b;
-        }
+        .hero-section { background-color: #1d4379; padding: 40px 0 80px 0; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; position: relative; text-align: center; }
+        .search-wrapper { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 90%; max-width: 500px; z-index: 30; }
+        .search-bar { background: white; border-radius: 20px; padding: 16px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; }
+        .categories-wrapper { margin-top: 50px; overflow-x: auto; display: flex; justify-content: space-between; gap: 10px; padding: 0 20px; scrollbar-width: none; }
+        .cat-btn { background: white; border: 1px solid #e2e8f0; padding: 12px 20px; min-width: 80px; border-radius: 100px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: #64748b; }
         .cat-btn.active { background: #1d4379; color: white; border-color: #1d4379; }
-
         .cars-column { margin-top: 24px; display: flex; flex-direction: column; gap: 24px; padding: 0 24px 30px 24px; }
-
-        .car-card {
-            width: 100%; height: 320px; border-radius: 35px; position: relative;
-            overflow: hidden; background: #f8fafc; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-        
+        .car-card { width: 100%; height: 320px; border-radius: 35px; position: relative; overflow: hidden; background: #f8fafc; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .car-bg { width: 100%; height: 100%; object-fit: cover; }
-
-        .car-overlay {
-            position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            display: flex; flex-direction: column; justify-content: flex-end;
-            padding: 24px; color: white;
-        }
-
-        .action-btns {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            padding: 20px 24px 35px 24px; display: flex; gap: 12px;
-            border-top-left-radius: 30px; border-top-right-radius: 30px;
-            z-index: 900; border-top: 1px solid #f1f5f9;
-        }
-
-        .btn-main {
-            width: 50%; padding: 14px; border-radius: 20px; color: white; 
-            font-weight: 900; font-size: 10px; text-transform: uppercase;
-            text-align: center; display: flex; flex-direction: column;
-            align-items: center; gap: 6px; cursor: pointer; border: none;
-        }
+        .car-overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; color: white; }
+        .action-btns { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 20px 24px 35px 24px; display: flex; gap: 12px; border-top-left-radius: 30px; border-top-right-radius: 30px; z-index: 900; border-top: 1px solid #f1f5f9; }
+        .btn-main { width: 50%; padding: 16px; border-radius: 20px; color: white; font-weight: 900; font-size: 10px; text-transform: uppercase; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; border:none; cursor:pointer; }
     </style>
 </head>
 <body class="antialiased">
-
     <div id="header-slot"></div>
-
     <main>
         <section class="hero-section">
             <h1 class="text-white text-lg font-black uppercase italic" id="hero-title"></h1>
@@ -114,11 +58,11 @@
 
         <div class="action-btns">
             <button onclick="secureAccess('add-car.html')" class="btn-main bg-[#1d4379]">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                <i data-lucide="plus-circle" class="w-6 h-6"></i>
                 <span id="txt-add-car"></span>
             </button>
             <button onclick="secureAccess('become-driver.html')" class="btn-main bg-[#22c55e]">
-                <i data-lucide="user-check" class="w-5 h-5"></i>
+                <i data-lucide="user-check" class="w-6 h-6"></i>
                 <span id="txt-become-driver"></span>
             </button>
         </div>
@@ -131,9 +75,9 @@
             const feed = document.getElementById('cars-feed');
             let query = sb.from('vehicles').select('*');
             if (category !== 'Tout') query = query.ilike('category', `%${category}%`);
-            const { data: vehicles, error } = await query;
+            const { data: vehicles } = await query;
 
-            if (error || !vehicles || vehicles.length === 0) {
+            if (!vehicles || vehicles.length === 0) {
                 feed.innerHTML = `<p class="text-center text-[10px] font-bold text-slate-400 uppercase py-10">Aucun véhicule trouvé</p>`;
                 return;
             }
@@ -170,7 +114,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Traduction des éléments
             document.getElementById('hero-title').innerText = DjuntaT('hero_title');
             document.getElementById('search-placeholder').innerText = DjuntaT('search_placeholder');
             document.getElementById('txt-add-car').innerText = DjuntaT('btn_add_car');
