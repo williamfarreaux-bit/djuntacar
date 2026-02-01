@@ -1,0 +1,19 @@
+{
+  "nav_items": [
+    {
+      "id": "nav-home",
+      "url": "index.html",
+      "icon": "https://unpkg.com/lucide-static@latest/icons/home.svg"
+    },
+    {
+      "id": "nav-cars",
+      "url": "search-car.html",
+      "icon": "https://unpkg.com/lucide-static@latest/icons/car.svg"
+    },
+    {
+      "id": "nav-profile-trigger",
+      "url": "#",
+      "icon": "https://unpkg.com/lucide-static@latest/icons/user-circle.svg"
+    }
+  ]
+}
