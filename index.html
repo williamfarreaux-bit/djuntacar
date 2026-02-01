@@ -3,95 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Accueil v1.8.9</title>
-    
+    <title>DjuntaCar - Accueil v1.9.4</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script src="translations.js"></script>
     <script src="config.js"></script>
+    <script src="translations.js"></script>
     <script src="layout.js" defer></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
-        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        
-        body { background-color: #fcfcfd; margin: 0; padding-bottom: 200px; }
-
-        .hero-section {
-            background-color: #1d4379;
-            padding: 40px 0 80px 0;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
-            position: relative;
-            text-align: center;
-        }
-
-        .search-wrapper {
-            position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%);
-            width: 90%; max-width: 500px; z-index: 30;
-        }
-
-        .search-bar {
-            background: white; border-radius: 20px; padding: 16px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-            display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9;
-            cursor: pointer;
-        }
-
-        .categories-wrapper {
-            margin-top: 50px; overflow-x: auto; display: flex;
-            justify-content: space-between; gap: 10px; padding: 0 20px;
-            scrollbar-width: none;
-        }
-        .categories-wrapper::-webkit-scrollbar { display: none; }
-
-        .cat-btn {
-            background: white; border: 1px solid #e2e8f0; padding: 12px 20px;
-            min-width: 80px; border-radius: 100px; font-size: 10px;
-            font-weight: 800; text-transform: uppercase; color: #64748b;
-        }
-        .cat-btn.active { background: #1d4379; color: white; border-color: #1d4379; }
-
-        .cars-column { margin-top: 24px; display: flex; flex-direction: column; gap: 24px; padding: 0 24px 30px 24px; }
-
-        .car-card {
-            width: 100%; height: 320px; border-radius: 35px; position: relative;
-            overflow: hidden; background: #f8fafc; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            cursor: pointer;
-        }
-        
-        .car-bg { width: 100%; height: 100%; object-fit: cover; }
-
-        .car-overlay {
-            position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            display: flex; flex-direction: column; justify-content: flex-end;
-            padding: 24px; color: white;
-        }
-
-        .action-btns {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px);
-            padding: 20px 24px 40px 24px; display: flex; gap: 12px;
-            border-top-left-radius: 35px; border-top-right-radius: 35px;
-            z-index: 1001; border-top: 1px solid #e2e8f0;
-        }
-
-        .btn-main {
-            width: 50%; padding: 18px; border-radius: 22px; color: white; 
-            font-weight: 900; font-size: 10px; text-transform: uppercase;
-            text-align: center; display: flex; flex-direction: column;
-            align-items: center; gap: 8px; border:none; cursor:pointer;
-        }
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #fcfcfd; padding-bottom: 200px; }
+        .hero-section { background-color: #1d4379; padding: 40px 0 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; position: relative; text-align: center; }
+        .search-wrapper { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 90%; max-width: 500px; z-index: 30; }
+        .search-bar { background: white; border-radius: 20px; padding: 16px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; cursor: pointer; }
+        .action-btns { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); padding: 20px 24px 40px; display: flex; gap: 12px; border-top-left-radius: 35px; border-top-right-radius: 35px; z-index: 1001; border-top: 1px solid #e2e8f0; }
+        .btn-main { width: 50%; padding: 18px; border-radius: 22px; color: white; font-weight: 900; font-size: 10px; text-transform: uppercase; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; border:none; }
     </style>
 </head>
 <body class="antialiased">
-
     <div id="header-slot"></div>
-
     <main>
         <section class="hero-section">
             <h1 class="text-white text-lg font-black uppercase italic" id="hero-title"></h1>
@@ -102,93 +35,40 @@
                 </div>
             </div>
         </section>
-
-        <div class="categories-wrapper">
-            <button onclick="filterCars('Tout', this)" class="cat-btn active">Tout</button>
-            <button onclick="filterCars('4x4', this)" class="cat-btn">🚙 4x4</button>
-            <button onclick="filterCars('Citadine', this)" class="cat-btn">🚗 Ville</button>
-            <button onclick="filterCars('Luxe', this)" class="cat-btn">✨ Luxe</button>
-        </div>
-
-        <div id="cars-feed" class="cars-column">
-            <div class="text-center py-20 opacity-20"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i></div>
-        </div>
-
+        <div id="cars-feed" class="p-6"></div>
         <div class="action-btns">
-            <button onclick="secureAccess('add-car.html')" class="btn-main bg-[#1d4379]">
-                <i data-lucide="plus-circle" class="w-6 h-6"></i>
-                <span id="txt-add-car"></span>
+            <button onclick="window.location.href='add-car.html'" class="btn-main bg-[#1d4379]">
+                <i data-lucide="plus-circle" class="w-6 h-6"></i><span id="txt-add-car"></span>
             </button>
-            <button onclick="secureAccess('become-driver.html')" class="btn-main bg-[#22c55e]">
-                <i data-lucide="steering-wheel" class="w-6 h-6"></i>
-                <span id="txt-become-driver"></span>
+            <button onclick="window.location.href='become-driver.html'" class="btn-main bg-[#22c55e]">
+                <i data-lucide="steering-wheel" class="w-6 h-6"></i><span id="txt-become-driver"></span>
             </button>
         </div>
     </main>
-
     <script>
-        // Initialisation Supabase
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
         const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
-
-        /**
-         * CHARGEMENT DES VÉHICULES
-         */
-        async function loadCars(category = 'Tout') {
+        async function loadCars() {
             const feed = document.getElementById('cars-feed');
-            let query = sb.from('vehicles').select('*');
-            if (category !== 'Tout') query = query.ilike('category', `%${category}%`);
-            
-            const { data: vehicles, error } = await query;
-
-            if (error || !vehicles || vehicles.length === 0) {
-                feed.innerHTML = `<p class="text-center text-[10px] font-bold text-slate-400 uppercase py-10">Aucun véhicule trouvé</p>`;
-                return;
-            }
-
-            feed.innerHTML = vehicles.map(v => `
-                <div class="car-card" onclick="window.location.href='car-detail.html?id=${v.id}'">
-                    <img src="${v.image_url}" class="car-bg" onerror="this.src='https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=60&w=800'">
-                    <div class="car-overlay">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <h3 class="text-xl font-black uppercase text-white">${v.brand} ${v.model}</h3>
-                                <p class="text-[9px] font-bold text-white opacity-70 uppercase">${v.location || 'Cabo Verde'}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-lg font-black text-white">${DjuntaFormat(v.price_per_day, DJUNTA_CONFIG.currencyBrain.current)}</p>
-                                <p class="text-[8px] font-bold text-gray-300 uppercase">/ JOUR</p>
-                            </div>
-                        </div>
+            const { data: vs } = await sb.from('vehicles').select('*');
+            if (!vs || vs.length === 0) { feed.innerHTML = `<p class="text-center text-[10px] font-bold text-slate-400 uppercase py-10">Aucun véhicule</p>`; return; }
+            feed.innerHTML = vs.map(v => `
+                <div class="bg-white rounded-[30px] overflow-hidden shadow-sm border border-gray-100 mb-4" onclick="window.location.href='car-detail.html?id=${v.id}'">
+                    <img src="${v.image_url}" class="w-full h-48 object-cover">
+                    <div class="p-5 flex justify-between items-center">
+                        <div><h3 class="font-black text-[#1d4379] uppercase">${v.brand} ${v.model}</h3><p class="text-[9px] font-bold text-gray-400 uppercase">${v.location}</p></div>
+                        <div class="text-right"><span class="font-black text-[#1d4379]">${DjuntaFormat(v.price_per_day, DJUNTA_CONFIG.currencyBrain.current)}</span><p class="text-[8px] font-bold text-gray-400">/ JOUR</p></div>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
             if (window.lucide) lucide.createIcons();
         }
-
-        function filterCars(cat, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            loadCars(cat);
-        }
-
-        async function secureAccess(target) {
-            const { data: { session } } = await sb.auth.getSession();
-            window.location.href = session ? target : 'login.html';
-        }
-
-        /**
-         * INITIALISATION TRADUCTIONS ET DONNÉES
-         */
         document.addEventListener('DOMContentLoaded', () => {
-            const translateUI = () => {
-                if(window.DjuntaT) {
-                    document.getElementById('hero-title').innerText = DjuntaT('hero_title');
-                    document.getElementById('search-placeholder').innerText = DjuntaT('search_placeholder');
-                    document.getElementById('txt-add-car').innerText = DjuntaT('btn_add_car');
-                    document.getElementById('txt-become-driver').innerText = DjuntaT('btn_become_driver');
-                }
-            };
-            setTimeout(translateUI, 150);
+            if(window.DjuntaT) {
+                document.getElementById('hero-title').innerText = DjuntaT('hero_title');
+                document.getElementById('search-placeholder').innerText = DjuntaT('search_placeholder');
+                document.getElementById('txt-add-car').innerText = DjuntaT('btn_add_car');
+                document.getElementById('txt-become-driver').innerText = DjuntaT('btn_become_driver');
+            }
             loadCars();
         });
     </script>
