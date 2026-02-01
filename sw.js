@@ -1,46 +1,14 @@
-/** PAGE: sw.js | VERSION: 1.9.3 */
-/**
- * DESCRIPTION: Service Worker minimal pour permettre l'installation PWA.
- */
-
-const CACHE_NAME = 'djuntacar-cache-v1.9.3';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/config.js',
-  '/layout.js',
-  '/translations.js',
-  '/sigle.png',
-  '/logo.png'
-];
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    })
-  );
-});
-
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
-  );
-});
+{
+  "name": "DjuntaCar",
+  "short_name": "DjuntaCar",
+  "description": "Location de voitures et VTC au Cap-Vert.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1d4379",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "sigle.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "sigle.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
