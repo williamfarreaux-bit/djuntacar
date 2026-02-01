@@ -1,6 +1,6 @@
-/** PAGE: translations.js | VERSION: 1.9.4 */
-/** * DESCRIPTION: Dictionnaire global. Définit DjuntaT immédiatement pour 
- * éviter les erreurs de chargement dans les autres fichiers.
+/** PAGE: translations.js | VERSION: 1.9.6 */
+/** * DESCRIPTION: Dictionnaire centralisé. 
+ * Définit DjuntaT globalement pour une disponibilité immédiate.
  */
 
 const DJUNTA_TRANSLATIONS = {
@@ -9,22 +9,20 @@ const DJUNTA_TRANSLATIONS = {
         "nav_rentals": "Mes Locations", "nav_wallet": "Portefeuille", "nav_account": "Mon Compte",
         "btn_logout": "Déconnexion", "btn_add_car": "Ajouter ma voiture", "btn_become_driver": "Devenir chauffeur",
         "footer_terms": "Conditions", "footer_privacy": "Confidentialité",
-        "pwa_install_title": "DjuntaCar sur votre écran",
-        "pwa_install_text": "Installez l'application pour un accès rapide et fluide.",
-        "pwa_install_btn": "Installer", "pwa_install_later": "Plus tard",
-        "hero_title": "Louez une voiture au Cap-Vert", "search_placeholder": "Où voulez-vous aller ?",
-        "signup_title": "Inscription", "title_profile": "Mon Profil",
-        "label_fname": "Prénom", "label_lname": "Nom", "label_email": "Email",
-        "msg_error": "Erreur survenue", "msg_success": "Opération réussie !",
-        "msg_update_success": "Profil mis à jour !"
+        "pwa_title": "DjuntaCar sur votre écran",
+        "pwa_desc": "Ajoutez l'application à votre écran d'accueil pour une expérience optimale.",
+        "pwa_ios_guide": "Appuyez sur le bouton 'Partager' [icon] puis sur 'Sur l'écran d'accueil'.",
+        "pwa_btn_install": "Installer maintenant", "pwa_btn_close": "Plus tard",
+        "hero_title": "Louez une voiture au Cap-Vert", "search_placeholder": "Où voulez-vous aller ?"
     },
     en: {
         "nav_home": "Home", "nav_driver": "Driver", "nav_car": "Car",
         "nav_rentals": "Rentals", "nav_wallet": "Wallet", "nav_account": "My Account",
         "btn_logout": "Logout", "btn_add_car": "Add my car", "btn_become_driver": "Become a driver",
         "footer_terms": "Terms", "footer_privacy": "Privacy",
-        "pwa_install_title": "DjuntaCar on your screen",
-        "pwa_install_btn": "Install", "pwa_install_later": "Later",
+        "pwa_title": "Install DjuntaCar", "pwa_desc": "Add to home screen for the best experience.",
+        "pwa_ios_guide": "Tap 'Share' [icon] then 'Add to Home Screen'.",
+        "pwa_btn_install": "Install Now", "pwa_btn_close": "Later",
         "hero_title": "Rent a car in Cape Verde", "search_placeholder": "Where to go?"
     },
     pt: {
@@ -32,8 +30,9 @@ const DJUNTA_TRANSLATIONS = {
         "nav_rentals": "Reservas", "nav_wallet": "Carteira", "nav_account": "Minha Conta",
         "btn_logout": "Sair", "btn_add_car": "Adicionar meu carro", "btn_become_driver": "Tornar-se motorista",
         "footer_terms": "Condições", "footer_privacy": "Privacidade",
-        "pwa_install_title": "DjuntaCar no seu ecrã",
-        "pwa_install_btn": "Instalar", "pwa_install_later": "Depois",
+        "pwa_title": "Instalar DjuntaCar", "pwa_desc": "Adicione à tela inicial para melhor experiência.",
+        "pwa_ios_guide": "Toque em 'Partilhar' [icon] e 'Adicionar ao ecrã principal'.",
+        "pwa_btn_install": "Instalar agora", "pwa_btn_close": "Depois",
         "hero_title": "Aluguer de carros em Cabo Verde", "search_placeholder": "Para onde quer ir?"
     }
 };
