@@ -1,6 +1,6 @@
 /**
- * CONFIGURATION OFFICIELLE DJUNTACAR - PRODUCTION
- * Version : 1.6.1 (Libellés Menu d'Origine)
+ * CONFIGURATION OFFICIELLE DJUNTACAR
+ * Version : 1.7.1 (Logique Système Uniquement)
  */
 
 const DJUNTA_CONFIG = {
@@ -12,56 +12,8 @@ const DJUNTA_CONFIG = {
     },
 
     langBrain: {
-        current: localStorage.getItem('djunta_lang') || 'fr',
-        translations: {
-            fr: {
-                // Clés du Menu d'Origine
-                nav_home: "Accueil",
-                nav_driver: "Mon Chauffeur",
-                nav_car: "Ma Voiture",
-                nav_rentals: "Mes Locations",
-                nav_wallet: "Portefeuille",
-                nav_account: "Mon Compte",
-                logout: "Déconnexion",
-                // Clés de contenu
-                find_driver: "Trouver un Chauffeur",
-                search_placeholder: "VILLE OU ÎLE...",
-                budget_label: "Tarif Journalier Max (8h)",
-                duration_label: "Durée de la course",
-                total_text: "Total estimé",
-                currency_info: "Prix affichés en"
-            },
-            pt: {
-                nav_home: "Início",
-                nav_driver: "Meu Motorista",
-                nav_car: "Meu Carro",
-                nav_rentals: "Minhas Reservas",
-                nav_wallet: "Carteira",
-                nav_account: "Minha Conta",
-                logout: "Sair",
-                find_driver: "Encontrar um Motorista",
-                search_placeholder: "CIDADE OU ILHA...",
-                budget_label: "Orçamento Diário Máx (8h)",
-                duration_label: "Duração da viagem",
-                total_text: "Total estimado",
-                currency_info: "Preços exibidos em"
-            },
-            en: {
-                nav_home: "Home",
-                nav_driver: "My Driver",
-                nav_car: "My Car",
-                nav_rentals: "My Bookings",
-                nav_wallet: "Wallet",
-                nav_account: "My Account",
-                logout: "Logout",
-                find_driver: "Find a Driver",
-                search_placeholder: "CITY OR ISLAND...",
-                budget_label: "Max Daily Rate (8h)",
-                duration_label: "Trip duration",
-                total_text: "Estimated total",
-                currency_info: "Prices shown in"
-            }
-        }
+        // Gère uniquement la langue active
+        current: localStorage.getItem('djunta_lang') || 'fr'
     },
 
     currencyBrain: {
@@ -84,9 +36,7 @@ const DJUNTA_CONFIG = {
         supportUrl: "https://support.djuntacar.com"
     },
 
-    routes: {
-        home: "/", login: "/login", profile: "/profile", bookings: "/bookings", legalTerms: "/legal-terms"
-    }
+    routes: { home: "/", login: "/login", profile: "/profile", bookings: "/bookings" }
 };
 
 Object.freeze(DJUNTA_CONFIG);
