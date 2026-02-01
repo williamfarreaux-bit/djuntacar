@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Accueil v2.1.1</title>
+    <title>DjuntaCar - Accueil v1.9.0</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -41,7 +41,9 @@
         </section>
 
         <div id="cars-feed" class="p-6 grid gap-6">
-            <div class="text-center py-20 opacity-20"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i></div>
+            <div class="text-center py-20 opacity-20">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
+            </div>
         </div>
 
         <div class="action-btns">
@@ -58,7 +60,8 @@
 
     <script>
         window.onload = function() {
-            if (!window.DJUNTA_CONFIG) return;
+            if (typeof window.DJUNTA_CONFIG === 'undefined') return;
+
             const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
 
             if (window.DjuntaT) {
