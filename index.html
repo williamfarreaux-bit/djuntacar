@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DjuntaCar - Accueil v1.9.0</title>
     
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,14 +14,12 @@
     <script src="config.js"></script>
     <script src="translations.js"></script>
     <script src="layout.js" defer></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
         body { background-color: #fcfcfd; padding-bottom: 220px; margin: 0; overflow-x: hidden; }
 
-        /* Section Hero */
         .hero-section {
             background-color: #1d4379;
             padding: 40px 0 80px;
@@ -52,7 +51,6 @@
             cursor: pointer;
         }
 
-        /* Barre d'action fixe en bas */
         .action-btns {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -121,28 +119,32 @@
     </main>
 
     <script>
-        /**
-         * Initialisation de l'application au chargement complet
-         */
         window.onload = function() {
-            // Vérification de la configuration
-            if (typeof window.DJUNTA_CONFIG === 'undefined') return;
+            // Vérification stricte de la disponibilité des objets globaux
+            if (typeof window.DJUNTA_CONFIG === 'undefined') {
+                console.error("Critical: config.js is missing or failed to load.");
+                return;
+            }
 
-            // Initialisation Supabase
             const sb = window.supabase.createClient(
                 DJUNTA_CONFIG.supabase.url, 
                 DJUNTA_CONFIG.supabase.anonKey
             );
 
-            // Mise à jour des textes via le dictionnaire
+            // Injection des textes multilingues
             if (window.DjuntaT) {
-                document.getElementById('hero-title').innerText = DjuntaT('hero_title');
-                document.getElementById('search-placeholder').innerText = DjuntaT('search_placeholder');
-                document.getElementById('txt-add-car').innerText = DjuntaT('btn_add_car');
-                document.getElementById('txt-become-driver').innerText = DjuntaT('btn_become_driver');
+                const titleEl = document.getElementById('hero-title');
+                const placeholderEl = document.getElementById('search-placeholder');
+                const addCarEl = document.getElementById('txt-add-car');
+                const becomeDriverEl = document.getElementById('txt-become-driver');
+
+                if(titleEl) titleEl.innerText = DjuntaT('hero_title');
+                if(placeholderEl) placeholderEl.innerText = DjuntaT('search_placeholder');
+                if(addCarEl) addCarEl.innerText = DjuntaT('btn_add_car');
+                if(becomeDriverEl) becomeDriverEl.innerText = DjuntaT('btn_become_driver');
             }
 
-            // Récupération des données véhicules
+            // Récupération asynchrone des données
             sb.from('vehicles').select('*').then(({ data: vs, error }) => {
                 const feed = document.getElementById('cars-feed');
                 if (error || !vs || vs.length === 0) {
@@ -150,7 +152,6 @@
                     return;
                 }
 
-                // Rendu des cartes véhicules
                 feed.innerHTML = vs.map(v => `
                     <div class="bg-white rounded-[30px] overflow-hidden shadow-sm border border-gray-100 mb-2" onclick="window.location.href='car-detail.html?id=${v.id}'">
                         <img src="${v.image_url}" class="w-full h-48 object-cover" onerror="this.src='https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=60&w=800'">
@@ -169,7 +170,6 @@
                     </div>
                 `).join('');
 
-                // Activation des icônes Lucide pour les éléments injectés
                 if (window.lucide) lucide.createIcons();
             });
         };
