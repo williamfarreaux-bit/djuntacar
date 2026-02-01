@@ -1,23 +1,21 @@
 /**
  * CONFIGURATION OFFICIELLE DJUNTACAR - PRODUCTION
- * Version : 1.6.1 (Harmonisation des libellés d'origine)
+ * Version : 1.6.1 (Libellés Menu d'Origine)
  */
 
 const DJUNTA_CONFIG = {
-    // 1. ENVIRONNEMENT
     isProduction: window.location.hostname === "djuntacar.com",
 
-    // 2. CONNEXION SUPABASE
     supabase: {
         url: "https://TON_ID_PROJET.supabase.co", 
         anonKey: "TA_CLE_ANON_PUBLIQUE"
     },
 
-    // 3. LE CERVEAU DES LANGUES (i18n)
     langBrain: {
         current: localStorage.getItem('djunta_lang') || 'fr',
         translations: {
             fr: {
+                // Clés du Menu d'Origine
                 nav_home: "Accueil",
                 nav_driver: "Mon Chauffeur",
                 nav_car: "Ma Voiture",
@@ -25,6 +23,7 @@ const DJUNTA_CONFIG = {
                 nav_wallet: "Portefeuille",
                 nav_account: "Mon Compte",
                 logout: "Déconnexion",
+                // Clés de contenu
                 find_driver: "Trouver un Chauffeur",
                 search_placeholder: "VILLE OU ÎLE...",
                 budget_label: "Tarif Journalier Max (8h)",
@@ -65,27 +64,13 @@ const DJUNTA_CONFIG = {
         }
     },
 
-    // 4. LE CERVEAU DES DEVISES (Calculs & Taux)
     currencyBrain: {
         current: localStorage.getItem('djunta_curr') || 'EUR',
-        rates: {
-            'EUR': 1,
-            'CVE': 110.265, 
-            'USD': 1.08
-        },
-        symbols: {
-            'EUR': '€',
-            'CVE': 'Esc',
-            'USD': '$'
-        },
-        rules: {
-            min_base: 25,
-            extra_hour: 5,
-            base_hours: 8
-        }
+        rates: { 'EUR': 1, 'CVE': 110.265, 'USD': 1.08 },
+        symbols: { 'EUR': '€', 'CVE': 'Esc', 'USD': '$' },
+        rules: { min_base: 25, extra_hour: 5, base_hours: 8 }
     },
 
-    // 5. ARCHITECTURE EMAIL
     emailing: {
         auth: { service: "Resend", sender: "noreply@auth.djuntacar.com", name: "DjuntaCar Sécurité" },
         legal: { service: "Brevo", sender: "contracts@legal.djuntacar.com", name: "DjuntaCar Legal", templateId: 1 },
@@ -93,18 +78,14 @@ const DJUNTA_CONFIG = {
         support: { service: "Cloudflare", sender: "help@support.djuntacar.com", name: "DjuntaCar Support" }
     },
 
-    // 6. PARAMÈTRES RÉGIONAUX & ROUTES
     settings: {
         timezone: "Atlantic/Cape_Verde",
         brandName: "DjuntaCar",
         supportUrl: "https://support.djuntacar.com"
     },
+
     routes: {
-        home: "/",
-        login: "/login",
-        profile: "/profile",
-        bookings: "/bookings",
-        legalTerms: "/legal-terms"
+        home: "/", login: "/login", profile: "/profile", bookings: "/bookings", legalTerms: "/legal-terms"
     }
 };
 
