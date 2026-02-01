@@ -1,10 +1,9 @@
+/** PAGE: sw.js | VERSION: 1.9.3 */
 /**
- * PAGE: sw.js
- * VERSION: 1.9.2
- * DESCRIPTION: Service Worker pour l'installation PWA et la mise en cache.
+ * DESCRIPTION: Service Worker minimal pour permettre l'installation PWA.
  */
 
-const CACHE_NAME = 'djuntacar-cache-v1.9.2';
+const CACHE_NAME = 'djuntacar-cache-v1.9.3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
