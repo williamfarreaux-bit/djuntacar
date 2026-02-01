@@ -1,38 +1,31 @@
-/** PAGE: layout.js | VERSION: 1.9.9 */
+/** PAGE: layout.js | VERSION: 2.0.0 */
 /** * DESCRIPTION: Master Layout universel. 
- * Injecte le Header (menu burger), le Menu Mobile (icône volant), 
- * le Footer et le Popup PWA sur n'importe quelle page disposant du slot.
+ * Gère l'affichage des icônes distinctes pour Chauffeur (Volant) et Compte (Profil).
  */
 
-console.log("DjuntaCar Layout Master - v1.9.9");
+console.log("DjuntaCar Layout Master - v2.0.0");
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Formatage monétaire global
     window.DjuntaFormat = (val, curr) => {
         const brain = DJUNTA_CONFIG.currencyBrain;
         const rate = brain.rates[curr] || 1;
         return `${Math.round(val * rate)} ${brain.symbols[curr]}`;
     };
 
-    // 2. Injection automatique du Header
-    // On cherche l'élément 'header-slot' sur la page
     const slot = document.getElementById('header-slot');
     if (slot) {
         injectHeaderContent(slot);
     } else {
-        // Sécurité : Si le slot est oublié, on injecte au tout début du body
         const autoSlot = document.createElement('div');
         autoSlot.id = 'header-slot';
         document.body.prepend(autoSlot);
         injectHeaderContent(autoSlot);
     }
     
-    // 3. Injection des autres composants globaux
     injectMobileMenu(); 
     injectFooter();
     injectPWAPopup(); 
     
-    // 4. Initialisation des icônes Lucide pour les éléments injectés
     if (window.lucide) window.lucide.createIcons();
 });
 
@@ -45,7 +38,7 @@ function injectHeaderContent(el) {
             </button>
             <img src="logo.png" style="height:30px; cursor:pointer;" onclick="window.location.href='index.html'" onerror="this.outerHTML='<b style=\'color:#1d4379\'>DJUNTACAR</b>'">
             <button onclick="window.location.href='profile.html'" style="background:none; border:none; cursor:pointer; padding:5px;">
-                <i data-lucide="user" style="color:#1d4379; width:24px;"></i>
+                <i data-lucide="user-circle" style="color:#1d4379; width:26px;"></i>
             </button>
         </div>`;
 }
@@ -60,12 +53,12 @@ function injectMobileMenu() {
             <button onclick="toggleMenu()" style="background:none; border:none; cursor:pointer;"><i data-lucide="x"></i></button>
         </div>
         <nav style="display:flex; flex-direction:column; gap:12px; font-weight:800; color:#1d4379; text-transform:uppercase; font-size:11px;">
-            <a href="index.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px;"><i data-lucide="home"></i> ${DjuntaT('nav_home')}</a>
-            <a href="search-driver.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px;"><i data-lucide="steering-wheel"></i> ${DjuntaT('nav_driver')}</a>
-            <a href="search-car.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px;"><i data-lucide="car-front"></i> ${DjuntaT('nav_car')}</a>
-            <a href="my-rentals.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px;"><i data-lucide="calendar"></i> ${DjuntaT('nav_rentals')}</a>
-            <a href="wallet.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px;"><i data-lucide="wallet"></i> ${DjuntaT('nav_wallet')}</a>
-            <a href="profile.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px;"><i data-lucide="user-circle"></i> ${DjuntaT('nav_account')}</a>
+            <a href="index.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="home"></i> ${DjuntaT('nav_home')}</a>
+            <a href="search-driver.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="steering-wheel"></i> ${DjuntaT('nav_driver')}</a>
+            <a href="search-car.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="car-front"></i> ${DjuntaT('nav_car')}</a>
+            <a href="my-rentals.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="calendar"></i> ${DjuntaT('nav_rentals')}</a>
+            <a href="wallet.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="wallet"></i> ${DjuntaT('nav_wallet')}</a>
+            <a href="profile.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="user-circle"></i> ${DjuntaT('nav_account')}</a>
         </nav>
         <button onclick="handleLogout()" style="margin-top:auto; background:#fef2f2; color:#ef4444; border:none; padding:15px; border-radius:15px; font-weight:900; font-size:12px; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer;">
             <i data-lucide="log-out"></i> ${DjuntaT('btn_logout')}
@@ -81,7 +74,7 @@ function injectFooter() {
             <a href="terms.html" style="text-decoration:none; font-size:10px; font-weight:900; color:#94a3b8; text-transform:uppercase;">${DjuntaT('footer_terms')}</a>
             <a href="privacy.html" style="text-decoration:none; font-size:10px; font-weight:900; color:#94a3b8; text-transform:uppercase;">${DjuntaT('footer_privacy')}</a>
         </div>
-        <p style="font-size:9px; color:#cbd5e1; font-weight:700; letter-spacing:1px;">© 2026 DJUNTACAR • v1.9.9</p>
+        <p style="font-size:9px; color:#cbd5e1; font-weight:700; letter-spacing:1px;">© 2026 DJUNTACAR • v2.0.0</p>
     </footer>`);
 }
 
