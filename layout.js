@@ -1,16 +1,18 @@
 /**
  * DJUNTACAR - LAYOUT MASTER
- * @version 1.8.5
- * @description Correction du bug d'affichage du menu mobile (unification des clés).
+ * @version 1.8.6
+ * @description Changement d'icône (volant) et stabilisation des clés de traduction.
  */
 
-console.log("DjuntaCar Layout Loaded - v1.8.5");
+console.log("DjuntaCar Layout Loaded - v1.8.6");
 
 document.addEventListener("DOMContentLoaded", () => {
     window.DjuntaT = (key) => {
         const lang = DJUNTA_CONFIG.langBrain.current;
         if (typeof DJUNTA_TRANSLATIONS !== 'undefined' && DJUNTA_TRANSLATIONS[lang]) {
-            return DJUNTA_TRANSLATIONS[lang][key] || key;
+            // On force le passage en minuscule pour éviter les erreurs de casse
+            const formattedKey = key.toLowerCase();
+            return DJUNTA_TRANSLATIONS[lang][formattedKey] || key;
         }
         return key;
     };
@@ -83,7 +85,7 @@ function injectMobileMenu() {
         </div>
         <nav style="display:flex; flex-direction:column; gap:15px; font-weight:800; color:#1d4379; text-transform:uppercase; font-size:12px;">
             <a href="index.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="home"></i> ${DjuntaT('nav_home')}</a>
-            <a href="search-driver.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="user-check"></i> ${DjuntaT('nav_driver')}</a>
+            <a href="search-driver.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="steering-wheel"></i> ${DjuntaT('nav_driver')}</a>
             <a href="search-car.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="car-front"></i> ${DjuntaT('nav_car')}</a>
             <a href="my-rentals.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="calendar"></i> ${DjuntaT('nav_rentals')}</a>
             <a href="wallet.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px; padding:10px;"><i data-lucide="wallet"></i> ${DjuntaT('nav_wallet')}</a>
@@ -103,12 +105,13 @@ function injectFooter() {
             <a href="terms.html" style="text-decoration: none; font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase;">Conditions</a>
             <a href="privacy.html" style="text-decoration: none; font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase;">Confidentialité</a>
         </div>
-        <p style="font-size:9px; color:#cbd5e1; font-weight:700; text-transform:uppercase;">© 2026 DjuntaCar • v${DJUNTA_CONFIG.version || '1.8.5'}</p>
+        <p style="font-size:9px; color:#cbd5e1; font-weight:700; text-transform:uppercase;">© 2026 DjuntaCar • v${DJUNTA_CONFIG.version || '1.8.6'}</p>
     </footer>`);
 }
 
 window.toggleMenu = () => {
-    const m = document.getElementById('mobile-menu'); const o = document.getElementById('menu-overlay');
+    const m = document.getElementById('mobile-menu');
+    const o = document.getElementById('menu-overlay');
     if(!m || !o) return;
     const isOpen = m.style.transform === 'translateX(0px)';
     m.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0px)';
@@ -116,8 +119,16 @@ window.toggleMenu = () => {
     if (!isOpen && window.lucide) lucide.createIcons();
 };
 
-window.toggleLang = (e) => { e.stopPropagation(); const d = document.getElementById('lang-dropdown'); if(d) d.style.display = d.style.display === 'block' ? 'none' : 'block'; };
-window.setDjuntaLang = (l) => { localStorage.setItem('djunta_lang', l); window.location.reload(); };
+window.toggleLang = (e) => { 
+    e.stopPropagation(); 
+    const d = document.getElementById('lang-dropdown'); 
+    if(d) d.style.display = d.style.display === 'block' ? 'none' : 'block'; 
+};
+
+window.setDjuntaLang = (l) => { 
+    localStorage.setItem('djunta_lang', l); 
+    window.location.reload(); 
+};
 
 window.handleProfileNavigation = async (e) => {
     if(e) e.preventDefault();
@@ -147,6 +158,7 @@ function setupPWA() {
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault(); 
         window.deferredPrompt = e;
-        const b = document.getElementById('pwa-install-btn'); if(b) b.style.display = 'block';
+        const b = document.getElementById('pwa-install-btn'); 
+        if(b) b.style.display = 'block';
     });
 }
