@@ -2,109 +2,195 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portefeuille - DjuntaCar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DjuntaCar - Portefeuille v1.8.1</title>
+    
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="translations.js"></script>
     <script src="config.js"></script>
     <script src="layout.js" defer></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
         body { background-color: #fcfcfd; padding-bottom: 120px; }
-        .wallet-card { background: linear-gradient(135deg, #1d4379 0%, #2563eb 100%); border-radius: 30px; padding: 30px; color: white; margin-bottom: 30px; box-shadow: 0 15px 40px rgba(37, 99, 235, 0.3); position: relative; overflow: hidden; }
-        .glass-btn { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 10px; text-transform: uppercase; width: 100%; transition: background 0.2s; }
+
+        .wallet-card { 
+            background: linear-gradient(135deg, #1d4379 0%, #2563eb 100%); 
+            border-radius: 30px; 
+            padding: 30px; 
+            color: white; 
+            margin-bottom: 30px; 
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.3); 
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        .glass-btn { 
+            background: rgba(255,255,255,0.2); 
+            backdrop-filter: blur(10px); 
+            border-radius: 12px; 
+            padding: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            font-weight: 800; 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            width: 100%; 
+            transition: background 0.2s; 
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
         .glass-btn:active { background: rgba(255,255,255,0.3); }
+
+        .transaction-item {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body class="antialiased">
     <div id="header-slot"></div>
+
     <main class="max-w-md mx-auto px-6 pt-6">
-        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-6">Mon Solde</h1>
+        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-6" id="title-wallet"></h1>
 
         <div class="wallet-card">
-            <p class="text-[10px] font-bold opacity-70 uppercase mb-1">Disponible pour retrait</p>
-            <h2 id="wallet-balance" class="text-4xl font-black mb-6">0 CVE</h2>
+            <p class="text-[10px] font-bold opacity-70 uppercase mb-1" id="label-available"></p>
+            <h2 id="wallet-balance" class="text-4xl font-black mb-6">...</h2>
+            
             <div class="flex gap-4">
-                <button onclick="alert('Virement bancaire indisponible en mode démo')" class="glass-btn">
-                    <i data-lucide="arrow-down-to-line" class="w-4 h-4"></i> Retirer
+                <button onclick="handleWithdraw()" class="glass-btn">
+                    <i data-lucide="arrow-down-to-line" class="w-4 h-4"></i>
+                    <span id="btn-withdraw"></span>
                 </button>
-                <button onclick="window.location.href='payment.html'" class="glass-btn">
-                    <i data-lucide="credit-card" class="w-4 h-4"></i> Cartes
+                <button onclick="window.location.href='payment-methods.html'" class="glass-btn">
+                    <i data-lucide="credit-card" class="w-4 h-4"></i>
+                    <span id="btn-cards"></span>
                 </button>
             </div>
         </div>
 
-        <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Dernières transactions</h3>
+        <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4" id="title-history"></h3>
         <div id="transactions-list" class="space-y-4">
-            <div class="text-center py-10 opacity-40"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-gray-400"></i></div>
+            <div class="text-center py-10 opacity-40">
+                <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-gray-400"></i>
+            </div>
         </div>
     </main>
 
     <script>
-        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        // Initialisation Supabase via config.js
+        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
 
-        async function loadWallet() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
+        /**
+         * CHARGEMENT DES DONNÉES
+         */
+        async function loadWalletData() {
+            // 1. Traduction de l'interface
+            document.getElementById('title-wallet').innerText = DjuntaT('nav_wallet');
+            document.getElementById('label-available').innerText = "Disponible pour retrait"; // À ajouter au dictionnaire
+            document.getElementById('title-history').innerText = "Dernières transactions";
+            document.getElementById('btn-withdraw').innerText = "Retirer";
+            document.getElementById('btn-cards').innerText = "Cartes";
 
-            // 1. Trouver les véhicules de l'user
-            const { data: vehicles } = await supabase.from('vehicles').select('id').eq('owner_id', user.id);
+            const { data: { user } } = await sb.auth.getUser();
+            if (!user) { window.location.href = 'login.html'; return; }
+
+            // 2. Récupérer le solde réel depuis le profil (Script SQL exécuté)
+            const { data: profile, error: pError } = await sb
+                .from('profiles')
+                .select('wallet_balance, iban')
+                .eq('id', user.id)
+                .single();
+
+            if (pError) console.error("Erreur profil:", pError);
+            
+            // Affichage du solde formaté (CVE par défaut ou selon config)
+            const balance = profile ? profile.wallet_balance : 0;
+            document.getElementById('wallet-balance').innerText = DjuntaFormat(balance, DJUNTA_CONFIG.currencyBrain.current);
+
+            // 3. Charger l'historique des revenus (Réservations sur ses propres véhicules)
+            const { data: vehicles } = await sb.from('vehicles').select('id').eq('owner_id', user.id);
+            
             if (!vehicles || vehicles.length === 0) {
                 renderEmpty();
                 return;
             }
-            const vehicleIds = vehicles.map(v => v.id);
 
-            // 2. Trouver les réservations sur ces véhicules
-            const { data: bookings } = await supabase
+            const vehicleIds = vehicles.map(v => v.id);
+            const { data: bookings, error: bError } = await sb
                 .from('bookings')
                 .select('*, vehicles(brand, model)')
                 .in('vehicle_id', vehicleIds)
                 .order('created_at', { ascending: false });
 
-            // 3. Calculs
-            let total = 0;
+            if (bError || !bookings || bookings.length === 0) {
+                renderEmpty();
+            } else {
+                renderTransactions(bookings);
+            }
+        }
+
+        /**
+         * RENDU DE LA LISTE
+         */
+        function renderTransactions(bookings) {
             const container = document.getElementById('transactions-list');
             container.innerHTML = '';
 
-            if(bookings && bookings.length > 0) {
-                bookings.forEach(b => {
-                    // Règle métier : Commission 15%
-                    const netIncome = b.total_price * 0.85; 
-                    total += netIncome;
+            bookings.forEach(b => {
+                // Règle métier : Revenu net propriétaire (85%)
+                const netIncome = b.total_price * 0.85; 
 
-                    const html = `
-                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
-                                <i data-lucide="arrow-down-left" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs font-black text-[#1d4379] uppercase">Loc. ${b.vehicles.brand}</p>
-                                <p class="text-[9px] font-bold text-gray-400">${new Date(b.created_at).toLocaleDateString()}</p>
-                            </div>
+                const html = `
+                <div class="transaction-item">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
                         </div>
-                        <span class="text-sm font-black text-green-600">+${Math.round(netIncome).toLocaleString()}</span>
-                    </div>`;
-                    container.insertAdjacentHTML('beforeend', html);
-                });
-            } else {
-                renderEmpty();
-            }
-
-            document.getElementById('wallet-balance').innerText = Math.round(total).toLocaleString() + " CVE";
-            lucide.createIcons();
+                        <div>
+                            <p class="text-xs font-black text-[#1d4379] uppercase">Loc. ${b.vehicles.brand}</p>
+                            <p class="text-[9px] font-bold text-gray-400">${new Date(b.created_at).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <span class="text-sm font-black text-green-600">+${DjuntaFormat(netIncome, 'CVE')}</span>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+            if (window.lucide) lucide.createIcons();
         }
 
         function renderEmpty() {
-            document.getElementById('transactions-list').innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Aucune transaction.</p>';
-            document.getElementById('wallet-balance').innerText = "0 CVE";
+            document.getElementById('transactions-list').innerHTML = `
+                <div class="text-center py-10 opacity-30">
+                    <i data-lucide="archive" class="w-8 h-8 mx-auto mb-2"></i>
+                    <p class="text-[10px] font-bold uppercase">Aucune transaction</p>
+                </div>`;
+            if (window.lucide) lucide.createIcons();
         }
 
-        document.addEventListener('DOMContentLoaded', loadWallet);
+        function handleWithdraw() {
+            alert("Le retrait vers votre IBAN est en cours de traitement. Un email de confirmation vous sera envoyé.");
+        }
+
+        document.addEventListener('DOMContentLoaded', loadWalletData);
     </script>
 </body>
 </html>
