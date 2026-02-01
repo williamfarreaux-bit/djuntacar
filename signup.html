@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Connexion - DjuntaCar</title>
+    <title>DjuntaCar - Connexion v1.8.1</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <script src="translations.js"></script>
     <script src="config.js"></script>
     <script src="layout.js" defer></script>
 
@@ -66,17 +67,11 @@
             box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
             transition: all 0.2s;
             border: none;
+            cursor: pointer;
         }
 
-        .btn-login:active {
-            transform: scale(0.95);
-        }
-
-        .btn-login:disabled {
-            background: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
+        .btn-login:active { transform: scale(0.95); }
+        .btn-login:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
     </style>
 </head>
 <body class="antialiased">
@@ -85,47 +80,67 @@
     <main class="flex-grow flex items-center justify-center p-6">
         <div class="login-card">
             <div class="text-center mb-8">
-                <h1 class="text-2xl font-black text-[#1d4379] uppercase italic tracking-tighter">Connexion</h1>
+                <h1 class="text-2xl font-black text-[#1d4379] uppercase italic tracking-tighter" id="title_login"></h1>
             </div>
 
             <form id="login-form">
                 <input type="email" id="email" class="input-field" placeholder="Email" required>
-                <input type="password" id="password" class="input-field" placeholder="Mot de passe" required>
-                <button type="submit" id="submit-btn" class="btn-login">Se connecter</button>
+                <input type="password" id="password" class="input-field" placeholder="••••••••" required>
+                <button type="submit" id="submit-btn" class="btn-login"></button>
             </form>
 
             <p class="mt-8 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                Nouveau ? <a href="signup.html" class="text-[#1d4379] underline">Créer un compte</a>
+                <span id="label_new_user"></span> 
+                <a href="signup.html" class="text-[#1d4379] underline" id="link_signup"></a>
             </p>
         </div>
     </main>
 
     <script>
-        // Initialisation Supabase avec les données du "Cerveau"
+        // Initialisation Supabase via config.js
         const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
 
+        /**
+         * TRADUCTION DE LA PAGE
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Traduction des éléments fixes
+            document.getElementById('title_login').innerText = DjuntaT('btn_login');
+            document.getElementById('submit-btn').innerText = DjuntaT('btn_login');
+            
+            // Textes spécifiques à la page (ajouts recommandés au dictionnaire)
+            document.getElementById('label_new_user').innerText = DjuntaT('fr') === 'fr' ? "Nouveau ?" : "New ?"; 
+            document.getElementById('link_signup').innerText = DjuntaT('signup_title');
+            
+            // Traduction des placeholders
+            document.getElementById('password').placeholder = DjuntaT('fr') === 'fr' ? "Mot de passe" : "Password";
+        });
+
+        /**
+         * LOGIQUE DE CONNEXION
+         */
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            btn.innerText = "CONNEXION...";
+            btn.innerText = "...";
             btn.disabled = true;
 
             try {
                 const { error } = await sb.auth.signInWithPassword({ email, password });
 
                 if (error) {
-                    alert("Erreur d'identifiants : " + error.message);
-                    btn.innerText = "SE CONNECTER";
+                    alert(DjuntaT('msg_error') + " : " + error.message);
+                    btn.innerText = DjuntaT('btn_login');
                     btn.disabled = false;
                 } else {
                     window.location.href = 'profile.html';
                 }
             } catch (err) {
-                alert("Une erreur technique est survenue.");
-                btn.innerText = "SE CONNECTER";
+                alert(DjuntaT('msg_error'));
+                btn.innerText = DjuntaT('btn_login');
                 btn.disabled = false;
             }
         });
