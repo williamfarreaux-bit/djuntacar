@@ -1,6 +1,7 @@
 /**
- * DJUNTACAR - DICTIONNAIRE DE TRADUCTION
- * @version 1.8.7
+ * PAGE: translations.js
+ * VERSION: 1.8.9
+ * DESCRIPTION: Dictionnaire unifié pour l'accueil, le profil et la navigation.
  */
 
 const DJUNTA_TRANSLATIONS = {
@@ -19,7 +20,8 @@ const DJUNTA_TRANSLATIONS = {
         "hero_title": "Louez une voiture au Cap-Vert",
         "search_placeholder": "Où voulez-vous aller ?",
         "signup_title": "Inscription",
-        "msg_error": "Erreur survenue", "msg_success": "Succès !"
+        "msg_error": "Erreur survenue", 
+        "msg_success": "Succès !"
     },
     en: {
         "nav_home": "Home",
@@ -34,8 +36,7 @@ const DJUNTA_TRANSLATIONS = {
         "footer_terms": "Terms",
         "footer_privacy": "Privacy",
         "hero_title": "Rent a car in Cape Verde",
-        "search_placeholder": "Where to go?",
-        "btn_login": "Login"
+        "search_placeholder": "Where to go?"
     },
     pt: {
         "nav_home": "Início",
