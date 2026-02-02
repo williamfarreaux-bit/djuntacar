@@ -1,26 +1,29 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Recherche</title>
+    <title>Pesquisar - DjuntaCar</title>
     
     <meta name="theme-color" content="#1d4379">
 
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="config.js"></script>
-    <script src="layout.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
-        body { background-color: #fcfcfd; padding-bottom: 120px; font-family: 'Montserrat', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #fcfcfd; padding-bottom: 120px; margin: 0; }
 
         /* HERO HEADER */
         .search-header {
             background-color: #1d4379;
-            padding: 20px 24px 40px 24px;
+            padding: 20px 24px 60px 24px;
             border-bottom-left-radius: 30px;
             border-bottom-right-radius: 30px;
             color: white;
@@ -31,7 +34,7 @@
         .form-container {
             width: 90%;
             max-width: 500px;
-            margin: -30px auto 0 auto;
+            margin: -40px auto 0 auto;
             background: white;
             border-radius: 24px;
             padding: 24px;
@@ -45,71 +48,54 @@
         .input-group { margin-bottom: 20px; }
         .input-label {
             display: block;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #94a3b8;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
+            font-size: 10px; font-weight: 800; text-transform: uppercase;
+            color: #94a3b8; margin-bottom: 8px; letter-spacing: 0.5px;
         }
         .input-field {
-            width: 100%;
-            height: 55px;
-            border-radius: 16px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 0 16px;
-            font-size: 14px;
-            font-weight: 700;
-            color: #1e293b;
-            outline: none;
-            transition: border-color 0.2s;
-            display: flex;
-            align-items: center;
+            width: 100%; height: 55px; border-radius: 16px;
+            background: #f8fafc; border: 1px solid #e2e8f0;
+            padding: 0 16px; font-size: 14px; font-weight: 700;
+            color: #1e293b; outline: none; transition: border-color 0.2s;
+            display: flex; align-items: center;
         }
-        .input-field:focus { border-color: #1d4379; background: white; }
+        .input-field:focus-within { border-color: #1d4379; background: white; }
         .input-icon { color: #1d4379; margin-right: 12px; }
 
         /* BOUTON FIXE */
         .fixed-btn-container {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 1px solid #f1f5f9;
-            padding: 16px 24px;
-            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            padding: 16px 24px; padding-bottom: max(16px, env(safe-area-inset-bottom));
             z-index: 100;
         }
         .btn-search {
-            width: 100%;
-            height: 60px;
-            background: #1d4379;
-            color: white;
-            border-radius: 20px;
-            font-weight: 900;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            width: 100%; height: 60px; background: #1d4379; color: white;
+            border-radius: 20px; font-weight: 900; font-size: 12px;
+            text-transform: uppercase; letter-spacing: 1px;
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3);
-            transition: transform 0.1s;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3); transition: transform 0.1s;
+            border: none; cursor: pointer;
         }
         .btn-search:active { transform: scale(0.96); }
     </style>
 </head>
-<body>
+<body class="antialiased">
+
+    <djunta-header></djunta-header>
 
     <div class="search-header">
-        <h1 class="text-xl font-black uppercase tracking-tight">Planifiez votre<br>prochain trajet</h1>
-        <p class="text-xs font-medium text-blue-200 mt-2">Choisissez vos dates et partez tranquille.</p>
+        <h1 class="text-xl font-black uppercase tracking-tight">Planeie a sua<br>próxima viagem</h1>
+        <p class="text-xs font-medium text-blue-200 mt-2">Escolha as datas e viaje tranquilo.</p>
     </div>
 
     <div class="form-container">
         
         <div class="input-group">
-            <label class="input-label">Lieu de prise en charge</label>
+            <label class="input-label">Local de levantamento</label>
             <div class="input-field relative">
                 <i data-lucide="map-pin" class="input-icon w-5 h-5"></i>
-                <select id="location" class="w-full bg-transparent outline-none appearance-none font-bold text-[#1d4379]">
-                    <option value="Praia">Praia (Aéroport)</option>
+                <select id="location" class="w-full bg-transparent outline-none appearance-none font-bold text-[#1d4379] border-none">
+                    <option value="Praia">Praia (Aeroporto)</option>
                     <option value="Mindelo">Mindelo</option>
                     <option value="Sal">Santa Maria (Sal)</option>
                     <option value="BoaVista">Boa Vista</option>
@@ -119,54 +105,65 @@
         </div>
 
         <div class="input-group">
-            <label class="input-label">Début de location</label>
+            <label class="input-label">Data de levantamento</label>
             <div class="input-field">
                 <i data-lucide="calendar" class="input-icon w-5 h-5"></i>
-                <input type="datetime-local" id="start-date" class="w-full bg-transparent outline-none font-bold text-gray-700">
+                <input type="datetime-local" id="start-date" class="w-full bg-transparent outline-none font-bold text-gray-700 border-none">
             </div>
         </div>
 
         <div class="input-group">
-            <label class="input-label">Fin de location</label>
+            <label class="input-label">Data de devolução</label>
             <div class="input-field">
                 <i data-lucide="calendar-check" class="input-icon w-5 h-5"></i>
-                <input type="datetime-local" id="end-date" class="w-full bg-transparent outline-none font-bold text-gray-700">
+                <input type="datetime-local" id="end-date" class="w-full bg-transparent outline-none font-bold text-gray-700 border-none">
             </div>
         </div>
 
         <div class="input-group">
-            <label class="input-label">Type de véhicule</label>
+            <label class="input-label">Tipo de veículo</label>
             <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar" id="type-selector">
-                <button type="button" onclick="selectType(this, 'all')" class="type-chip active px-4 py-2 bg-[#1d4379] text-white rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-[#1d4379]">Tous</button>
+                <button type="button" onclick="selectType(this, 'all')" class="type-chip active px-4 py-2 bg-[#1d4379] text-white rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-[#1d4379]">Todos</button>
                 <button type="button" onclick="selectType(this, '4x4')" class="type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200">4x4 / SUV</button>
-                <button type="button" onclick="selectType(this, 'citadine')" class="type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200">Citadine</button>
+                <button type="button" onclick="selectType(this, 'citadine')" class="type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200">Citadino</button>
             </div>
         </div>
     </div>
 
     <div class="fixed-btn-container">
         <button onclick="performSearch()" class="btn-search">
-            Voir les véhicules <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            Ver Veículos <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
     </div>
 
     <script>
-        // Initialisation dates par défaut (Aujourd'hui + Demain)
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('start-date').value = now.toISOString().slice(0, 16);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation dates (Aujourd'hui + Demain)
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('start-date').value = now.toISOString().slice(0, 16);
 
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 2); // Location de 48h par défaut
-        document.getElementById('end-date').value = tomorrow.toISOString().slice(0, 16);
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 2); 
+            document.getElementById('end-date').value = tomorrow.toISOString().slice(0, 16);
+            
+            // Wait for Lucide
+            const checkLucide = setInterval(() => {
+                if(window.lucide) {
+                    lucide.createIcons();
+                    clearInterval(checkLucide);
+                }
+            }, 100);
+        });
 
         let selectedCategory = 'all';
 
         function selectType(btn, type) {
-            // Gestion visuelle
+            // Reset UI
             document.querySelectorAll('.type-chip').forEach(c => {
                 c.className = 'type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200';
             });
+            // Active UI
             btn.className = 'type-chip px-4 py-2 bg-[#1d4379] text-white rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-[#1d4379]';
             
             selectedCategory = type;
@@ -177,18 +174,17 @@
             const startDate = document.getElementById('start-date').value;
             const endDate = document.getElementById('end-date').value;
 
-            // Validation basique
             if (!startDate || !endDate) {
-                alert("Veuillez sélectionner vos dates.");
+                alert("Por favor selecione as datas.");
                 return;
             }
 
             if (new Date(startDate) >= new Date(endDate)) {
-                alert("La date de fin doit être après la date de début.");
+                alert("A data de devolução deve ser posterior à data de levantamento.");
                 return;
             }
 
-            // Construction de l'URL vers RESULTS.HTML (C'est ici que la boucle est brisée)
+            // Construction URL
             const params = new URLSearchParams({
                 location: location,
                 start: startDate,
@@ -196,7 +192,7 @@
                 category: selectedCategory
             });
 
-            // Redirection
+            // Note: Redirection vers results.html (ou index.html si results.html n'existe pas)
             window.location.href = `results.html?${params.toString()}`;
         }
     </script>
