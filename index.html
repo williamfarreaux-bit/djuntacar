@@ -17,13 +17,7 @@
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 120px; }
         
-        /* Styles CSS critiques pour le Header */
-        header { position: sticky; top: 0; z-index: 100; background: white; border-bottom: 1px solid #f1f5f9; height: 70px; width: 100%; }
-        .header-container { position: relative; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; max-width: 600px; margin: 0 auto; }
-        .header-left { display: flex; align-items: center; gap: 8px; z-index: 20; }
-        .header-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 10; }
-        .header-right { display: flex; gap: 8px; z-index: 20; }
-
+        /* Styles spécifiques à l'Accueil */
         .hero-section { background-color: #1d4379; padding: 40px 0 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; text-align: center; position: relative; }
         .search-wrapper { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 90%; max-width: 500px; z-index: 30; }
         .search-bar { background: white; border-radius: 20px; padding: 16px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; cursor: pointer; }
@@ -33,43 +27,7 @@
 </head>
 <body class="antialiased">
 
-    <div id="app-shell">
-        <header>
-            <div class="header-container">
-                <div class="header-left">
-                    <button id="btn-toggle-menu" style="border:none; background:none; padding:5px;"><i data-lucide="menu" style="color:#1d4379; width:26px;"></i></button>
-                    <select id="lang-select" style="border:1px solid #e2e8f0; border-radius:6px; font-weight:800; color:#1d4379; font-size:10px; padding:4px;">
-                        <option value="pt">PT 🇨🇻</option>
-                        <option value="fr">FR 🇫🇷</option>
-                        <option value="en">EN 🇺🇸</option>
-                    </select>
-                </div>
-                <div class="header-center">
-                    <img src="logo.png" style="height:26px; display:block;" onclick="window.location.href='index.html'" onerror="this.outerHTML='<b style=\'color:#1d4379\'>DJUNTA</b>'">
-                </div>
-                <div class="header-right">
-                    <button onclick="window.location.href='chat-list.html'" style="border:none; background:none;"><i data-lucide="message-square" style="color:#1d4379; width:24px;"></i></button>
-                    <button id="btn-profile-header" style="border:none; background:none;"><i data-lucide="user-circle" style="color:#1d4379; width:26px;"></i></button>
-                </div>
-            </div>
-        </header>
-
-        <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:24px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease; box-shadow:10px 0 30px rgba(0,0,0,0.1);">
-            <div style="display:flex; justify-content:space-between; margin-bottom:40px;">
-                <span style="font-weight:900; color:#1d4379;">MENU</span>
-                <button id="btn-close-menu" style="border:none; background:none;"><i data-lucide="x"></i></button>
-            </div>
-            <nav style="display:flex; flex-direction:column; gap:15px; font-weight:800; color:#1d4379; text-transform:uppercase; font-size:12px;">
-                <a href="index.html" style="text-decoration:none; color:inherit; display:flex; gap:10px;"><i data-lucide="home" style="width:18px"></i> <span data-key="nav_home">Início</span></a>
-                <a href="search-driver.html" style="text-decoration:none; color:inherit; display:flex; gap:10px;"><i data-lucide="steering-wheel" style="width:18px"></i> <span data-key="nav_driver">Motorista</span></a>
-                <a href="search-car.html" style="text-decoration:none; color:inherit; display:flex; gap:10px;"><i data-lucide="car-front" style="width:18px"></i> <span data-key="nav_car">Carros</span></a>
-                <a href="wallet.html" style="text-decoration:none; color:inherit; display:flex; gap:10px;"><i data-lucide="wallet" style="width:18px"></i> <span data-key="nav_wallet">Carteira</span></a>
-                <hr style="border-top:1px solid #f1f5f9;">
-                <div id="auth-links-container"></div>
-            </nav>
-        </div>
-        <div id="menu-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1999; display:none;"></div>
-    </div>
+    <div id="djunta-layout"></div>
 
     <main>
         <section class="hero-section">
@@ -108,17 +66,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            if(window.lucide) lucide.createIcons(); // Force l'affichage immédiat des icônes
-            
             const checkCore = setInterval(async () => {
                 if(window.DJUNTA && DJUNTA.sb) {
                     clearInterval(checkCore);
+                    
                     const { data: vehicles, error } = await DJUNTA.sb.from('vehicles').select('*');
                     const feed = document.getElementById('cars-feed');
+
                     if(error || !vehicles || vehicles.length === 0) {
                         feed.innerHTML = `<p class="text-center text-gray-400 font-bold uppercase text-[10px] py-20">${DJUNTA.t('msg_no_car')}</p>`;
                         return;
                     }
+
                     feed.innerHTML = vehicles.map(v => `
                         <div class="bg-white rounded-[30px] overflow-hidden shadow-sm border border-gray-100 mb-2" onclick="window.location.href='car-detail.html?id=${v.id}'">
                             <img src="${v.image_url}" class="w-full h-48 object-cover" style="background:#f1f5f9;">
@@ -133,9 +92,10 @@
                                 </div>
                             </div>
                         </div>`).join('');
+                        
                     if(window.lucide) lucide.createIcons();
                 }
-            }, 500);
+            }, 500); 
         });
     </script>
 </body>
