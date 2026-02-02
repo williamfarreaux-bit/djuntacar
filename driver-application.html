@@ -1,82 +1,116 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Candidature</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Motorista - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-[#fcfcfd] antialiased">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="djunta-master.js" defer></script>
 
-    <header>
-        <div class="header-left">
-            <button onclick="window.history.back()" class="profile-btn">
-                <i data-lucide="arrow-left" class="header-user-icon"></i>
-            </button>
-        </div>
-        <div class="header-center">
-            <span class="text-[#1d4379] font-black uppercase text-sm">Vérification</span>
-        </div>
-        <div class="header-right">
-            <i data-lucide="shield-check" class="w-5 h-5 text-green-500"></i>
-        </div>
-    </header>
-
-    <main class="content-padding pt-6 pb-24">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        <h1 class="text-2xl font-black text-[#1d4379] mb-2">Profil Chauffeur</h1>
-        <p class="text-xs font-bold text-gray-400 mb-6">Ces documents sont nécessaires pour assurer les locations.</p>
+        body { background-color: #fcfcfd; padding-bottom: 120px; margin: 0; }
+
+        .form-section { margin-bottom: 20px; }
+
+        .input-label { 
+            display: block; font-size: 10px; font-weight: 800; 
+            text-transform: uppercase; color: #94a3b8; 
+            margin-bottom: 8px; letter-spacing: 0.5px; 
+        }
+
+        .input-field { 
+            width: 100%; border-radius: 16px; background: #f8fafc; 
+            border: 1px solid #e2e8f0; padding: 16px; font-size: 14px; 
+            font-weight: 700; color: #1e293b; outline: none; 
+            transition: border-color 0.2s; 
+        }
+        .input-field:focus { border-color: #1d4379; background: white; }
+
+        .upload-zone {
+            background: white; border: 2px dashed #cbd5e1; border-radius: 16px;
+            padding: 24px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            transition: all 0.2s;
+        }
+        .upload-zone.has-file { border-style: solid; border-color: #22c55e; background: #f0fdf4; }
+
+        .fixed-footer { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: white; border-top: 1px solid #f1f5f9; 
+            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom)); 
+            z-index: 1000; 
+        }
+
+        .btn-action { 
+            width: 100%; height: 56px; background: #1d4379; 
+            color: white; border-radius: 18px; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: 1px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3); border: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <djunta-header></djunta-header>
+
+    <main class="max-w-md mx-auto px-6 pt-6 pb-24">
+        
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2 uppercase">Candidatura</h1>
+        <p class="text-xs font-bold text-gray-400 mb-6">Torne-se motorista DjuntaCar e ganhe dinheiro.</p>
 
         <form id="driverForm" onsubmit="event.preventDefault(); submitApplication();">
             
             <div class="form-section">
-                <label class="input-label">Nom complet (État Civil)</label>
-                <input type="text" id="fullName" class="input-field" placeholder="Ex: Joao Batista Mendes">
+                <label class="input-label">Nome Completo</label>
+                <input type="text" id="fullName" class="input-field" placeholder="Ex: Joao Batista Mendes" required>
             </div>
 
             <div class="form-section">
-                <label class="input-label">Numéro de Téléphone</label>
+                <label class="input-label">Telemóvel (Whatsapp)</label>
                 <div class="relative flex items-center">
-                    <span class="absolute left-0 text-sm font-bold text-gray-400">+238</span>
-                    <input type="tel" id="phone" class="input-field pl-10" placeholder="999 99 99">
+                    <span class="absolute left-4 text-sm font-bold text-gray-400">+238</span>
+                    <input type="tel" id="phone" class="input-field pl-14" placeholder="999 99 99" required>
                 </div>
             </div>
 
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Pièce d'Identité</h2>
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Documentos</h2>
+            
             <div class="form-section">
-                <label class="upload-zone cursor-pointer" id="dropZoneCNI">
+                <label class="upload-zone cursor-pointer" id="zone-cni">
                     <i data-lucide="scan-face" class="w-8 h-8 text-blue-300 mb-2"></i>
-                    <span class="text-xs font-bold text-[#1d4379]">Scanner CNI ou Passeport</span>
-                    <span class="text-[9px] text-gray-400 mt-1">Recto / Verso lisible</span>
-                    <input type="file" class="hidden" onchange="handleFileSelect(this, 'CNI')">
+                    <span class="text-xs font-bold text-[#1d4379]">CNI ou Passaporte</span>
+                    <span class="text-[9px] text-gray-400 mt-1">Frente e Verso</span>
+                    <input type="file" class="hidden" accept="image/*" onchange="handleFileSelect(this, 'cni')">
                 </label>
-                <div id="previewCNI" class="hidden mt-3 flex items-center gap-2 bg-green-50 p-2 rounded-lg">
-                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
-                    <span class="text-[10px] font-bold text-green-700">Document chargé</span>
-                </div>
+                <p id="txt-cni" class="text-[10px] text-green-600 font-bold mt-2 text-center hidden">
+                    <i data-lucide="check" class="w-3 h-3 inline"></i> Carregado
+                </p>
             </div>
 
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Permis de Conduire</h2>
             <div class="form-section">
                 <div class="mb-4">
-                    <label class="input-label">Numéro de Permis</label>
-                    <input type="text" class="input-field" placeholder="Ex: S-12345678">
+                    <label class="input-label">Nº Carta Condução</label>
+                    <input type="text" id="licenseNum" class="input-field" placeholder="Ex: S-12345678" required>
                 </div>
 
-                <label class="upload-zone cursor-pointer" id="dropZonePermis">
+                <label class="upload-zone cursor-pointer" id="zone-license">
                     <i data-lucide="credit-card" class="w-8 h-8 text-blue-300 mb-2"></i>
-                    <span class="text-xs font-bold text-[#1d4379]">Photo du Permis</span>
-                    <span class="text-[9px] text-gray-400 mt-1">En cours de validité</span>
-                    <input type="file" class="hidden" onchange="handleFileSelect(this, 'Permis')">
+                    <span class="text-xs font-bold text-[#1d4379]">Foto da Carta</span>
+                    <span class="text-[9px] text-gray-400 mt-1">Legível e Válida</span>
+                    <input type="file" class="hidden" accept="image/*" onchange="handleFileSelect(this, 'license')">
                 </label>
-                <div id="previewPermis" class="hidden mt-3 flex items-center gap-2 bg-green-50 p-2 rounded-lg">
-                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
-                    <span class="text-[10px] font-bold text-green-700">Document chargé</span>
-                </div>
+                <p id="txt-license" class="text-[10px] text-green-600 font-bold mt-2 text-center hidden">
+                    <i data-lucide="check" class="w-3 h-3 inline"></i> Carregado
+                </p>
             </div>
 
         </form>
@@ -84,40 +118,28 @@
     </main>
 
     <div class="fixed-footer">
-        <button onclick="submitApplication()" class="btn-action btn-primary shadow-xl">
-            Envoyer ma candidature
+        <button id="btn-submit" onclick="submitApplication()" class="btn-action active:scale-95 transition-transform">
+            Enviar Candidatura
         </button>
     </div>
 
     <script>
-        lucide.createIcons();
+        const files = { cni: null, license: null };
 
-        function handleFileSelect(input, type) {
-            if (input.files && input.files[0]) {
-                // Afficher le feedback visuel
-                document.getElementById('preview' + type).classList.remove('hidden');
-                
-                // Changer la bordure de la zone pour montrer le succès
-                const zone = input.parentElement;
-                zone.classList.remove('border-blue-200');
-                zone.classList.add('border-green-300', 'bg-green-50/30');
-            }
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkEngine = setInterval(async () => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    checkAuth();
+                }
+            }, 100);
+        });
 
-        function submitApplication() {
-            const name = document.getElementById('fullName').value;
-            if(!name) { alert("Merci de remplir votre nom."); return; }
+        async function checkAuth() {
+            const { data: { user } } = await DJUNTA.sb.auth.getUser();
+            if (!user) window.location.href = 'login.html';
             
-            // Simulation d'envoi
-            const btn = document.querySelector('.btn-primary');
-            btn.innerHTML = '<i data-lucide="loader" class="animate-spin w-5 h-5 mx-auto"></i>';
-            lucide.createIcons();
-
-            setTimeout(() => {
-                alert("Dossier reçu ! Notre équipe va vérifier vos documents sous 24h.");
-                window.location.href = 'profile.html';
-            }, 1500);
-        }
-    </script>
-</body>
-</html>
+            // Pré-remplissage si profil existant
+            const { data: profile } = await DJUNTA.sb.from('profiles').select('*').eq('id', user.id).single();
+            if(profile) {
+                if(profile.
