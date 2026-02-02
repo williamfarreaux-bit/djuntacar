@@ -1,11 +1,10 @@
 /**
- * DJUNTACAR CORE ENGINE v6.1 (FIX MENU)
- * Architecture : Single Source of Truth
- * Le Menu Burger est corrigé (Alignement + Icônes) pour TOUTES les pages.
+ * DJUNTACAR MASTER ENGINE v7.0
+ * FICHIER RENOMMÉ POUR FORCER LA MISE À JOUR
  */
 
 const DJUNTA = {
-    // --- 1. CONFIGURATION ---
+    // 1. CONFIGURATION
     config: {
         supabaseUrl: "https://enuiuuwnjzvpfvpklmjw.supabase.co",
         supabaseKey: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-",
@@ -13,8 +12,7 @@ const DJUNTA = {
         currency: { code: 'CVE', symbol: 'CVE', rate: 1 }
     },
 
-    // --- 2. LE CODE HTML DU HEADER & MENU (Centralisé) ---
-    // C'est ICI que je corrige le design pour tout le site d'un coup.
+    // 2. HTML DU HEADER (AVEC ICÔNE VOLANT)
     layoutHTML: `
         <header style="position:sticky; top:0; z-index:100; background:white; border-bottom:1px solid #f1f5f9; height:70px; width:100%;">
             <div style="position:relative; height:100%; width:100%; display:flex; align-items:center; justify-content:space-between; padding:0 16px; max-width:600px; margin:0 auto;">
@@ -48,7 +46,7 @@ const DJUNTA = {
         <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:24px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease; box-shadow:10px 0 30px rgba(0,0,0,0.1);">
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-                <span style="font-weight:900; color:#1d4379; font-size:14px; letter-spacing:1px;">MENU</span>
+                <span style="font-weight:900; color:#1d4379; font-size:14px; letter-spacing:1px; border: 1px solid red; padding: 2px;">MENU V7</span>
                 <button id="btn-close-menu" style="border:none; background:none; cursor:pointer; padding:5px;">
                     <i data-lucide="x" style="width:24px; color:#1d4379;"></i>
                 </button>
@@ -84,51 +82,49 @@ const DJUNTA = {
         <div id="menu-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1999; display:none;"></div>
     `,
 
-    // --- 3. DICTIONNAIRE ---
+    // 3. DICTIONNAIRE
     i18n: {
         pt: { nav_home: "Início", nav_driver: "Motorista", nav_car: "Carros", nav_wallet: "Carteira", nav_account: "Minha Conta", btn_login: "Entrar", btn_register: "Criar Conta", btn_logout: "Sair", hero_title: "Alugue um carro em Cabo Verde", search_placeholder: "Para onde quer ir?", btn_add_car: "Adicionar carro", btn_become_driver: "Ser motorista", footer_terms: "Termos", footer_privacy: "Privacidade", msg_no_car: "Nenhum veículo disponível", label_day: "/ dia" },
         fr: { nav_home: "Accueil", nav_driver: "Chauffeur", nav_car: "Voiture", nav_wallet: "Portefeuille", nav_account: "Mon Compte", btn_login: "Connexion", btn_register: "Inscription", btn_logout: "Déconnexion", hero_title: "Louez une voiture", search_placeholder: "Où allez-vous ?", btn_add_car: "Ajouter voiture", btn_become_driver: "Devenir chauffeur", footer_terms: "Conditions", footer_privacy: "Confidentialité", msg_no_car: "Aucun véhicule", label_day: "/ jour" },
         en: { nav_home: "Home", nav_driver: "Driver", nav_car: "Cars", nav_wallet: "Wallet", nav_account: "My Account", btn_login: "Login", btn_register: "Register", btn_logout: "Logout", hero_title: "Rent a car", search_placeholder: "Where to go?", btn_add_car: "Add car", btn_become_driver: "Become driver", footer_terms: "Terms", footer_privacy: "Privacy", msg_no_car: "No vehicles", label_day: "/ day" }
     },
 
-    // --- 4. ÉTAT ---
+    // 4. ÉTAT
     state: { lang: localStorage.getItem('djunta_lang') || 'pt', session: null },
 
-    // --- 5. INITIALISATION ---
+    // 5. INITIALISATION
     init: async function() {
-        console.log('DjuntaCar v6.1: Injection du Menu Corrigé...');
+        console.log('DjuntaCar MASTER: Injection UI...');
         
-        // 1. INJECTION DU HTML
         const target = document.getElementById('djunta-layout');
         if(target) {
             target.innerHTML = this.layoutHTML;
         } else {
-            console.error("ERREUR: <div id='djunta-layout'> manquant dans le HTML !");
+            console.error("ERREUR CRITIQUE: <div id='djunta-layout'> introuvable !");
+            return;
         }
 
-        // 2. Logique
         this.applyLang();
         this.bindEvents();
         this.bindLanguage();
 
-        // 3. Supabase
         if (window.supabase) {
             try {
                 this.sb = window.supabase.createClient(this.config.supabaseUrl, this.config.supabaseKey);
                 const { data } = await this.sb.auth.getSession();
                 this.state.session = data.session;
                 this.updateAuthUI();
-            } catch (e) { console.error("Supabase Error:", e); }
+            } catch (e) { console.error(e); }
         }
         
-        // 4. Icônes (On force l'affichage)
         if (window.lucide) {
             lucide.createIcons();
-            setTimeout(() => lucide.createIcons(), 200); // Sécurité
+            // DOUBLE CHECK pour forcer l'affichage
+            setTimeout(() => lucide.createIcons(), 300);
         }
     },
 
-    // --- 6. FONCTIONS ---
+    // 6. FONCTIONS
     t: function(key) { return (this.i18n[this.state.lang] && this.i18n[this.state.lang][key]) || key; },
     
     setLang: function(lang) {
@@ -156,25 +152,18 @@ const DJUNTA = {
         const container = document.getElementById('auth-links-container');
         if (!container) return;
         
-        // Les liens injectés ici doivent aussi avoir le style Flex pour l'alignement
+        const style = "text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;";
+
         if (this.state.session) {
             container.innerHTML = `
-                <a href="profile.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
-                    <i data-lucide="user" style="width:20px; height:20px;"></i> ${this.t('nav_account')}
-                </a>
-                <button id="action-logout" style="background:none; border:none; color:#ef4444; display:flex; align-items:center; gap:12px; font-weight:800; font-size:12px; text-transform:uppercase; cursor:pointer; margin-top:10px;">
-                    <i data-lucide="log-out" style="width:20px; height:20px;"></i> ${this.t('btn_logout')}
-                </button>
+                <a href="profile.html" style="${style}"><i data-lucide="user" style="width:20px; height:20px;"></i> ${this.t('nav_account')}</a>
+                <button id="action-logout" style="background:none; border:none; color:#ef4444; display:flex; align-items:center; gap:12px; font-weight:800; font-size:12px; text-transform:uppercase; cursor:pointer; margin-top:10px;"><i data-lucide="log-out" style="width:20px; height:20px;"></i> ${this.t('btn_logout')}</button>
             `;
             setTimeout(() => { document.getElementById('action-logout')?.addEventListener('click', async () => { await this.sb.auth.signOut(); window.location.reload(); }); }, 100);
         } else {
             container.innerHTML = `
-                <a href="signup.html" style="text-decoration:none; color:#22c55e; display:flex; align-items:center; gap:12px;">
-                    <i data-lucide="log-in" style="width:20px; height:20px;"></i> ${this.t('btn_register')}
-                </a>
-                <a href="login.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
-                    <i data-lucide="user" style="width:20px; height:20px;"></i> ${this.t('btn_login')}
-                </a>
+                <a href="signup.html" style="text-decoration:none; color:#22c55e; display:flex; align-items:center; gap:12px;"><i data-lucide="log-in" style="width:20px; height:20px;"></i> ${this.t('btn_register')}</a>
+                <a href="login.html" style="${style}"><i data-lucide="user" style="width:20px; height:20px;"></i> ${this.t('btn_login')}</a>
             `;
         }
         if(window.lucide) lucide.createIcons();
@@ -187,17 +176,7 @@ const DJUNTA = {
     },
 
     bindEvents: function() {
-        const toggle = () => { 
-            const m = document.getElementById('mobile-menu'), o = document.getElementById('menu-overlay'); 
-            if(m && o) { 
-                const open = m.style.transform === 'translateX(0px)'; 
-                m.style.transform = open ? 'translateX(-100%)' : 'translateX(0px)'; 
-                o.style.display = open ? 'none' : 'block';
-                
-                // Si on ouvre, on rafraîchit les icônes pour être sûr
-                if(!open && window.lucide) setTimeout(() => lucide.createIcons(), 50);
-            } 
-        };
+        const toggle = () => { const m = document.getElementById('mobile-menu'), o = document.getElementById('menu-overlay'); if(m && o) { const open = m.style.transform === 'translateX(0px)'; m.style.transform = open ? 'translateX(-100%)' : 'translateX(0px)'; o.style.display = open ? 'none' : 'block'; if(!open && window.lucide) setTimeout(() => lucide.createIcons(), 50); } };
         document.getElementById('btn-toggle-menu')?.addEventListener('click', toggle);
         document.getElementById('btn-close-menu')?.addEventListener('click', toggle);
         document.getElementById('menu-overlay')?.addEventListener('click', toggle);
