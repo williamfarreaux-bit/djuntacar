@@ -1,7 +1,7 @@
 /**
- * DJUNTACAR CORE ENGINE v6.0 (CENTRALIZED)
+ * DJUNTACAR CORE ENGINE v6.1 (FIX MENU)
  * Architecture : Single Source of Truth
- * Le JS injecte le Header partout. Plus de copier-coller.
+ * Le Menu Burger est corrigé (Alignement + Icônes) pour TOUTES les pages.
  */
 
 const DJUNTA = {
@@ -13,39 +13,71 @@ const DJUNTA = {
         currency: { code: 'CVE', symbol: 'CVE', rate: 1 }
     },
 
-    // --- 2. LE CODE HTML DU HEADER (Centralisé ici) ---
+    // --- 2. LE CODE HTML DU HEADER & MENU (Centralisé) ---
+    // C'est ICI que je corrige le design pour tout le site d'un coup.
     layoutHTML: `
         <header style="position:sticky; top:0; z-index:100; background:white; border-bottom:1px solid #f1f5f9; height:70px; width:100%;">
             <div style="position:relative; height:100%; width:100%; display:flex; align-items:center; justify-content:space-between; padding:0 16px; max-width:600px; margin:0 auto;">
+                
                 <div style="display:flex; align-items:center; gap:8px; z-index:20; height:100%;">
-                    <button id="btn-toggle-menu" style="border:none; background:none; padding:5px; display:flex; align-items:center; cursor:pointer;"><i data-lucide="menu" style="color:#1d4379; width:26px;"></i></button>
+                    <button id="btn-toggle-menu" style="border:none; background:none; padding:5px; display:flex; align-items:center; cursor:pointer;">
+                        <i data-lucide="menu" style="color:#1d4379; width:26px;"></i>
+                    </button>
                     <select id="lang-select" style="border:1px solid #e2e8f0; border-radius:6px; font-weight:800; color:#1d4379; font-size:10px; padding:4px; cursor:pointer;">
                         <option value="pt">PT 🇨🇻</option>
                         <option value="fr">FR 🇫🇷</option>
                         <option value="en">EN 🇺🇸</option>
                     </select>
                 </div>
+
                 <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); z-index:10; display:flex; align-items:center;">
                     <img src="logo.png" style="height:26px; display:block; cursor:pointer;" onclick="window.location.href='index.html'" onerror="this.outerHTML='<b style=\'color:#1d4379\'>DJUNTA</b>'">
                 </div>
+
                 <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px; z-index:20; height:100%;">
-                    <button onclick="window.location.href='chat-list.html'" style="border:none; background:none; display:flex; align-items:center; cursor:pointer;"><i data-lucide="message-square" style="color:#1d4379; width:24px;"></i></button>
-                    <button id="btn-profile-header" style="border:none; background:none; display:flex; align-items:center; cursor:pointer;"><i data-lucide="user-circle" style="color:#1d4379; width:26px;"></i></button>
+                    <button onclick="window.location.href='chat-list.html'" style="border:none; background:none; display:flex; align-items:center; cursor:pointer;">
+                        <i data-lucide="message-square" style="color:#1d4379; width:24px;"></i>
+                    </button>
+                    <button id="btn-profile-header" style="border:none; background:none; display:flex; align-items:center; cursor:pointer;">
+                        <i data-lucide="user-circle" style="color:#1d4379; width:26px;"></i>
+                    </button>
                 </div>
             </div>
         </header>
 
         <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:24px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease; box-shadow:10px 0 30px rgba(0,0,0,0.1);">
+            
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
                 <span style="font-weight:900; color:#1d4379; font-size:14px; letter-spacing:1px;">MENU</span>
-                <button id="btn-close-menu" style="border:none; background:none; cursor:pointer; padding:5px;"><i data-lucide="x" style="width:24px; color:#1d4379;"></i></button>
+                <button id="btn-close-menu" style="border:none; background:none; cursor:pointer; padding:5px;">
+                    <i data-lucide="x" style="width:24px; color:#1d4379;"></i>
+                </button>
             </div>
+
             <nav style="display:flex; flex-direction:column; gap:20px; font-weight:800; color:#1d4379; text-transform:uppercase; font-size:12px;">
-                <a href="index.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;"><i data-lucide="home" style="width:20px; height:20px;"></i> <span data-key="nav_home">Início</span></a>
-                <a href="search-driver.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;"><i data-lucide="steering-wheel" style="width:20px; height:20px;"></i> <span data-key="nav_driver">Motorista</span></a>
-                <a href="search-car.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;"><i data-lucide="car-front" style="width:20px; height:20px;"></i> <span data-key="nav_car">Carros</span></a>
-                <a href="wallet.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;"><i data-lucide="wallet" style="width:20px; height:20px;"></i> <span data-key="nav_wallet">Carteira</span></a>
+                
+                <a href="index.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
+                    <i data-lucide="home" style="width:20px; height:20px;"></i> 
+                    <span data-key="nav_home">Início</span>
+                </a>
+
+                <a href="search-driver.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
+                    <i data-lucide="steering-wheel" style="width:20px; height:20px;"></i> 
+                    <span data-key="nav_driver">Motorista</span>
+                </a>
+
+                <a href="search-car.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
+                    <i data-lucide="car-front" style="width:20px; height:20px;"></i> 
+                    <span data-key="nav_car">Carros</span>
+                </a>
+
+                <a href="wallet.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
+                    <i data-lucide="wallet" style="width:20px; height:20px;"></i> 
+                    <span data-key="nav_wallet">Carteira</span>
+                </a>
+
                 <hr style="border-top:1px solid #f1f5f9; margin:10px 0;">
+                
                 <div id="auth-links-container" style="display:flex; flex-direction:column; gap:20px;"></div>
             </nav>
         </div>
@@ -64,9 +96,9 @@ const DJUNTA = {
 
     // --- 5. INITIALISATION ---
     init: async function() {
-        console.log('DjuntaCar v6.0: Injecting UI...');
+        console.log('DjuntaCar v6.1: Injection du Menu Corrigé...');
         
-        // 1. INJECTION DU HEADER (La partie magique)
+        // 1. INJECTION DU HTML
         const target = document.getElementById('djunta-layout');
         if(target) {
             target.innerHTML = this.layoutHTML;
@@ -89,7 +121,11 @@ const DJUNTA = {
             } catch (e) { console.error("Supabase Error:", e); }
         }
         
-        if (window.lucide) lucide.createIcons();
+        // 4. Icônes (On force l'affichage)
+        if (window.lucide) {
+            lucide.createIcons();
+            setTimeout(() => lucide.createIcons(), 200); // Sécurité
+        }
     },
 
     // --- 6. FONCTIONS ---
@@ -119,11 +155,27 @@ const DJUNTA = {
     updateAuthUI: function() {
         const container = document.getElementById('auth-links-container');
         if (!container) return;
+        
+        // Les liens injectés ici doivent aussi avoir le style Flex pour l'alignement
         if (this.state.session) {
-            container.innerHTML = `<a href="profile.html" style="text-decoration:none; color:inherit; display:flex; gap:10px;"><i data-lucide="user" style="width:18px"></i> ${this.t('nav_account')}</a><button id="action-logout" style="background:none; border:none; color:#ef4444; display:flex; gap:10px; font-weight:800; font-size:12px; text-transform:uppercase; cursor:pointer; margin-top:10px;"><i data-lucide="log-out" style="width:18px"></i> ${this.t('btn_logout')}</button>`;
+            container.innerHTML = `
+                <a href="profile.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
+                    <i data-lucide="user" style="width:20px; height:20px;"></i> ${this.t('nav_account')}
+                </a>
+                <button id="action-logout" style="background:none; border:none; color:#ef4444; display:flex; align-items:center; gap:12px; font-weight:800; font-size:12px; text-transform:uppercase; cursor:pointer; margin-top:10px;">
+                    <i data-lucide="log-out" style="width:20px; height:20px;"></i> ${this.t('btn_logout')}
+                </button>
+            `;
             setTimeout(() => { document.getElementById('action-logout')?.addEventListener('click', async () => { await this.sb.auth.signOut(); window.location.reload(); }); }, 100);
         } else {
-            container.innerHTML = `<a href="signup.html" style="text-decoration:none; color:#22c55e; display:flex; gap:10px;"><i data-lucide="log-in" style="width:18px"></i> ${this.t('btn_register')}</a><a href="login.html" style="text-decoration:none; color:inherit; display:flex; gap:10px;"><i data-lucide="user" style="width:18px"></i> ${this.t('btn_login')}</a>`;
+            container.innerHTML = `
+                <a href="signup.html" style="text-decoration:none; color:#22c55e; display:flex; align-items:center; gap:12px;">
+                    <i data-lucide="log-in" style="width:20px; height:20px;"></i> ${this.t('btn_register')}
+                </a>
+                <a href="login.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
+                    <i data-lucide="user" style="width:20px; height:20px;"></i> ${this.t('btn_login')}
+                </a>
+            `;
         }
         if(window.lucide) lucide.createIcons();
     },
@@ -135,7 +187,17 @@ const DJUNTA = {
     },
 
     bindEvents: function() {
-        const toggle = () => { const m = document.getElementById('mobile-menu'), o = document.getElementById('menu-overlay'); if(m && o) { const open = m.style.transform === 'translateX(0px)'; m.style.transform = open ? 'translateX(-100%)' : 'translateX(0px)'; o.style.display = open ? 'none' : 'block'; } };
+        const toggle = () => { 
+            const m = document.getElementById('mobile-menu'), o = document.getElementById('menu-overlay'); 
+            if(m && o) { 
+                const open = m.style.transform === 'translateX(0px)'; 
+                m.style.transform = open ? 'translateX(-100%)' : 'translateX(0px)'; 
+                o.style.display = open ? 'none' : 'block';
+                
+                // Si on ouvre, on rafraîchit les icônes pour être sûr
+                if(!open && window.lucide) setTimeout(() => lucide.createIcons(), 50);
+            } 
+        };
         document.getElementById('btn-toggle-menu')?.addEventListener('click', toggle);
         document.getElementById('btn-close-menu')?.addEventListener('click', toggle);
         document.getElementById('menu-overlay')?.addEventListener('click', toggle);
