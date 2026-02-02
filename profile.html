@@ -1,24 +1,22 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Profil v1.8.2</title>
+    <title>Perfil - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="translations.js"></script>
-    <script src="config.js"></script>
-    <script src="layout.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background-color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; margin: 0; }
 
         .profile-card { 
             background: white; border-radius: 35px; padding: 30px; 
@@ -29,141 +27,4 @@
         .label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin: 0 0 4px 10px; display: block; }
         
         .field { 
-            width: 100%; background-color: #f1f5f9; border: 2px solid transparent;
-            border-radius: 18px; padding: 14px 18px; font-size: 13px;
-            font-weight: 700; color: #1d4379; outline: none; margin-bottom: 12px;
-        }
-        .field:focus { border-color: #1d4379; background-color: white; }
-        .field:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        .role-badge {
-            background: #eff6ff; color: #1d4379; padding: 6px 12px; 
-            border-radius: 10px; font-size: 9px; font-weight: 900; 
-            text-transform: uppercase; border: 1px solid #dbeafe;
-        }
-
-        .btn-update { 
-            background: #1d4379; color: white; width: 100%; padding: 18px; 
-            border-radius: 20px; font-weight: 900; text-transform: uppercase; 
-            font-size: 12px; box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
-            border: none; margin-top: 15px; cursor: pointer;
-        }
-    </style>
-</head>
-<body class="antialiased">
-    <div id="header-slot"></div>
-
-    <main class="flex-grow p-4">
-        <div class="profile-card">
-            <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-6 text-center" id="title_profile"></h1>
-
-            <div id="roles-container" class="flex flex-wrap gap-2 justify-center mb-8">
-                </div>
-
-            <form id="profile-form">
-                <div class="flex gap-3">
-                    <div class="w-1/2">
-                        <label class="label" id="label_fname"></label>
-                        <input type="text" id="first_name" class="field" required>
-                    </div>
-                    <div class="w-1/2">
-                        <label class="label" id="label_lname"></label>
-                        <input type="text" id="last_name" class="field" required>
-                    </div>
-                </div>
-
-                <label class="label" id="label_email"></label>
-                <input type="email" id="email" class="field" disabled>
-
-                <label class="label" id="label_dob"></label>
-                <input type="date" id="dob" class="field" required>
-
-                <label class="label" id="label_address"></label>
-                <input type="text" id="address" class="field" required>
-
-                <label class="label" id="label_phone"></label>
-                <input type="tel" id="phone" class="field" required>
-
-                <div id="iban-section" class="hidden">
-                    <label class="label" id="label_iban"></label>
-                    <input type="text" id="iban" class="field">
-                </div>
-
-                <button type="submit" id="btn_update" class="btn-update active:scale-95"></button>
-            </form>
-        </div>
-    </main>
-
-    <script>
-        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
-
-        /**
-         * CHARGEMENT DU PROFIL
-         */
-        async function loadProfile() {
-            // Traduction initiale
-            const keys = ['title_profile', 'label_fname', 'label_lname', 'label_email', 'label_dob', 'label_address', 'label_phone', 'label_iban', 'btn_update'];
-            keys.forEach(k => { if(document.getElementById(k)) document.getElementById(k).innerText = DjuntaT(k); });
-
-            const { data: { user } } = await sb.auth.getUser();
-            if (!user) { window.location.href = 'login.html'; return; }
-
-            // Récupération des données dans la table public.profiles
-            const { data: profile, error } = await sb.from('profiles').select('*').eq('id', user.id).single();
-
-            if (profile) {
-                document.getElementById('email').value = user.email;
-                document.getElementById('first_name').value = profile.first_name || '';
-                document.getElementById('last_name').value = profile.last_name || '';
-                document.getElementById('dob').value = profile.dob || '';
-                document.getElementById('address').value = profile.address || '';
-                document.getElementById('phone').value = profile.phone || '';
-                
-                // Gestion de l'IBAN si Chauffeur ou Propriétaire
-                const roles = profile.roles || [];
-                if (roles.includes('owner') || roles.includes('driver')) {
-                    document.getElementById('iban-section').classList.remove('hidden');
-                    document.getElementById('iban').value = profile.iban || '';
-                }
-
-                // Affichage des badges de rôles
-                const rolesContainer = document.getElementById('roles-container');
-                rolesContainer.innerHTML = roles.map(r => `<span class="role-badge">${DjuntaT('role_'+r)}</span>`).join('');
-            }
-        }
-
-        /**
-         * MISE À JOUR DU PROFIL
-         */
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn_update');
-            btn.innerText = "...";
-
-            const { data: { user } } = await sb.auth.getUser();
-            
-            const updates = {
-                first_name: document.getElementById('first_name').value,
-                last_name: document.getElementById('last_name').value,
-                dob: document.getElementById('dob').value,
-                address: document.getElementById('address').value,
-                phone: document.getElementById('phone').value,
-                iban: document.getElementById('iban').value,
-                updated_at: new Date()
-            };
-
-            const { error } = await sb.from('profiles').update(updates).eq('id', user.id);
-
-            if (error) {
-                alert(DjuntaT('msg_error') + " : " + error.message);
-                btn.innerText = DjuntaT('btn_update');
-            } else {
-                alert(DjuntaT('msg_update_success'));
-                btn.innerText = DjuntaT('btn_update');
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', loadProfile);
-    </script>
-</body>
-</html>
+            width: 100%; background-color: #
