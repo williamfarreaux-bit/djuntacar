@@ -73,7 +73,7 @@
         </div>
 
         <div class="payment-card mb-6">
-            <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4">Detalhes</h3>
+            <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4">Detalhes da Fatura</h3>
             <div class="space-y-3">
                 <div class="flex justify-between text-xs font-bold text-gray-500">
                     <span>Aluguer (<span id="nb-days">0</span> dias)</span>
@@ -91,7 +91,7 @@
             </div>
         </div>
 
-        <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4 ml-2">Método</h3>
+        <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4 ml-2">Método de Pagamento</h3>
         <div class="flex gap-3 mb-6">
             <button onclick="selectMethod('card')" id="method-card" class="method-btn active">
                 <i data-lucide="credit-card" class="w-6 h-6"></i>
@@ -115,7 +115,7 @@
 
     <div class="fixed-confirm">
         <button id="btn-confirm" onclick="processPayment()" class="btn-pay active:scale-95 transition-transform flex items-center justify-center gap-3">
-            <i data-lucide="lock" class="w-5 h-5"></i> Confirmar
+            <i data-lucide="lock" class="w-5 h-5"></i> Confirmar Pagamento
         </button>
     </div>
 
