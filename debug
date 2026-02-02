@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>DEBUG MENU DJUNTACAR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        djunta-header { display: block; border: 2px solid red; } /* Bordure rouge pour voir l'élément */
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <djunta-header></djunta-header>
+
+    <div class="p-10 text-center">
+        <h1 class="text-2xl font-bold">Page de Debug</h1>
+        <p>Si vous voyez une bordure rouge sans contenu, le JS a planté.</p>
+        <p>Si vous voyez le menu dans le cadre rouge, le code JS est bon !</p>
+    </div>
+
+    <script>
+        console.log("1. Script démarré");
+
+        // --- CONFIGURATION ---
+        const MENU_ITEMS = [
+            { label: "Início", href: "index.html", icon: "home" },
+            { label: "Alugar", href: "search-car.html", icon: "search" },
+            { label: "Motorista", href: "driver-application.html", icon: "briefcase" },
+            { label: "Viagens", href: "my-rentals.html", icon: "map-pin" },
+            { label: "Meu Perfil", href: "profile.html", icon: "user" },
+            { label: "Definições", href: "settings.html", icon: "settings" }
+        ];
+
+        // --- COMPOSANT HEADER ---
+        class DjuntaHeader extends HTMLElement {
+            constructor() {
+                super();
+                console.log("2. Constructeur appelé");
+            }
+
+            connectedCallback() {
+                console.log("3. Élément connecté au DOM");
+                try {
+                    this.render();
+                    this.initIcons();
+                    this.addEventListener('click', this.handleInteraction.bind(this));
+                    console.log("4. Rendu effectué avec succès");
+                } catch (error) {
+                    console.error("ERREUR CRITIQUE DANS LE RENDU :", error);
+                    this.innerHTML = `<div style="color:red; font-weight:bold; padding:20px;">ERREUR JS: ${error.message}</div>`;
+                }
+            }
+
+            getDesktopLinks() {
+                const mainLinks = ["Início", "Alugar", "Viagens"];
+                return MENU_ITEMS
+                    .filter(item => mainLinks.includes(item.label))
+                    .map(item => `<a href="${item.href}" class="hover:text-[#1d4379] transition-colors">${item.label}</a>`)
+                    .join('');
+            }
+
+            getMobileLinks() {
+                return MENU_ITEMS.map(item => `
+                    <a href="${item.href}" class="flex items-center gap-4 text-lg font-bold text-[#1d4379] p-2 hover:bg-gray-50 rounded-xl transition-colors">
+                        <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                            <i data-lucide="${item.icon}" class="w-5 h-5 pointer-events-none"></i>
+                        </div>
+                        ${item.label}
+                    </a>
+                `).join('');
+            }
+
+            render() {
+                this.innerHTML = `
+                <header class="h-16 bg-white flex items-center justify-between px-6 sticky top-0 z-50 border-b border-gray-100 shadow-sm font-['Montserrat']">
+                    <div class="flex items-center gap-2 cursor-pointer" data-action="go-home">
+                        <div class="w-8 h-8 bg-[#1d4379] rounded-lg text-white flex items-center justify-center font-bold">D</div>
+                        <span class="text-[#1d4379] font-black uppercase text-sm tracking-tighter">DjuntaCar</span>
+                    </div>
+                    <nav class="hidden md:flex gap-6 text-xs font-bold text-gray-400 uppercase">
+                        ${this.getDesktopLinks()}
+                    </nav>
+                    <div class="flex items-center gap-4">
+                        <button data-action="toggle-menu" class="md:hidden text-[#1d4379]"><i data-lucide="menu" class="w-7 h-7"></i></button>
+                    </div>
+                </header>
+
+                <div id="mobile-menu-overlay" aria-hidden="true" class="hidden fixed inset-0 z-[100] bg-white pt-6 px-6">
+                    <div class="flex justify-between items-center mb-10">
+                        <span class="text-[#1d4379] font-black uppercase text-xl">Menu</span>
+                        <button data-action="close-menu" class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    </div>
+                    <nav class="flex flex-col gap-6">${this.getMobileLinks()}</nav>
+                </div>
+                `;
+            }
+
+            handleInteraction(e) {
+                const trigger = e.target.closest('[data-action]');
+                if (!trigger) return;
+                const action = trigger.dataset.action;
+                const overlay = this.querySelector('#mobile-menu-overlay');
+
+                if (action === 'toggle-menu') overlay.classList.remove('hidden');
+                if (action === 'close-menu') overlay.classList.add('hidden');
+                if (action === 'go-home') window.location.href = 'index.html';
+            }
+
+            initIcons() {
+                if (window.lucide) window.lucide.createIcons();
+                else setTimeout(() => window.lucide && window.lucide.createIcons(), 500);
+            }
+        }
+
+        // Enregistrement
+        if (!customElements.get('djunta-header')) {
+            customElements.define('djunta-header', DjuntaHeader);
+            console.log("5. Composant enregistré");
+        }
+    </script>
+</body>
+</html>
