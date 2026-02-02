@@ -1,141 +1,219 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Paiement</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pagamento - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="djunta-master.js" defer></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        /* Effet verre sur la carte */
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        body { background-color: #fcfcfd; padding-bottom: 140px; margin: 0; }
+
+        .payment-card { 
+            background: white; border-radius: 30px; 
+            padding: 24px; border: 1px solid #f1f5f9; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); 
         }
+
+        .input-pay { 
+            width: 100%; height: 60px; border-radius: 18px; 
+            background: #f8fafc; border: 1px solid #e2e8f0; 
+            padding: 0 20px; font-weight: 700; font-size: 14px; 
+            outline: none; transition: border-color 0.2s; 
+        }
+        .input-pay:focus { border-color: #1d4379; background: white; }
+
+        .method-btn { 
+            border: 2px solid #f1f5f9; border-radius: 20px; 
+            padding: 16px; flex: 1; display: flex; flex-direction: column; 
+            align-items: center; gap: 8px; transition: all 0.2s; 
+            cursor: pointer; background: white;
+        }
+        .method-btn.active { border-color: #1d4379; background: #eff6ff; }
+
+        .fixed-confirm { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: white; border-top: 1px solid #f1f5f9; 
+            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom)); 
+            z-index: 1000; 
+        }
+
+        .btn-pay { 
+            width: 100%; height: 65px; background: #1d4379; 
+            color: white; border-radius: 22px; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: 1px; 
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2); 
+            border: none; cursor: pointer;
+        }
+        .btn-pay:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
     </style>
 </head>
-<body class="bg-[#fcfcfd] antialiased">
+<body class="antialiased">
 
-    <header class="h-16 flex items-center justify-between px-6 bg-white sticky top-0 z-50 border-b border-gray-100">
-        <button onclick="window.history.back()" class="p-2 -ml-2 rounded-full active:bg-gray-50 transition-colors">
-            <i data-lucide="arrow-left" class="w-6 h-6 text-[#1d4379]"></i>
-        </button>
-        <span class="text-[#1d4379] font-black uppercase text-sm tracking-wide">Portefeuille</span>
-        <i data-lucide="shield-check" class="w-5 h-5 text-green-500"></i>
-    </header>
+    <djunta-header></djunta-header>
 
-    <main class="px-6 pt-8 pb-24 max-w-md mx-auto">
-        
-        <h1 class="text-2xl font-black text-[#1d4379] mb-2 uppercase">Mes Cartes</h1>
-        <p class="text-xs font-bold text-gray-400 mb-8">Gérez vos moyens de paiement sécurisés.</p>
+    <main class="max-w-md mx-auto px-6 pt-8">
+        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-6 italic">Finalizar Pagamento</h1>
 
-        <div class="relative w-full h-52 rounded-[28px] p-7 text-white shadow-2xl mb-10 overflow-hidden transform transition-all hover:scale-[1.02] cursor-pointer group">
-            <div class="absolute inset-0 bg-gradient-to-br from-[#1d4379] via-[#2563eb] to-[#1d4379]"></div>
-            
-            <div class="absolute -top-12 -right-12 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
-            <div class="absolute bottom-[-20px] left-[-20px] w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-            
-            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-            
-            <div class="relative h-full flex flex-col justify-between z-10">
-                <div class="flex justify-between items-start">
-                    <span class="font-black italic tracking-widest opacity-90 text-xl">vinti4</span>
-                    <i data-lucide="nfc" class="w-6 h-6 opacity-80"></i>
+        <div class="payment-card mb-6 flex items-center gap-4">
+            <img id="car-thumb" src="" class="w-20 h-20 rounded-2xl object-cover bg-gray-100">
+            <div>
+                <h2 id="car-name" class="font-black text-[#1d4379] uppercase text-sm">A carregar...</h2>
+                <p id="stay-dates" class="text-[10px] font-bold text-gray-400 mt-1 uppercase">...</p>
+            </div>
+        </div>
+
+        <div class="payment-card mb-6">
+            <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4">Detalhes</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between text-xs font-bold text-gray-500">
+                    <span>Aluguer (<span id="nb-days">0</span> dias)</span>
+                    <span id="subtotal">0 CVE</span>
                 </div>
-                
-                <div class="flex items-center gap-4 mt-2">
-                    <div class="w-11 h-8 bg-gradient-to-tr from-yellow-300 to-yellow-500 rounded-md flex items-center justify-center shadow-sm">
-                        <div class="w-7 h-5 border border-black/10 rounded-[2px] grid grid-cols-2 grid-rows-2 gap-[1px]"></div>
-                    </div>
+                <div class="flex justify-between text-xs font-bold text-gray-500">
+                    <span>Taxa Serviço (10%)</span>
+                    <span id="fee">0 CVE</span>
                 </div>
-
-                <div class="font-mono text-xl tracking-[3px] font-bold shadow-black drop-shadow-md mt-4">
-                    •••• •••• •••• 8829
-                </div>
-
-                <div class="flex justify-between items-end mt-auto">
-                    <div>
-                        <p class="text-[7px] uppercase opacity-70 mb-0.5 font-bold tracking-widest">Titulaire</p>
-                        <p class="font-bold text-xs tracking-wider uppercase">Joao Mendes</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[7px] uppercase opacity-70 mb-0.5 font-bold tracking-widest">Expire</p>
-                        <p class="font-bold text-xs">12/28</p>
-                    </div>
+                <div class="h-px bg-gray-100 my-2"></div>
+                <div class="flex justify-between text-lg font-black text-[#1d4379]">
+                    <span>TOTAL</span>
+                    <span id="total-price">0 CVE</span>
                 </div>
             </div>
         </div>
 
-        <div class="flex items-center justify-between mb-5 px-1">
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Méthodes disponibles</h2>
-            <button class="text-[10px] font-bold text-blue-500 uppercase hover:text-blue-700 transition-colors">Modifier</button>
+        <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4 ml-2">Método</h3>
+        <div class="flex gap-3 mb-6">
+            <button onclick="selectMethod('card')" id="method-card" class="method-btn active">
+                <i data-lucide="credit-card" class="w-6 h-6"></i>
+                <span class="text-[10px] font-black uppercase">Cartão</span>
+            </button>
+            <button onclick="selectMethod('mobi')" id="method-mobi" class="method-btn">
+                <i data-lucide="smartphone" class="w-6 h-6"></i>
+                <span class="text-[10px] font-black uppercase">Vinti4</span>
+            </button>
         </div>
 
-        <div class="space-y-4">
-            <label class="flex items-center justify-between bg-white p-5 rounded-2xl border border-gray-100 shadow-sm cursor-pointer active:scale-[0.98] transition-all hover:shadow-md group">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">
-                        <i data-lucide="banknote" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs font-black text-[#1d4379] uppercase mb-0.5">Espèces / Cash</p>
-                        <p class="text-[9px] font-bold text-gray-400">Paiement à la remise des clés</p>
-                    </div>
-                </div>
-                <div class="w-5 h-5 rounded-full border-2 border-gray-200 flex items-center justify-center group-hover:border-gray-300">
-                    <div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
-                </div>
-            </label>
-
-            <label class="flex items-center justify-between bg-white p-5 rounded-2xl border-2 border-[#1d4379] shadow-md cursor-pointer relative overflow-hidden active:scale-[0.98] transition-all">
-                <div class="absolute top-0 right-0 bg-[#1d4379] text-white text-[8px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider">Par défaut</div>
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-[#1d4379]">
-                        <i data-lucide="credit-card" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs font-black text-[#1d4379] uppercase mb-0.5">Vinti4 •••• 8829</p>
-                        <p class="text-[9px] font-bold text-gray-400">Expire le 12/28</p>
-                    </div>
-                </div>
-                <div class="w-5 h-5 rounded-full border-2 border-[#1d4379] flex items-center justify-center">
-                    <div class="w-2.5 h-2.5 rounded-full bg-[#1d4379]"></div>
-                </div>
-            </label>
-        </div>
-
-        <button onclick="addCard()" class="w-full mt-8 border-2 border-dashed border-gray-200 rounded-2xl p-5 flex items-center justify-center gap-3 text-gray-400 font-bold text-xs uppercase hover:bg-gray-50 hover:border-[#1d4379] hover:text-[#1d4379] transition-all group">
-            <div class="bg-gray-100 p-1 rounded-full group-hover:bg-blue-100 transition-colors">
-                <i data-lucide="plus" class="w-4 h-4"></i>
+        <div id="card-form" class="space-y-4">
+            <input type="text" placeholder="Nome no Cartão" class="input-pay uppercase">
+            <input type="text" placeholder="Número do Cartão" class="input-pay" maxlength="19">
+            <div class="flex gap-3">
+                <input type="text" placeholder="MM/YY" class="input-pay" maxlength="5">
+                <input type="password" placeholder="CVV" class="input-pay" maxlength="3">
             </div>
-            Ajouter une nouvelle carte
-        </button>
-
-        <div class="mt-10 text-center px-6 opacity-60">
-            <div class="flex justify-center items-center gap-2 mb-2">
-                <i data-lucide="lock" class="w-3 h-3 text-gray-500"></i>
-                <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Paiement 100% Sécurisé</span>
-            </div>
-            <p class="text-[8px] text-gray-400 leading-tight font-medium max-w-[250px] mx-auto">
-                Vos données bancaires sont cryptées SSL et traitées directement par notre partenaire bancaire SISP/Vinti4.
-            </p>
         </div>
-
     </main>
 
-    <script>
-        lucide.createIcons();
+    <div class="fixed-confirm">
+        <button id="btn-confirm" onclick="processPayment()" class="btn-pay active:scale-95 transition-transform flex items-center justify-center gap-3">
+            <i data-lucide="lock" class="w-5 h-5"></i> Confirmar
+        </button>
+    </div>
 
-        function addCard() {
-            // Simulation d'ajout
-            alert("Redirection vers la passerelle sécurisée Vinti4...");
+    <script>
+        let dailyPrice = 0;
+        let totalPrice = 0;
+        let startDateStr, endDateStr;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkEngine = setInterval(async () => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    initPayment();
+                }
+            }, 100);
+        });
+
+        async function initPayment() {
+            const params = new URLSearchParams(window.location.search);
+            const carId = params.get('id');
+            const startParam = params.get('start');
+            const endParam = params.get('end');
+
+            if (!carId) { window.location.href = 'index.html'; return; }
+
+            const { data: car } = await DJUNTA.sb.from('vehicles').select('*').eq('id', carId).single();
+            
+            if (car) {
+                dailyPrice = car.price_per_day;
+                document.getElementById('car-thumb').src = car.image_url;
+                document.getElementById('car-name').innerText = `${car.brand} ${car.model}`;
+                
+                const today = new Date();
+                const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+
+                startDateStr = startParam || today.toISOString();
+                endDateStr = endParam || tomorrow.toISOString();
+
+                calculateBilling(startDateStr, endDateStr);
+            }
+            if(window.lucide) lucide.createIcons();
+        }
+
+        function calculateBilling(start, end) {
+            const d1 = new Date(start);
+            const d2 = new Date(end);
+            const diffTime = Math.abs(d2 - d1);
+            const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+            
+            document.getElementById('stay-dates').innerText = `${d1.toLocaleDateString('pt-CV')} - ${d2.toLocaleDateString('pt-CV')}`;
+
+            const subtotal = dailyPrice * days;
+            const fee = Math.round(subtotal * 0.10);
+            totalPrice = subtotal + fee;
+
+            document.getElementById('nb-days').innerText = days;
+            document.getElementById('subtotal').innerText = DJUNTA.formatMoney(subtotal);
+            document.getElementById('fee').innerText = DJUNTA.formatMoney(fee);
+            document.getElementById('total-price').innerText = DJUNTA.formatMoney(totalPrice);
+        }
+
+        function selectMethod(method) {
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`method-${method}`).classList.add('active');
+        }
+
+        async function processPayment() {
+            const btn = document.getElementById('btn-confirm');
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Processando...`;
+            btn.disabled = true;
+
+            const { data: { user } } = await DJUNTA.sb.auth.getUser();
+            if (!user) {
+                sessionStorage.setItem('redirect_after_login', window.location.href);
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const carId = params.get('id');
+
+            const { error } = await DJUNTA.sb.from('bookings').insert([{
+                vehicle_id: carId,
+                user_id: user.id,
+                start_date: startDateStr,
+                end_date: endDateStr,
+                total_price: totalPrice,
+                status: 'confirmed'
+            }]);
+
+            if (!error) {
+                alert("Pagamento confirmado! Reserva efetuada.");
+                window.location.href = 'my-rentals.html';
+            } else {
+                alert("Erro ao pagar: " + error.message);
+                btn.innerHTML = "TENTAR NOVAMENTE";
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
