@@ -1,153 +1,192 @@
+
+
+```javascript name=djunta-master.js url=https://github.com/williamfarreaux-bit/djuntacar/blob/511c3792ceeca74432fd1db19080d5730388145c/djunta-master.js
 /**
- * DJUNTACAR MASTER ENGINE (v7.0 Final)
- * Ce fichier contient le Header Centralisé CORRIGÉ.
- * - Alignement Menu : OK
- * - Icone Chauffeur : OK
+ * DJUNTACAR MASTER ENGINE (v7.0 Final - centralized header)
+ * Central header injection / replacement for all HTML pages.
+ *
+ * - Injecte un seul header centralisé sur chaque page
+ * - Remplace tous les <header> statiques par le header central
+ * - Si aucun <header> n'existe, insère le header au début du <body>
+ * - Initialise lucide.createIcons() après injection (si lucide chargé)
+ *
+ * Usage: inclure <script src="djunta-master.js" defer></script> dans le <head>.
  */
 
 const DJUNTA = {
-    // --- 1. CONFIGURATION ---
-    config: {
-        supabaseUrl: "https://enuiuuwnjzvpfvpklmjw.supabase.co",
-        supabaseKey: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-",
-        defaultLang: 'pt',
-        currency: { code: 'CVE', symbol: 'CVE', rate: 1 }
-    },
+  // --- Configuration (exemples) ---
+  config: {
+    supabaseUrl: "https://enuiuuwnjzvpfvpklmjw.supabase.co",
+    supabaseKey: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-",
+    defaultLang: 'pt',
+    currency: { code: 'CVE', symbol: 'CVE', rate: 1 }
+  },
 
-    // --- 2. HEADER & MENU (HTML Centralisé) ---
-    layoutHTML: `
-        <header style="position:sticky; top:0; z-index:100; background:white; border-bottom:1px solid #f1f5f9; height:70px; width:100%;">
-            <div style="position:relative; height:100%; width:100%; display:flex; align-items:center; justify-content:space-between; padding:0 16px; max-width:600px; margin:0 auto;">
-                
-                <div style="display:flex; align-items:center; gap:8px; z-index:20; height:100%;">
-                    <button id="btn-toggle-menu" style="border:none; background:none; padding:5px; display:flex; align-items:center; cursor:pointer;">
-                        <i data-lucide="menu" style="color:#1d4379; width:26px;"></i>
-                    </button>
-                    <select id="lang-select" style="border:1px solid #e2e8f0; border-radius:6px; font-weight:800; color:#1d4379; font-size:10px; padding:4px; cursor:pointer;">
-                        <option value="pt">PT 🇨🇻</option>
-                        <option value="fr">FR 🇫🇷</option>
-                        <option value="en">EN 🇺🇸</option>
-                    </select>
-                </div>
-
-                <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); z-index:10; display:flex; align-items:center;">
-                    <img src="logo.png" style="height:26px; display:block; cursor:pointer;" onclick="window.location.href='index.html'" onerror="this.outerHTML='<b style=\'color:#1d4379\'>DJUNTA</b>'">
-                </div>
-
-                <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px; z-index:20; height:100%;">
-                    <button onclick="window.location.href='chat-list.html'" style="border:none; background:none; display:flex; align-items:center; cursor:pointer;">
-                        <i data-lucide="message-square" style="color:#1d4379; width:24px;"></i>
-                    </button>
-                    <button id="btn-profile-header" style="border:none; background:none; display:flex; align-items:center; cursor:pointer;">
-                        <i data-lucide="user-circle" style="color:#1d4379; width:26px;"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <div id="mobile-menu" style="position:fixed; top:0; left:0; bottom:0; width:280px; background:white; z-index:2000; padding:24px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.3s ease; box-shadow:10px 0 30px rgba(0,0,0,0.1);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-                <span style="font-weight:900; color:#1d4379; font-size:14px; letter-spacing:1px;">MENU</span>
-                <button id="btn-close-menu" style="border:none; background:none; cursor:pointer; padding:5px;"><i data-lucide="x" style="width:24px; color:#1d4379;"></i></button>
-            </div>
-            
-            <nav style="display:flex; flex-direction:column; gap:20px; font-weight:800; color:#1d4379; text-transform:uppercase; font-size:12px;">
-                
-                <a href="index.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
-                    <i data-lucide="home" style="width:20px; height:20px;"></i> <span data-key="nav_home">Início</span>
-                </a>
-
-                <a href="search-driver.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
-                    <i data-lucide="steering-wheel" style="width:20px; height:20px;"></i> <span data-key="nav_driver">Motorista</span>
-                </a>
-
-                <a href="search-car.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
-                    <i data-lucide="car-front" style="width:20px; height:20px;"></i> <span data-key="nav_car">Carros</span>
-                </a>
-
-                <a href="wallet.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;">
-                    <i data-lucide="wallet" style="width:20px; height:20px;"></i> <span data-key="nav_wallet">Carteira</span>
-                </a>
-
-                <hr style="border-top:1px solid #f1f5f9; margin:10px 0;">
-                
-                <div id="auth-links-container" style="display:flex; flex-direction:column; gap:20px;"></div>
-            </nav>
+  // --- Header HTML centralisé (template) ---
+  // Modifie ce HTML si tu veux changer l'apparence du header global.
+  layoutHTML: `
+    <header id="djunta-header" class="djunta-header" style="position:sticky; top:0; z-index:1000; background:white; border-bottom:1px solid #f1f5f9; height:70px; width:100%;">
+      <div style="position:relative; height:100%; width:100%; display:flex; align-items:center; justify-content:space-between; padding:0 16px; max-width:980px; margin:0 auto;">
+        <div style="display:flex; align-items:center; gap:8px; z-index:20; height:100%;">
+          <button id="btn-toggle-menu" aria-label="Menu" style="border:none; background:none; padding:8px; display:flex; align-items:center; cursor:pointer;">
+            <i data-lucide="menu" style="color:#1d4379; width:26px;"></i>
+          </button>
         </div>
-        <div id="menu-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1999; display:none;"></div>
-    `,
 
-    // --- 3. TEXTES ---
-    i18n: {
-        pt: { nav_home: "Início", nav_driver: "Motorista", nav_car: "Carros", nav_wallet: "Carteira", nav_account: "Minha Conta", btn_login: "Entrar", btn_register: "Criar Conta", btn_logout: "Sair", hero_title: "Alugue um carro em Cabo Verde", search_placeholder: "Para onde quer ir?", btn_add_car: "Adicionar carro", btn_become_driver: "Ser motorista", footer_terms: "Termos", footer_privacy: "Privacidade", msg_no_car: "Nenhum veículo disponível", label_day: "/ dia" },
-        fr: { nav_home: "Accueil", nav_driver: "Chauffeur", nav_car: "Voiture", nav_wallet: "Portefeuille", nav_account: "Mon Compte", btn_login: "Connexion", btn_register: "Inscription", btn_logout: "Déconnexion", hero_title: "Louez une voiture", search_placeholder: "Où allez-vous ?", btn_add_car: "Ajouter voiture", btn_become_driver: "Devenir chauffeur", footer_terms: "Conditions", footer_privacy: "Confidentialité", msg_no_car: "Aucun véhicule", label_day: "/ jour" },
-        en: { nav_home: "Home", nav_driver: "Driver", nav_car: "Cars", nav_wallet: "Wallet", nav_account: "My Account", btn_login: "Login", btn_register: "Register", btn_logout: "Logout", hero_title: "Rent a car", search_placeholder: "Where to go?", btn_add_car: "Add car", btn_become_driver: "Become driver", footer_terms: "Terms", footer_privacy: "Privacy", msg_no_car: "No vehicles", label_day: "/ day" }
-    },
+        <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
+          <a href="index.html" aria-label="Accueil" style="display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+            <img src="logo.png" alt="DjuntaCar" style="height:28px;">
+            <span style="color:#1d4379; font-weight:900; letter-spacing:1px; font-size:12px; text-transform:uppercase;">DjuntaCar</span>
+          </a>
+        </div>
 
-    state: { lang: localStorage.getItem('djunta_lang') || 'pt', session: null },
+        <div style="display:flex; align-items:center; gap:12px;">
+          <select id="lang-select" aria-label="Langue" style="border:1px solid #e2e8f0; border-radius:6px; font-weight:700; color:#1d4379; font-size:12px; padding:6px;">
+            <option value="pt">PT</option>
+            <option value="fr">FR</option>
+            <option value="en">EN</option>
+          </select>
 
-    // --- 4. DÉMARRAGE ---
-    init: async function() {
-        console.log('DjuntaCar MASTER: Injection en cours...');
-        
-        // A. Injection du Header
-        const target = document.getElementById('djunta-layout');
-        if(target) {
-            target.innerHTML = this.layoutHTML;
+          <button id="btn-wallet" aria-label="Portefeuille" style="border:none; background:none; padding:6px; display:flex; align-items:center; cursor:pointer;">
+            <i data-lucide="wallet" style="color:#1d4379; width:22px;"></i>
+          </button>
+
+          <button id="btn-profile" aria-label="Mon profil" style="border:none; background:none; padding:6px; display:flex; align-items:center; cursor:pointer;">
+            <i data-lucide="user" style="color:#1d4379; width:22px;"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+  `,
+
+  // --- Init: injection centralisée et setup ---
+  init: function () {
+    console.log('DJUNTA: démarrage de l\'injection du header centralisé...');
+
+    try {
+      // Crée un container pour le layout centralisé
+      const container = document.createElement('div');
+      container.id = 'djunta-layout';
+      container.innerHTML = this.layoutHTML;
+
+      // Récupère tous les headers existants
+      const existingHeaders = Array.from(document.getElementsByTagName('header') || []);
+
+      if (existingHeaders.length > 0) {
+        // Remplace le premier <header> par notre container
+        const firstHeader = existingHeaders[0];
+        if (firstHeader && firstHeader.parentNode) {
+          firstHeader.parentNode.replaceChild(container, firstHeader);
+          console.info('DJUNTA: header statique remplacé par header centralisé (first header).');
         } else {
-            console.error("ERREUR CRITIQUE: <div id='djunta-layout'> introuvable !");
-            return;
+          // fallback si parentNode absent
+          (document.body || document.getElementsByTagName('body')[0]).insertBefore(container, (document.body || document.getElementsByTagName('body')[0]).firstChild);
+          console.warn('DJUNTA: remplacement header fallback (parentNode absent).');
         }
 
-        // B. Application Logique
-        this.applyLang();
-        this.bindEvents();
-        this.bindLanguage();
-
-        // C. Supabase
-        if (window.supabase) {
-            try {
-                this.sb = window.supabase.createClient(this.config.supabaseUrl, this.config.supabaseKey);
-                const { data } = await this.sb.auth.getSession();
-                this.state.session = data.session;
-                this.updateAuthUI();
-            } catch (e) { console.error(e); }
+        // Supprime tout autre header restant (pour éviter duplication)
+        for (let i = 1; i < existingHeaders.length; i++) {
+          const h = existingHeaders[i];
+          if (h && h.parentNode) {
+            h.parentNode.removeChild(h);
+          }
         }
-        
-        // D. Icônes (Double vérification pour affichage immédiat)
-        if (window.lucide) {
-            lucide.createIcons();
-            setTimeout(() => lucide.createIcons(), 300);
+      } else {
+        // Aucun header présent: insère le container en début du body
+        const body = document.body || document.getElementsByTagName('body')[0];
+        if (body) {
+          body.insertBefore(container, body.firstChild);
+          console.info('DJUNTA: header injecté en début du body (fallback insertion).');
+        } else {
+          console.error('DJUNTA: body introuvable — injection impossible.');
         }
-    },
+      }
 
-    // --- 5. FONCTIONS ---
-    t: function(key) { return (this.i18n[this.state.lang] && this.i18n[this.state.lang][key]) || key; },
-    
-    setLang: function(lang) {
-        if (this.i18n[lang]) {
-            this.state.lang = lang;
-            localStorage.setItem('djunta_lang', lang);
-            window.location.reload();
+      // Post-injection: initialisation des icônes lucide (retry si non prêt)
+      this._initLucideIconsWithRetry();
+
+      // Bind UI handlers (menu toggles, lang change...) si nécessaire
+      this._attachUiHandlers();
+
+    } catch (err) {
+      console.error('DJUNTA: erreur durant l\'injection du header :', err);
+    }
+  },
+
+  // --- Helper: initialize lucide icons with retries ---
+  _initLucideIconsWithRetry: function (retries = 6, delay = 300) {
+    const tryInit = () => {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        try {
+          window.lucide.createIcons();
+          console.info('DJUNTA: lucide.createIcons() exécuté.');
+        } catch (e) {
+          console.warn('DJUNTA: erreur lors de lucide.createIcons():', e);
         }
-    },
+        return true;
+      }
+      return false;
+    };
 
-    bindLanguage: function() {
-        const sel = document.getElementById('lang-select');
-        if (sel) {
-            sel.value = this.state.lang;
-            sel.onchange = (e) => this.setLang(e.target.value);
+    if (!tryInit()) {
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        if (tryInit() || attempts >= retries) {
+          clearInterval(interval);
+          if (attempts >= retries) {
+            console.warn('DJUNTA: lucide non disponible après multiples tentatives.');
+          }
         }
-    },
+      }, delay);
+    }
+  },
 
-    formatMoney: function(amount) {
-        const locale = this.state.lang === 'pt' ? 'pt-CV' : (this.state.lang === 'fr' ? 'fr-FR' : 'en-US');
-        return new Intl.NumberFormat(locale).format(amount) + ' ' + this.config.currency.symbol;
-    },
+  // --- Helper: attach minimal UI handlers (non invasif) ---
+  _attachUiHandlers: function () {
+    // Exemple: menu toggle basique (peut être personnalisé)
+    const btnMenu = document.getElementById('btn-toggle-menu');
+    if (btnMenu) {
+      btnMenu.addEventListener('click', (e) => {
+        // Emission d'un event custom pour que la page gère l'ouverture du menu
+        const ev = new CustomEvent('djunta:toggle-menu', { detail: {} });
+        window.dispatchEvent(ev);
+      });
+    }
 
-    updateAuthUI: function() {
-        const container = document.getElementById('auth-links-container');
-        if (!container) return;
-        
-        // Style aligné pour les éléments injectés
-        const style = "text-decoration:none; color:inherit; display:flex; align-items:center; gap:12px;";
+    // Lang select handler (met à jour localStorage et déclenche event)
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+      // set default value from config or localStorage
+      const stored = localStorage.getItem('djunta_lang') || this.config.defaultLang;
+      langSelect.value = stored;
+      langSelect.addEventListener('change', (e) => {
+        localStorage.setItem('djunta_lang', e.target.value);
+        const ev = new CustomEvent('djunta:lang-changed', { detail: { lang: e.target.value } });
+        window.dispatchEvent(ev);
+      });
+    }
+
+    // Wallet/profile buttons can dispatch events; pages can listen and react.
+    const btnWallet = document.getElementById('btn-wallet');
+    if (btnWallet) {
+      btnWallet.addEventListener('click', () => window.dispatchEvent(new CustomEvent('djunta:open-wallet')));
+    }
+    const btnProfile = document.getElementById('btn-profile');
+    if (btnProfile) {
+      btnProfile.addEventListener('click', () => window.dispatchEvent(new CustomEvent('djunta:open-profile')));
+    }
+  }
+};
+
+// Expose DJUNTA globally
+window.DJUNTA = DJUNTA;
+
+// Lancement automatique quand le DOM est prêt
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => DJUNTA.init());
+} else {
+  // DOM déjà prêt
+  setTimeout(() => DJUNTA.init(), 0);
+}
+```
