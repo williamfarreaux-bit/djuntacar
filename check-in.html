@@ -1,42 +1,124 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - État des lieux</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Check-in - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-[#fcfcfd] antialiased">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="djunta-master.js" defer></script>
 
-    <header>
-        <div class="header-left">
-            <button onclick="window.history.back()" class="profile-btn">
-                <i data-lucide="arrow-left" class="header-user-icon"></i>
-            </button>
-        </div>
-        <div class="header-center">
-            <span class="text-[#1d4379] font-black uppercase text-sm">Check-in (Départ)</span>
-        </div>
-        <div class="header-right">
-            <span class="text-[10px] font-bold text-gray-400">1/3</span>
-        </div>
-    </header>
-
-    <main class="content-padding pt-6 pb-24">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        <h1 class="text-2xl font-black text-[#1d4379] mb-2">Inspection Véhicule</h1>
-        <p class="text-xs font-bold text-gray-400 mb-6">Prenez des photos pour garantir l'état du véhicule.</p>
+        body { background-color: #fcfcfd; padding-bottom: 140px; margin: 0; }
 
-        <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl flex items-center gap-4 mb-6">
-            <i data-lucide="car" class="w-8 h-8 text-[#1d4379]"></i>
-            <div>
-                <h3 class="font-black text-[#1d4379] text-sm">Mercedes GLC</h3>
-                <p class="text-[10px] text-gray-500 font-bold">Immatriculation: ST-22-BG</p>
+        .step-indicator {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px; padding: 0 10px;
+        }
+        .step-dot {
+            width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0;
+        }
+        .step-dot.active { background: #1d4379; transform: scale(1.2); }
+
+        .upload-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+        }
+        
+        .photo-zone {
+            background: white; border: 2px dashed #cbd5e1; border-radius: 16px;
+            height: 120px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; position: relative;
+            overflow: hidden; cursor: pointer; transition: all 0.2s;
+        }
+        .photo-zone.has-file { border-style: solid; border-color: #22c55e; }
+        
+        .photo-preview {
+            width: 100%; height: 100%; object-fit: cover; position: absolute;
+            top: 0; left: 0; display: none;
+        }
+
+        .input-box {
+            background: white; border: 1px solid #e2e8f0; border-radius: 16px;
+            padding: 16px; margin-bottom: 12px;
+        }
+
+        .fixed-footer { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: white; border-top: 1px solid #f1f5f9; 
+            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom)); 
+            z-index: 1000; 
+        }
+
+        .btn-main { 
+            width: 100%; height: 56px; background: #1d4379; 
+            color: white; border-radius: 18px; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: 1px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3); border: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <djunta-header></djunta-header>
+
+    <main class="max-w-md mx-auto px-6 pt-6">
+        
+        <div class="step-indicator">
+            <h1 class="text-xl font-black text-[#1d4379] uppercase">Inspeção (Check-in)</h1>
+            <div class="flex gap-2">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
             </div>
         </div>
 
-        <h2 class="text-[10px] font-black text-gray-
+        <p class="text-xs font-bold text-gray-400 mb-6">Tire fotos para garantir o estado do veículo.</p>
+
+        <div id="vehicle-card" class="bg-blue-50 border border-blue-100 p-4 rounded-2xl flex items-center gap-4 mb-6">
+            <i data-lucide="loader-2" class="w-8 h-8 text-[#1d4379] animate-spin"></i>
+            <div>
+                <h3 class="font-black text-[#1d4379] text-sm">A carregar...</h3>
+            </div>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase mb-3 ml-1">1. Fotos do Veículo</h2>
+        <div class="upload-grid">
+            <label class="photo-zone" id="zone-front">
+                <i data-lucide="camera" class="w-6 h-6 text-gray-300 mb-1"></i>
+                <span class="text-[9px] font-bold text-gray-400 uppercase">Frente</span>
+                <img id="prev-front" class="photo-preview">
+                <input type="file" accept="image/*" capture="environment" hidden onchange="handleFile(this, 'front')">
+            </label>
+            <label class="photo-zone" id="zone-back">
+                <i data-lucide="camera" class="w-6 h-6 text-gray-300 mb-1"></i>
+                <span class="text-[9px] font-bold text-gray-400 uppercase">Trás</span>
+                <img id="prev-back" class="photo-preview">
+                <input type="file" accept="image/*" capture="environment" hidden onchange="handleFile(this, 'back')">
+            </label>
+            <label class="photo-zone" id="zone-left">
+                <i data-lucide="camera" class="w-6 h-6 text-gray-300 mb-1"></i>
+                <span class="text-[9px] font-bold text-gray-400 uppercase">Esq.</span>
+                <img id="prev-left" class="photo-preview">
+                <input type="file" accept="image/*" capture="environment" hidden onchange="handleFile(this, 'left')">
+            </label>
+            <label class="photo-zone" id="zone-right">
+                <i data-lucide="camera" class="w-6 h-6 text-gray-300 mb-1"></i>
+                <span class="text-[9px] font-bold text-gray-400 uppercase">Dir.</span>
+                <img id="prev-right" class="photo-preview">
+                <input type="file" accept="image/*" capture="environment" hidden onchange="handleFile(this, 'right')">
+            </label>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase mb-3 ml-1">2. Detalhes Técnicos</h2>
+        <div class="input-box flex justify-between items-center">
+            <span class="text-xs font-bold text-[#1d4379] uppercase">Quilometragem</span>
+            <input type="number" id="odometer" placeholder="00000" class="text-right font-black text-[#1d4379] outline-none w-24 bg-transparent">
+            <span class
