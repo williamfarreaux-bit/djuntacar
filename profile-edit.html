@@ -1,24 +1,22 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mon Profil - DjuntaCar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Meu Perfil - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="config.js"></script>
-    <script src="layout.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #fcfcfd; padding-bottom: 120px; }
+        body { background-color: #fcfcfd; padding-bottom: 120px; margin: 0; }
 
         /* HEADER PROFIL DESIGN */
         .profile-header-bg {
@@ -53,6 +51,7 @@
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
             transition: transform 0.1s;
+            width: 100%; cursor: pointer;
         }
         .menu-btn:active { transform: scale(0.98); background: #f8fafc; }
 
@@ -70,108 +69,4 @@
             border-radius: 24px; padding: 20px;
             color: white; margin-bottom: 24px;
             display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-        }
-        
-        .become-host-banner {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            border-radius: 24px; padding: 20px;
-            color: white; margin-bottom: 24px;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
-        }
-    </style>
-</head>
-<body class="antialiased">
-
-    <div id="header-slot"></div>
-
-    <div class="profile-header-bg">
-        <div class="text-center">
-            <h1 class="text-white text-lg font-black uppercase tracking-widest opacity-80">Mon Profil</h1>
-        </div>
-        
-        <div class="avatar-wrapper">
-            <img id="user-avatar" src="" class="profile-avatar">
-            <button class="absolute -bottom-2 -right-2 bg-white text-[#1d4379] p-2 rounded-full border border-gray-100 shadow-md">
-                <i data-lucide="camera" class="w-4 h-4"></i>
-            </button>
-        </div>
-    </div>
-
-    <main class="max-w-md mx-auto px-6 pt-20">
-        
-        <div class="text-center mb-8">
-            <h2 id="user-name" class="text-2xl font-black text-[#1d4379] uppercase">Chargement...</h2>
-            <p id="user-email" class="text-xs font-bold text-gray-400 mt-1">...</p>
-            
-            <div id="verified-badge" class="hidden mx-auto mt-3 w-fit">
-                <div class="badge-verified">
-                    <i data-lucide="shield-check" class="w-3 h-3"></i> Identité Vérifiée
-                </div>
-            </div>
-        </div>
-
-        <div id="host-section">
-            <div class="animate-pulse h-20 bg-gray-100 rounded-3xl mb-6"></div>
-        </div>
-
-        <div class="space-y-2">
-            <button onclick="window.location.href='wallet.html'" class="menu-btn">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#1d4379]">
-                        <i data-lucide="wallet" class="w-5 h-5"></i>
-                    </div>
-                    <span class="text-xs font-black text-[#1d4379] uppercase">Portefeuille</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
-            </button>
-
-            <button onclick="window.location.href='my-rentals.html'" class="menu-btn">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500">
-                        <i data-lucide="history" class="w-5 h-5"></i>
-                    </div>
-                    <span class="text-xs font-black text-[#1d4379] uppercase">Historique</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
-            </button>
-
-            <button onclick="window.location.href='settings.html'" class="menu-btn">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500">
-                        <i data-lucide="settings" class="w-5 h-5"></i>
-                    </div>
-                    <span class="text-xs font-black text-[#1d4379] uppercase">Paramètres</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
-            </button>
-        </div>
-
-        <button onclick="handleLogout()" class="w-full mt-8 py-4 text-xs font-black text-red-400 uppercase bg-red-50 rounded-2xl border border-red-100 active:scale-95 transition-transform flex justify-center items-center gap-2">
-            <i data-lucide="log-out" class="w-4 h-4"></i> Se déconnecter
-        </button>
-
-        <p class="text-center text-[9px] font-bold text-gray-300 uppercase mt-8">DjuntaCar v1.0.0</p>
-
-    </main>
-
-    <script>
-        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-
-        async function initProfile() {
-            // 1. Vérifier Auth
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
-
-            // 2. Récupérer le Profil Public
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-
-            if (
+            box-shadow: 0 10px 25px rgba
