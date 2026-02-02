@@ -1,241 +1,183 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Contrat Chauffeur - DjuntaCar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Contrato Motorista - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="config.js"></script>
-    <script src="layout.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #fcfcfd; padding-bottom: 140px; }
+        body { background-color: #fcfcfd; padding-bottom: 140px; margin: 0; }
 
-        /* HEADER CONTRAT VERT */
-        .contract-header {
-            background: #22c55e;
-            color: white; padding: 24px;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
-            margin-bottom: 24px; text-align: center;
+        /* HEADER CONTRAT VERT (Spécifique Chauffeur) */
+        .contract-header { 
+            background: #22c55e; 
+            color: white; padding: 24px; 
+            border-bottom-left-radius: 30px; 
+            border-bottom-right-radius: 30px; 
+            margin-bottom: 24px; text-align: center; 
         }
 
-        .paper-card {
-            background: white; margin: 0 20px;
-            padding: 30px 24px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid #f1f5f9;
-            font-size: 11px; color: #334155; line-height: 1.6;
+        .paper-card { 
+            background: white; margin: 0 20px; 
+            padding: 30px 24px; border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            border: 1px solid #f1f5f9; 
+            font-size: 11px; color: #334155; line-height: 1.6; 
         }
 
-        .clause-title {
-            background: #f0fdf4; color: #15803d; /* Fond vert très clair */
-            padding: 8px 12px; border-radius: 8px;
-            font-weight: 900; text-transform: uppercase;
-            margin-top: 20px; margin-bottom: 8px; font-size: 10px;
+        .clause-title { 
+            background: #f0fdf4; color: #15803d; 
+            padding: 8px 12px; border-radius: 8px; 
+            font-weight: 900; text-transform: uppercase; 
+            margin-top: 20px; margin-bottom: 8px; font-size: 10px; 
         }
 
-        .lang-text {
-            font-size: 10px; margin-bottom: 6px;
-            border-left: 2px solid #bbf7d0; padding-left: 8px;
+        .lang-text { 
+            font-size: 10px; margin-bottom: 6px; 
+            border-left: 2px solid #bbf7d0; padding-left: 8px; 
         }
 
-        .signature-pad {
-            background: #f8fafc; border: 2px dashed #bbf7d0;
-            border-radius: 16px; height: 150px; width: 100%;
-            margin-top: 20px; touch-action: none; cursor: crosshair;
+        .signature-pad { 
+            background: #f8fafc; border: 2px dashed #bbf7d0; 
+            border-radius: 16px; height: 180px; width: 100%; 
+            margin-top: 20px; touch-action: none; cursor: crosshair; 
+            position: relative;
+        }
+        
+        canvas { width: 100%; height: 100%; border-radius: 16px; }
+
+        .fixed-footer { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: white; padding: 20px 24px; 
+            border-top: 1px solid #f1f5f9; z-index: 1000; 
+            padding-bottom: max(20px, env(safe-area-inset-bottom)); 
         }
 
-        .fixed-footer {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; padding: 20px 24px;
-            border-top: 1px solid #f1f5f9; z-index: 1000;
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
+        .btn-sign { 
+            width: 100%; height: 56px; 
+            background: #22c55e; color: white; 
+            border-radius: 18px; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: 1px; 
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3); 
+            border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
-        .btn-sign {
-            width: 100%; height: 56px;
-            background: #22c55e; color: white;
-            border-radius: 18px; font-weight: 900;
-            text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+        .btn-clear {
+            background: #ef4444; color: white;
+            padding: 4px 12px; border-radius: 8px; font-size: 9px;
+            font-weight: bold; position: absolute; top: 10px; right: 10px;
+            border: none; z-index: 10; cursor: pointer;
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <div id="header-slot"></div>
+    <djunta-header></djunta-header>
 
     <div class="contract-header">
         <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
             <i data-lucide="file-check" class="w-6 h-6 text-white"></i>
         </div>
-        <h1 class="text-xl font-black uppercase tracking-wide">Contrat de Service</h1>
-        <p class="text-xs font-bold opacity-90 mt-1">Chauffeur Privé / Private Driver</p>
+        <h1 class="text-xl font-black uppercase tracking-wide">Contrato de Serviço</h1>
+        <p class="text-xs font-bold opacity-90 mt-1">Motorista Privado / Private Driver</p>
     </div>
 
     <main class="max-w-md mx-auto">
-        
-        <div class="paper-card">
-            <div class="flex justify-between border-b border-gray-100 pb-4 mb-4">
-                <div>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase">Référence</p>
-                    <p id="booking-ref" class="text-sm font-black text-[#1d4379]">...</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-[9px] font-bold text-gray-400 uppercase">Date</p>
-                    <p id="contract-date" class="text-xs font-bold text-[#1d4379]">...</p>
-                </div>
+        <div class="paper-card" id="contract-content">
+             <div class="text-center py-10 opacity-50">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-green-600"></i>
             </div>
-
-            <p class="mb-4 text-xs">
-                Entre le client <strong id="client-name" class="uppercase">...</strong> et le prestataire <strong id="driver-name" class="uppercase text-green-600">...</strong>.
-            </p>
-
-            <h3 class="clause-title">1. Objet / Objeto / Object</h3>
-            <p class="mb-2">Transport privé avec chauffeur / Private transport with driver.</p>
-
-            <h3 class="clause-title">2. Responsabilité / Responsabilidade</h3>
-            <div class="lang-text">
-                <strong>FR:</strong> Le chauffeur est seul responsable du véhicule et de la sécurité. Le client n'est pas responsable des dommages au véhicule.
-            </div>
-            <div class="lang-text">
-                <strong>PT:</strong> O motorista é o único responsável pelo veículo e pela segurança. O cliente não é responsável por danos no veículo.
-            </div>
-            <div class="lang-text">
-                <strong>EN:</strong> The driver is solely responsible for the vehicle and safety. The client is not liable for damages to the vehicle.
-            </div>
-
-            <h3 class="clause-title">3. Carburant / Combustível / Fuel</h3>
-            <div class="lang-text">
-                <strong>FR:</strong> Le carburant est à la charge exclusive du <span class="text-red-500 font-bold">CLIENT</span>.
-            </div>
-            <div class="lang-text">
-                <strong>PT:</strong> O combustível é da exclusiva responsabilidade do <span class="text-red-500 font-bold">CLIENTE</span>.
-            </div>
-            <div class="lang-text">
-                <strong>EN:</strong> Fuel is the exclusive responsibility of the <span class="text-red-500 font-bold">CLIENT</span>.
-            </div>
-
-            <h3 class="clause-title">4. Durée / Duração / Duration</h3>
-            <p>Du <strong id="start-date">...</strong> au <strong id="end-date">...</strong>.</p>
-
-            <h3 class="clause-title">5. Signature</h3>
-            <p class="mb-2 text-[10px] text-gray-400">Veuillez signer ci-dessous / Assine abaixo / Please sign below :</p>
-            
-            <canvas id="signature-pad" class="signature-pad"></canvas>
-            <button onclick="clearPad()" class="text-[9px] font-bold text-red-400 uppercase mt-2 underline">Effacer / Limpar / Clear</button>
         </div>
 
+        <div style="padding: 0 20px 20px;">
+            <div class="signature-pad">
+                <button class="btn-clear" onclick="clearPad()">Limpar</button>
+                <canvas id="sig-canvas"></canvas>
+            </div>
+            <p class="text-[9px] text-gray-400 font-bold uppercase mt-2 text-center">Assine acima / Sign above</p>
+        </div>
     </main>
 
     <div class="fixed-footer">
-        <button onclick="signContract()" class="btn-sign active:scale-95 transition-transform">
-            <i data-lucide="pen-tool" class="w-5 h-5"></i> Valider / Validar / Validate
+        <button id="btn-validate" onclick="signContract()" class="btn-sign active:scale-95 transition-transform" disabled style="opacity: 0.5;">
+            <i data-lucide="pen-tool" class="w-5 h-5"></i> Validar / Validate
         </button>
     </div>
 
     <script>
-        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-        
-        // --- LOGIQUE CANVAS ---
-        const canvas = document.getElementById('signature-pad');
-        const ctx = canvas.getContext('2d');
+        let bookingId = null;
+        let canvas, ctx;
         let isDrawing = false;
+        let hasSignature = false;
 
-        function resizeCanvas() {
-            const rect = canvas.getBoundingClientRect();
+        document.addEventListener('DOMContentLoaded', () => {
+            setupCanvas();
+            
+            const checkEngine = setInterval(async () => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    
+                    const params = new URLSearchParams(window.location.search);
+                    bookingId = params.get('booking_id');
+
+                    if(bookingId) {
+                        loadData(bookingId);
+                    } else {
+                        document.getElementById('contract-content').innerHTML = `<p class="text-center text-red-500 font-bold">Reserva não encontrada.</p>`;
+                    }
+                }
+            }, 100);
+        });
+
+        // --- CANVAS LOGIC ---
+        function setupCanvas() {
+            canvas = document.getElementById('sig-canvas');
+            ctx = canvas.getContext('2d');
+            
+            const rect = canvas.parentElement.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
+
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#166534'; // Vert foncé
+
+            // Events
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', endDraw);
+            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); });
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+            canvas.addEventListener('touchend', endDraw);
         }
-        window.addEventListener('resize', resizeCanvas);
-        setTimeout(resizeCanvas, 100);
 
         function startDraw(e) {
             isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
             ctx.beginPath();
-            const pos = getPos(e);
-            ctx.moveTo(pos.x, pos.y);
+            ctx.moveTo((e.clientX || e.pageX) - rect.left, (e.clientY || e.pageY) - rect.top);
         }
+
         function draw(e) {
             if (!isDrawing) return;
-            const pos = getPos(e);
-            ctx.lineTo(pos.x, pos.y);
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo((e.clientX || e.pageX) - rect.left, (e.clientY || e.pageY) - rect.top);
             ctx.stroke();
+            hasSignature = true;
+            updateBtn();
         }
+
         function endDraw() { isDrawing = false; }
         
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
-
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', endDraw);
-        canvas.addEventListener('touchstart', startDraw);
-        canvas.addEventListener('touchmove', draw);
-        canvas.addEventListener('touchend', endDraw);
-
-        function clearPad() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-
-        // --- CHARGEMENT DONNÉES ---
-        async function init() {
-            const params = new URLSearchParams(window.location.search);
-            const bookingId = params.get('id');
-
-            if (!bookingId) {
-                window.location.href = 'my-rentals.html';
-                return;
-            }
-
-            const { data: booking, error } = await supabase
-                .from('bookings')
-                .select('*, vehicles(brand, model), profiles:user_id(first_name, last_name)')
-                .eq('id', bookingId)
-                .single();
-
-            if (booking) {
-                document.getElementById('booking-ref').innerText = `#DJ-${booking.id}`;
-                document.getElementById('contract-date').innerText = new Date().toLocaleDateString();
-                
-                // Client
-                let clientName = "Client inconnu";
-                if(booking.profiles) {
-                     clientName = `${booking.profiles.first_name} ${booking.profiles.last_name}`;
-                }
-                
-                document.getElementById('client-name').innerText = clientName;
-                document.getElementById('driver-name').innerText = `${booking.vehicles.brand} ${booking.vehicles.model}`;
-                
-                document.getElementById('start-date').innerText = new Date(booking.start_date).toLocaleDateString();
-                document.getElementById('end-date').innerText = new Date(booking.end_date).toLocaleDateString();
-            }
-            lucide.createIcons();
-        }
-
-        async function signContract() {
-            const btn = document.querySelector('.btn-sign');
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Validation...';
-            
-            setTimeout(() => {
-                alert("✅ Contrat signé / Contrato assinado !");
-                window.location.href = 'my-rentals.html';
-            }, 1500);
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
-</body>
-</html>
+        function clearPad() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height
