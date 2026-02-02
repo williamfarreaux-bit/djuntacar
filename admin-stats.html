@@ -1,80 +1,122 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin - DjuntaCar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Estatísticas - DjuntaCar</title>
+    
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
-</head>
-<body class="bg-[#fcfcfd] pb-24">
+    
+    <script src="djunta-master.js" defer></script>
 
-    <header class="p-6 bg-[#1d4379] text-white rounded-b-[40px] shadow-lg">
-        <h1 class="text-xl font-black uppercase tracking-widest">Finance Plateforme</h1>
-        <div class="mt-6">
-            <p class="text-[10px] font-bold opacity-60 uppercase">Chiffre d'Affaires Global</p>
-            <h2 id="total-revenue" class="text-3xl font-black">0 CVE</h2>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #fcfcfd; padding-bottom: 120px; margin: 0; }
+
+        .stat-header {
+            background: #1d4379; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            padding: 24px; box-shadow: 0 10px 30px rgba(29, 67, 121, 0.2);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <djunta-header></djunta-header>
+
+    <div class="stat-header">
+        <h1 class="text-xl font-black uppercase tracking-widest text-center mb-6">Finanças Plataforma</h1>
+        <div>
+            <p class="text-[10px] font-bold opacity-60 uppercase">Volume de Negócios Global</p>
+            <h2 id="total-revenue" class="text-3xl font-black">...</h2>
         </div>
-    </header>
+    </div>
 
     <main class="max-w-md mx-auto px-6 pt-8">
         
         <div class="grid grid-cols-2 gap-4 mb-8">
-            <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+            <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
                 <i data-lucide="percent" class="w-5 h-5 text-blue-500 mb-2"></i>
-                <p id="platform-margin" class="text-lg font-black text-[#1d4379]">0 CVE</p>
-                <p class="text-[9px] font-bold text-gray-400 uppercase">Commissions App</p>
+                <p id="platform-margin" class="text-lg font-black text-[#1d4379]">...</p>
+                <p class="text-[9px] font-bold text-gray-400 uppercase mt-1">Comissões (15%)</p>
             </div>
-            <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+            <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
                 <i data-lucide="shield-check" class="w-5 h-5 text-green-500 mb-2"></i>
-                <p id="insurance-fund" class="text-lg font-black text-[#1d4379]">0 CVE</p>
-                <p class="text-[9px] font-bold text-gray-400 uppercase">Fonds Assurance</p>
+                <p id="insurance-fund" class="text-lg font-black text-[#1d4379]">...</p>
+                <p class="text-[9px] font-bold text-gray-400 uppercase mt-1">Fundo Seguro (10%)</p>
             </div>
         </div>
 
-        <h3 class="text-xs font-black text-[#1d4379] uppercase mb-4">Assurances à reverser</h3>
-        <div id="insurance-list" class="space-y-3">
+        <h3 class="text-xs font-black text-[#1d4379] uppercase mb-4 ml-1">Seguros a Repassar</h3>
+        
+        <div id="insurance-list" class="space-y-3 pb-20">
+            <div class="text-center py-10 opacity-40">
+                <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-[#1d4379]"></i>
             </div>
+        </div>
 
     </main>
 
     <script>
-        lucide.createIcons();
-        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkEngine = setInterval(async () => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    loadAdminData();
+                }
+            }, 100);
+        });
 
         async function loadAdminData() {
-            const { data: bookings } = await supabase.from('bookings').select('*').eq('status', 'confirmed');
-            
-            if (!bookings) return;
+            // 1. Auth Check
+            const { data: { user } } = await DJUNTA.sb.auth.getUser();
+            if (!user) { window.location.href = 'login.html'; return; }
 
+            // 2. Fetch Data (Bookings Confirmed/Completed)
+            const { data: bookings, error } = await DJUNTA.sb
+                .from('bookings')
+                .select('*')
+                .in('status', ['confirmed', 'completed'])
+                .order('created_at', { ascending: false });
+
+            if (error || !bookings) {
+                console.error(error);
+                return;
+            }
+
+            // 3. Calculs
             const total = bookings.reduce((sum, b) => sum + b.total_price, 0);
-            // Simulation : 15% commission plateforme, 10% assurance
             const margin = total * 0.15;
             const insurance = total * 0.10;
 
-            document.getElementById('total-revenue').innerText = total.toLocaleString() + " CVE";
-            document.getElementById('platform-margin').innerText = margin.toLocaleString() + " CVE";
-            document.getElementById('insurance-fund').innerText = insurance.toLocaleString() + " CVE";
+            // 4. Affichage Global
+            document.getElementById('total-revenue').innerText = DJUNTA.formatMoney(total);
+            document.getElementById('platform-margin').innerText = DJUNTA.formatMoney(margin);
+            document.getElementById('insurance-fund').innerText = DJUNTA.formatMoney(insurance);
 
+            // 5. Liste Assurances
             const list = document.getElementById('insurance-list');
+            list.innerHTML = '';
+
             bookings.forEach(b => {
                 const part = b.total_price * 0.10;
-                list.insertAdjacentHTML('beforeend', `
-                    <div class="bg-white p-4 rounded-2xl border border-gray-50 flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] font-black text-[#1d4379]">Réf: #${b.id}</p>
-                            <p class="text-[8px] font-bold text-gray-400 uppercase">Type: ${b.insurance_type || 'Basique'}</p>
-                        </div>
-                        <p class="text-xs font-black text-blue-600">+ ${part.toLocaleString()} CVE</p>
+                const html = `
+                <div class="bg-white p-4 rounded-2xl border border-gray-50 flex justify-between items-center shadow-sm">
+                    <div>
+                        <p class="text-[10px] font-black text-[#1d4379] uppercase">Ref: #${b.id.slice(0,6)}</p>
+                        <p class="text-[8px] font-bold text-gray-400 uppercase">Reserva Confirmada</p>
                     </div>
-                `);
+                    <p class="text-xs font-black text-blue-600">+ ${DJUNTA.formatMoney(part)}</p>
+                </div>`;
+                list.insertAdjacentHTML('beforeend', html);
             });
-            lucide.createIcons();
+            
+            if(window.lucide) lucide.createIcons();
         }
-        loadAdminData();
     </script>
 </body>
 </html>
