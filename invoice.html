@@ -1,126 +1,162 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Facture #INV-2026-001</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Fatura - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="djunta-master.js" defer></script>
 
     <style>
-        /* Style spécifique pour l'impression : on cache le bouton et le header */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: #f8fafc; padding: 20px; }
+
+        .invoice-card {
+            background: white; border-radius: 0; padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 600px; margin: 0 auto;
+            border: 1px solid #e2e8f0;
+        }
+
+        .line-item {
+            display: flex; justify-content: space-between;
+            padding: 8px 0; border-bottom: 1px dashed #e2e8f0;
+            font-size: 11px;
+        }
+        .line-item:last-child { border-bottom: none; }
+
         @media print {
-            .fixed-footer, header, .no-print { display: none !important; }
             body { background: white; padding: 0; }
-            .content-padding { padding-top: 0; }
-            .invoice-box { box-shadow: none; border: none; }
+            .invoice-card { box-shadow: none; border: none; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
-<body class="bg-[#fcfcfd] antialiased">
+<body class="antialiased">
 
-    <header>
-        <div class="header-left">
-            <button onclick="window.history.back()" class="profile-btn">
-                <i data-lucide="x" class="header-user-icon"></i>
-            </button>
-        </div>
-        <div class="header-center">
-            <span class="text-[#1d4379] font-black uppercase text-sm">Reçu</span>
-        </div>
-        <div class="header-right">
-            <button onclick="window.print()" class="profile-btn">
-                <i data-lucide="printer" class="header-user-icon"></i>
-            </button>
-        </div>
-    </header>
-
-    <main class="content-padding pt-6 pb-28">
-        
-        <div class="invoice-box bg-white p-6 rounded-3xl border border-gray-100 shadow-lg relative overflow-hidden">
-            
-            <div class="absolute top-4 right-4 border-2 border-green-500 text-green-500 px-3 py-1 rounded text-xs font-black uppercase transform rotate-12 opacity-30">
-                PAYÉ
-            </div>
-
-            <div class="text-center mb-8 border-b border-gray-100 pb-6">
-                <img src="logo.png" class="h-8 mx-auto mb-4">
-                <p class="text-xs text-gray-400 font-bold uppercase">DjuntaCar Lda.</p>
-                <p class="text-[10px] text-gray-400">Sal, Santa Maria, Cap-Vert</p>
-                <p class="text-[10px] text-gray-400">NIF: 123456789</p>
-            </div>
-
-            <div class="flex justify-between mb-8">
-                <div>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase mb-1">Facturé à</p>
-                    <p class="text-xs font-black text-[#1d4379]">Carlos Semedo</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-[9px] font-bold text-gray-400 uppercase mb-1">Date & Réf</p>
-                    <p class="text-xs font-black text-[#1d4379]">24 Jan 2026</p>
-                    <p class="text-[10px] text-gray-500">#INV-001</p>
-                </div>
-            </div>
-
-            <div class="mb-6">
-                <div class="flex justify-between text-[10px] font-bold text-gray-400 uppercase border-b border-gray-100 pb-2 mb-3">
-                    <span>Description</span>
-                    <span>Total</span>
-                </div>
-
-                <div class="flex justify-between items-start mb-3">
-                    <div>
-                        <p class="text-xs font-bold text-[#1d4379]">Location Mercedes GLC</p>
-                        <p class="text-[10px] text-gray-400">3 Jours x 15 000 CVE</p>
-                    </div>
-                    <p class="text-xs font-bold text-[#1d4379]">45 000</p>
-                </div>
-
-                <div class="flex justify-between items-start mb-3">
-                    <div>
-                        <p class="text-xs font-bold text-[#1d4379]">Frais de service</p>
-                        <p class="text-[10px] text-gray-400">Plateforme (3%)</p>
-                    </div>
-                    <p class="text-xs font-bold text-[#1d4379]">1 500</p>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded-xl">
-                <div class="flex justify-between mb-2">
-                    <span class="text-[10px] font-bold text-gray-500">Sous-total</span>
-                    <span class="text-[10px] font-bold text-[#1d4379]">46 500 CVE</span>
-                </div>
-                <div class="flex justify-between mb-2">
-                    <span class="text-[10px] font-bold text-gray-500">TVA (15%)</span>
-                    <span class="text-[10px] font-bold text-[#1d4379]">Incluse</span>
-                </div>
-                <div class="border-t border-gray-200 mt-2 pt-2 flex justify-between items-center">
-                    <span class="text-xs font-black text-[#1d4379] uppercase">Total Payé</span>
-                    <span class="text-lg font-black text-[#1d4379]">46 500 CVE</span>
-                </div>
-            </div>
-
-            <div class="text-center mt-8">
-                <p class="text-[9px] text-gray-400 italic">Merci de votre confiance !</p>
-                <p class="text-[8px] text-gray-300 mt-1">Généré électroniquement par DjuntaCar.</p>
-            </div>
-
+    <div class="invoice-card" id="invoice-content">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-black text-[#1d4379] uppercase italic tracking-tighter">DjuntaCar</h1>
+            <p class="text-[9px] font-bold text-gray-400 uppercase mt-1">Recibo de Pagamento</p>
         </div>
 
-    </main>
+        <div class="mb-6 flex justify-between">
+            <div>
+                <p class="text-[9px] font-bold text-gray-400 uppercase">Cliente</p>
+                <p class="text-xs font-black text-[#1d4379]" id="client-name">...</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] font-bold text-gray-400 uppercase">Data</p>
+                <p class="text-xs font-black text-[#1d4379]" id="invoice-date">...</p>
+            </div>
+        </div>
 
-    <div class="fixed-footer">
-        <button onclick="window.print()" class="btn-action btn-primary shadow-xl flex items-center justify-center gap-2">
-            <i data-lucide="printer" class="w-4 h-4"></i>
-            Imprimer / Télécharger PDF
+        <div class="mb-6">
+            <p class="text-[9px] font-bold text-gray-400 uppercase mb-2">Detalhes</p>
+            <div class="line-item">
+                <span class="text-gray-600">Veículo</span>
+                <span class="font-bold text-[#1d4379]" id="car-name">...</span>
+            </div>
+            <div class="line-item">
+                <span class="text-gray-600">Período</span>
+                <span class="font-bold text-[#1d4379]" id="dates">...</span>
+            </div>
+            <div class="line-item">
+                <span class="text-gray-600">Duração</span>
+                <span class="font-bold text-[#1d4379]" id="duration">... dias</span>
+            </div>
+        </div>
+
+        <div class="mb-8 bg-gray-50 p-4 rounded-xl">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold text-gray-500">Subtotal</span>
+                <span class="text-xs font-bold text-gray-700" id="subtotal">...</span>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold text-gray-500">Taxa de Serviço (10%)</span>
+                <span class="text-xs font-bold text-gray-700" id="fee">...</span>
+            </div>
+            <div class="h-px bg-gray-200 my-2"></div>
+            <div class="flex justify-between items-center">
+                <span class="text-sm font-black text-[#1d4379]">TOTAL PAGO</span>
+                <span class="text-lg font-black text-[#1d4379]" id="total">...</span>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <p class="text-[8px] font-bold text-gray-400 uppercase">Obrigado pela preferência!</p>
+            <p class="text-[8px] font-bold text-gray-300 mt-1">ID: <span id="ref-id">...</span></p>
+        </div>
+    </div>
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 no-print max-w-md mx-auto flex gap-3">
+        <button onclick="window.history.back()" class="flex-1 h-14 bg-gray-100 text-gray-600 rounded-2xl font-black text-xs uppercase flex items-center justify-center gap-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+        </button>
+        <button onclick="window.print()" class="flex-1 h-14 bg-[#1d4379] text-white rounded-2xl font-black text-xs uppercase flex items-center justify-center gap-2 shadow-lg">
+            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
         </button>
     </div>
 
     <script>
-        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkEngine = setInterval(async () => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    loadInvoice();
+                }
+            }, 100);
+        });
+
+        async function loadInvoice() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            if (!id) { alert("Fatura não encontrada."); return; }
+
+            const { data: booking, error } = await DJUNTA.sb
+                .from('bookings')
+                .select('*, vehicles(brand, model), profiles(full_name)')
+                .eq('id', id)
+                .single();
+
+            if (booking) {
+                // Client Info
+                document.getElementById('client-name').innerText = booking.profiles.full_name;
+                document.getElementById('invoice-date').innerText = new Date(booking.created_at).toLocaleDateString('pt-CV');
+                document.getElementById('ref-id').innerText = booking.id;
+
+                // Car Info
+                document.getElementById('car-name').innerText = `${booking.vehicles.brand} ${booking.vehicles.model}`;
+                
+                // Dates
+                const start = new Date(booking.start_date);
+                const end = new Date(booking.end_date);
+                const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                
+                document.getElementById('dates').innerText = `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
+                document.getElementById('duration').innerText = days;
+
+                // Pricing
+                const total = booking.total_price;
+                const fee = Math.round(total * 0.10); // Approximation reverse (car total inclut déjà fee dans la DB souvent, à adapter)
+                // Ici on suppose que total_price est le montant final payé
+                const subtotal = total - fee;
+
+                document.getElementById('subtotal').innerText = DJUNTA.formatMoney(subtotal);
+                document.getElementById('fee').innerText = DJUNTA.formatMoney(fee);
+                document.getElementById('total').innerText = DJUNTA.formatMoney(total);
+                
+                if(window.lucide) lucide.createIcons();
+            }
+        }
     </script>
 </body>
 </html>
