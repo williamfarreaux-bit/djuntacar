@@ -1,6 +1,7 @@
 /**
- * DJUNTACAR CORE ENGINE v5.5 (FIX SELECTEUR LANGUE)
+ * DJUNTACAR CORE ENGINE v5.6 (STABLE RELEASE)
  * Architecture Hybride : HTML Squelette + JS Logique
+ * Correctif : Sélecteur de langue fonctionnel + Supabase
  */
 
 const DJUNTA = {
@@ -48,12 +49,12 @@ const DJUNTA = {
 
     // --- 4. INITIALISATION ---
     init: async function() {
-        console.log('DjuntaCar Core v5.5: Démarrage...');
+        console.log('DjuntaCar Core v5.6: Démarrage...');
         
         // 1. Logique immédiate (Langue & Clics)
         this.applyLang();
-        this.bindEvents();     // Menu Mobile
-        this.bindLanguage();   // <--- CORRECTION: Gestion du sélecteur
+        this.bindEvents();     // Active le menu mobile
+        this.bindLanguage();   // Active le sélecteur de langue
 
         // 2. Connexion Supabase
         if (window.supabase) {
@@ -81,22 +82,23 @@ const DJUNTA = {
         if (this.i18n[lang]) {
             this.state.lang = lang;
             localStorage.setItem('djunta_lang', lang);
-            // Rechargement forcé pour tout mettre à jour proprement
-            window.location.reload();
+            window.location.reload(); // Indispensable pour tout rafraîchir
         }
     },
 
-    // Fonction spécifique pour connecter le sélecteur HTML au moteur JS
+    // Connecte le sélecteur HTML au moteur JS
     bindLanguage: function() {
         const sel = document.getElementById('lang-select');
         if (sel) {
-            // 1. Mettre visuellement la bonne option (ex: afficher "FR" si on est en français)
+            // Affiche la langue actuelle dans le menu déroulant
             sel.value = this.state.lang;
             
-            // 2. Écouter le changement
-            sel.addEventListener('change', (e) => {
+            // Écoute le changement
+            sel.onchange = (e) => {
                 this.setLang(e.target.value);
-            });
+            };
+        } else {
+            console.warn("Sélecteur de langue introuvable dans le HTML");
         }
     },
 
@@ -113,10 +115,12 @@ const DJUNTA = {
         if (!container) return;
 
         if (this.state.session) {
+            // Connecté
             container.innerHTML = `
                 <a href="profile.html" style="text-decoration:none; color:inherit; display:flex; gap:10px;"><i data-lucide="user" style="width:18px"></i> ${this.t('nav_account')}</a>
                 <button id="action-logout" style="background:none; border:none; color:#ef4444; display:flex; gap:10px; font-weight:800; font-size:12px; text-transform:uppercase; cursor:pointer; margin-top:10px;"><i data-lucide="log-out" style="width:18px"></i> ${this.t('btn_logout')}</button>
             `;
+            // Attache l'événement logout après injection
             setTimeout(() => {
                 document.getElementById('action-logout')?.addEventListener('click', async () => {
                     await this.sb.auth.signOut();
@@ -124,6 +128,7 @@ const DJUNTA = {
                 });
             }, 100);
         } else {
+            // Déconnecté
             container.innerHTML = `
                 <a href="signup.html" style="text-decoration:none; color:#22c55e; display:flex; gap:10px;"><i data-lucide="log-in" style="width:18px"></i> ${this.t('btn_register')}</a>
                 <a href="login.html" style="text-decoration:none; color:inherit; display:flex; gap:10px;"><i data-lucide="user" style="width:18px"></i> ${this.t('btn_login')}</a>
@@ -138,7 +143,7 @@ const DJUNTA = {
             const k = el.getAttribute('data-key');
             if(k) el.innerText = this.t(k);
         });
-        // Footer
+        // Footer (cas spécial car liens)
         const f = document.getElementById('app-footer');
         if(f) {
             const t = f.querySelector('a[href="terms.html"]'); if(t) t.innerText = this.t('footer_terms');
@@ -168,6 +173,6 @@ const DJUNTA = {
     }
 };
 
-// --- DÉMARRAGE ---
+// --- DÉMARRAGE SÉCURISÉ ---
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => DJUNTA.init());
 else DJUNTA.init();
