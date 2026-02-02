@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Connexion - DjuntaCar</title>
+    <title>Login - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="config.js"></script>
-    <script src="layout.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
@@ -21,6 +21,7 @@
             min-height: 100vh; 
             display: flex; 
             flex-direction: column; 
+            margin: 0;
         }
 
         .login-card { 
@@ -66,6 +67,7 @@
             box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
             transition: all 0.2s;
             border: none;
+            cursor: pointer;
         }
 
         .btn-login:active {
@@ -80,55 +82,71 @@
     </style>
 </head>
 <body class="antialiased">
-    <div id="header-slot"></div>
+
+    <djunta-header></djunta-header>
 
     <main class="flex-grow flex items-center justify-center p-6">
         <div class="login-card">
             <div class="text-center mb-8">
-                <h1 class="text-2xl font-black text-[#1d4379] uppercase italic tracking-tighter">Connexion</h1>
+                <h1 class="text-2xl font-black text-[#1d4379] uppercase italic tracking-tighter" data-key="btn_login">Login</h1>
             </div>
 
             <form id="login-form">
                 <input type="email" id="email" class="input-field" placeholder="Email" required>
-                <input type="password" id="password" class="input-field" placeholder="Mot de passe" required>
-                <button type="submit" id="submit-btn" class="btn-login">Se connecter</button>
+                <input type="password" id="password" class="input-field" placeholder="Senha" required>
+                <button type="submit" id="submit-btn" class="btn-login" data-key="btn_login">ENTRAR</button>
             </form>
 
             <p class="mt-8 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                Nouveau ? <a href="signup.html" class="text-[#1d4379] underline">Créer un compte</a>
+                Novo? <a href="signup.html" class="text-[#1d4379] underline" data-key="btn_register">Criar conta</a>
             </p>
         </div>
     </main>
 
     <script>
-        // Initialisation Supabase avec les données du "Cerveau"
-        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
-
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            btn.innerText = "CONNEXION...";
-            btn.disabled = true;
-
-            try {
-                const { error } = await sb.auth.signInWithPassword({ email, password });
-
-                if (error) {
-                    alert("Erreur d'identifiants : " + error.message);
-                    btn.innerText = "SE CONNECTER";
-                    btn.disabled = false;
-                } else {
-                    window.location.href = 'profile.html';
+        document.addEventListener('DOMContentLoaded', () => {
+            // Attente du moteur
+            const checkEngine = setInterval(() => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    setupLogin();
                 }
-            } catch (err) {
-                alert("Une erreur technique est survenue.");
-                btn.innerText = "SE CONNECTER";
-                btn.disabled = false;
-            }
+            }, 100);
         });
+
+        function setupLogin() {
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const btn = document.getElementById('submit-btn');
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                // UI Loading
+                const originalText = btn.innerText;
+                btn.innerText = "AGUARDE...";
+                btn.disabled = true;
+
+                try {
+                    // Utilisation du client Supabase centralisé
+                    const { error } = await DJUNTA.sb.auth.signInWithPassword({ email, password });
+
+                    if (error) {
+                        alert("Erro: " + error.message);
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                    } else {
+                        // Succès : Redirection
+                        window.location.href = 'profile.html';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Erro técnico.");
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            });
+        }
     </script>
 </body>
 </html>
