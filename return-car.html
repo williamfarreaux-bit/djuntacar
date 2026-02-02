@@ -1,137 +1,255 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DjuntaCar - Restitution</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Devolução - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-[#fcfcfd] antialiased">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="djunta-master.js" defer></script>
 
-    <header>
-        <div class="header-left">
-            <button onclick="window.history.back()" class="profile-btn">
-                <i data-lucide="arrow-left" class="header-user-icon"></i>
-            </button>
-        </div>
-        <div class="header-center">
-            <span class="text-[#1d4379] font-black uppercase text-sm">Fin de location</span>
-        </div>
-        <div class="header-right">
-            </div>
-    </header>
-
-    <main class="content-padding pt-6 pb-28">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        <h1 class="text-2xl font-black text-[#1d4379] mb-2">Restitution Véhicule</h1>
-        <p class="text-xs font-bold text-gray-400 mb-6">Vérification finale avant clôture du contrat.</p>
+        body { background-color: #fcfcfd; padding-bottom: 140px; margin: 0; }
 
-        <div class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 mb-6 shadow-sm">
-            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d" class="w-16 h-16 rounded-xl object-cover">
-            <div>
-                <h3 class="font-black text-[#1d4379] text-sm">Mercedes GLC</h3>
-                <p class="text-[10px] text-gray-500 font-bold">Retour prévu : Aujourd'hui 10:00</p>
-                <span class="text-[9px] bg-green-100 text-green-700 px-2 py-0.5 rounded font-black uppercase mt-1 inline-block">À l'heure</span>
-            </div>
-        </div>
+        .step-indicator {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px; padding: 0 10px;
+        }
+        .step-dot {
+            width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0;
+        }
+        .step-dot.active { background: #ef4444; transform: scale(1.2); } /* Rouge pour le retour */
 
-        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2">1. Niveau Carburant</h2>
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 mb-6 shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-xs font-bold text-gray-600">Niveau de départ : <span class="text-[#1d4379]">Plein (F)</span></span>
-            </div>
-            
-            <div class="flex justify-between gap-1">
-                <button onclick="selectFuel(this, 'low')" class="flex-1 py-3 bg-red-50 text-red-500 rounded-lg text-[10px] font-black border border-transparent hover:border-red-200">E</button>
-                <button onclick="selectFuel(this, 'mid')" class="flex-1 py-3 bg-gray-50 text-gray-400 rounded-lg text-[10px] font-black hover:bg-gray-100">1/2</button>
-                <button onclick="selectFuel(this, 'ok')" class="flex-1 py-3 bg-[#1d4379] text-white rounded-lg text-[10px] font-black shadow-md ring-2 ring-offset-2 ring-[#1d4379]">F</button>
-            </div>
-            
-            <div id="fuelAlert" class="hidden mt-3 text-[10px] font-bold text-red-500 bg-red-50 p-2 rounded-lg flex items-center gap-2">
-                <i data-lucide="alert-circle" class="w-4 h-4"></i> Frais de remplissage : +2000 CVE
-            </div>
-        </div>
+        .upload-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+        }
+        
+        .photo-zone {
+            background: white; border: 2px dashed #cbd5e1; border-radius: 16px;
+            height: 120px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; position: relative;
+            overflow: hidden; cursor: pointer; transition: all 0.2s;
+        }
+        .photo-zone.has-file { border-style: solid; border-color: #ef4444; } /* Rouge */
+        
+        .photo-preview {
+            width: 100%; height: 100%; object-fit: cover; position: absolute;
+            top: 0; left: 0; display: none;
+        }
 
-        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2">2. Kilométrage</h2>
-        <div class="form-section">
-            <label class="input-label">Compteur actuel</label>
+        .input-box {
+            background: white; border: 1px solid #e2e8f0; border-radius: 16px;
+            padding: 16px; margin-bottom: 12px;
+        }
+
+        .fixed-footer { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: white; border-top: 1px solid #f1f5f9; 
+            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom)); 
+            z-index: 1000; 
+        }
+
+        .btn-main { 
+            width: 100%; height: 56px; background: #ef4444; 
+            color: white; border-radius: 18px; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: 1px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3); border: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <djunta-header></djunta-header>
+
+    <main class="max-w-md mx-auto px-6 pt-6">
+        
+        <div class="step-indicator">
+            <h1 class="text-xl font-black text-[#1d4379] uppercase">Devolução (Check-out)</h1>
             <div class="flex gap-2">
-                <input type="number" class="input-field" placeholder="Ex: 45 300">
-                <span class="bg-gray-100 flex items-center px-4 rounded-xl text-xs font-bold text-gray-500">km</span>
+                <div class="step-dot active"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot active"></div>
             </div>
-            <p class="text-[9px] text-gray-400 mt-2 text-right">Départ : 45 032 km</p>
         </div>
 
-        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-2 mt-6">3. Nouveaux Dommages ?</h2>
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <label class="cursor-pointer bg-white border border-gray-100 p-4 rounded-2xl flex flex-col items-center gap-2 shadow-sm has-[:checked]:border-red-500 has-[:checked]:bg-red-50">
-                <input type="radio" name="damage" class="hidden" onchange="toggleDamage(true)">
-                <i data-lucide="frown" class="w-8 h-8 text-gray-300"></i>
-                <span class="text-xs font-bold text-gray-600">Oui, dommage</span>
+        <p class="text-xs font-bold text-gray-400 mb-6">Inspeção final para encerrar o aluguer.</p>
+
+        <div id="vehicle-card" class="bg-red-50 border border-red-100 p-4 rounded-2xl flex items-center gap-4 mb-6">
+            <i data-lucide="loader-2" class="w-8 h-8 text-red-500 animate-spin"></i>
+            <div>
+                <h3 class="font-black text-[#1d4379] text-sm">A carregar...</h3>
+            </div>
+        </div>
+
+        <h2 class="text-[10px] font-black text-gray-400 uppercase mb-3 ml-1">1. Fotos de Retorno</h2>
+        <div class="upload-grid">
+            <label class="photo-zone" id="zone-front">
+                <i data-lucide="camera" class="w-6 h-6 text-gray-300 mb-1"></i>
+                <span class="text-[9px] font-bold text-gray-400 uppercase">Frente</span>
+                <img id="prev-front" class="photo-preview">
+                <input type="file" accept="image/*" capture="environment" hidden onchange="handleFile(this, 'front')">
             </label>
-            
-            <label class="cursor-pointer bg-white border border-gray-100 p-4 rounded-2xl flex flex-col items-center gap-2 shadow-sm has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
-                <input type="radio" name="damage" class="hidden" checked onchange="toggleDamage(false)">
-                <i data-lucide="smile" class="w-8 h-8 text-gray-300"></i>
-                <span class="text-xs font-bold text-gray-600">Rien à signaler</span>
+            <label class="photo-zone" id="zone-back">
+                <i data-lucide="camera" class="w-6 h-6 text-gray-300 mb-1"></i>
+                <span class="text-[9px] font-bold text-gray-400 uppercase">Trás</span>
+                <img id="prev-back" class="photo-preview">
+                <input type="file" accept="image/*" capture="environment" hidden onchange="handleFile(this, 'back')">
+            </label>
+            <label class="photo-zone" id="zone-left">
+                <i data-lucide="camera" class="w-6 h-6 text-gray-300 mb-1"></i>
+                <span class="text-[9px] font-bold text-gray-400 uppercase">Esq.</span>
+                <img id="prev-left" class="photo-preview">
+                <input type="file" accept="image/*" capture="environment" hidden onchange="handleFile(this, 'left')">
+            </label>
+            <label class="photo-zone" id="zone-right">
+                <i data-lucide="camera" class="w-6 h-6 text-gray-300 mb-1"></i>
+                <span class="text-[9px] font-bold text-gray-400 uppercase">Dir.</span>
+                <img id="prev-right" class="photo-preview">
+                <input type="file" accept="image/*" capture="environment" hidden onchange="handleFile(this, 'right')">
             </label>
         </div>
 
-        <div id="damageUpload" class="hidden animate-in fade-in slide-in-from-top-2">
-            <label class="upload-zone cursor-pointer bg-red-50 border-red-200">
-                <i data-lucide="camera" class="w-8 h-8 text-red-300 mb-2"></i>
-                <span class="text-xs font-bold text-red-500">Prendre photo du dégât</span>
-                <input type="file" class="hidden" capture="environment">
-            </label>
+        <h2 class="text-[10px] font-black text-gray-400 uppercase mb-3 ml-1">2. Estado Final</h2>
+        <div class="input-box flex justify-between items-center">
+            <span class="text-xs font-bold text-[#1d4379] uppercase">Quilometragem</span>
+            <input type="number" id="odometer" placeholder="00000" class="text-right font-black text-[#1d4379] outline-none w-24 bg-transparent">
+            <span class="text-xs font-bold text-gray-400 ml-1">km</span>
+        </div>
+
+        <div class="input-box">
+            <div class="flex justify-between mb-2">
+                <span class="text-xs font-bold text-[#1d4379] uppercase">Combustível</span>
+                <span id="fuel-val" class="text-xs font-black text-[#1d4379]">50%</span>
+            </div>
+            <input type="range" id="fuel" min="0" max="100" value="50" step="5" class="w-full accent-red-500" oninput="document.getElementById('fuel-val').innerText = this.value + '%'">
+        </div>
+
+        <div class="input-box">
+             <span class="text-xs font-bold text-[#1d4379] uppercase mb-2 block">Danos / Observações</span>
+             <textarea id="notes" class="w-full text-xs p-2 border border-gray-100 rounded-lg outline-none resize-none" placeholder="O carro tem algum novo risco ou problema?"></textarea>
         </div>
 
     </main>
 
     <div class="fixed-footer">
-        <div class="flex items-center justify-between mb-4 px-1">
-            <span class="text-xs font-bold text-gray-500">Caution (20.000 CVE)</span>
-            <span class="text-xs font-black text-green-600">Sera libérée</span>
-        </div>
-        <button onclick="finalizeReturn()" class="btn-action btn-primary shadow-xl">
-            Clôturer le contrat
+        <button id="btn-submit" onclick="submitCheckOut()" class="btn-main active:scale-95 transition-transform">
+            Finalizar Aluguer
         </button>
     </div>
 
     <script>
-        lucide.createIcons();
+        let bookingId = null;
+        const photos = { front: null, back: null, left: null, right: null };
 
-        function selectFuel(btn, level) {
-            // Reset styles
-            btn.parentNode.querySelectorAll('button').forEach(b => {
-                b.className = "flex-1 py-3 bg-gray-50 text-gray-400 rounded-lg text-[10px] font-black hover:bg-gray-100";
-            });
-            // Active style
-            if(level === 'ok') {
-                btn.className = "flex-1 py-3 bg-[#1d4379] text-white rounded-lg text-[10px] font-black shadow-md ring-2 ring-offset-2 ring-[#1d4379]";
-                document.getElementById('fuelAlert').classList.add('hidden');
-            } else {
-                btn.className = "flex-1 py-3 bg-red-500 text-white rounded-lg text-[10px] font-black shadow-md ring-2 ring-offset-2 ring-red-500";
-                document.getElementById('fuelAlert').classList.remove('hidden');
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkEngine = setInterval(async () => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    
+                    const params = new URLSearchParams(window.location.search);
+                    bookingId = params.get('booking_id');
+
+                    if(bookingId) {
+                        loadBooking(bookingId);
+                    } else {
+                        alert("Reserva não encontrada.");
+                        window.history.back();
+                    }
+                }
+            }, 100);
+        });
+
+        async function loadBooking(id) {
+            const { data: booking, error } = await DJUNTA.sb
+                .from('bookings')
+                .select('*, vehicles(brand, model, license_plate)')
+                .eq('id', id)
+                .single();
+
+            if(booking && booking.vehicles) {
+                document.getElementById('vehicle-card').innerHTML = `
+                    <i data-lucide="car" class="w-8 h-8 text-red-500"></i>
+                    <div>
+                        <h3 class="font-black text-[#1d4379] text-sm uppercase">${booking.vehicles.brand} ${booking.vehicles.model}</h3>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase">Matrícula: ${booking.vehicles.license_plate || '---'}</p>
+                    </div>
+                `;
+                if(window.lucide) lucide.createIcons();
             }
         }
 
-        function toggleDamage(hasDamage) {
-            const zone = document.getElementById('damageUpload');
-            if(hasDamage) {
-                zone.classList.remove('hidden');
-            } else {
-                zone.classList.add('hidden');
+        function handleFile(input, side) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                photos[side] = file;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.getElementById(`prev-${side}`);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById(`zone-${side}`).classList.add('has-file');
+                };
+                reader.readAsDataURL(file);
             }
         }
 
-        function finalizeReturn() {
-            if(confirm("Confirmer la restitution et générer la facture ?")) {
-                // Redirection vers la notation
-                window.location.href = 'rate-experience.html';
+        async function submitCheckOut() {
+            const btn = document.getElementById('btn-submit');
+            const odo = document.getElementById('odometer').value;
+            const fuel = document.getElementById('fuel').value;
+            const notes = document.getElementById('notes').value;
+
+            if (!odo) { alert("Indique a quilometragem final."); return; }
+            if (!photos.front) { alert("Foto da frente obrigatória."); return; }
+
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> A FINALIZAR...`;
+            btn.disabled = true;
+
+            try {
+                // 1. Upload Photos
+                const uploadedUrls = {};
+                for (const [key, file] of Object.entries(photos)) {
+                    if (file) {
+                        const path = `inspections/${bookingId}/return_${key}_${Date.now()}.jpg`;
+                        await DJUNTA.sb.storage.from('inspections').upload(path, file);
+                        uploadedUrls[key] = path; 
+                    }
+                }
+
+                // 2. Insert Inspection Record (Check-out)
+                const { error } = await DJUNTA.sb.from('inspections').insert([{
+                    booking_id: bookingId,
+                    type: 'check-out',
+                    odometer: odo,
+                    fuel_level: fuel,
+                    notes: notes,
+                    photos: uploadedUrls,
+                    performed_at: new Date()
+                }]);
+
+                if(error) throw error;
+
+                // 3. Update Booking Status -> Completed (Disponible pour notation)
+                await DJUNTA.sb.from('bookings').update({ status: 'completed' }).eq('id', bookingId);
+
+                alert("Devolução concluída! Obrigado.");
+                // Redirection vers la page de notation
+                window.location.href = `rate-experience.html?booking_id=${bookingId}`;
+
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao finalizar. Tente novamente.");
+                btn.innerText = "TENTAR NOVAMENTE";
+                btn.disabled = false;
             }
         }
     </script>
