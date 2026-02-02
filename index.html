@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DjuntaCar</title>
-    
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="djunta-core.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         body { background-color: #fcfcfd; margin: 0; padding-bottom: 120px; }
-        
-        /* Styles spécifiques à l'Accueil */
         .hero-section { background-color: #1d4379; padding: 40px 0 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; text-align: center; position: relative; }
         .search-wrapper { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 90%; max-width: 500px; z-index: 30; }
         .search-bar { background: white; border-radius: 20px; padding: 16px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; cursor: pointer; }
@@ -69,15 +66,12 @@
             const checkCore = setInterval(async () => {
                 if(window.DJUNTA && DJUNTA.sb) {
                     clearInterval(checkCore);
-                    
                     const { data: vehicles, error } = await DJUNTA.sb.from('vehicles').select('*');
                     const feed = document.getElementById('cars-feed');
-
                     if(error || !vehicles || vehicles.length === 0) {
                         feed.innerHTML = `<p class="text-center text-gray-400 font-bold uppercase text-[10px] py-20">${DJUNTA.t('msg_no_car')}</p>`;
                         return;
                     }
-
                     feed.innerHTML = vehicles.map(v => `
                         <div class="bg-white rounded-[30px] overflow-hidden shadow-sm border border-gray-100 mb-2" onclick="window.location.href='car-detail.html?id=${v.id}'">
                             <img src="${v.image_url}" class="w-full h-48 object-cover" style="background:#f1f5f9;">
@@ -92,7 +86,6 @@
                                 </div>
                             </div>
                         </div>`).join('');
-                        
                     if(window.lucide) lucide.createIcons();
                 }
             }, 500); 
