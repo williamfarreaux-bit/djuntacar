@@ -1,82 +1,91 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Paiement - DjuntaCar</title>
+    <title>Pagamento - DjuntaCar</title>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="config.js"></script>
-    <script src="layout.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #fcfcfd; padding-bottom: 140px; }
+        body { background-color: #fcfcfd; padding-bottom: 140px; margin: 0; }
 
-        .payment-card {
-            background: white; border-radius: 30px;
-            padding: 24px; border: 1px solid #f1f5f9;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        .payment-card { 
+            background: white; border-radius: 30px; 
+            padding: 24px; border: 1px solid #f1f5f9; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); 
         }
 
-        .input-pay {
-            width: 100%; height: 60px; border-radius: 18px;
-            background: #f8fafc; border: 1px solid #e2e8f0;
-            padding: 0 20px; font-weight: 700; font-size: 14px;
-            outline: none; transition: border-color 0.2s;
+        .input-pay { 
+            width: 100%; height: 60px; border-radius: 18px; 
+            background: #f8fafc; border: 1px solid #e2e8f0; 
+            padding: 0 20px; font-weight: 700; font-size: 14px; 
+            outline: none; transition: border-color 0.2s; 
         }
         .input-pay:focus { border-color: #1d4379; background: white; }
 
-        .method-btn {
-            border: 2px solid #f1f5f9; border-radius: 20px;
-            padding: 16px; flex: 1; display: flex; flex-direction: column;
-            align-items: center; gap: 8px; transition: all 0.2s;
+        .method-btn { 
+            border: 2px solid #f1f5f9; border-radius: 20px; 
+            padding: 16px; flex: 1; display: flex; flex-direction: column; 
+            align-items: center; gap: 8px; transition: all 0.2s; 
+            cursor: pointer; background: white;
         }
         .method-btn.active { border-color: #1d4379; background: #eff6ff; }
 
-        .fixed-confirm {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; border-top: 1px solid #f1f5f9;
-            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom));
-            z-index: 1000;
+        .fixed-confirm { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: white; border-top: 1px solid #f1f5f9; 
+            padding: 20px 24px; padding-bottom: max(20px, env(safe-area-inset-bottom)); 
+            z-index: 1000; 
         }
 
-        .btn-pay {
-            width: 100%; height: 65px; background: #1d4379;
-            color: white; border-radius: 22px; font-weight: 900;
-            text-transform: uppercase; letter-spacing: 1px;
+        .btn-pay { 
+            width: 100%; height: 65px; background: #1d4379; 
+            color: white; border-radius: 22px; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: 1px; 
             box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
+            border: none; cursor: pointer;
+        }
+        
+        .btn-pay:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            box-shadow: none;
         }
     </style>
 </head>
 <body class="antialiased">
 
+    <djunta-header></djunta-header>
+
     <main class="max-w-md mx-auto px-6 pt-8">
-        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-6 italic">Finaliser la réservation</h1>
+        <h1 class="text-2xl font-black text-[#1d4379] uppercase mb-6 italic">Finalizar Reserva</h1>
 
         <div class="payment-card mb-6 flex items-center gap-4">
             <img id="car-thumb" src="" class="w-20 h-20 rounded-2xl object-cover bg-gray-100">
             <div>
-                <h2 id="car-name" class="font-black text-[#1d4379] uppercase text-sm">Chargement...</h2>
-                <p id="stay-dates" class="text-[10px] font-bold text-gray-400 mt-1 uppercase"></p>
+                <h2 id="car-name" class="font-black text-[#1d4379] uppercase text-sm">Carregando...</h2>
+                <p id="stay-dates" class="text-[10px] font-bold text-gray-400 mt-1 uppercase">...</p>
             </div>
         </div>
 
         <div class="payment-card mb-6">
-            <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4">Détails de la facturation</h3>
+            <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4">Detalhes da Fatura</h3>
             <div class="space-y-3">
                 <div class="flex justify-between text-xs font-bold text-gray-500">
-                    <span>Location (<span id="nb-days">0</span> j)</span>
+                    <span>Aluguer (<span id="nb-days">0</span> dias)</span>
                     <span id="subtotal">0 CVE</span>
                 </div>
                 <div class="flex justify-between text-xs font-bold text-gray-500">
-                    <span>Frais de service (10%)</span>
+                    <span>Taxa Serviço (10%)</span>
                     <span id="fee">0 CVE</span>
                 </div>
                 <div class="h-px bg-gray-100 my-2"></div>
@@ -87,11 +96,11 @@
             </div>
         </div>
 
-        <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4 ml-2">Mode de paiement</h3>
+        <h3 class="text-[11px] font-black text-[#1d4379] uppercase tracking-widest mb-4 ml-2">Método de Pagamento</h3>
         <div class="flex gap-3 mb-6">
             <button onclick="selectMethod('card')" id="method-card" class="method-btn active">
                 <i data-lucide="credit-card" class="w-6 h-6"></i>
-                <span class="text-[10px] font-black uppercase">Carte</span>
+                <span class="text-[10px] font-black uppercase">Cartão</span>
             </button>
             <button onclick="selectMethod('mobi')" id="method-mobi" class="method-btn">
                 <i data-lucide="smartphone" class="w-6 h-6"></i>
@@ -100,8 +109,8 @@
         </div>
 
         <div id="card-form" class="space-y-4">
-            <input type="text" placeholder="Nom sur la carte" class="input-pay uppercase">
-            <input type="text" placeholder="Numéro de carte" class="input-pay" maxlength="16">
+            <input type="text" placeholder="Nome no Cartão" class="input-pay uppercase">
+            <input type="text" placeholder="Número do Cartão" class="input-pay" maxlength="19">
             <div class="flex gap-3">
                 <input type="text" placeholder="MM/YY" class="input-pay" maxlength="5">
                 <input type="password" placeholder="CVV" class="input-pay" maxlength="3">
@@ -110,83 +119,70 @@
     </main>
 
     <div class="fixed-confirm">
-        <button onclick="processPayment()" class="btn-pay active:scale-95 transition-transform flex items-center justify-center gap-3">
-            <i data-lucide="lock" class="w-5 h-5"></i> Confirmer le paiement
+        <button id="btn-confirm" onclick="processPayment()" class="btn-pay active:scale-95 transition-transform flex items-center justify-center gap-3">
+            <i data-lucide="lock" class="w-5 h-5"></i> Confirmar Pagamento
         </button>
     </div>
 
     <script>
-        const supabase = window.supabase.createClient(DJUNTA_CONFIG.supabaseUrl, DJUNTA_CONFIG.supabaseKey);
-        
-        const params = new URLSearchParams(window.location.search);
-        const carId = params.get('id');
-        const start = params.get('start');
-        const end = params.get('end');
-
+        // Variables globales
         let dailyPrice = 0;
+        let totalPrice = 0;
+        let days = 1;
+        let startDateStr = '';
+        let endDateStr = '';
+        
+        // Attente moteur
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkEngine = setInterval(async () => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    initCheckout();
+                }
+            }, 100);
+        });
 
-        async function init() {
-            if (!carId) return window.location.href = 'index.html';
+        async function initCheckout() {
+            const params = new URLSearchParams(window.location.search);
+            const carId = params.get('id');
+            // Récupérer dates de l'URL ou utiliser défaut
+            const startParam = params.get('start');
+            const endParam = params.get('end');
 
-            const { data: car } = await supabase.from('vehicles').select('*').eq('id', carId).single();
+            if (!carId) { window.location.href = 'index.html'; return; }
+
+            // Fetch Car Info
+            const { data: car } = await DJUNTA.sb.from('vehicles').select('*').eq('id', carId).single();
             
             if (car) {
                 dailyPrice = car.price_per_day;
                 document.getElementById('car-thumb').src = car.image_url;
                 document.getElementById('car-name').innerText = `${car.brand} ${car.model}`;
-                calculateBilling();
+                
+                // Calcul Dates
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                startDateStr = startParam || today.toISOString();
+                endDateStr = endParam || tomorrow.toISOString();
+
+                calculateBilling(startDateStr, endDateStr);
             }
-            lucide.createIcons();
+            if(window.lucide) lucide.createIcons();
         }
 
-        function calculateBilling() {
-            let days = 1;
-            if (start && end) {
-                const diffTime = Math.abs(new Date(end) - new Date(start));
-                days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
-                
-                const opt = { day: 'numeric', month: 'short' };
-                document.getElementById('stay-dates').innerText = `${new Date(start).toLocaleDateString('fr-FR', opt)} - ${new Date(end).toLocaleDateString('fr-FR', opt)}`;
-            }
+        function calculateBilling(start, end) {
+            const d1 = new Date(start);
+            const d2 = new Date(end);
+            const diffTime = Math.abs(d2 - d1);
+            days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+            
+            // UI Dates
+            const opt = { day: 'numeric', month: 'short' };
+            document.getElementById('stay-dates').innerText = `${d1.toLocaleDateString('pt-CV', opt)} - ${d2.toLocaleDateString('pt-CV', opt)}`;
 
+            // UI Prix
             const subtotal = dailyPrice * days;
             const fee = Math.round(subtotal * 0.10);
-            const total = subtotal + fee;
-
-            document.getElementById('nb-days').innerText = days;
-            document.getElementById('subtotal').innerText = `${subtotal.toLocaleString()} CVE`;
-            document.getElementById('fee').innerText = `${fee.toLocaleString()} CVE`;
-            document.getElementById('total-price').innerText = `${total.toLocaleString()} CVE`;
-        }
-
-        function selectMethod(method) {
-            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`method-${method}`).classList.add('active');
-        }
-
-        async function processPayment() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return window.location.href = 'login.html';
-
-            // Simulation de création de réservation
-            const { error } = await supabase.from('bookings').insert([{
-                vehicle_id: carId,
-                user_id: user.id,
-                start_date: start,
-                end_date: end,
-                total_price: parseInt(document.getElementById('total-price').innerText.replace(/\s/g, '')),
-                status: 'confirmed'
-            }]);
-
-            if (!error) {
-                alert("Paiement réussi ! Votre réservation est confirmée.");
-                window.location.href = 'my-rentals.html';
-            } else {
-                alert("Erreur lors de la réservation. Veuillez réessayer.");
-            }
-        }
-
-        init();
-    </script>
-</body>
-</html>
+            total
