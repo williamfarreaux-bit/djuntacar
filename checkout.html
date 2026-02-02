@@ -51,7 +51,7 @@
             width: 100%; height: 65px; background: #1d4379; 
             color: white; border-radius: 22px; font-weight: 900; 
             text-transform: uppercase; letter-spacing: 1px; 
-            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2); 
             border: none; cursor: pointer;
         }
         
@@ -120,7 +120,7 @@
 
     <div class="fixed-confirm">
         <button id="btn-confirm" onclick="processPayment()" class="btn-pay active:scale-95 transition-transform flex items-center justify-center gap-3">
-            <i data-lucide="lock" class="w-5 h-5"></i> Confirmar Pagamento
+            <i data-lucide="lock" class="w-5 h-5"></i> Confirmar e Pagar
         </button>
     </div>
 
@@ -145,7 +145,6 @@
         async function initCheckout() {
             const params = new URLSearchParams(window.location.search);
             const carId = params.get('id');
-            // Récupérer dates de l'URL ou utiliser défaut
             const startParam = params.get('start');
             const endParam = params.get('end');
 
@@ -159,13 +158,13 @@
                 document.getElementById('car-thumb').src = car.image_url;
                 document.getElementById('car-name').innerText = `${car.brand} ${car.model}`;
                 
-                // Calcul Dates
+                // Calcul Dates (Par défaut Demain à Après-demain si vide)
                 const today = new Date();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+                const dayAfter = new Date(tomorrow); dayAfter.setDate(dayAfter.getDate() + 2);
 
-                startDateStr = startParam || today.toISOString();
-                endDateStr = endParam || tomorrow.toISOString();
+                startDateStr = startParam || tomorrow.toISOString();
+                endDateStr = endParam || dayAfter.toISOString();
 
                 calculateBilling(startDateStr, endDateStr);
             }
@@ -185,4 +184,33 @@
             // UI Prix
             const subtotal = dailyPrice * days;
             const fee = Math.round(subtotal * 0.10);
-            total
+            totalPrice = subtotal + fee;
+
+            document.getElementById('nb-days').innerText = days;
+            document.getElementById('subtotal').innerText = DJUNTA.formatMoney(subtotal);
+            document.getElementById('fee').innerText = DJUNTA.formatMoney(fee);
+            document.getElementById('total-price').innerText = DJUNTA.formatMoney(totalPrice);
+        }
+
+        function selectMethod(method) {
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`method-${method}`).classList.add('active');
+        }
+
+        async function processPayment() {
+            const btn = document.getElementById('btn-confirm');
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> A Processar...`;
+            btn.disabled = true;
+
+            const { data: { user } } = await DJUNTA.sb.auth.getUser();
+            if (!user) {
+                // Stocker l'URL actuelle pour y revenir après login
+                sessionStorage.setItem('redirect_after_login', window.location.href);
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const carId = params.get('id');
+
+            // Création de la réservation
