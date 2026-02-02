@@ -10,13 +10,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="config.js"></script>
-    <script src="layout.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #fcfcfd; padding-bottom: 120px; }
+        body { background-color: #fcfcfd; padding-bottom: 120px; margin: 0; }
         .verification-card { background: white; border-radius: 35px; padding: 24px; border: 1px solid #f1f5f9; margin-bottom: 20px; }
         .upload-zone { border: 2px dashed #e2e8f0; border-radius: 20px; min-height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; background: #f8fafc; transition: 0.2s; }
         .upload-zone.has-file { border-style: solid; border-color: #22c55e; }
@@ -30,7 +29,7 @@
 </head>
 <body class="antialiased">
 
-    <div id="header-slot"></div>
+    <djunta-header></djunta-header>
 
     <main class="max-w-md mx-auto px-6 pt-6">
         <h1 class="text-2xl font-black text-[#1d4379] uppercase italic mb-8">Vérification</h1>
@@ -78,8 +77,16 @@
     </div>
 
     <script>
-        // Initialisation avec la structure exacte de votre config.js
-        const sb = window.supabase.createClient(DJUNTA_CONFIG.supabase.url, DJUNTA_CONFIG.supabase.anonKey);
+        // Attente du Master Engine
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkEngine = setInterval(() => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    if(window.lucide) lucide.createIcons();
+                }
+            }, 100);
+        });
+
         let files = { selfie: null, id: null, license: null };
 
         function previewFile(input, type) {
@@ -96,45 +103,46 @@
         }
 
         async function startUpload() {
-            const { data: auth, error: authError } = await sb.auth.getUser();
+            // Utilisation du client Supabase centralisé
+            const { data: auth, error: authError } = await DJUNTA.sb.auth.getUser();
             const user = auth?.user;
 
             if (!user) {
-                alert("Session expirée. Veuillez vous reconnecter.");
+                alert("Sessão expirada. Faça login novamente.");
                 window.location.href = 'login.html';
                 return;
             }
 
             if (!files.selfie || !files.id) {
-                alert("Le selfie et la pièce d'identité sont obligatoires.");
+                alert("Selfie e documento de identidade são obrigatórios.");
                 return;
             }
             
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerText = "ENVOI SÉCURISÉ...";
+            btn.innerText = "ENVIANDO...";
 
             try {
                 // 1. Upload Selfie
                 const selfiePath = `${user.id}/selfie_${Date.now()}`;
-                await sb.storage.from('identity-docs').upload(selfiePath, files.selfie);
-                const selfieUrl = sb.storage.from('identity-docs').getPublicUrl(selfiePath).data.publicUrl;
+                await DJUNTA.sb.storage.from('identity-docs').upload(selfiePath, files.selfie);
+                const selfieUrl = DJUNTA.sb.storage.from('identity-docs').getPublicUrl(selfiePath).data.publicUrl;
 
                 // 2. Upload CNI
                 const idPath = `${user.id}/cni_${Date.now()}`;
-                await sb.storage.from('identity-docs').upload(idPath, files.id);
-                const idUrl = sb.storage.from('identity-docs').getPublicUrl(idPath).data.publicUrl;
+                await DJUNTA.sb.storage.from('identity-docs').upload(idPath, files.id);
+                const idUrl = DJUNTA.sb.storage.from('identity-docs').getPublicUrl(idPath).data.publicUrl;
 
                 // 3. Upload Permis (Optionnel)
                 let licenseUrl = null;
                 if (files.license) {
                     const licPath = `${user.id}/permis_${Date.now()}`;
-                    await sb.storage.from('identity-docs').upload(licPath, files.license);
-                    licenseUrl = sb.storage.from('identity-docs').getPublicUrl(licPath).data.publicUrl;
+                    await DJUNTA.sb.storage.from('identity-docs').upload(licPath, files.license);
+                    licenseUrl = DJUNTA.sb.storage.from('identity-docs').getPublicUrl(licPath).data.publicUrl;
                 }
 
                 // 4. Mise à jour Profil
-                const { error: dbError } = await sb.from('profiles').update({
+                const { error: dbError } = await DJUNTA.sb.from('profiles').update({
                     selfie_url: selfieUrl,
                     id_card_url: idUrl,
                     driver_license_url: licenseUrl,
@@ -143,20 +151,16 @@
 
                 if (dbError) throw dbError;
 
-                alert("Dossier soumis avec succès !");
+                alert("Documentos enviados com sucesso!");
                 window.location.href = 'profile.html';
 
             } catch (err) {
                 console.error("Erreur d'upload:", err);
-                alert("Une erreur est survenue lors de l'envoi.");
+                alert("Erro ao enviar os documentos.");
                 btn.disabled = false;
-                btn.innerText = "RÉESSAYER";
+                btn.innerText = "TENTAR NOVAMENTE";
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.lucide) lucide.createIcons();
-        });
     </script>
 </body>
 </html>
