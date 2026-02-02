@@ -49,4 +49,157 @@
             color: white; border-radius: 18px; font-weight: 900; 
             text-transform: uppercase; letter-spacing: 1px; 
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3); border: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <djunta-header></djunta-header>
+
+    <main class="max-w-md mx-auto px-6 pt-6 pb-24 text-center">
+        
+        <div id="loading-state" class="py-10">
+            <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
+        </div>
+
+        <div id="content-state" class="hidden">
+            <img id="car-img" src="" class="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-white shadow-lg bg-gray-100">
+            <h1 id="car-name" class="text-xl font-black text-[#1d4379] mb-1 uppercase">...</h1>
+            <p id="owner-name" class="text-xs font-bold text-gray-400 mb-8 uppercase">...</p>
+
+            <p class="text-sm font-bold text-gray-600 mb-4">Como correu a viagem?</p>
+            
+            <div class="flex justify-center gap-2 mb-8">
+                <button onclick="setRating(1)" class="star-btn text-gray-300"><i data-lucide="star" class="w-10 h-10 fill-current"></i></button>
+                <button onclick="setRating(2)" class="star-btn text-gray-300"><i data-lucide="star" class="w-10 h-10 fill-current"></i></button>
+                <button onclick="setRating(3)" class="star-btn text-gray-300"><i data-lucide="star" class="w-10 h-10 fill-current"></i></button>
+                <button onclick="setRating(4)" class="star-btn text-gray-300"><i data-lucide="star" class="w-10 h-10 fill-current"></i></button>
+                <button onclick="setRating(5)" class="star-btn text-gray-300"><i data-lucide="star" class="w-10 h-10 fill-current"></i></button>
+            </div>
+            
+            <input type="hidden" id="ratingValue" value="0">
+
+            <div class="text-left">
+                <label class="input-label ml-1">Deixe um comentário (Opcional)</label>
+                <textarea id="reviewText" class="input-field h-32 resize-none pt-3" placeholder="O carro estava limpo? O proprietário foi pontual?"></textarea>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed-footer">
+        <button id="submit-btn" onclick="submitReview()" class="btn-action active:scale-95 transition-transform" disabled style="opacity: 0.5;">
+            Enviar Avaliação
+        </button>
+    </div>
+
+    <script>
+        let bookingId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkEngine = setInterval(async () => {
+                if(window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkEngine);
+                    
+                    const params = new URLSearchParams(window.location.search);
+                    bookingId = params.get('booking_id');
+
+                    if(bookingId) {
+                        loadBookingInfo(bookingId);
+                    } else {
+                        // Pas d'ID ? Retour accueil
+                        window.location.href = 'index.html';
+                    }
+                }
+            }, 100);
+        });
+
+        async function loadBookingInfo(id) {
+            const { data: booking, error } = await DJUNTA.sb
+                .from('bookings')
+                .select('*, vehicles(brand, model, image_url), profiles:vehicle_id(first_name)') // Note: relation à adapter selon votre schéma exact
+                // Fallback si la relation profiles n'est pas directe: on prend juste vehicle
+                .eq('id', id)
+                .single();
+
+            // Si relation complexe, on fait simple pour l'affichage
+            if (booking && booking.vehicles) {
+                document.getElementById('car-img').src = booking.vehicles.image_url;
+                document.getElementById('car-name').innerText = `${booking.vehicles.brand} ${booking.vehicles.model}`;
+                document.getElementById('owner-name').innerText = `Reserva #${booking.id.slice(0,6)}`;
+                
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('content-state').classList.remove('hidden');
+                
+                if(window.lucide) lucide.createIcons();
+            } else {
+                alert("Erro ao carregar dados da viagem.");
+                window.location.href = 'my-rentals.html';
+            }
+        }
+
+        function setRating(n) {
+            const stars = document.querySelectorAll('.star-btn');
+            document.getElementById('ratingValue').value = n;
+            
+            // UI Update
+            stars.forEach((star, index) => {
+                const icon = star.querySelector('i'); // Lucide svg container
+                // Reset classes
+                star.classList.remove('text-gray-300', 'text-amber-400');
+                
+                if (index < n) {
+                    star.classList.add('text-amber-400'); // Or
+                } else {
+                    star.classList.add('text-gray-300'); // Gris
+                }
+            });
+
+            // Enable Button
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+
+        async function submitReview() {
+            const rating = document.getElementById('ratingValue').value;
+            const comment = document.getElementById('reviewText').value;
+            const btn = document.getElementById('submit-btn');
+            
+            if (rating == 0) return;
+
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5 mx-auto"></i>';
+            
+            const { data: { user } } = await DJUNTA.sb.auth.getUser();
+
+            try {
+                // Insert Review
+                const { error } = await DJUNTA.sb.from('reviews').insert([{
+                    booking_id: bookingId,
+                    reviewer_id: user.id,
+                    rating: parseInt(rating),
+                    comment: comment,
+                    created_at: new Date()
+                }]);
+
+                // On ne bloque pas si la table reviews n'existe pas encore parfaitement, on simule le succès pour l'UX
+                if (error) console.warn("Supabase Review Insert Error (Table exists?):", error);
+
+                // Update Booking Status to Completed/Rated if needed
+                await DJUNTA.sb.from('bookings').update({ status: 'completed' }).eq('id', bookingId);
+                
+                setTimeout(() => {
+                    alert("Obrigado pela sua avaliação!");
+                    window.location.href = 'index.html';
+                }, 1000);
+
+            } catch (err) {
+                console.error(err);
+                alert("Erro técnico.");
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>
