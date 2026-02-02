@@ -1,118 +1,35 @@
-/**
- * DJUNTA MASTER ENGINE v10.1
- * Mode: "Logic Only"
- * Ce fichier ne dessine plus le menu. Il gère :
- * 1. La connexion Supabase
- * 2. La traduction automatique (i18n)
- * 3. Le formatage de l'argent
- */
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DjuntaCar</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="djunta-master.js" defer></script>
 
-// 1. CONFIGURATION
-const CONFIG = {
-    supabaseUrl: "https://enuiuuwnjzvpfvpklmjw.supabase.co",
-    supabaseKey: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-",
-    defaultLang: 'pt'
-};
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+        
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #f8fafc; margin: 0; padding-top: 70px; padding-bottom: 120px; }
+        
+        /* Animation fluide pour le menu mobile */
+        .slide-enter { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 
-// 2. DICTIONNAIRE DE TRADUCTION
-const TRANSLATIONS = {
-    pt: {
-        nav_home: "Início", nav_rent: "Alugar", nav_trips: "Minhas Viagens", nav_driver: "Motorista", nav_profile: "Perfil", nav_settings: "Definições",
-        hero_title: "Alugue um carro em Cabo Verde",
-        search_placeholder: "Para onde quer ir?",
-        btn_add_car: "Adicionar carro",
-        btn_become_driver: "Ser motorista",
-        msg_no_car: "Nenhum veículo disponível no momento.",
-        label_day: "/ dia"
-    },
-    fr: {
-        nav_home: "Accueil", nav_rent: "Louer", nav_trips: "Mes Trajets", nav_driver: "Chauffeur", nav_profile: "Profil", nav_settings: "Paramètres",
-        hero_title: "Louez une voiture au Cap-Vert",
-        search_placeholder: "Où souhaitez-vous aller ?",
-        btn_add_car: "Ajouter un véhicule",
-        btn_become_driver: "Devenir chauffeur",
-        msg_no_car: "Aucun véhicule disponible pour le moment.",
-        label_day: "/ jour"
-    },
-    en: {
-        nav_home: "Home", nav_rent: "Rent", nav_trips: "My Trips", nav_driver: "Driver", nav_profile: "Profile", nav_settings: "Settings",
-        hero_title: "Rent a car in Cape Verde",
-        search_placeholder: "Where do you want to go?",
-        btn_add_car: "Add a car",
-        btn_become_driver: "Become a driver",
-        msg_no_car: "No vehicles available at the moment.",
-        label_day: "/ day"
-    }
-};
+        /* Styles spécifiques Hero */
+        .hero-section { background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); padding: 30px 0 70px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; text-align: center; position: relative; }
+        
+        /* Barre de recherche flottante */
+        .search-wrapper { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 90%; max-width: 500px; z-index: 30; }
+        .search-bar { background: white; border-radius: 20px; padding: 12px 20px; box-shadow: 0 15px 35px rgba(29, 67, 121, 0.15); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; cursor: pointer; transition: transform 0.1s; }
+        .search-bar:active { transform: scale(0.98); }
 
-// 3. CLASSE MOTEUR
-class DjuntaEngine {
-    constructor() {
-        this.sb = null;
-        // Récupère la langue du navigateur ou la langue par défaut
-        this.lang = localStorage.getItem('djunta_lang') || CONFIG.defaultLang;
-        this.dict = TRANSLATIONS[this.lang];
-    }
-
-    // Démarrage
-    init() {
-        console.log(`🚀 Djunta Logic v10 démarré en [${this.lang}]`);
-
-        // A. Connexion Supabase
-        if (window.supabase) {
-            this.sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
-        } else {
-            console.warn("⚠️ Supabase non chargé.");
-        }
-
-        // B. Synchroniser le sélecteur de langue HTML avec la langue actuelle
-        const langSelect = document.getElementById('lang-selector');
-        if (langSelect) {
-            langSelect.value = this.lang;
-        }
-
-        // C. Lancer la traduction de la page
-        this.translatePage();
-    }
-
-    // Fonction pour changer la langue (appelée par le <select> HTML)
-    setLanguage(newLang) {
-        localStorage.setItem('djunta_lang', newLang);
-        window.location.reload(); // On recharge pour appliquer partout
-    }
-
-    // Fonction pour récupérer un texte précis dans le JS
-    t(key) {
-        return this.dict[key] || key;
-    }
-
-    // Fonction qui cherche tous les attributs data-key="..." et remplace le texte
-    translatePage() {
-        const elements = document.querySelectorAll('[data-key]');
-        elements.forEach(el => {
-            const key = el.getAttribute('data-key');
-            if (this.dict[key]) {
-                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    el.placeholder = this.dict[key];
-                } else {
-                    el.innerText = this.dict[key];
-                }
-            }
-        });
-    }
-
-    // Outil de formatage monétaire (CVE)
-    formatMoney(amount) {
-        return new Intl.NumberFormat('pt-CV', { 
-            style: 'currency', currency: 'CVE', maximumFractionDigits: 0 
-        }).format(amount).replace('CVE', '').trim() + ' CVE';
-    }
-}
-
-// 4. INSTANCE GLOBALE
-window.DJUNTA = new DjuntaEngine();
-
-// Lancement une fois le HTML chargé
-document.addEventListener('DOMContentLoaded', () => {
-    window.DJUNTA.init();
-});
+        /* Boutons d'action bas de page */
+        .action-btns { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 24px 35px; display: flex; gap: 12px; border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 40; border-top: 1px solid #e2e8f0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); }
+        .btn-main { flex: 1; padding: 14px; border-radius: 18px; color: white; font-weight: 800; font-size: 11px; text-transform: uppercase; text-align: center; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px; border: none; cursor: pointer; box-shadow: 0
