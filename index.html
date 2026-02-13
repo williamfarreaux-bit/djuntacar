@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Cabo Verde 2026</title>
+    <title>DjuntaCar - Cabo Verde</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -11,7 +11,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 140px; }
+        body { 
+            background-color: #f8fafc; 
+            margin: 0; 
+            padding-top: 75px; 
+            padding-bottom: 140px; 
+            overflow-x: hidden;
+        }
         
         header {
             position: fixed; top: 0; left: 0; right: 0; height: 75px;
@@ -25,15 +31,18 @@
             display: flex; align-items: center;
         }
 
+        /* HERO AJUSTÉ : Plus de padding pour éviter le recouvrement */
         .hero-section { 
             background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
-            padding: 45px 20px 100px; text-align: center; color: white;
+            padding: 60px 20px 130px; /* Augmenté de 45/100 à 60/130 */
+            text-align: center; color: white;
             border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
             position: relative;
         }
 
         .search-container {
-            position: absolute; bottom: -75px; left: 50%; transform: translateX(-50%);
+            position: absolute; bottom: -85px; /* Abaissé pour laisser respirer le texte */
+            left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 500px; z-index: 50;
         }
 
@@ -82,12 +91,11 @@
         <section class="hero-section">
             <h1 id="hero-title" class="text-white text-xl font-black uppercase italic leading-tight drop-shadow-md">
                 Louer une voiture au Cap-Vert<br>
-                <span class="text-sm font-bold normal-case block mt-2 opacity-95">Avec ou sans chauffeur</span>
+                <span class="text-sm font-bold normal-case block mt-3 opacity-95">Avec ou sans chauffeur</span>
             </h1>
 
             <div class="search-container">
                 <div class="bg-white p-5 rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-slate-50">
-                    
                     <div class="flex items-center gap-3 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100 text-[#1d4379]">
                         <span>🏝️</span>
                         <select id="search-island" class="w-full bg-transparent text-sm font-bold outline-none">
@@ -123,97 +131,28 @@
             </div>
         </section>
 
-        <div class="px-5 pt-32 pb-10 max-w-lg mx-auto">
-            <h2 class="text-[#1d4379] font-black uppercase text-[10px] tracking-widest mb-6 opacity-40 text-center uppercase">Véhicules populaires au Cap-Vert</h2>
-            <div id="cars-feed" class="flex flex-col gap-6"></div>
+        <div class="px-4 pt-36 pb-10 max-w-lg mx-auto">
+            <h2 class="text-[#1d4379] font-black uppercase text-[10px] tracking-widest mb-6 opacity-40 text-center">Nos Catégories</h2>
+            
+            <div id="cars-feed" class="grid grid-cols-2 gap-4">
+                </div>
         </div>
     </main>
 
     <div class="action-btns max-w-lg mx-auto">
         <a href="add-car.html" class="btn-cta btn-blue">Inscrire ma voiture</a>
-        <a href="driver-application.html" class="btn-cta btn-green">Devenir chauffeur</a>
+        <a href="driver-application.html" class="btn-cta btn-green">Devenez chauffeur</a>
     </div>
 
     <script>
-        // --- DONNÉES GÉO COMPLÈTES ---
+        // --- DATA GÉO COMPLÈTE ---
         const GEO_DATA = {
-            "Santiago": ["Aeroporto Nelson Mandela (RAI)", "Porto da Praia (Marítima)", "Praia (Cidade)", "Assomada (Cidade)", "Tarrafal (Vila)", "Cidade Velha", "Calheta"],
-            "São Vicente": ["Aeroporto Cesária Évora (VXE)", "Porto Grande (Mindelo)", "Marina de Mindelo", "Mindelo (Cidade)", "São Pedro", "Baía das Gatas"],
-            "Sal": ["Aeroporto Amílcar Cabral (SID)", "Porto da Palmeira (Marítima)", "Santa Maria (Cidade)", "Espargos (Cidade)", "Murdeira"],
-            "Boa Vista": ["Aeroporto Aristides Pereira (BVC)", "Porto de Sal Rei (Marítima)", "Sal Rei (Cidade)", "Rabil", "Fundo das Figueiras"],
-            "Fogo": ["Aeroporto São Filipe (SFL)", "Porto Vale de Cavaleiros (Marítima)", "São Filipe (Cidade)", "Mosteiros"],
-            "Santo Antão": ["Porto de Porto Novo (Marítima)", "Porto Novo (Cidade)", "Ribeira Grande (Cidade)", "Ponta do Sol", "Paúl"],
-            "São Nicolau": ["Aeroporto da Preguiça (SNE)", "Porto do Tarrafal (Marítima)", "Ribeira Brava (Cidade)", "Tarrafal"],
-            "Maio": ["Aeroporto do Maio (MMO)", "Porto Inglês (Marítima)", "Vila do Maio (Cidade)"],
-            "Brava": ["Porto da Furna (Marítima)", "Nova Sintra (Cidade)", "Fajã de Água"]
-        };
-
-        const TRANSLATIONS = {
-            fr: "Louer une voiture au Cap-Vert<br><span class='text-sm font-bold normal-case block mt-2 opacity-95'>Avec ou sans chauffeur</span>",
-            pt: "Alugar um carro em Cabo Verde<br><span class='text-sm font-bold normal-case block mt-2 opacity-95'>Com ou sem motorista</span>",
-            en: "Rent a car in Cape Verde<br><span class='text-sm font-bold normal-case block mt-2 opacity-95'>With or without driver</span>"
-        };
-
-        // --- FONCTIONS LOGIQUES ---
-        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
-
-        // Correction du Menu : On utilise addEventListener pour plus de fiabilité
-        document.getElementById('search-island').addEventListener('change', function() {
-            const island = this.value;
-            const locSelect = document.getElementById('search-location');
-            const addrBox = document.getElementById('address-container');
-            
-            locSelect.disabled = false;
-            locSelect.classList.remove('text-slate-400');
-            locSelect.classList.add('text-[#1d4379]');
-            addrBox.classList.add('hidden'); // Reset adresse
-            
-            let options = '<option value="" disabled selected>Lieu de prise en charge</option>';
-            GEO_DATA[island].forEach(l => { options += `<option value="${l}">${l}</option>`; });
-            locSelect.innerHTML = options;
-        });
-
-        document.getElementById('search-location').addEventListener('change', function() {
-            const val = this.value;
-            const addrBox = document.getElementById('address-container');
-            // Hub = Pas d'adresse. Ville = Adresse affichée.
-            const isHub = val.includes("Aeroporto") || val.includes("Porto") || val.includes("Gare") || val.includes("Marina");
-            if (val && !isHub) { addrBox.classList.remove('hidden'); } else { addrBox.classList.add('hidden'); }
-        });
-
-        function changeLanguage(lang) {
-            localStorage.setItem('djunta_lang', lang);
-            document.getElementById('hero-title').innerHTML = TRANSLATIONS[lang];
-        }
-
-        function goToSearch() {
-            const isl = document.getElementById('search-island').value;
-            const loc = document.getElementById('search-location').value;
-            const adr = document.getElementById('search-address').value;
-            if(isl && loc) { window.location.href = `search-car.html?island=${isl}&location=${loc}&address=${adr}`; }
-            else { alert("Veuillez sélectionner une île et un lieu."); }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('djunta_lang') || 'fr';
-            document.getElementById('lang-selector').value = savedLang;
-            changeLanguage(savedLang);
-
-            // Mock feed pour visibilité
-            const feed = document.getElementById('cars-feed');
-            const demo = [
-                { b: 'Toyota', m: 'Hilux 4x4', p: '8.500', l: 'Santiago', i: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=500' },
-                { b: 'Suzuki', m: 'Jimny', p: '6.500', l: 'Sal', i: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=500' }
-            ];
-            feed.innerHTML = demo.map(c => `
-                <div class="bg-white rounded-[32px] overflow-hidden shadow-sm border border-slate-100">
-                    <img src="${c.i}" class="w-full h-48 object-cover">
-                    <div class="p-6 flex justify-between items-center">
-                        <div><h3 class="font-black text-[#1d4379] uppercase text-sm">${c.b} ${c.m}</h3><p class="text-[10px] font-bold text-slate-400 mt-1 uppercase">📍 ${c.l}</p></div>
-                        <div class="text-right font-black text-[#1d4379] text-lg">${c.p}<p class="text-[8px] font-bold text-slate-400 uppercase">CVE/Jour</p></div>
-                    </div>
-                </div>`).join('');
-        });
-    </script>
-</body>
-</html>
+            "Santiago": ["Aeroporto Nelson Mandela (RAI)", "Porto da Praia (Marítima)", "Praia (Cidade)", "Assomada (Cidade)", "Tarrafal (Vila)", "Cidade Velha"],
+            "São Vicente": ["Aeroporto Cesária Évora (VXE)", "Porto Grande (Mindelo)", "Marina de Mindelo", "Mindelo (Cidade)", "São Pedro"],
+            "Sal": ["Aeroporto Amílcar Cabral (SID)", "Porto da Palmeira (Marítima)", "Santa Maria (Cidade)", "Espargos (Cidade)"],
+            "Boa Vista": ["Aeroporto Aristides Pereira (BVC)", "Porto de Sal Rei (Marítima)", "Sal Rei (Cidade)"],
+            "Fogo": ["Aeroporto São Filipe (SFL)", "Porto Vale de Cavaleiros (Marítima)", "São Filipe (Cidade)"],
+            "Santo Antão": ["Porto de Porto Novo (Marítima)", "Porto Novo (Cidade)", "Ribeira Grande (Cidade)", "Paúl"],
+            "São Nicolau": ["Aeroporto da Preguiça (SNE)", "Porto do Tarrafal (Marítima)", "Ribeira Brava"],
+            "Maio": ["Aeroporto do Maio (MMO)", "Porto Inglês (Marítima)", "Vila do Maio"],
+            "Brava": ["Port
