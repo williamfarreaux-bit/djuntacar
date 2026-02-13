@@ -1,35 +1,71 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar</title>
-    
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="djunta-master.js" defer></script>
+// DJUNTA MASTER v1.9.0 (STABLE)
+console.log("✅ Chargement du Menu v1.9.0...");
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
-        
-        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f8fafc; margin: 0; padding-top: 70px; padding-bottom: 120px; }
-        
-        /* Animation fluide pour le menu mobile */
-        .slide-enter { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+// 1. DÉFINITION DU COMPOSANT MENU
+class DjuntaHeader extends HTMLElement {
+    constructor() {
+        super();
+    }
 
-        /* Styles spécifiques Hero */
-        .hero-section { background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); padding: 30px 0 70px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; text-align: center; position: relative; }
-        
-        /* Barre de recherche flottante */
-        .search-wrapper { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 90%; max-width: 500px; z-index: 30; }
-        .search-bar { background: white; border-radius: 20px; padding: 12px 20px; box-shadow: 0 15px 35px rgba(29, 67, 121, 0.15); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; cursor: pointer; transition: transform 0.1s; }
-        .search-bar:active { transform: scale(0.98); }
+    connectedCallback() {
+        this.innerHTML = `
+        <header class="fixed top-0 left-0 right-0 h-16 bg-white z-50 border-b border-gray-100 px-4 flex items-center justify-between font-sans shadow-sm">
+            
+            <div class="flex items-center gap-4">
+                <button onclick="document.getElementById('mobile-menu-overlay').classList.remove('hidden')" class="md:hidden text-[#1d4379] p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+                
+                <div class="hidden md:flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                    <div class="w-8 h-8 bg-[#1d4379] rounded-lg text-white flex items-center justify-center font-bold">D</div>
+                    <span class="text-[#1d4379] font-black uppercase text-sm">DjuntaCar</span>
+                </div>
+            </div>
 
-        /* Boutons d'action bas de page */
-        .action-btns { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 24px 35px; display: flex; gap: 12px; border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 40; border-top: 1px solid #e2e8f0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); }
-        .btn-main { flex: 1; padding: 14px; border-radius: 18px; color: white; font-weight: 800; font-size: 11px; text-transform: uppercase; text-align: center; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px; border: none; cursor: pointer; box-shadow: 0
+            <div class="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-[#1d4379] rounded-lg text-white flex items-center justify-center font-bold">D</div>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex gap-6 text-xs font-bold text-gray-400 uppercase">
+                <a href="index.html" class="text-[#1d4379]">Início</a>
+                <a href="search-car.html" class="hover:text-[#1d4379]">Alugar</a>
+                <a href="driver-application.html" class="hover:text-[#1d4379]">Motorista</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-[100]">
+            <div onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+            
+            <div class="absolute top-0 left-0 bottom-0 w-[85%] max-w-[300px] bg-white p-6 shadow-2xl flex flex-col">
+                <div class="flex justify-between items-center mb-8">
+                    <span class="text-[#1d4379] font-black uppercase text-xl">Menu</span>
+                    <button onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg>
+                    </button>
+                </div>
+                
+                <nav class="flex flex-col gap-6 text-[#1d4379] font-bold text-lg">
+                    <a href="index.html" class="flex items-center gap-3">Início</a>
+                    <a href="search-car.html" class="flex items-center gap-3">Alugar</a>
+                    <a href="driver-application.html" class="flex items-center gap-3">Motorista</a>
+                    <a href="profile.html" class="flex items-center gap-3">Meu Perfil</a>
+                </nav>
+            </div>
+        </div>
+        <div style="height: 70px;"></div>
+        `;
+    }
+}
+
+// 2. ENREGISTREMENT
+if (!customElements.get('djunta-header')) {
+    customElements.define('djunta-header', DjuntaHeader);
+}
