@@ -105,6 +105,17 @@
         .address-input.hidden {
             display: none;
         }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
         /* BOUTONS ACTION */
         .action-btns { 
@@ -179,22 +190,24 @@
                 <form id="hero-search-form" class="search-form">
                     <div class="flex gap-3 mb-3">
                         <div class="select-wrapper flex-1">
-                            <select id="island-select" required>
-                                <option value="" disabled selected>Choisir l'île</option>
+                            <label for="island-select" class="sr-only">Choisir l'île</label>
+                            <select id="island-select" aria-label="Choisir l'île / Escolher ilha" required>
+                                <option value="" disabled selected data-key="select_island">Choisir l'île</option>
                             </select>
                         </div>
                         <div class="select-wrapper flex-1">
-                            <select id="location-select" disabled required>
-                                <option value="" disabled selected>Choisir le lieu</option>
+                            <label for="location-select" class="sr-only">Choisir le lieu</label>
+                            <select id="location-select" aria-label="Choisir le lieu / Escolher local" disabled required>
+                                <option value="" disabled selected data-key="select_location">Choisir le lieu</option>
                             </select>
                         </div>
                     </div>
                     <div id="address-wrapper" class="address-input hidden mb-3">
-                        <input type="text" id="address-input" placeholder="Adresse précise / Endereço exato">
+                        <label for="address-input" class="sr-only">Adresse précise</label>
+                        <input type="text" id="address-input" aria-label="Adresse précise / Endereço exato" placeholder="Adresse précise / Endereço exato">
                     </div>
-                    <div class="flex gap-3">
-                        <div class="flex-1"></div>
-                        <button type="submit" class="search-btn">
+                    <div class="flex gap-3 justify-end">
+                        <button type="submit" class="search-btn" aria-label="Rechercher">
                             <i data-lucide="search" class="w-5 h-5"></i>
                         </button>
                     </div>
@@ -292,7 +305,10 @@
             const addressInput = document.getElementById('address-input');
             const searchForm = document.getElementById('hero-search-form');
 
-            if (!islandSelect || !locationSelect || !addressWrapper || !searchForm) return;
+            if (!islandSelect || !locationSelect || !addressWrapper || !searchForm) {
+                console.warn('Search form elements not found, skipping initialization');
+                return;
+            }
 
             // Populate islands
             Object.keys(CAPE_VERDE_DATA).forEach(island => {
@@ -308,7 +324,7 @@
                 const locations = CAPE_VERDE_DATA[selectedIsland]?.locations || [];
 
                 // Reset location select
-                locationSelect.innerHTML = '<option value="" disabled selected>Choisir le lieu</option>';
+                locationSelect.innerHTML = '<option value="" disabled selected data-key="select_location">Choisir le lieu</option>';
                 locationSelect.disabled = false;
 
                 // Populate locations
