@@ -55,7 +55,7 @@ class DjuntaHeader extends HTMLElement {
             <div class="absolute top-0 left-0 bottom-0 w-[80%] bg-white p-6 shadow-2xl flex flex-col">
                 <div class="flex justify-between items-center mb-8">
                     <img src="./logo.png" style="height: 25px;">
-                    <button onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg></button>
+                    <button onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
                 </div>
                 <nav class="flex flex-col gap-6 text-[#1d4379] font-bold text-lg">
                     <a href="index.html" class="flex items-center gap-3">Início</a>
