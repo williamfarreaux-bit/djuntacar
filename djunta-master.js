@@ -1,5 +1,5 @@
-// DJUNTA MASTER v1.9.0 (STABLE)
-console.log("✅ Chargement du Menu v1.9.0...");
+// DJUNTA MASTER v2.0.0 (STABLE) - With Language Support
+console.log("✅ Chargement du Menu v2.0.0...");
 
 // 1. DÉFINITION DU COMPOSANT MENU
 class DjuntaHeader extends HTMLElement {
@@ -36,7 +36,12 @@ class DjuntaHeader extends HTMLElement {
             </nav>
 
             <div class="flex items-center gap-3">
-                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 text-gray-400">
+                <select id="language-selector" class="px-3 py-1.5 text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg text-[#1d4379] cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#1d4379] focus:ring-opacity-50" onchange="window.DjuntaHeader.handleLanguageChange(event)">
+                    <option value="pt">PT</option>
+                    <option value="fr">FR</option>
+                    <option value="en">EN</option>
+                </select>
+                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 text-gray-400 hover:text-[#1d4379] hover:border-[#1d4379] transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </button>
             </div>
@@ -117,6 +122,33 @@ class DjuntaHeader extends HTMLElement {
         </div>
         <div style="height: 70px;"></div>
         `;
+        
+        // Load saved language after rendering
+        this.loadSavedLanguage();
+    }
+    
+    // Load saved language from localStorage
+    loadSavedLanguage() {
+        const savedLanguage = localStorage.getItem('djuntacar-language');
+        if (savedLanguage) {
+            const selector = document.getElementById('language-selector');
+            if (selector) {
+                selector.value = savedLanguage;
+                console.log(`✅ Language loaded: ${savedLanguage.toUpperCase()}`);
+            }
+        }
+    }
+    
+    // Static method to handle language change
+    static handleLanguageChange(event) {
+        const selectedLanguage = event.target.value;
+        localStorage.setItem('djuntacar-language', selectedLanguage);
+        console.log(`✅ Language saved: ${selectedLanguage.toUpperCase()}`);
+        
+        // Dispatch custom event for other components to listen to
+        window.dispatchEvent(new CustomEvent('languageChanged', { 
+            detail: { language: selectedLanguage } 
+        }));
     }
 }
 
@@ -124,3 +156,6 @@ class DjuntaHeader extends HTMLElement {
 if (!customElements.get('djunta-header')) {
     customElements.define('djunta-header', DjuntaHeader);
 }
+
+// 3. EXPOSE STATIC METHOD GLOBALLY
+window.DjuntaHeader = DjuntaHeader;
