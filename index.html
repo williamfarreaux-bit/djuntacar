@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar</title>
+    <title>DjuntaCar - Cabo Verde</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 120px; }
+        body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 140px; overflow-x: hidden; }
         
         /* HEADER FIXE */
         header {
@@ -23,87 +23,83 @@
 
         .logo-center {
             position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-            font-weight: 900; font-style: italic; color: #1d4379; font-size: 20px;
+            display: flex; align-items: center; justify-content: center;
         }
 
+        /* HERO & SEARCH */
         .hero-section { 
             background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
-            padding: 40px 20px 80px; text-align: center; color: white;
+            padding: 40px 20px 100px; text-align: center; color: white;
             border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            position: relative;
         }
 
-        /* BOUTONS ACTION FIXES EN BAS */
+        .search-container {
+            position: absolute; bottom: -70px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 500px; z-index: 50;
+        }
+
+        /* BOUTONS ACTION FIXES */
         .action-btns { 
             position: fixed; bottom: 0; left: 0; right: 0; 
-            background: white; padding: 15px 20px 35px; 
-            display: flex; gap: 10px; border-top: 1px solid #eee; z-index: 1000;
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(10px);
+            padding: 15px 20px 35px; 
+            display: flex; gap: 12px; border-top: 1px solid #eee; z-index: 1000;
         }
 
         .btn-main { 
-            flex: 1; padding: 15px; border-radius: 15px; text-decoration: none;
-            color: white; font-weight: 900; font-size: 10px; text-transform: uppercase;
-            text-align: center; border: none; cursor: pointer;
+            flex: 1; padding: 16px; border-radius: 16px; text-decoration: none;
+            color: white; font-weight: 900; font-size: 11px; text-transform: uppercase;
+            text-align: center; border: none; cursor: pointer; transition: transform 0.1s;
         }
-        .btn-blue { background: #1d4379; }
-        .btn-green { background: #22c55e; }
+        .btn-blue { background: #1d4379; box-shadow: 0 4px 12px rgba(29, 67, 121, 0.2); }
+        .btn-green { background: #22c55e; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2); }
 
         /* MENU BURGER */
         #mobile-menu {
             position: fixed; inset: 0; background: white; z-index: 2000;
-            display: none; padding: 40px;
+            display: none; padding: 40px; flex-direction: column;
         }
-        #mobile-menu.active { display: block; }
+        #mobile-menu.active { display: flex; }
+
+        .hidden { display: none; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
     <header>
-        <button onclick="toggleMenu()" style="font-size: 30px; background:none; border:none; color:#1d4379; cursor:pointer;">☰</button>
+        <button onclick="toggleMenu()" style="font-size: 28px; background:none; border:none; color:#1d4379; cursor:pointer;">☰</button>
         
-        <div class="logo-center">DjuntaCar</div>
+        <div class="logo-center" onclick="window.location.reload()">
+            <img src="./logo.png" alt="DjuntaCar" style="height: 42px; width: auto;" onerror="this.outerHTML='<b style=\'color:#1d4379; font-style:italic; font-size:22px;\'>DjuntaCar</b>'">
+        </div>
 
-        <div style="display:flex; align-items:center; gap:8px;">
-            <select id="lang-selector" onchange="window.location.reload()" style="font-size:10px; font-weight:bold; border:none; background:#f1f5f9; padding:5px; border-radius:5px;">
-                <option>FR</option>
-                <option>PT</option>
+        <div class="flex items-center gap-2">
+            <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-slate-100 text-[#1d4379] text-[11px] font-bold py-2 px-1 rounded-lg border-none">
+                <option value="fr">FR</option>
+                <option value="pt">PT</option>
+                <option value="en">EN</option>
             </select>
-            <div onclick="window.location.href='profile.html'" style="width:40px; height:40px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;">👤</div>
+            <div onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center cursor-pointer border border-slate-200">👤</div>
         </div>
     </header>
 
     <div id="mobile-menu">
-        <button onclick="toggleMenu()" style="float:right; font-size:35px; border:none; background:none; color:#1d4379;">✕</button>
-        <nav style="display:flex; flex-direction:column; gap:25px; margin-top:80px; font-weight:900; color:#1d4379; font-size:24px;">
-            <a href="index.html" style="text-decoration:none; color:inherit;">ACCUEIL</a>
-            <a href="search-car.html" style="text-decoration:none; color:inherit;">LOUER</a>
-            <a href="driver-application.html" style="text-decoration:none; color:inherit;">CHAUFFEUR</a>
-            <a href="profile.html" style="text-decoration:none; color:inherit;">PROFIL</a>
+        <div class="flex justify-between items-center w-full">
+            <b class="text-[#1d4379] text-xl italic">DjuntaCar</b>
+            <button onclick="toggleMenu()" style="font-size: 35px; border:none; background:none; color:#1d4379;">✕</button>
+        </div>
+        <nav class="flex flex-col gap-8 mt-16 font-black text-[#1d4379] text-2xl uppercase">
+            <a href="index.html" onclick="toggleMenu()">Accueil</a>
+            <a href="search-car.html">Louer un véhicule</a>
+            <a href="driver-application.html">Devenir chauffeur</a>
+            <a href="profile.html">Mon Profil</a>
         </nav>
     </div>
 
     <main>
         <section class="hero-section">
-            <h1 style="font-size:20px; font-weight:900; text-transform:uppercase; font-style:italic;">
-                Louez une voiture au Cap-Vert<br>
-                <span style="font-size:14px; font-weight:700; font-style:normal; opacity:0.9;">Avec ou sans chauffeur</span>
-            </h1>
-        </section>
-
-        <div style="padding: 50px 20px; text-align: center; color: #ccc; font-weight: bold;">
-            Le centre de la page défile ici...
-        </div>
-    </main>
-
-    <div class="action-btns">
-        <a href="add-car.html" class="btn-main btn-blue">Inscrire ma voiture</a>
-        <a href="driver-application.html" class="btn-main btn-green">Devenir chauffeur</a>
-    </div>
-
-    <script>
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('active');
-        }
-    </script>
-</body>
-</html>
+            <h1 class="text-white text-xl font-black uppercase italic leading-tight drop-shadow-md">
+                Louez une voiture
