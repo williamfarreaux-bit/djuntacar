@@ -139,7 +139,7 @@
             const { data: { user } } = await DJUNTA.sb.auth.getUser();
             if (!user) window.location.href = 'login.html';
             
-            // Pré-remplissage si profil existant
+            // Pré-preenchimento se perfil existente
             const { data: profile } = await DJUNTA.sb.from('profiles').select('*').eq('id', user.id).single();
             if(profile) {
                 if(profile.full_name) document.getElementById('fullName').value = profile.full_name;
@@ -180,14 +180,14 @@
             try {
                 const { data: { user } } = await DJUNTA.sb.auth.getUser();
 
-                // Upload des fichiers
+                // Upload dos ficheiros
                 const cniPath = `drivers/${user.id}/cni_${Date.now()}.jpg`;
                 const licensePath = `drivers/${user.id}/license_${Date.now()}.jpg`;
 
                 await DJUNTA.sb.storage.from('documents').upload(cniPath, files.cni);
                 await DJUNTA.sb.storage.from('documents').upload(licensePath, files.license);
 
-                // Création de la candidature
+                // Criação da candidatura
                 const { error } = await DJUNTA.sb.from('driver_applications').insert([{
                     user_id: user.id,
                     full_name: fullName,
