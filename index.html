@@ -27,4 +27,68 @@
 
         /* Boutons d'action */
         .action-btns { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 24px 35px; display: flex; gap: 12px; border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 40; border-top: 1px solid #e2e8f0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); }
-        .btn-main { flex: 1; padding: 14px; border-radius: 18px; color: white; font-weight: 800; font-size: 11px; text-transform: uppercase; text-align: center; display: flex; justify-content
+        .btn-main { flex: 1; padding: 14px; border-radius: 18px; color: white; font-weight: 800; font-size: 11px; text-transform: uppercase; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; transition: transform 0.1s; }
+        .btn-main:active { transform: scale(0.97); }
+        .btn-primary { background: #1d4379; }
+        .btn-secondary { background: #64748b; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <djunta-header></djunta-header>
+
+    <section class="hero-section">
+        <h1 style="color: white; font-size: 28px; font-weight: 900; margin-bottom: 8px;">DjuntaCar</h1>
+        <p style="color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600;">Alugue carros ou motoristas, de forma simples.</p>
+        
+        <div class="search-wrapper">
+            <div class="search-bar" onclick="window.location.href='search-car.html'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <span style="color: #94a3b8; font-size: 13px; font-weight: 600;">Pesquisar carros...</span>
+            </div>
+        </div>
+    </section>
+
+    <div style="padding: 60px 24px 24px;">
+        <h2 style="color: #1d4379; font-size: 18px; font-weight: 900; margin-bottom: 16px;">Como funciona</h2>
+        
+        <div style="display: grid; gap: 16px;">
+            <div style="background: white; border-radius: 20px; padding: 20px; border: 1px solid #f1f5f9;">
+                <div style="width: 48px; height: 48px; background: #f0f9ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d4379" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+                <h3 style="color: #1d4379; font-size: 14px; font-weight: 800; margin-bottom: 6px;">1. Pesquisar</h3>
+                <p style="color: #64748b; font-size: 12px; font-weight: 600; line-height: 1.5;">Encontre o carro perfeito para a sua viagem.</p>
+            </div>
+
+            <div style="background: white; border-radius: 20px; padding: 20px; border: 1px solid #f1f5f9;">
+                <div style="width: 48px; height: 48px; background: #f0f9ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d4379" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </div>
+                <h3 style="color: #1d4379; font-size: 14px; font-weight: 800; margin-bottom: 6px;">2. Reservar</h3>
+                <p style="color: #64748b; font-size: 12px; font-weight: 600; line-height: 1.5;">Faça a sua reserva de forma rápida e segura.</p>
+            </div>
+
+            <div style="background: white; border-radius: 20px; padding: 20px; border: 1px solid #f1f5f9;">
+                <div style="width: 48px; height: 48px; background: #f0f9ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d4379" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </div>
+                <h3 style="color: #1d4379; font-size: 14px; font-weight: 800; margin-bottom: 6px;">3. Aproveitar</h3>
+                <p style="color: #64748b; font-size: 12px; font-weight: 600; line-height: 1.5;">Levante o carro e aproveite a viagem!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-btns">
+        <button class="btn-main btn-primary" onclick="window.location.href='search-car.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            Alugar Carro
+        </button>
+        <button class="btn-main btn-secondary" onclick="window.location.href='driver-application.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Ser Motorista
+        </button>
+    </div>
+
+</body>
+</html>
