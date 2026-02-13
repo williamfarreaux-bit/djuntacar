@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar</title>
+    <title>DjuntaCar - Location de voitures au Cap-Vert</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -15,38 +15,35 @@
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 120px; }
         
-        /* HEADER AVEC LOGO CENTRÉ */
+        /* HEADER FIXE */
         header {
             position: fixed; top: 0; left: 0; right: 0; height: 75px;
             background: white; z-index: 50; border-bottom: 1px solid #f1f5f9;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+            padding: 0 16px; box-shadow: 0 2px 15px rgba(0,0,0,0.03);
         }
 
-        /* HERO SECTION */
+        /* HERO SECTION (Fond Bleu) */
         .hero-section { 
             background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
-            padding: 40px 0 90px; 
+            padding: 40px 0 100px; 
             border-bottom-left-radius: 40px; 
             border-bottom-right-radius: 40px; 
             text-align: center; 
             position: relative; 
         }
         
-        /* SEARCH BAR */
+        /* SEARCH WRAPPER (La boite flottante) */
         .search-wrapper { 
             position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); 
             width: 90%; max-width: 500px; z-index: 30; 
         }
-        .search-bar { 
-            width: 100%;
-            background: white; border-radius: 20px; padding: 12px 20px; 
-            box-shadow: 0 15px 35px rgba(29, 67, 121, 0.15); 
-            display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; 
-            cursor: pointer; text-align: left;
-        }
 
-        /* BOUTONS ACTION */
+        /* ANIMATIONS */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+
+        /* BOUTONS ACTION (Bas de page) */
         .action-btns { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); 
@@ -63,7 +60,7 @@
             transition: transform 0.1s; line-height: 1.2;
         }
         .btn-blue { background-color: #1d4379; }
-        .btn-green { background-color: #22c55e; }
+        .btn-green { background-color: #22c55e; } /* Vert demandé */
     </style>
 </head>
 <body class="antialiased text-slate-800">
@@ -75,7 +72,7 @@
             </button>
         </div>
 
-        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center" onclick="window.location.reload()">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center cursor-pointer" onclick="window.location.reload()">
             <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
             <span class="hidden font-black text-[#1d4379] italic text-2xl tracking-tighter">DjuntaCar</span>
         </div>
@@ -96,7 +93,7 @@
         <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
         <div class="absolute top-0 left-0 bottom-0 w-[85%] bg-white p-6 shadow-2xl flex flex-col transition-transform">
             <div class="flex justify-between items-center mb-10">
-                <span class="font-black text-[#1d4379] text-xl">Menu</span>
+                <span class="font-black text-[#1d4379] text-xl">MENU</span>
                 <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full"><i data-lucide="x" class="w-6 h-6 text-gray-500"></i></button>
             </div>
             <nav class="flex flex-col gap-4 text-lg font-bold text-[#1d4379]">
@@ -112,148 +109,10 @@
         <section class="hero-section">
             <h1 class="text-white text-xl font-black uppercase italic px-4 leading-tight drop-shadow-md" data-key="hero_title">
                 Louez une voiture au Cap-Vert<br>
-                <span class="text-base font-bold normal-case block mt-2 opacity-90">Avec ou sans chauffeur</span>
+                <span class="text-sm font-bold normal-case block mt-2 opacity-90">Avec ou sans chauffeur</span>
             </h1>
             
             <div class="search-wrapper">
-                <button class="search-bar" onclick="window.location.href='search-car.html'">
-                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1d4379]">
-                        <i data-lucide="search" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex flex-col items-start">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide" data-key="label_dest">Destination</span>
-                        <span class="text-sm font-bold text-[#1d4379] uppercase" data-key="search_placeholder">Où allez-vous ?</span>
-                    </div>
-                </button>
-            </div>
-        </section>
-
-        <div id="cars-feed" class="px-6 pt-24 pb-6 grid gap-6 max-w-lg mx-auto min-h-[300px]">
-            <div class="text-center py-20 opacity-50">
-                <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto text-[#1d4379]"></i>
-                <p class="text-xs font-bold text-gray-400 mt-4 uppercase">Chargement...</p>
-            </div>
-        </div>
-
-        <div class="px-6 pb-6 max-w-lg mx-auto">
-            <h2 class="text-[#1d4379] font-black uppercase text-sm mb-4" data-key="how_it_works">Comment ça marche ?</h2>
-            <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-                <div class="min-w-[140px] bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                    <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-[#1d4379] mb-3"><i data-lucide="mouse-pointer" class="w-4 h-4"></i></div>
-                    <h3 class="font-bold text-xs text-[#1d4379]" data-key="step_1_title">1. Choisissez</h3>
-                    <p class="text-[10px] text-gray-400 mt-1" data-key="step_1_desc">Trouvez la voiture idéale.</p>
-                </div>
-                <div class="min-w-[140px] bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                    <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-[#1d4379] mb-3"><i data-lucide="calendar" class="w-4 h-4"></i></div>
-                    <h3 class="font-bold text-xs text-[#1d4379]" data-key="step_2_title">2. Réservez</h3>
-                    <p class="text-[10px] text-gray-400 mt-1" data-key="step_2_desc">Dates flexibles.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="action-btns max-w-lg mx-auto">
-            <button onclick="window.location.href='add-car.html'" class="btn-main btn-blue">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i> <span data-key="btn_add">Inscrivez votre voiture</span>
-            </button>
-            <button onclick="window.location.href='driver-application.html'" class="btn-main btn-green">
-                <i data-lucide="steering-wheel" class="w-5 h-5"></i> <span data-key="btn_driver">Devenez chauffeur</span>
-            </button>
-        </div>
-    </main>
-
-    <script>
-        // 1. DICTIONNAIRE (Mis à jour avec le nouveau texte)
-        const TRANSLATIONS = {
-            fr: {
-                hero_title: "Louez une voiture au Cap-Vert<br><span class='text-base font-bold normal-case block mt-2 opacity-90'>Avec ou sans chauffeur</span>",
-                label_dest: "Destination", search_placeholder: "Où allez-vous ?",
-                btn_add: "Inscrivez votre voiture", btn_driver: "Devenez chauffeur",
-                nav_home: "Accueil", nav_rent: "Louer", nav_driver: "Chauffeur", menu_profile: "Profil",
-                how_it_works: "Comment ça marche ?", step_1_title: "1. Choisissez", step_1_desc: "Trouvez la voiture idéale.", step_2_title: "2. Réservez", step_2_desc: "Dates flexibles.",
-                msg_no_car: "Aucun véhicule disponible"
-            },
-            pt: {
-                hero_title: "Alugue um carro em Cabo Verde<br><span class='text-base font-bold normal-case block mt-2 opacity-90'>Com ou sem motorista</span>",
-                label_dest: "Destino", search_placeholder: "Para onde quer ir?",
-                btn_add: "Inscreva seu carro", btn_driver: "Seja motorista",
-                nav_home: "Início", nav_rent: "Alugar", nav_driver: "Motorista", menu_profile: "Perfil",
-                how_it_works: "Como funciona?", step_1_title: "1. Escolha", step_1_desc: "Encontre o carro ideal.", step_2_title: "2. Reserve", step_2_desc: "Datas flexíveis.",
-                msg_no_car: "Nenhum veículo disponível"
-            },
-            en: {
-                hero_title: "Rent a car in Cape Verde<br><span class='text-base font-bold normal-case block mt-2 opacity-90'>With or without driver</span>",
-                label_dest: "Destination", search_placeholder: "Where to go?",
-                btn_add: "List your car", btn_driver: "Become a driver",
-                nav_home: "Home", nav_rent: "Rent", nav_driver: "Driver", menu_profile: "Profile",
-                how_it_works: "How it works?", step_1_title: "1. Choose", step_1_desc: "Find the perfect car.", step_2_title: "2. Book", step_2_desc: "Flexible dates.",
-                msg_no_car: "No vehicles available"
-            }
-        };
-
-        // 2. FONCTIONS
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            if(menu) menu.classList.toggle('hidden');
-        }
-
-        function changeLanguage(lang) {
-            localStorage.setItem('djunta_lang', lang);
-            const dict = TRANSLATIONS[lang];
-            if(!dict) return;
-            
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.getAttribute('data-key');
-                if(dict[key]) el.innerHTML = dict[key];
-            });
-
-            const sel = document.getElementById('lang-selector');
-            if(sel) sel.value = lang;
-        }
-
-        // 3. INIT & DATA
-        document.addEventListener('DOMContentLoaded', async () => {
-            if(window.lucide) lucide.createIcons();
-
-            const savedLang = localStorage.getItem('djunta_lang') || 'fr';
-            changeLanguage(savedLang);
-
-            // Supabase Init
-            const SUPABASE_URL = "https://enuiuuwnjzvpfvpklmjw.supabase.co";
-            const SUPABASE_KEY = "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-"; 
-
-            if(window.supabase) {
-                const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                try {
-                    const { data: vehicles, error } = await sb.from('vehicles').select('*').limit(10);
-                    const feed = document.getElementById('cars-feed');
+                <div class="bg-white rounded-[24px] p-4 shadow-[0_15px_35px_rgba(29,67,121,0.2)] border border-[#f1f5f9]">
                     
-                    if (error || !vehicles || vehicles.length === 0) {
-                        feed.innerHTML = `<div class="bg-white p-8 rounded-3xl border border-gray-100 text-center shadow-sm"><p class="text-gray-400 font-bold uppercase text-xs">${TRANSLATIONS[savedLang].msg_no_car}</p></div>`;
-                    } else {
-                        const formatMoney = (n) => new Intl.NumberFormat('pt-CV').format(n);
-                        feed.innerHTML = vehicles.map(v => `
-                            <div class="bg-white rounded-[28px] overflow-hidden shadow-sm border border-gray-100 cursor-pointer hover:shadow-lg transition-all active:scale-95" onclick="window.location.href='car-detail.html?id=${v.id}'">
-                                <div class="relative h-48 bg-gray-100">
-                                    <img src="${v.image_url}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400?text=Carro'">
-                                    <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black text-[#1d4379] uppercase shadow-sm">${v.transmission || 'Manual'}</div>
-                                </div>
-                                <div class="p-5 flex justify-between items-center">
-                                    <div>
-                                        <h3 class="font-black text-[#1d4379] uppercase text-sm leading-tight">${v.brand} ${v.model}</h3>
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase mt-1"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ${v.location || 'Praia'}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="font-black text-[#1d4379] text-lg">${formatMoney(v.price_per_day)}</span>
-                                        <p class="text-[9px] font-bold text-gray-400 uppercase">CVE / dia</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('');
-                        if(window.lucide) lucide.createIcons();
-                    }
-                } catch (err) { console.error(err); }
-            }
-        });
-    </script>
-</body>
-</html>
+                    <div class="flex items
