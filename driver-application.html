@@ -64,31 +64,31 @@
 
     <main class="max-w-md mx-auto px-6 pt-6 pb-24">
         
-        <h1 class="text-2xl font-black text-[#1d4379] mb-2 uppercase">Candidatura</h1>
-        <p class="text-xs font-bold text-gray-400 mb-6">Torne-se motorista DjuntaCar e ganhe dinheiro.</p>
+        <h1 class="text-2xl font-black text-[#1d4379] mb-2 uppercase" data-key="driver_title">Candidatura</h1>
+        <p class="text-xs font-bold text-gray-400 mb-6" data-key="driver_subtitle">Torne-se motorista DjuntaCar e ganhe dinheiro.</p>
 
         <form id="driverForm" onsubmit="event.preventDefault(); submitApplication();">
             
             <div class="form-section">
-                <label class="input-label">Nome Completo</label>
+                <label class="input-label" data-key="label_fullname">Nome Completo</label>
                 <input type="text" id="fullName" class="input-field" placeholder="Ex: Joao Batista Mendes" required>
             </div>
 
             <div class="form-section">
-                <label class="input-label">Telemóvel (Whatsapp)</label>
+                <label class="input-label" data-key="label_phone">Telemóvel (Whatsapp)</label>
                 <div class="relative flex items-center">
                     <span class="absolute left-4 text-sm font-bold text-gray-400">+238</span>
                     <input type="tel" id="phone" class="input-field pl-14" placeholder="999 99 99" required>
                 </div>
             </div>
 
-            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2">Documentos</h2>
+            <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 mt-6 px-2" data-key="label_docs">Documentos</h2>
             
             <div class="form-section">
                 <label class="upload-zone cursor-pointer" id="zone-cni">
                     <i data-lucide="scan-face" class="w-8 h-8 text-blue-300 mb-2"></i>
-                    <span class="text-xs font-bold text-[#1d4379]">CNI ou Passaporte</span>
-                    <span class="text-[9px] text-gray-400 mt-1">Frente e Verso</span>
+                    <span class="text-xs font-bold text-[#1d4379]" data-key="label_cni">CNI ou Passaporte</span>
+                    <span class="text-[9px] text-gray-400 mt-1" data-key="label_cni_desc">Frente e Verso</span>
                     <input type="file" class="hidden" accept="image/*" onchange="handleFileSelect(this, 'cni')">
                 </label>
                 <p id="txt-cni" class="text-[10px] text-green-600 font-bold mt-2 text-center hidden">
@@ -98,14 +98,14 @@
 
             <div class="form-section">
                 <div class="mb-4">
-                    <label class="input-label">Nº Carta Condução</label>
+                    <label class="input-label" data-key="label_license_num">Nº Carta Condução</label>
                     <input type="text" id="licenseNum" class="input-field" placeholder="Ex: S-12345678" required>
                 </div>
 
                 <label class="upload-zone cursor-pointer" id="zone-license">
                     <i data-lucide="credit-card" class="w-8 h-8 text-blue-300 mb-2"></i>
-                    <span class="text-xs font-bold text-[#1d4379]">Foto da Carta</span>
-                    <span class="text-[9px] text-gray-400 mt-1">Legível e Válida</span>
+                    <span class="text-xs font-bold text-[#1d4379]" data-key="label_license">Foto da Carta</span>
+                    <span class="text-[9px] text-gray-400 mt-1" data-key="label_license_desc">Legível e Válida</span>
                     <input type="file" class="hidden" accept="image/*" onchange="handleFileSelect(this, 'license')">
                 </label>
                 <p id="txt-license" class="text-[10px] text-green-600 font-bold mt-2 text-center hidden">
@@ -119,7 +119,7 @@
 
     <div class="fixed-footer">
         <button id="btn-submit" onclick="submitApplication()" class="btn-action active:scale-95 transition-transform">
-            Enviar Candidatura
+            <span data-key="btn_submit_application">Enviar Candidatura</span>
         </button>
     </div>
 
@@ -131,6 +131,7 @@
                 if(window.DJUNTA && DJUNTA.sb) {
                     clearInterval(checkEngine);
                     checkAuth();
+                    if(window.lucide) lucide.createIcons();
                 }
             }, 100);
         });
@@ -139,7 +140,76 @@
             const { data: { user } } = await DJUNTA.sb.auth.getUser();
             if (!user) window.location.href = 'login.html';
             
-            // Pré-remplissage si profil existant
+            // Pre-fill if profile exists
             const { data: profile } = await DJUNTA.sb.from('profiles').select('*').eq('id', user.id).single();
             if(profile) {
-                if(profile.
+                if(profile.full_name) document.getElementById('fullName').value = profile.full_name;
+                if(profile.phone) document.getElementById('phone').value = profile.phone;
+            }
+        }
+
+        function handleFileSelect(input, type) {
+            if(input.files && input.files[0]) {
+                files[type] = input.files[0];
+                document.getElementById('zone-' + type).classList.add('has-file');
+                document.getElementById('txt-' + type).classList.remove('hidden');
+                if(window.lucide) lucide.createIcons();
+            }
+        }
+
+        async function submitApplication() {
+            const btn = document.getElementById('btn-submit');
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const licenseNum = document.getElementById('licenseNum').value;
+
+            if(!fullName || !phone || !licenseNum) {
+                alert("Por favor preencha todos os campos.");
+                return;
+            }
+
+            if(!files.cni || !files.license) {
+                alert("Por favor carregue todos os documentos.");
+                return;
+            }
+
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Enviando...';
+            btn.disabled = true;
+            if(window.lucide) lucide.createIcons();
+
+            try {
+                const { data: { user } } = await DJUNTA.sb.auth.getUser();
+                
+                // Upload documents
+                const cniFileName = `drivers/${user.id}/cni_${Date.now()}.jpg`;
+                const licenseFileName = `drivers/${user.id}/license_${Date.now()}.jpg`;
+                
+                await DJUNTA.sb.storage.from('documents').upload(cniFileName, files.cni);
+                await DJUNTA.sb.storage.from('documents').upload(licenseFileName, files.license);
+
+                // Create driver application
+                const { error } = await DJUNTA.sb.from('driver_applications').insert([{
+                    user_id: user.id,
+                    full_name: fullName,
+                    phone: '+238' + phone,
+                    license_number: licenseNum,
+                    cni_document: cniFileName,
+                    license_document: licenseFileName,
+                    status: 'pending'
+                }]);
+
+                if(error) throw error;
+
+                alert("Candidatura enviada com sucesso! Entraremos em contacto em breve.");
+                window.location.href = 'index.html';
+
+            } catch(err) {
+                console.error(err);
+                alert("Erro ao enviar: " + err.message);
+                btn.innerHTML = '<span data-key="btn_submit_application">Enviar Candidatura</span>';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

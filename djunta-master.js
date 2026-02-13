@@ -1,9 +1,22 @@
-// DJUNTA MASTER v2.1 (Debug Mode)
+// DJUNTA MASTER v2.2 - Standardized Header & Language Persistence
 console.log("♻️ Chargement Menu + Logo...");
 
 const CONFIG = {
     url: "https://enuiuuwnjzvpfvpklmjw.supabase.co",
     key: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-"
+};
+
+// Translation dictionary (from index.html)
+const TRANSLATIONS = {
+    fr: {
+        nav_home: "Accueil", nav_rent: "Louer", nav_driver: "Chauffeur", menu_profile: "Profil"
+    },
+    pt: {
+        nav_home: "Início", nav_rent: "Alugar", nav_driver: "Motorista", menu_profile: "Perfil"
+    },
+    en: {
+        nav_home: "Home", nav_rent: "Rent", nav_driver: "Driver", menu_profile: "Profile"
+    }
 };
 
 window.DJUNTA = {
@@ -19,53 +32,93 @@ if(window.supabase) {
     window.DJUNTA.sb = window.supabase.createClient(CONFIG.url, CONFIG.key);
 }
 
+// Global function to toggle menu
+window.toggleMenu = function() {
+    const menu = document.getElementById('mobile-menu');
+    if(menu) menu.classList.toggle('hidden');
+};
+
+// Global function to change language with localStorage persistence
+window.changeLanguage = function(lang) {
+    localStorage.setItem('djunta_lang', lang);
+    const dict = TRANSLATIONS[lang];
+    if(!dict) return;
+    
+    document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if(dict[key]) el.innerHTML = dict[key];
+    });
+
+    const sel = document.getElementById('lang-selector');
+    if(sel) sel.value = lang;
+};
+
 class DjuntaHeader extends HTMLElement {
     constructor() { super(); }
 
     connectedCallback() {
         this.innerHTML = `
-        <header class="fixed top-0 left-0 right-0 h-16 bg-white z-50 border-b border-gray-100 px-4 flex items-center justify-between font-sans shadow-sm">
-            
-            <div class="flex items-center gap-4">
-                <button onclick="document.getElementById('mobile-menu-overlay').classList.remove('hidden')" class="md:hidden text-[#1d4379]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        <style>
+            .djunta-header {
+                position: fixed; top: 0; left: 0; right: 0; height: 75px;
+                background: white; z-index: 50; border-bottom: 1px solid #f1f5f9;
+                display: flex; align-items: center; justify-content: space-between;
+                padding: 0 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+            }
+            .djunta-header-spacer { height: 75px; }
+        </style>
+
+        <header class="djunta-header">
+            <div class="flex items-center z-10">
+                <button onclick="toggleMenu()" class="text-[#1d4379] p-1">
+                    <i data-lucide="menu" class="w-8 h-8"></i>
                 </button>
-                
-                <div class="hidden md:flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                    <img src="./logo.png" alt="DjuntaCar" style="height: 35px; width: auto; object-fit: contain; border: 1px dashed red;"> 
-                </div>
             </div>
 
-            <div class="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" onclick="window.location.href='index.html'">
-                <img src="./logo.png" alt="DjuntaCar" style="height: 30px; width: auto; object-fit: contain; border: 1px dashed red;">
+            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center cursor-pointer" onclick="window.location.href='index.html'">
+                <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <span class="hidden font-black text-[#1d4379] italic text-2xl tracking-tighter">DjuntaCar</span>
             </div>
 
-            <div class="flex items-center gap-3">
-                <select onchange="window.changeLanguage(this.value)" class="bg-gray-100 text-[#1d4379] text-[10px] font-bold py-1 px-2 rounded-lg hidden md:block">
-                    <option value="pt">PT</option><option value="fr">FR</option><option value="en">EN</option>
+            <div class="flex items-center gap-2 z-10">
+                <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-gray-50 text-[#1d4379] text-[10px] font-bold py-2 px-2 rounded-lg border-none outline-none cursor-pointer">
+                    <option value="fr">FR</option>
+                    <option value="pt">PT</option>
+                    <option value="en">EN</option>
                 </select>
-                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <button onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-200 text-gray-400 hover:bg-blue-50 hover:text-[#1d4379] transition-colors">
+                    <i data-lucide="user" class="w-5 h-5"></i>
                 </button>
             </div>
         </header>
 
-        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-[100]">
-            <div onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-            <div class="absolute top-0 left-0 bottom-0 w-[80%] bg-white p-6 shadow-2xl flex flex-col">
-                <div class="flex justify-between items-center mb-8">
-                    <img src="./logo.png" style="height: 25px;">
-                    <button onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg></button>
+        <div id="mobile-menu" class="hidden fixed inset-0 z-[100]">
+            <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+            <div class="absolute top-0 left-0 bottom-0 w-[85%] bg-white p-6 shadow-2xl flex flex-col transition-transform">
+                <div class="flex justify-between items-center mb-10">
+                    <span class="font-black text-[#1d4379] text-xl">Menu</span>
+                    <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full"><i data-lucide="x" class="w-6 h-6 text-gray-500"></i></button>
                 </div>
-                <nav class="flex flex-col gap-6 text-[#1d4379] font-bold text-lg">
-                    <a href="index.html" class="flex items-center gap-3">Início</a>
-                    <a href="search-car.html" class="flex items-center gap-3">Alugar</a>
-                    <a href="driver-application.html" class="flex items-center gap-3">Motorista</a>
+                <nav class="flex flex-col gap-4 text-lg font-bold text-[#1d4379]">
+                    <a href="index.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="home" class="w-5 h-5"></i> <span data-key="nav_home">Accueil</span></a>
+                    <a href="search-car.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="search" class="w-5 h-5"></i> <span data-key="nav_rent">Louer</span></a>
+                    <a href="driver-application.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="briefcase" class="w-5 h-5"></i> <span data-key="nav_driver">Chauffeur</span></a>
+                    <a href="profile.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="user" class="w-5 h-5"></i> <span data-key="menu_profile">Profil</span></a>
                 </nav>
             </div>
         </div>
-        <div style="height: 70px;"></div>
+
+        <div class="djunta-header-spacer"></div>
         `;
+
+        // Apply saved language on header load
+        setTimeout(() => {
+            const savedLang = localStorage.getItem('djunta_lang') || 'fr';
+            const sel = document.getElementById('lang-selector');
+            if(sel) sel.value = savedLang;
+            changeLanguage(savedLang);
+            if(window.lucide) lucide.createIcons();
+        }, 50);
     }
 }
 if (!customElements.get('djunta-header')) customElements.define('djunta-header', DjuntaHeader);
