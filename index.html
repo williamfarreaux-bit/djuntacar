@@ -458,7 +458,7 @@
         </div>
         
         <div class="header-center" onclick="window.location.reload()">
-            <img src="./logo.png" alt="DjuntaCar" class="logo-img" onerror="this.classList.add('logo-img-failed'); this.style.display='none';">
+            <img src="./logo.png" alt="DjuntaCar" class="logo-img" onerror="this.style.visibility='hidden'; this.style.position='absolute'; this.nextElementSibling.style.display='block';">
             <span class="logo-text">DjuntaCar</span>
         </div>
         
@@ -606,6 +606,10 @@
          JAVASCRIPT - Minimal, Self-Contained
     ======================================== -->
     <script>
+        // Cache DOM elements for performance
+        var mobileMenu = null;
+        var menuOverlay = null;
+        
         // Locations data for each island (Airports, Ports, Cities)
         var locationData = {
             'santiago': [
@@ -693,12 +697,22 @@
             locationSelect.appendChild(defaultOpt);
             
             // Add location options
-            for (var i = 0; i < locations.length; i++) {
+            locations.forEach(function(loc) {
                 var opt = document.createElement('option');
-                opt.value = locations[i].value;
-                opt.textContent = locations[i].label;
+                opt.value = loc.value;
+                opt.textContent = loc.label;
                 locationSelect.appendChild(opt);
-            }
+            });
+        }
+        
+        // Show inline error message
+        function showError(message) {
+            var islandSelect = document.getElementById('island-select');
+            islandSelect.style.borderColor = '#ef4444';
+            islandSelect.focus();
+            setTimeout(function() {
+                islandSelect.style.borderColor = '';
+            }, 2000);
         }
         
         // Perform search and redirect to results
@@ -707,7 +721,7 @@
             var location = document.getElementById('location-select').value;
             
             if (!island) {
-                alert('Veuillez sélectionner une île.');
+                showError('Veuillez sélectionner une île.');
                 return;
             }
             
@@ -722,14 +736,17 @@
         
         // Toggle mobile menu
         function toggleMenu() {
-            var menu = document.getElementById('mobile-menu');
-            var overlay = document.getElementById('menu-overlay');
+            // Initialize cached references if needed
+            if (!mobileMenu) {
+                mobileMenu = document.getElementById('mobile-menu');
+                menuOverlay = document.getElementById('menu-overlay');
+            }
             
-            menu.classList.toggle('active');
-            overlay.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
             
             // Prevent body scroll when menu is open
-            if (menu.classList.contains('active')) {
+            if (mobileMenu.classList.contains('active')) {
                 document.body.style.overflow = 'hidden';
             } else {
                 document.body.style.overflow = '';
@@ -738,11 +755,8 @@
         
         // Close menu on escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                var menu = document.getElementById('mobile-menu');
-                if (menu.classList.contains('active')) {
-                    toggleMenu();
-                }
+            if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) {
+                toggleMenu();
             }
         });
     </script>
