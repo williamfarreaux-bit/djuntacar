@@ -11,15 +11,15 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        /* STRUCTURE FIXE */
         body { 
             background-color: #f8fafc; 
             margin: 0; 
-            padding-top: 75px; /* Espace Header */
-            padding-bottom: 140px; /* Espace Boutons Bas */
+            padding-top: 75px; 
+            padding-bottom: 140px; 
             overflow-x: hidden;
         }
         
+        /* HEADER FIXE */
         header {
             position: fixed; top: 0; left: 0; right: 0; height: 75px;
             background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
@@ -27,12 +27,12 @@
             padding: 0 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         }
 
-        .logo-centré {
+        .logo-center {
             position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* HERO & MOTEUR */
+        /* HERO & RECHERCHE */
         .hero-section { 
             background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
             padding: 45px 20px 100px; text-align: center; color: white;
@@ -41,7 +41,7 @@
         }
 
         .search-container {
-            position: absolute; bottom: -70px; left: 50%; transform: translateX(-50%);
+            position: absolute; bottom: -75px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 500px; z-index: 50;
         }
 
@@ -57,21 +57,17 @@
         .btn-cta { 
             flex: 1; padding: 16px; border-radius: 16px; text-decoration: none;
             color: white; font-weight: 900; font-size: 11px; text-transform: uppercase;
-            text-align: center; border: none; cursor: pointer; transition: transform 0.1s;
+            text-align: center; border: none; cursor: pointer;
         }
         .btn-blue { background: #1d4379; box-shadow: 0 4px 12px rgba(29, 67, 121, 0.2); }
         .btn-green { background: #22c55e; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2); }
 
-        /* MENU OVERLAY */
+        /* MENU BURGER */
         #mobile-menu {
             position: fixed; inset: 0; background: white; z-index: 2000;
             display: none; padding: 40px; flex-direction: column;
         }
         #mobile-menu.active { display: flex; }
-
-        .hidden { display: none; }
-        .animate-in { animation: fadeIn 0.3s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="antialiased">
@@ -79,7 +75,7 @@
     <header>
         <button onclick="toggleMenu()" style="font-size: 28px; background:none; border:none; color:#1d4379; cursor:pointer;">☰</button>
         
-        <div class="logo-centré" onclick="window.location.reload()">
+        <div class="logo-center" onclick="window.location.reload()">
             <img src="./logo.png" alt="DjuntaCar" style="height: 40px; width: auto;" onerror="this.outerHTML='<b style=\'color:#1d4379; font-style:italic; font-size:22px;\'>DjuntaCar</b>'">
         </div>
 
@@ -108,7 +104,7 @@
 
     <main>
         <section class="hero-section">
-            <h1 class="text-white text-xl font-black uppercase italic leading-tight drop-shadow-md">
+            <h1 id="hero-title" class="text-white text-xl font-black uppercase italic leading-tight drop-shadow-md">
                 Louer une voiture au Cap-Vert<br>
                 <span class="text-sm font-bold normal-case block mt-2 opacity-95">Avec ou sans chauffeur</span>
             </h1>
@@ -117,7 +113,7 @@
                 <div class="bg-white p-5 rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-slate-50">
                     
                     <div class="flex items-center gap-3 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span class="text-lg">🏝️</span>
+                        <span>🏝️</span>
                         <select id="search-island" onchange="updateLocations()" class="w-full bg-transparent text-sm font-bold text-[#1d4379] outline-none">
                             <option value="" disabled selected>Choisir l'île</option>
                             <option value="Santiago">Santiago</option>
@@ -133,14 +129,14 @@
                     </div>
 
                     <div class="flex items-center gap-3 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span class="text-lg">📍</span>
+                        <span>📍</span>
                         <select id="search-location" onchange="checkAddressNeeded()" class="w-full bg-transparent text-sm font-bold text-slate-400 outline-none" disabled>
                             <option value="">Lieu de prise en charge</option>
                         </select>
                     </div>
 
-                    <div id="address-container" class="hidden animate-in flex items-center gap-3 mb-4 bg-blue-50 p-3 rounded-xl border border-blue-100">
-                        <span class="text-lg">🏠</span>
+                    <div id="address-container" class="hidden flex items-center gap-3 mb-4 bg-blue-50 p-3 rounded-xl border border-blue-100">
+                        <span>🏠</span>
                         <input type="text" id="search-address" placeholder="Hôtel ou adresse précise" class="w-full bg-transparent text-sm font-bold text-[#1d4379] outline-none placeholder-blue-300">
                     </div>
 
@@ -151,11 +147,16 @@
             </div>
         </section>
 
-        <div class="px-5 pt-28 pb-10 max-w-lg mx-auto">
-            <h2 class="text-[#1d4379] font-black uppercase text-[10px] tracking-widest mb-6 opacity-40 text-center">Véhicules disponibles</h2>
-            
+        <div class="px-5 pt-32 pb-10 max-w-lg mx-auto">
+            <h2 class="text-[#1d4379] font-black uppercase text-[10px] tracking-widest mb-6 opacity-40 text-center">Découvrez nos offres</h2>
             <div id="cars-feed" class="flex flex-col gap-6">
-                <div class="text-center py-10 text-slate-300 font-bold italic">Recherche de véhicules...</div>
+                <div class="bg-white rounded-[32px] overflow-hidden shadow-sm border border-slate-100">
+                    <div class="h-44 bg-slate-200"></div>
+                    <div class="p-6 flex justify-between items-center opacity-50">
+                        <div class="h-4 w-24 bg-slate-200 rounded"></div>
+                        <div class="h-4 w-12 bg-slate-200 rounded"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -166,63 +167,59 @@
     </div>
 
     <script>
-        // --- DATA GÉOGRAPHIQUE EXHAUSTIVE ---
-        const LOCATIONS_DATA = {
-            "Santiago": ["Aeroporto Nelson Mandela (RAI)", "Porto da Praia (Marítima)", "Praia (Cidade)", "Assomada (Cidade)", "Tarrafal (Vila)", "Cidade Velha", "Calheta de São Miguel"],
-            "São Vicente": ["Aeroporto Cesária Évora (VXE)", "Porto Grande - Mindelo (Marina)", "Mindelo (Cidade)", "São Pedro", "Baía das Gatas"],
-            "Sal": ["Aeroporto Amílcar Cabral (SID)", "Porto da Palmeira (Marítima)", "Santa Maria (Cidade)", "Espargos (Cidade)", "Murdeira"],
-            "Boa Vista": ["Aeroporto Aristides Pereira (BVC)", "Porto de Sal Rei (Marítima)", "Sal Rei (Cidade)", "Rabil", "Fundo das Figueiras"],
-            "Fogo": ["Aeroporto São Filipe (SFL)", "Porto Vale de Cavaleiros (Marítima)", "São Filipe (Cidade)", "Mosteiros (Cidade)"],
+        const LOCATIONS = {
+            "Santiago": ["Aeroporto Nelson Mandela (RAI)", "Porto da Praia (Marítima)", "Praia (Cidade)", "Assomada (Cidade)", "Tarrafal (Vila)", "Cidade Velha"],
+            "São Vicente": ["Aeroporto Cesária Évora (VXE)", "Porto Grande - Mindelo (Marina)", "Mindelo (Cidade)", "São Pedro"],
+            "Sal": ["Aeroporto Amílcar Cabral (SID)", "Porto da Palmeira (Marítima)", "Santa Maria (Cidade)", "Espargos"],
+            "Boa Vista": ["Aeroporto Aristides Pereira (BVC)", "Porto de Sal Rei (Marítima)", "Sal Rei (Cidade)", "Rabil"],
+            "Fogo": ["Aeroporto São Filipe (SFL)", "Porto Vale de Cavaleiros (Marítima)", "São Filipe (Cidade)", "Mosteiros"],
             "Santo Antão": ["Porto de Porto Novo (Ferry)", "Porto Novo (Cidade)", "Ribeira Grande (Cidade)", "Ponta do Sol", "Paúl"],
             "São Nicolau": ["Aeroporto da Preguiça (SNE)", "Porto do Tarrafal (Marítima)", "Ribeira Brava (Cidade)", "Tarrafal"],
             "Maio": ["Aeroporto do Maio (MMO)", "Porto Inglês (Marítima)", "Vila do Maio (Cidade)"],
             "Brava": ["Porto da Furna (Ferry)", "Nova Sintra (Cidade)", "Fajã de Água"]
         };
 
-        // --- LOGIQUE UI ---
+        const TRANSLATIONS = {
+            fr: { title: "Louer une voiture au Cap-Vert<br><span class='text-sm font-bold normal-case block mt-2 opacity-95'>Avec ou sans chauffeur</span>" },
+            pt: { title: "Alugar um carro em Cabo Verde<br><span class='text-sm font-bold normal-case block mt-2 opacity-95'>Com ou sem motorista</span>" },
+            en: { title: "Rent a car in Cape Verde<br><span class='text-sm font-bold normal-case block mt-2 opacity-95'>With or without driver</span>" }
+        };
+
         function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
 
         function updateLocations() {
             const island = document.getElementById('search-island').value;
             const locSelect = document.getElementById('search-location');
-            const addr = document.getElementById('address-container');
-            
             locSelect.disabled = false;
-            locSelect.style.color = "#1d4379";
-            addr.classList.add('hidden');
-            
+            locSelect.classList.remove('text-slate-400');
+            locSelect.classList.add('text-[#1d4379]');
             locSelect.innerHTML = '<option value="" disabled selected>Lieu de prise en charge</option>' + 
-                LOCATIONS_DATA[island].map(l => `<option value="${l}">${l}</option>`).join('');
+                LOCATIONS[island].map(l => `<option value="${l}">${l}</option>`).join('');
         }
 
         function checkAddressNeeded() {
             const loc = document.getElementById('search-location').value;
             const addr = document.getElementById('address-container');
-            // Hub = Pas d'adresse. Ville = Adresse requise.
             const isHub = loc.includes("Aeroporto") || loc.includes("Porto") || loc.includes("Gare") || loc.includes("Marina") || loc.includes("Ferry");
-            
-            if (loc && !isHub) { addr.classList.remove('hidden'); } 
-            else { addr.classList.add('hidden'); }
+            if (loc && !isHub) addr.classList.remove('hidden'); else addr.classList.add('hidden');
         }
 
         function changeLanguage(lang) {
             localStorage.setItem('djunta_lang', lang);
-            console.log("Langue mémorisée : " + lang);
+            document.getElementById('hero-title').innerHTML = TRANSLATIONS[lang].title;
         }
 
         function goToSearch() {
             const isl = document.getElementById('search-island').value;
             const loc = document.getElementById('search-location').value;
-            const adr = document.getElementById('search-address').value;
-            if(isl && loc) {
-                window.location.href = `search-car.html?island=${isl}&location=${loc}&address=${adr}`;
-            } else {
-                alert("Veuillez choisir une île.");
-            }
+            if(isl && loc) window.location.href = `search-car.html?island=${isl}&location=${loc}`;
         }
 
-        // --- INITIALISATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Charger langue
-            const savedLang = localStorage.
-                
+            const savedLang = localStorage.getItem('djunta_lang') || 'fr';
+            document.getElementById('lang-selector').value = savedLang;
+            changeLanguage(savedLang);
+        });
+    </script>
+</body>
+</html>
