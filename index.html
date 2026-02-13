@@ -7,18 +7,82 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: #f8fafc; 
+            margin: 0; 
+            padding-top: 75px; 
+            padding-bottom: 140px; 
+            overflow-x: hidden;
+        }
+        
+        header {
+            position: fixed; top: 0; left: 0; right: 0; height: 75px;
+            background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .logo-center {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            display: flex; align-items: center;
+        }
+
+        /* HERO SECTION : CENTRAGE VERTICAL DU TEXTE */
+        .hero-section { 
+            background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
+            min-height: 280px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            padding: 20px 20px 100px; 
+            text-align: center; 
+            color: white;
+            border-bottom-left-radius: 40px; 
+            border-bottom-right-radius: 40px;
+            position: relative;
+        }
+
+        .search-container {
+            position: absolute; 
+            bottom: -80px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 92%; 
+            max-width: 500px; 
+            z-index: 1100;
+        }
+
+        .action-btns { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(10px);
+            padding: 15px 20px 35px; display: flex; gap: 12px; border-top: 1px solid #eee; z-index: 1000;
+        }
+
+        .btn-cta { flex: 1; padding: 16px; border-radius: 16px; color: white; font-weight: 900; font-size: 11px; text-transform: uppercase; text-align: center; border: none; cursor: pointer; }
+        .btn-blue { background: #1d4379; }
+        .btn-green { background: #22c55e; }
+
+        #mobile-menu { position: fixed; inset: 0; background: white; z-index: 2000; display: none; padding: 40px; flex-direction: column; }
+        #mobile-menu.active { display: flex; }
+    </style>
+
     <script>
-        // --- LOGIQUE GLOBALE (Placée ici pour éviter le ReferenceError) ---
+        // DONNÉES GÉOGRAPHIQUES GLOBALES
         const GEO_DATA = {
-            "Santiago": ["Aeroporto Nelson Mandela (RAI)", "Porto da Praia (Marítima)", "Praia (Cidade)", "Assomada (Cidade)", "Tarrafal (Vila)"],
-            "São Vicente": ["Aeroporto Cesária Évora (VXE)", "Porto Grande (Mindelo)", "Marina de Mindelo", "Mindelo (Cidade)"],
-            "Sal": ["Aeroporto Amílcar Cabral (SID)", "Porto da Palmeira (Marítima)", "Santa Maria (Cidade)", "Espargos"],
-            "Boa Vista": ["Aeroporto Aristides Pereira (BVC)", "Porto de Sal Rei", "Sal Rei (Cidade)"],
-            "Fogo": ["Aeroporto São Filipe (SFL)", "Porto Vale de Cavaleiros", "São Filipe (Cidade)"],
-            "Santo Antão": ["Porto de Porto Novo (Marítima)", "Porto Novo (Cidade)", "Ribeira Grande"],
-            "São Nicolau": ["Aeroporto Preguiça (SNE)", "Porto do Tarrafal", "Ribeira Brava"],
-            "Maio": ["Aeroporto MMO", "Porto Inglês", "Vila do Maio"],
-            "Brava": ["Porto da Furna", "Nova Sintra"]
+            "Santiago": ["Aeroporto Nelson Mandela (RAI)", "Porto da Praia (Marítima)", "Praia (Cidade)", "Assomada (Cidade)", "Tarrafal (Vila)", "Cidade Velha", "Calheta"],
+            "São Vicente": ["Aeroporto Cesária Évora (VXE)", "Porto Grande (Mindelo)", "Marina de Mindelo", "Mindelo (Cidade)", "São Pedro"],
+            "Sal": ["Aeroporto Amílcar Cabral (SID)", "Porto da Palmeira (Marítima)", "Santa Maria (Cidade)", "Espargos (Cidade)", "Murdeira"],
+            "Boa Vista": ["Aeroporto Aristides Pereira (BVC)", "Porto de Sal Rei (Marítima)", "Sal Rei (Cidade)", "Rabil"],
+            "Fogo": ["Aeroporto São Filipe (SFL)", "Porto Vale de Cavaleiros (Marítima)", "São Filipe (Cidade)", "Mosteiros"],
+            "Santo Antão": ["Porto de Porto Novo (Ferry)", "Porto Novo (Cidade)", "Ribeira Grande (Cidade)", "Paúl"],
+            "São Nicolau": ["Aeroporto da Preguiça (SNE)", "Porto do Tarrafal (Marítima)", "Ribeira Brava (Cidade)", "Tarrafal"],
+            "Maio": ["Aeroporto do Maio (MMO)", "Porto Inglês (Marítima)", "Vila do Maio"],
+            "Brava": ["Porto da Furna (Ferry)", "Nova Sintra (Cidade)", "Fajã de Água"]
         };
 
         const TRANSLATIONS = {
@@ -27,15 +91,21 @@
             en: "Rent a car in Cape Verde<br><span class='text-sm font-bold normal-case block mt-3 opacity-95'>With or without driver</span>"
         };
 
-        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
+        // FONCTIONS DE NAVIGATION ET UI
+        function toggleMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+        }
 
         function updateLocations(island) {
             const locSelect = document.getElementById('search-location');
-            if(!locSelect) return;
+            const addrContainer = document.getElementById('address-container');
             
+            if(!locSelect) return;
+
             locSelect.disabled = false;
             locSelect.classList.remove('text-slate-400');
             locSelect.classList.add('text-[#1d4379]');
+            if(addrContainer) addrContainer.classList.add('hidden');
 
             let options = '<option value="" disabled selected>Lieu de prise en charge</option>';
             if(GEO_DATA[island]) {
@@ -47,81 +117,34 @@
         }
 
         function checkAddressNeeded(val) {
-            const addr = document.getElementById('address-container');
-            if(!addr) return;
-            const isHub = val.includes("Aeroporto") || val.includes("Porto") || val.includes("Marina") || val.includes("Gare");
-            if (val && !isHub) addr.classList.remove('hidden'); else addr.classList.add('hidden');
+            const addrContainer = document.getElementById('address-container');
+            if(!addrContainer) return;
+            
+            const isHub = val.includes("Aeroporto") || val.includes("Porto") || val.includes("Marina") || val.includes("Ferry");
+            
+            if (val && !isHub) {
+                addrContainer.classList.remove('hidden');
+            } else {
+                addrContainer.classList.add('hidden');
+            }
         }
 
         function changeLanguage(lang) {
             localStorage.setItem('djunta_lang', lang);
-            const titleEl = document.getElementById('hero-title');
-            if(titleEl) titleEl.innerHTML = TRANSLATIONS[lang];
+            const title = document.getElementById('hero-title');
+            if(title) title.innerHTML = TRANSLATIONS[lang];
         }
 
         function goToSearch() {
             const isl = document.getElementById('search-island').value;
             const loc = document.getElementById('search-location').value;
-            if(isl && loc) window.location.href = `search-car.html?island=${isl}&location=${loc}`;
-            else alert("Veuillez choisir une île et un lieu.");
+            const adr = document.getElementById('search-address').value;
+            if(isl && loc) {
+                window.location.href = `search-car.html?island=${encodeURIComponent(isl)}&location=${encodeURIComponent(loc)}&address=${encodeURIComponent(adr)}`;
+            } else {
+                alert("Veuillez choisir une île et un lieu.");
+            }
         }
     </script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
-        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 140px; }
-        header { position: fixed; top: 0; left: 0; right: 0; height: 75px; background: white; z-index: 2000; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .logo-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; }
-        .hero-section { background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); min-height: 280px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px 100px; text-align: center; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; position: relative; }
-        .search-container { position: absolute; bottom: -85px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px; z-index: 3000; }
-        .action-btns { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); padding: 15px 20px 35px; display: flex; gap: 12px; border-top: 1px solid #eee; z-index: 2000; }
-        .btn-cta { flex: 1; padding: 16px; border-radius: 16px; color: white; font-weight: 900; font-size: 11px; text-transform: uppercase; text-align: center; border: none; cursor: pointer; }
-        .btn-blue { background: #1d4379; }
-        .btn-green { background: #22c55e; }
-        #mobile-menu { position: fixed; inset: 0; background: white; z-index: 4000; display: none; padding: 40px; flex-direction: column; }
-        #mobile-menu.active { display: flex; }
-    </style>
 </head>
-<body class="antialiased">
-
-    <header>
-        <button onclick="toggleMenu()" style="font-size: 28px; background:none; border:none; color:#1d4379; cursor:pointer;">☰</button>
-        <div class="logo-center" onclick="window.location.reload()">
-            <img src="./logo.png" alt="DjuntaCar" style="height: 40px;" onerror="this.outerHTML='<b style=\'color:#1d4379; font-style:italic; font-size:22px;\'>DjuntaCar</b>'">
-        </div>
-        <div class="flex items-center gap-2">
-            <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-slate-100 text-[#1d4379] text-[11px] font-bold py-2 px-1 rounded-lg border-none outline-none">
-                <option value="fr">FR</option><option value="pt">PT</option><option value="en">EN</option>
-            </select>
-            <div onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center cursor-pointer border border-slate-200">👤</div>
-        </div>
-    </header>
-
-    <div id="mobile-menu">
-        <div class="flex justify-between items-center"><b class="text-[#1d4379] text-xl italic">DjuntaCar</b><button onclick="toggleMenu()" style="font-size: 35px; border:none; background:none; color:#1d4379;">✕</button></div>
-        <nav class="flex flex-col gap-8 mt-16 font-black text-[#1d4379] text-2xl uppercase tracking-tighter">
-            <a href="index.html" onclick="toggleMenu()">Accueil</a>
-            <a href="search-car.html">Louer un véhicule</a>
-            <a href="driver-application.html">Devenir chauffeur</a>
-            <a href="profile.html">Mon Profil</a>
-        </nav>
-    </div>
-
-    <main>
-        <section class="hero-section">
-            <div class="mt-[-20px]">
-                <h1 id="hero-title" class="text-white text-xl font-black uppercase italic leading-tight drop-shadow-md text-center">
-                    Louer une voiture au Cap-Vert<br>
-                    <span class="text-sm font-bold normal-case block mt-3 opacity-95">Avec ou sans chauffeur</span>
-                </h1>
-            </div>
-
-            <div class="search-container">
-                <div class="bg-white p-5 rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-slate-50">
-                    <div class="flex items-center gap-3 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100 text-[#1d4379]">
-                        <span>🏝️</span>
-                        <select id="search-island" onchange="updateLocations(this.value)" class="w-full bg-transparent text-sm font-bold outline-none cursor-pointer">
-                            <option value="" disabled selected>Choisir l'île</option>
-                            <option value="Santiago">Santiago</option><option value="São Vicente">São Vicente</option>
-                            <option value="Sal">Sal</option><option
+<body class="
