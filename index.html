@@ -22,8 +22,9 @@
         
         /* Barre de recherche */
         .search-wrapper { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 90%; max-width: 500px; z-index: 30; }
-        .search-bar { background: white; border-radius: 20px; padding: 12px 20px; box-shadow: 0 15px 35px rgba(29, 67, 121, 0.15); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; cursor: pointer; transition: transform 0.1s; }
-        .search-bar:active { transform: scale(0.98); }
+        .search-bar { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 15px 35px rgba(29, 67, 121, 0.15); display: flex; flex-direction: column; gap: 16px; border: 1px solid #f1f5f9; }
+        .search-bar select:focus, .search-bar input:focus { border-color: #1d4379; background: white; }
+        .search-bar button:active { transform: scale(0.97); }
 
         /* Boutons d'action */
         .action-btns { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 24px 35px; display: flex; gap: 12px; border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 40; border-top: 1px solid #e2e8f0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); }
@@ -42,10 +43,41 @@
         <p style="color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600;">Alugue carros ou motoristas, de forma simples.</p>
         
         <div class="search-wrapper">
-            <button class="search-bar" onclick="window.location.href='search-car.html'" style="width: 100%; border: none;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <span style="color: #94a3b8; font-size: 13px; font-weight: 600;">Pesquisar carros...</span>
-            </button>
+            <div class="search-bar" style="flex-direction: column; gap: 16px; padding: 20px;">
+                <!-- Island Selector -->
+                <div style="width: 100%;">
+                    <label style="display: block; font-size: 9px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">Escolha a Ilha</label>
+                    <div style="position: relative;">
+                        <select id="island-selector" style="width: 100%; height: 48px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0 36px 0 16px; font-size: 13px; font-weight: 700; color: #1d4379; outline: none; appearance: none; cursor: pointer;">
+                            <option value="">Selecione uma ilha</option>
+                        </select>
+                        <svg style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                </div>
+
+                <!-- Location Selector -->
+                <div style="width: 100%;">
+                    <label style="display: block; font-size: 9px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">Escolha o Local</label>
+                    <div style="position: relative;">
+                        <select id="location-selector" disabled style="width: 100%; height: 48px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0 36px 0 16px; font-size: 13px; font-weight: 700; color: #1d4379; outline: none; appearance: none; cursor: pointer;">
+                            <option value="">Primeiro selecione uma ilha</option>
+                        </select>
+                        <svg style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                </div>
+
+                <!-- Address Field (Conditional) -->
+                <div id="address-field-wrapper" style="width: 100%; display: none;">
+                    <label style="display: block; font-size: 9px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">Endereço Específico</label>
+                    <input type="text" id="address-field" placeholder="Ex: Rua Principal, Nº 123" style="width: 100%; height: 48px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0 16px; font-size: 13px; font-weight: 600; color: #1e293b; outline: none;">
+                </div>
+
+                <!-- Search Button -->
+                <button id="search-btn" onclick="performSearch()" style="width: 100%; height: 50px; background: #1d4379; color: white; border-radius: 14px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 20px rgba(29, 67, 121, 0.25); transition: transform 0.1s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    Pesquisar
+                </button>
+            </div>
         </div>
     </section>
 
@@ -97,6 +129,180 @@
             Ser Motorista
         </button>
     </div>
+
+    <script>
+        // Cape Verde Data Structure
+        const capeVerdeData = {
+            "Santiago": {
+                "Airports": ["Aeroporto Internacional Nelson Mandela (RAI)"],
+                "Ports": ["Porto da Praia"],
+                "Cities": ["Praia", "Assomada", "Tarrafal"]
+            },
+            "São Vicente": {
+                "Airports": ["Aeroporto Internacional Cesária Évora (VXE)"],
+                "Marinas": ["Marina do Mindelo"],
+                "Cities": ["Mindelo", "São Pedro"]
+            },
+            "Sal": {
+                "Airports": ["Aeroporto Internacional Amílcar Cabral (SID)"],
+                "Ports": ["Porto da Palmeira"],
+                "Cities": ["Santa Maria", "Espargos"]
+            },
+            "Boa Vista": {
+                "Airports": ["Aeroporto Internacional Aristides Pereira (BVC)"],
+                "Ports": ["Porto de Sal Rei"],
+                "Cities": ["Sal Rei"]
+            },
+            "Fogo": {
+                "Airports": ["Aeroporto de São Filipe (SFL)"],
+                "Ports": ["Porto de Vale dos Cavaleiros"],
+                "Cities": ["São Filipe", "Mosteiros"]
+            },
+            "Santo Antão": {
+                "Ports": ["Porto de Porto Novo"],
+                "Cities": ["Porto Novo", "Ribeira Grande", "Ponta do Sol"]
+            },
+            "São Nicolau": {
+                "Airports": ["Aeroporto da Preguiça (SNE)"],
+                "Ports": ["Porto do Tarrafal"],
+                "Cities": ["Ribeira Brava", "Tarrafal"]
+            },
+            "Maio": {
+                "Airports": ["Aeroporto do Maio (MMO)"],
+                "Ports": ["Porto Inglês"],
+                "Cities": ["Porto Inglês (Cidade do Maio)"]
+            },
+            "Brava": {
+                "Ports": ["Porto da Furna"],
+                "Cities": ["Nova Sintra"]
+            }
+        };
+
+        // Initialize island selector
+        function initializeIslands() {
+            const islandSelector = document.getElementById('island-selector');
+            
+            // Populate islands
+            Object.keys(capeVerdeData).forEach(island => {
+                const option = document.createElement('option');
+                option.value = island;
+                option.textContent = island;
+                islandSelector.appendChild(option);
+            });
+        }
+
+        // Handle island selection change
+        function handleIslandChange() {
+            const islandSelector = document.getElementById('island-selector');
+            const locationSelector = document.getElementById('location-selector');
+            const selectedIsland = islandSelector.value;
+            
+            // Clear and reset location selector
+            locationSelector.innerHTML = '<option value="">Selecione um local</option>';
+            locationSelector.disabled = !selectedIsland;
+            
+            // Hide address field
+            document.getElementById('address-field-wrapper').style.display = 'none';
+            document.getElementById('address-field').value = '';
+            
+            if (selectedIsland) {
+                const islandData = capeVerdeData[selectedIsland];
+                
+                // Add locations grouped by type
+                ['Airports', 'Ports', 'Marinas', 'Cities'].forEach(category => {
+                    if (islandData[category] && islandData[category].length > 0) {
+                        // Add category optgroup
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = category === 'Airports' ? 'Aeroportos' :
+                                        category === 'Ports' ? 'Portos' :
+                                        category === 'Marinas' ? 'Marinas' : 'Cidades';
+                        
+                        islandData[category].forEach(location => {
+                            const option = document.createElement('option');
+                            option.value = location;
+                            option.textContent = location;
+                            option.dataset.type = category;
+                            optgroup.appendChild(option);
+                        });
+                        
+                        locationSelector.appendChild(optgroup);
+                    }
+                });
+            }
+        }
+
+        // Handle location selection change
+        function handleLocationChange() {
+            const locationSelector = document.getElementById('location-selector');
+            const selectedOption = locationSelector.options[locationSelector.selectedIndex];
+            const addressFieldWrapper = document.getElementById('address-field-wrapper');
+            const addressField = document.getElementById('address-field');
+            
+            if (selectedOption && selectedOption.dataset.type) {
+                const locationType = selectedOption.dataset.type;
+                
+                // Show address field only for Cities
+                if (locationType === 'Cities') {
+                    addressFieldWrapper.style.display = 'block';
+                    addressField.required = true;
+                } else {
+                    addressFieldWrapper.style.display = 'none';
+                    addressField.required = false;
+                    addressField.value = '';
+                }
+            } else {
+                addressFieldWrapper.style.display = 'none';
+                addressField.required = false;
+                addressField.value = '';
+            }
+        }
+
+        // Perform search
+        function performSearch() {
+            const island = document.getElementById('island-selector').value;
+            const location = document.getElementById('location-selector').value;
+            const address = document.getElementById('address-field').value;
+            
+            if (!island) {
+                alert('Por favor, selecione uma ilha.');
+                return;
+            }
+            
+            if (!location) {
+                alert('Por favor, selecione um local.');
+                return;
+            }
+            
+            // Check if address is required and empty
+            const addressField = document.getElementById('address-field');
+            if (addressField.required && !address.trim()) {
+                alert('Por favor, insira o endereço.');
+                return;
+            }
+            
+            // Build search URL with parameters
+            const params = new URLSearchParams({
+                island: island,
+                location: location
+            });
+            
+            if (address) {
+                params.append('address', address);
+            }
+            
+            // Redirect to search page
+            window.location.href = `search-car.html?${params.toString()}`;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeIslands();
+            
+            // Add event listeners
+            document.getElementById('island-selector').addEventListener('change', handleIslandChange);
+            document.getElementById('location-selector').addEventListener('change', handleLocationChange);
+        });
+    </script>
 
 </body>
 </html>
