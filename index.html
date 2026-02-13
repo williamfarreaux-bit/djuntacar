@@ -38,12 +38,83 @@
             position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); 
             width: 90%; max-width: 500px; z-index: 30; 
         }
-        .search-bar { 
+        .search-form { 
             width: 100%;
-            background: white; border-radius: 20px; padding: 12px 20px; 
+            background: white; border-radius: 24px; padding: 16px; 
             box-shadow: 0 15px 35px rgba(29, 67, 121, 0.15); 
-            display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; 
-            cursor: pointer; text-align: left;
+            border: 1px solid #f1f5f9; 
+        }
+        .search-form select, .search-form input {
+            width: 100%;
+            height: 48px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0 14px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1d4379;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        .search-form select:focus, .search-form input:focus {
+            border-color: #1d4379;
+            background: white;
+        }
+        .search-form select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper::after {
+            content: '';
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #94a3b8;
+            pointer-events: none;
+        }
+        .search-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #1d4379;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+            transition: transform 0.1s;
+        }
+        .search-btn:active {
+            transform: scale(0.95);
+        }
+        .address-input {
+            transition: all 0.3s ease;
+        }
+        .address-input.hidden {
+            display: none;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         /* BOUTONS ACTION */
@@ -116,15 +187,31 @@
             </h1>
             
             <div class="search-wrapper">
-                <button class="search-bar" onclick="window.location.href='search-car.html'">
-                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1d4379]">
-                        <i data-lucide="search" class="w-5 h-5"></i>
+                <form id="hero-search-form" class="search-form">
+                    <div class="flex gap-3 mb-3">
+                        <div class="select-wrapper flex-1">
+                            <label for="island-select" class="sr-only">Choisir l'île</label>
+                            <select id="island-select" aria-label="Choisir l'île / Escolher ilha" required>
+                                <option value="" disabled selected data-key="select_island">Choisir l'île</option>
+                            </select>
+                        </div>
+                        <div class="select-wrapper flex-1">
+                            <label for="location-select" class="sr-only">Choisir le lieu</label>
+                            <select id="location-select" aria-label="Choisir le lieu / Escolher local" disabled required>
+                                <option value="" disabled selected data-key="select_location">Choisir le lieu</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="flex flex-col items-start">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide" data-key="label_dest">Destination</span>
-                        <span class="text-sm font-bold text-[#1d4379] uppercase" data-key="search_placeholder">Où allez-vous ?</span>
+                    <div id="address-wrapper" class="address-input hidden mb-3">
+                        <label for="address-input" class="sr-only">Adresse précise</label>
+                        <input type="text" id="address-input" aria-label="Adresse précise / Endereço exato" placeholder="Adresse précise / Endereço exato">
                     </div>
-                </button>
+                    <div class="flex gap-3 justify-end">
+                        <button type="submit" class="search-btn" aria-label="Rechercher">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
         </section>
 
@@ -190,6 +277,113 @@
             }
         };
 
+        // CAPE VERDE DATA - Islands and Locations
+        const CAPE_VERDE_DATA = {
+            "Santiago": { type: "island", locations: ["Aeroporto Nelson Mandela (RAI)", "Porto da Praia", "Praia (Cidade)", "Assomada", "Tarrafal"] },
+            "São Vicente": { type: "island", locations: ["Aeroporto Cesária Évora (VXE)", "Marina do Mindelo", "Mindelo (Cidade)", "São Pedro"] },
+            "Sal": { type: "island", locations: ["Aeroporto Amílcar Cabral (SID)", "Porto da Palmeira", "Santa Maria", "Espargos"] },
+            "Boa Vista": { type: "island", locations: ["Aeroporto Aristides Pereira (BVC)", "Porto de Sal Rei", "Sal Rei"] },
+            "Fogo": { type: "island", locations: ["Aeroporto São Filipe (SFL)", "Porto Vale de Cavaleiros", "São Filipe"] },
+            "Santo Antão": { type: "island", locations: ["Porto de Porto Novo", "Porto Novo", "Ribeira Grande", "Ponta do Sol"] },
+            "São Nicolau": { type: "island", locations: ["Aeroporto da Preguiça (SNE)", "Porto do Tarrafal", "Ribeira Brava"] },
+            "Maio": { type: "island", locations: ["Aeroporto do Maio (MMO)", "Porto Inglês"] },
+            "Brava": { type: "island", locations: ["Porto da Furna", "Nova Sintra"] }
+        };
+
+        // Helper to check if location is Airport or Port
+        function isAirportOrPort(location) {
+            return location.toLowerCase().includes('aeroporto') || 
+                   location.toLowerCase().includes('porto') || 
+                   location.toLowerCase().includes('marina');
+        }
+
+        // Initialize cascading search form
+        function initSearchForm() {
+            const islandSelect = document.getElementById('island-select');
+            const locationSelect = document.getElementById('location-select');
+            const addressWrapper = document.getElementById('address-wrapper');
+            const addressInput = document.getElementById('address-input');
+            const searchForm = document.getElementById('hero-search-form');
+
+            if (!islandSelect || !locationSelect || !addressWrapper || !searchForm) {
+                console.warn('Search form elements not found, skipping initialization');
+                return;
+            }
+
+            // Populate islands
+            Object.keys(CAPE_VERDE_DATA).forEach(island => {
+                const option = document.createElement('option');
+                option.value = island;
+                option.textContent = island;
+                islandSelect.appendChild(option);
+            });
+
+            // Handle island selection
+            islandSelect.addEventListener('change', function() {
+                const selectedIsland = this.value;
+                const locations = CAPE_VERDE_DATA[selectedIsland]?.locations || [];
+
+                // Reset location select
+                locationSelect.innerHTML = '<option value="" disabled selected data-key="select_location">Choisir le lieu</option>';
+                locationSelect.disabled = false;
+
+                // Populate locations
+                locations.forEach(loc => {
+                    const option = document.createElement('option');
+                    option.value = loc;
+                    option.textContent = loc;
+                    locationSelect.appendChild(option);
+                });
+
+                // Hide address field when island changes
+                addressWrapper.classList.add('hidden');
+                addressInput.removeAttribute('required');
+                addressInput.value = '';
+            });
+
+            // Handle location selection - show/hide address field
+            locationSelect.addEventListener('change', function() {
+                const selectedLocation = this.value;
+
+                if (isAirportOrPort(selectedLocation)) {
+                    // Hide address for airports and ports
+                    addressWrapper.classList.add('hidden');
+                    addressInput.removeAttribute('required');
+                    addressInput.value = '';
+                } else {
+                    // Show address for cities
+                    addressWrapper.classList.remove('hidden');
+                    addressInput.setAttribute('required', 'required');
+                }
+            });
+
+            // Handle form submission
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const island = islandSelect.value;
+                const location = locationSelect.value;
+                const address = addressInput.value;
+
+                if (!island || !location) {
+                    return;
+                }
+
+                // Build query params
+                const params = new URLSearchParams({
+                    island: island,
+                    location: location
+                });
+
+                if (address && !isAirportOrPort(location)) {
+                    params.append('address', address);
+                }
+
+                // Redirect to search-car.html
+                window.location.href = `search-car.html?${params.toString()}`;
+            });
+        }
+
         // 2. FONCTIONS
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
@@ -216,6 +410,9 @@
 
             const savedLang = localStorage.getItem('djunta_lang') || 'fr';
             changeLanguage(savedLang);
+
+            // Initialize the cascading search form
+            initSearchForm();
 
             // Supabase Init
             const SUPABASE_URL = "https://enuiuuwnjzvpfvpklmjw.supabase.co";
