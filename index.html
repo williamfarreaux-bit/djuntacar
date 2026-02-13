@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -13,25 +13,24 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
         
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f8fafc; margin: 0; padding-top: 70px; padding-bottom: 120px; }
+        body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 120px; }
         
-        /* HEADER FIXE */
+        /* HEADER AVEC LOGO CENTRÉ */
         header {
-            position: fixed; top: 0; left: 0; right: 0; height: 70px;
+            position: fixed; top: 0; left: 0; right: 0; height: 75px;
             background: white; z-index: 50; border-bottom: 1px solid #f1f5f9;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            padding: 0 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.03);
         }
 
         /* HERO SECTION */
         .hero-section { 
             background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
-            padding: 30px 0 80px; 
+            padding: 40px 0 90px; 
             border-bottom-left-radius: 40px; 
             border-bottom-right-radius: 40px; 
             text-align: center; 
             position: relative; 
-            min-height: 200px; /* Évite le saut d'image */
         }
         
         /* SEARCH BAR */
@@ -47,7 +46,7 @@
             cursor: pointer; text-align: left;
         }
 
-        /* BOUTONS ACTION (Bas de page) */
+        /* BOUTONS ACTION */
         .action-btns { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); 
@@ -64,30 +63,30 @@
             transition: transform 0.1s; line-height: 1.2;
         }
         .btn-blue { background-color: #1d4379; }
-        .btn-green { background-color: #22c55e; } /* Ton vert demandé */
+        .btn-green { background-color: #22c55e; }
     </style>
 </head>
 <body class="antialiased text-slate-800">
 
-    <header>
-        <div class="flex items-center gap-4">
-            <button onclick="toggleMenu()" class="md:hidden text-[#1d4379]">
-                <i data-lucide="menu" class="w-7 h-7"></i>
+    <header class="relative">
+        <div class="flex items-center z-10">
+            <button onclick="toggleMenu()" class="text-[#1d4379] p-1">
+                <i data-lucide="menu" class="w-8 h-8"></i>
             </button>
-            
-            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.reload()">
-                <img src="./logo.png" alt="DjuntaCar" class="h-8 w-auto object-contain" onerror="this.style.display='none';">
-                <span class="font-black text-[#1d4379] italic text-xl hidden md:block">DjuntaCar</span>
-            </div>
         </div>
 
-        <div class="flex items-center gap-3">
-            <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-gray-100 text-[#1d4379] text-[10px] font-bold py-2 px-2 rounded-lg border-none outline-none cursor-pointer">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center" onclick="window.location.reload()">
+            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <span class="hidden font-black text-[#1d4379] italic text-2xl tracking-tighter">DjuntaCar</span>
+        </div>
+
+        <div class="flex items-center gap-2 z-10">
+            <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-gray-50 text-[#1d4379] text-[10px] font-bold py-2 px-2 rounded-lg border-none outline-none cursor-pointer">
                 <option value="fr">FR</option>
                 <option value="pt">PT</option>
                 <option value="en">EN</option>
             </select>
-            <button onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-200 text-gray-400">
+            <button onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-200 text-gray-400 hover:bg-blue-50 hover:text-[#1d4379] transition-colors">
                 <i data-lucide="user" class="w-5 h-5"></i>
             </button>
         </div>
@@ -97,23 +96,25 @@
         <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
         <div class="absolute top-0 left-0 bottom-0 w-[85%] bg-white p-6 shadow-2xl flex flex-col transition-transform">
             <div class="flex justify-between items-center mb-10">
-                <img src="./logo.png" class="h-8 w-auto">
+                <span class="font-black text-[#1d4379] text-xl">Menu</span>
                 <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full"><i data-lucide="x" class="w-6 h-6 text-gray-500"></i></button>
             </div>
-            <nav class="flex flex-col gap-6 text-lg font-bold text-[#1d4379]">
-                <a href="index.html" class="flex items-center gap-4 p-2 hover:bg-blue-50 rounded-xl"><i data-lucide="home" class="w-5 h-5"></i> <span data-key="nav_home">Accueil</span></a>
-                <a href="search-car.html" class="flex items-center gap-4 p-2 hover:bg-blue-50 rounded-xl"><i data-lucide="search" class="w-5 h-5"></i> <span data-key="nav_rent">Louer</span></a>
-                <a href="driver-application.html" class="flex items-center gap-4 p-2 hover:bg-blue-50 rounded-xl"><i data-lucide="briefcase" class="w-5 h-5"></i> <span data-key="nav_driver">Chauffeur</span></a>
-                <a href="profile.html" class="flex items-center gap-4 p-2 hover:bg-blue-50 rounded-xl"><i data-lucide="user" class="w-5 h-5"></i> <span data-key="menu_profile">Profil</span></a>
+            <nav class="flex flex-col gap-4 text-lg font-bold text-[#1d4379]">
+                <a href="index.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="home" class="w-5 h-5"></i> <span data-key="nav_home">Accueil</span></a>
+                <a href="search-car.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="search" class="w-5 h-5"></i> <span data-key="nav_rent">Louer</span></a>
+                <a href="driver-application.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="briefcase" class="w-5 h-5"></i> <span data-key="nav_driver">Chauffeur</span></a>
+                <a href="profile.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="user" class="w-5 h-5"></i> <span data-key="menu_profile">Profil</span></a>
             </nav>
         </div>
     </div>
 
     <main>
         <section class="hero-section">
-            <h1 class="text-white text-xl font-black uppercase italic px-6 leading-tight drop-shadow-md" data-key="hero_title">
-                Louez une voiture<br>au Cap-Vert
+            <h1 class="text-white text-xl font-black uppercase italic px-4 leading-tight drop-shadow-md" data-key="hero_title">
+                Louez une voiture au Cap-Vert<br>
+                <span class="text-base font-bold normal-case block mt-2 opacity-90">Avec ou sans chauffeur</span>
             </h1>
+            
             <div class="search-wrapper">
                 <button class="search-bar" onclick="window.location.href='search-car.html'">
                     <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1d4379]">
@@ -161,10 +162,10 @@
     </main>
 
     <script>
-        // 1. DICTIONNAIRE DE LANGUES (Hardcodé - Pas de JSON)
+        // 1. DICTIONNAIRE (Mis à jour avec le nouveau texte)
         const TRANSLATIONS = {
             fr: {
-                hero_title: "Louez une voiture<br>au Cap-Vert",
+                hero_title: "Louez une voiture au Cap-Vert<br><span class='text-base font-bold normal-case block mt-2 opacity-90'>Avec ou sans chauffeur</span>",
                 label_dest: "Destination", search_placeholder: "Où allez-vous ?",
                 btn_add: "Inscrivez votre voiture", btn_driver: "Devenez chauffeur",
                 nav_home: "Accueil", nav_rent: "Louer", nav_driver: "Chauffeur", menu_profile: "Profil",
@@ -172,7 +173,7 @@
                 msg_no_car: "Aucun véhicule disponible"
             },
             pt: {
-                hero_title: "Alugue um carro<br>em Cabo Verde",
+                hero_title: "Alugue um carro em Cabo Verde<br><span class='text-base font-bold normal-case block mt-2 opacity-90'>Com ou sem motorista</span>",
                 label_dest: "Destino", search_placeholder: "Para onde quer ir?",
                 btn_add: "Inscreva seu carro", btn_driver: "Seja motorista",
                 nav_home: "Início", nav_rent: "Alugar", nav_driver: "Motorista", menu_profile: "Perfil",
@@ -180,7 +181,7 @@
                 msg_no_car: "Nenhum veículo disponível"
             },
             en: {
-                hero_title: "Rent a car<br>in Cape Verde",
+                hero_title: "Rent a car in Cape Verde<br><span class='text-base font-bold normal-case block mt-2 opacity-90'>With or without driver</span>",
                 label_dest: "Destination", search_placeholder: "Where to go?",
                 btn_add: "List your car", btn_driver: "Become a driver",
                 nav_home: "Home", nav_rent: "Rent", nav_driver: "Driver", menu_profile: "Profile",
@@ -189,7 +190,7 @@
             }
         };
 
-        // 2. FONCTIONS UI
+        // 2. FONCTIONS
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
             if(menu) menu.classList.toggle('hidden');
@@ -200,44 +201,36 @@
             const dict = TRANSLATIONS[lang];
             if(!dict) return;
             
-            // Traduire tout ce qui a un 'data-key'
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
                 if(dict[key]) el.innerHTML = dict[key];
             });
 
-            // Mettre à jour le selecteur
             const sel = document.getElementById('lang-selector');
             if(sel) sel.value = lang;
         }
 
-        // 3. INITIALISATION
+        // 3. INIT & DATA
         document.addEventListener('DOMContentLoaded', async () => {
-            // A. Icones
             if(window.lucide) lucide.createIcons();
 
-            // B. Langue (Défaut FR)
             const savedLang = localStorage.getItem('djunta_lang') || 'fr';
             changeLanguage(savedLang);
 
-            // C. Supabase & Données
+            // Supabase Init
             const SUPABASE_URL = "https://enuiuuwnjzvpfvpklmjw.supabase.co";
-            const SUPABASE_KEY = "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-"; // Ta clé publique
+            const SUPABASE_KEY = "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-"; 
 
             if(window.supabase) {
                 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                
                 try {
-                    // Récupérer les voitures
                     const { data: vehicles, error } = await sb.from('vehicles').select('*').limit(10);
                     const feed = document.getElementById('cars-feed');
                     
                     if (error || !vehicles || vehicles.length === 0) {
                         feed.innerHTML = `<div class="bg-white p-8 rounded-3xl border border-gray-100 text-center shadow-sm"><p class="text-gray-400 font-bold uppercase text-xs">${TRANSLATIONS[savedLang].msg_no_car}</p></div>`;
                     } else {
-                        // Formateur de prix
                         const formatMoney = (n) => new Intl.NumberFormat('pt-CV').format(n);
-
                         feed.innerHTML = vehicles.map(v => `
                             <div class="bg-white rounded-[28px] overflow-hidden shadow-sm border border-gray-100 cursor-pointer hover:shadow-lg transition-all active:scale-95" onclick="window.location.href='car-detail.html?id=${v.id}'">
                                 <div class="relative h-48 bg-gray-100">
@@ -258,9 +251,7 @@
                         `).join('');
                         if(window.lucide) lucide.createIcons();
                     }
-                } catch (err) {
-                    console.error("Erreur de chargement:", err);
-                }
+                } catch (err) { console.error(err); }
             }
         });
     </script>
