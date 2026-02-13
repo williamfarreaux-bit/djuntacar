@@ -139,7 +139,77 @@
             const { data: { user } } = await DJUNTA.sb.auth.getUser();
             if (!user) window.location.href = 'login.html';
             
-            // Pré-remplissage si profil existant
+            // Pré-preenchimento se perfil existente
             const { data: profile } = await DJUNTA.sb.from('profiles').select('*').eq('id', user.id).single();
             if(profile) {
-                if(profile.
+                if(profile.full_name) document.getElementById('fullName').value = profile.full_name;
+                if(profile.phone) document.getElementById('phone').value = profile.phone;
+            }
+
+            if(window.lucide) lucide.createIcons();
+        }
+
+        function handleFileSelect(input, type) {
+            if (input.files && input.files[0]) {
+                files[type] = input.files[0];
+                document.getElementById(`zone-${type}`).classList.add('has-file');
+                document.getElementById(`txt-${type}`).classList.remove('hidden');
+                if(window.lucide) lucide.createIcons();
+            }
+        }
+
+        async function submitApplication() {
+            const btn = document.getElementById('btn-submit');
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const licenseNum = document.getElementById('licenseNum').value;
+
+            if (!fullName || !phone || !licenseNum) {
+                alert('Por favor preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            if (!files.cni || !files.license) {
+                alert('Por favor carregue todos os documentos necessários.');
+                return;
+            }
+
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Enviando...';
+            btn.disabled = true;
+
+            try {
+                const { data: { user } } = await DJUNTA.sb.auth.getUser();
+
+                // Upload dos ficheiros
+                const cniPath = `drivers/${user.id}/cni_${Date.now()}.jpg`;
+                const licensePath = `drivers/${user.id}/license_${Date.now()}.jpg`;
+
+                await DJUNTA.sb.storage.from('documents').upload(cniPath, files.cni);
+                await DJUNTA.sb.storage.from('documents').upload(licensePath, files.license);
+
+                // Criação da candidatura
+                const { error } = await DJUNTA.sb.from('driver_applications').insert([{
+                    user_id: user.id,
+                    full_name: fullName,
+                    phone: phone,
+                    license_number: licenseNum,
+                    cni_document: cniPath,
+                    license_document: licensePath,
+                    status: 'pending'
+                }]);
+
+                if (error) throw error;
+
+                alert('✅ Candidatura enviada com sucesso! Entraremos em contacto em breve.');
+                window.location.href = 'profile.html';
+
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao enviar candidatura: ' + err.message);
+                btn.innerHTML = 'Enviar Candidatura';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
