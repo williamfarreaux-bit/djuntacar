@@ -5,114 +5,761 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DjuntaCar - Location de voitures au Cap-Vert</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+        /* ========================================
+           DJUNTACAR - SINGLE-FILE ARCHITECTURE
+           Ultra-robust, No External Dependencies
+        ======================================== */
         
-        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 120px; }
+        /* RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
         
-        /* HEADER FIXE */
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding-top: 75px;
+            padding-bottom: 120px;
+            min-height: 100vh;
+        }
+        
+        /* ========================================
+           HEADER - FIXED TOP
+        ======================================== */
         header {
-            position: fixed; top: 0; left: 0; right: 0; height: 75px;
-            background: white; z-index: 50; border-bottom: 1px solid #f1f5f9;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; box-shadow: 0 2px 15px rgba(0,0,0,0.03);
-        }
-
-        /* HERO SECTION (Fond Bleu) */
-        .hero-section { 
-            background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
-            padding: 40px 0 100px; 
-            border-bottom-left-radius: 40px; 
-            border-bottom-right-radius: 40px; 
-            text-align: center; 
-            position: relative; 
-        }
-        
-        /* SEARCH WRAPPER (La boite flottante) */
-        .search-wrapper { 
-            position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); 
-            width: 90%; max-width: 500px; z-index: 30; 
-        }
-
-        /* ANIMATIONS */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-
-        /* BOUTONS ACTION (Bas de page) */
-        .action-btns { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); 
-            padding: 15px 24px 35px; display: flex; gap: 12px; 
-            border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 40; 
-            border-top: 1px solid #e2e8f0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); 
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 75px;
+            background: #ffffff;
+            z-index: 1000;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.03);
         }
         
-        .btn-main { 
-            flex: 1; padding: 12px; border-radius: 18px; color: white; 
-            font-weight: 800; font-size: 11px; text-transform: uppercase; 
-            text-align: center; display: flex; justify-content: center; align-items: center; 
-            gap: 6px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-            transition: transform 0.1s; line-height: 1.2;
+        .header-left,
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
         }
-        .btn-blue { background-color: #1d4379; }
-        .btn-green { background-color: #22c55e; } /* Vert demandé */
+        
+        .header-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .logo-img {
+            height: 42px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            font-weight: 900;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: #1d4379;
+            letter-spacing: -0.05em;
+            display: none;
+        }
+        
+        /* If logo image fails, show text */
+        .logo-img-failed + .logo-text {
+            display: block;
+        }
+        
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: #64748b;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        .icon-btn:hover {
+            background: #e0f2fe;
+            color: #1d4379;
+        }
+        
+        .lang-selector {
+            background: #f8fafc;
+            color: #1d4379;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        /* ========================================
+           HERO SECTION (Blue Background)
+        ======================================== */
+        .hero-section {
+            background: linear-gradient(135deg, #1d4379 0%, #15325b 100%);
+            padding: 40px 16px 120px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-title {
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-style: italic;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+        
+        .hero-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: block;
+            margin-top: 8px;
+            font-style: normal;
+            text-transform: none;
+        }
+        
+        /* ========================================
+           SEARCH WRAPPER (Floating Box)
+        ======================================== */
+        .search-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            width: 90%;
+            max-width: 500px;
+            z-index: 30;
+        }
+        
+        .search-box {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(29,67,121,0.2);
+            border: 1px solid #f1f5f9;
+        }
+        
+        .search-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #1d4379;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .search-row {
+            margin-bottom: 12px;
+        }
+        
+        .search-label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        
+        .search-select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+        
+        .search-select:focus {
+            border-color: #1d4379;
+        }
+        
+        .search-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            background: #1d4379;
+            color: #ffffff;
+            font-size: 0.875rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        
+        .search-btn:hover {
+            background: #15325b;
+        }
+        
+        .search-btn:active {
+            transform: scale(0.98);
+        }
+        
+        /* ========================================
+           MAIN CONTENT AREA
+        ======================================== */
+        main {
+            padding-top: 0;
+        }
+        
+        .content-section {
+            padding: 80px 16px 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #1d4379;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        
+        .info-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: 1px solid #f1f5f9;
+            margin-bottom: 16px;
+        }
+        
+        .info-card h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-card p {
+            font-size: 0.8rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        
+        /* ========================================
+           MOBILE MENU
+        ======================================== */
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 320px;
+            background: #ffffff;
+            z-index: 2001;
+            padding: 24px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .menu-title {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #1d4379;
+        }
+        
+        .close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: #64748b;
+        }
+        
+        .menu-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            color: #1d4379;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        
+        .menu-link:hover {
+            background: #e0f2fe;
+        }
+        
+        .menu-link-icon {
+            font-size: 1.25rem;
+        }
+        
+        /* ========================================
+           ACTION BAR - FIXED BOTTOM
+        ======================================== */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px 24px;
+            padding-bottom: max(35px, env(safe-area-inset-bottom, 35px));
+            display: flex;
+            gap: 12px;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            z-index: 1000;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .btn-main {
+            flex: 1;
+            padding: 14px 12px;
+            border-radius: 18px;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.1s, opacity 0.2s;
+            line-height: 1.3;
+            text-decoration: none;
+        }
+        
+        .btn-main:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-main:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-blue {
+            background-color: #1d4379;
+        }
+        
+        .btn-green {
+            background-color: #22c55e;
+        }
     </style>
 </head>
-<body class="antialiased text-slate-800">
+<body>
 
-    <header class="relative">
-        <div class="flex items-center z-10">
-            <button onclick="toggleMenu()" class="text-[#1d4379] p-1">
-                <i data-lucide="menu" class="w-8 h-8"></i>
-            </button>
+    <!-- ========================================
+         HEADER - Fixed at Top
+    ======================================== -->
+    <header>
+        <div class="header-left">
+            <button class="icon-btn" onclick="toggleMenu()" aria-label="Menu">☰</button>
         </div>
-
-        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center cursor-pointer" onclick="window.location.reload()">
-            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-            <span class="hidden font-black text-[#1d4379] italic text-2xl tracking-tighter">DjuntaCar</span>
+        
+        <div class="header-center" onclick="window.location.reload()">
+            <img src="./logo.png" alt="DjuntaCar" class="logo-img" onerror="this.style.visibility='hidden'; this.style.position='absolute'; this.nextElementSibling.style.display='block';">
+            <span class="logo-text">DjuntaCar</span>
         </div>
-
-        <div class="flex items-center gap-2 z-10">
-            <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-gray-50 text-[#1d4379] text-[10px] font-bold py-2 px-2 rounded-lg border-none outline-none cursor-pointer">
+        
+        <div class="header-right">
+            <select class="lang-selector" id="lang-selector">
                 <option value="fr">FR</option>
                 <option value="pt">PT</option>
                 <option value="en">EN</option>
             </select>
-            <button onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-200 text-gray-400 hover:bg-blue-50 hover:text-[#1d4379] transition-colors">
-                <i data-lucide="user" class="w-5 h-5"></i>
-            </button>
+            <a href="profile.html" class="icon-btn" aria-label="Profil">👤</a>
         </div>
     </header>
 
-    <div id="mobile-menu" class="hidden fixed inset-0 z-[100]">
-        <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        <div class="absolute top-0 left-0 bottom-0 w-[85%] bg-white p-6 shadow-2xl flex flex-col transition-transform">
-            <div class="flex justify-between items-center mb-10">
-                <span class="font-black text-[#1d4379] text-xl">MENU</span>
-                <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full"><i data-lucide="x" class="w-6 h-6 text-gray-500"></i></button>
-            </div>
-            <nav class="flex flex-col gap-4 text-lg font-bold text-[#1d4379]">
-                <a href="index.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="home" class="w-5 h-5"></i> <span data-key="nav_home">Accueil</span></a>
-                <a href="search-car.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="search" class="w-5 h-5"></i> <span data-key="nav_rent">Louer</span></a>
-                <a href="driver-application.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="briefcase" class="w-5 h-5"></i> <span data-key="nav_driver">Chauffeur</span></a>
-                <a href="profile.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="user" class="w-5 h-5"></i> <span data-key="menu_profile">Profil</span></a>
-            </nav>
+    <!-- ========================================
+         MOBILE MENU
+    ======================================== -->
+    <div class="mobile-menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="menu-header">
+            <span class="menu-title">MENU</span>
+            <button class="close-btn" onclick="toggleMenu()" aria-label="Fermer">✕</button>
         </div>
+        <nav class="menu-nav">
+            <a href="index.html" class="menu-link">
+                <span class="menu-link-icon">🏠</span>
+                <span>Accueil</span>
+            </a>
+            <a href="search-car.html" class="menu-link">
+                <span class="menu-link-icon">🔍</span>
+                <span>Louer une voiture</span>
+            </a>
+            <a href="become-driver.html" class="menu-link">
+                <span class="menu-link-icon">🚗</span>
+                <span>Devenez chauffeur</span>
+            </a>
+            <a href="profile.html" class="menu-link">
+                <span class="menu-link-icon">👤</span>
+                <span>Mon Profil</span>
+            </a>
+            <a href="favorites.html" class="menu-link">
+                <span class="menu-link-icon">❤️</span>
+                <span>Favoris</span>
+            </a>
+            <a href="my-rentals.html" class="menu-link">
+                <span class="menu-link-icon">📋</span>
+                <span>Mes Locations</span>
+            </a>
+            <a href="assistance.html" class="menu-link">
+                <span class="menu-link-icon">💬</span>
+                <span>Assistance</span>
+            </a>
+        </nav>
     </div>
 
+    <!-- ========================================
+         MAIN CONTENT
+    ======================================== -->
     <main>
+        <!-- HERO SECTION -->
         <section class="hero-section">
-            <h1 class="text-white text-xl font-black uppercase italic px-4 leading-tight drop-shadow-md" data-key="hero_title">
-                Louez une voiture au Cap-Vert<br>
-                <span class="text-sm font-bold normal-case block mt-2 opacity-90">Avec ou sans chauffeur</span>
+            <h1 class="hero-title">
+                Louez une voiture au Cap-Vert
+                <span class="hero-subtitle">Avec ou sans chauffeur</span>
             </h1>
             
+            <!-- CASCADING SEARCH BOX -->
             <div class="search-wrapper">
-                <div class="bg-white rounded-[24px] p-4 shadow-[0_15px_35px_rgba(29,67,121,0.2)] border border-[#f1f5f9]">
+                <div class="search-box">
+                    <div class="search-title">
+                        🔍 Rechercher une voiture
+                    </div>
                     
-                    <div class="flex items
+                    <!-- Island Selection (9 Cape Verde Islands) -->
+                    <div class="search-row">
+                        <label class="search-label" for="island-select">Île</label>
+                        <select class="search-select" id="island-select" onchange="updateLocations()">
+                            <option value="">-- Sélectionnez une île --</option>
+                            <option value="santiago">Santiago</option>
+                            <option value="sal">Sal</option>
+                            <option value="boavista">Boa Vista</option>
+                            <option value="sao-vicente">São Vicente</option>
+                            <option value="santo-antao">Santo Antão</option>
+                            <option value="fogo">Fogo</option>
+                            <option value="maio">Maio</option>
+                            <option value="sao-nicolau">São Nicolau</option>
+                            <option value="brava">Brava</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Location Selection (Cascading based on Island) -->
+                    <div class="search-row">
+                        <label class="search-label" for="location-select">Lieu de prise en charge</label>
+                        <select class="search-select" id="location-select" disabled>
+                            <option value="">-- D'abord, choisissez une île --</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Search Button -->
+                    <button class="search-btn" onclick="performSearch()">
+                        🔍 Rechercher
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info Section -->
+        <section class="content-section">
+            <h2 class="section-title">Pourquoi DjuntaCar ?</h2>
+            
+            <div class="info-card">
+                <h3>🚗 Large choix de véhicules</h3>
+                <p>Des citadines aux 4x4, trouvez le véhicule parfait pour explorer les îles du Cap-Vert.</p>
+            </div>
+            
+            <div class="info-card">
+                <h3>👨‍✈️ Chauffeurs professionnels</h3>
+                <p>Optez pour un chauffeur local expérimenté qui connaît parfaitement les routes et les secrets de chaque île.</p>
+            </div>
+            
+            <div class="info-card">
+                <h3>✅ Réservation simple</h3>
+                <p>Réservez en quelques clics, sans frais cachés. Annulation gratuite jusqu'à 24h avant.</p>
+            </div>
+            
+            <div class="info-card">
+                <h3>🏝️ 9 îles couvertes</h3>
+                <p>Service disponible sur toutes les îles habitées du Cap-Vert : Santiago, Sal, Boa Vista, São Vicente, Santo Antão, Fogo, Maio, São Nicolau et Brava.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================
+         ACTION BAR - Fixed at Bottom
+    ======================================== -->
+    <footer class="action-bar">
+        <a href="add-car.html" class="btn-main btn-blue">
+            🚗 Inscrire ma voiture
+        </a>
+        <a href="become-driver.html" class="btn-main btn-green">
+            👨‍✈️ Devenez chauffeur
+        </a>
+    </footer>
+
+    <!-- ========================================
+         JAVASCRIPT - Minimal, Self-Contained
+    ======================================== -->
+    <script>
+        // Cache DOM elements for performance
+        var mobileMenu = null;
+        var menuOverlay = null;
+        
+        // Locations data for each island (Airports, Ports, Cities)
+        var locationData = {
+            'santiago': [
+                { value: 'praia-airport', label: '✈️ Aéroport Nelson Mandela (Praia)' },
+                { value: 'praia-port', label: '⚓ Port de Praia' },
+                { value: 'praia-city', label: '🏙️ Praia (Centre-ville)' },
+                { value: 'assomada', label: '🏘️ Assomada' },
+                { value: 'tarrafal', label: '🏖️ Tarrafal' },
+                { value: 'cidade-velha', label: '🏛️ Cidade Velha' }
+            ],
+            'sal': [
+                { value: 'sal-airport', label: '✈️ Aéroport Amílcar Cabral' },
+                { value: 'palmeira-port', label: '⚓ Port de Palmeira' },
+                { value: 'santa-maria', label: '🏖️ Santa Maria' },
+                { value: 'espargos', label: '🏙️ Espargos' }
+            ],
+            'boavista': [
+                { value: 'boavista-airport', label: '✈️ Aéroport Aristides Pereira' },
+                { value: 'sal-rei-port', label: '⚓ Port de Sal Rei' },
+                { value: 'sal-rei', label: '🏙️ Sal Rei' },
+                { value: 'rabil', label: '🏘️ Rabil' }
+            ],
+            'sao-vicente': [
+                { value: 'cesaria-airport', label: '✈️ Aéroport Cesária Évora' },
+                { value: 'porto-grande', label: '⚓ Porto Grande (Mindelo)' },
+                { value: 'mindelo', label: '🏙️ Mindelo' },
+                { value: 'calhau', label: '🏖️ Calhau' }
+            ],
+            'santo-antao': [
+                { value: 'porto-novo-port', label: '⚓ Port de Porto Novo' },
+                { value: 'porto-novo', label: '🏙️ Porto Novo' },
+                { value: 'ribeira-grande', label: '🏘️ Ribeira Grande' },
+                { value: 'paul', label: '🌿 Paul' },
+                { value: 'ponta-do-sol', label: '🏖️ Ponta do Sol' }
+            ],
+            'fogo': [
+                { value: 'fogo-airport', label: '✈️ Aéroport de São Filipe' },
+                { value: 'vale-cavaleiros-port', label: '⚓ Port de Vale de Cavaleiros' },
+                { value: 'sao-filipe', label: '🏙️ São Filipe' },
+                { value: 'cha-das-caldeiras', label: '🌋 Chã das Caldeiras' },
+                { value: 'mosteiros', label: '🏘️ Mosteiros' }
+            ],
+            'maio': [
+                { value: 'maio-airport', label: '✈️ Aéroport de Maio' },
+                { value: 'porto-ingles-port', label: '⚓ Port de Porto Inglês' },
+                { value: 'vila-maio', label: '🏙️ Vila do Maio' },
+                { value: 'calheta', label: '🏖️ Calheta' }
+            ],
+            'sao-nicolau': [
+                { value: 'sao-nicolau-airport', label: '✈️ Aéroport Preguiça' },
+                { value: 'tarrafal-sn-port', label: '⚓ Port de Tarrafal' },
+                { value: 'ribeira-brava', label: '🏙️ Ribeira Brava' },
+                { value: 'tarrafal-sn', label: '🏖️ Tarrafal de São Nicolau' }
+            ],
+            'brava': [
+                { value: 'furna-port', label: '⚓ Port de Furna' },
+                { value: 'vila-nova-sintra', label: '🏙️ Vila Nova Sintra' },
+                { value: 'faja-dagua', label: '🏘️ Fajã d\'Água' }
+            ]
+        };
+        
+        // Update locations dropdown based on selected island
+        function updateLocations() {
+            var islandSelect = document.getElementById('island-select');
+            var locationSelect = document.getElementById('location-select');
+            var selectedIsland = islandSelect.value;
+            
+            // Clear existing options
+            locationSelect.innerHTML = '';
+            
+            if (!selectedIsland) {
+                locationSelect.innerHTML = '<option value="">-- D\'abord, choisissez une île --</option>';
+                locationSelect.disabled = true;
+                return;
+            }
+            
+            // Enable and populate with locations
+            locationSelect.disabled = false;
+            var locations = locationData[selectedIsland] || [];
+            
+            // Add default option
+            var defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = '-- Sélectionnez un lieu --';
+            locationSelect.appendChild(defaultOpt);
+            
+            // Add location options
+            locations.forEach(function(loc) {
+                var opt = document.createElement('option');
+                opt.value = loc.value;
+                opt.textContent = loc.label;
+                locationSelect.appendChild(opt);
+            });
+        }
+        
+        // Show inline error message
+        function showError(message) {
+            var islandSelect = document.getElementById('island-select');
+            islandSelect.style.borderColor = '#ef4444';
+            islandSelect.focus();
+            setTimeout(function() {
+                islandSelect.style.borderColor = '';
+            }, 2000);
+        }
+        
+        // Perform search and redirect to results
+        function performSearch() {
+            var island = document.getElementById('island-select').value;
+            var location = document.getElementById('location-select').value;
+            
+            if (!island) {
+                showError('Veuillez sélectionner une île.');
+                return;
+            }
+            
+            // Build search URL
+            var searchUrl = 'search-car.html?island=' + encodeURIComponent(island);
+            if (location) {
+                searchUrl += '&location=' + encodeURIComponent(location);
+            }
+            
+            window.location.href = searchUrl;
+        }
+        
+        // Toggle mobile menu
+        function toggleMenu() {
+            // Initialize cached references if needed
+            if (!mobileMenu) {
+                mobileMenu = document.getElementById('mobile-menu');
+                menuOverlay = document.getElementById('menu-overlay');
+            }
+            
+            mobileMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            if (mobileMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+    </script>
+
+</body>
+</html>
