@@ -3,116 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Location de voitures au Cap-Vert</title>
+    <title>DjuntaCar</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
         body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 120px; }
         
         /* HEADER FIXE */
         header {
             position: fixed; top: 0; left: 0; right: 0; height: 75px;
-            background: white; z-index: 50; border-bottom: 1px solid #f1f5f9;
+            background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 16px; box-shadow: 0 2px 15px rgba(0,0,0,0.03);
         }
 
-        /* HERO SECTION (Fond Bleu) */
+        .logo-center {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            font-weight: 900; font-style: italic; color: #1d4379; font-size: 20px;
+        }
+
         .hero-section { 
             background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
-            padding: 40px 0 100px; 
-            border-bottom-left-radius: 40px; 
-            border-bottom-right-radius: 40px; 
-            text-align: center; 
-            position: relative; 
-        }
-        
-        /* SEARCH WRAPPER (La boite flottante) */
-        .search-wrapper { 
-            position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); 
-            width: 90%; max-width: 500px; z-index: 30; 
+            padding: 40px 20px 80px; text-align: center; color: white;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
         }
 
-        /* ANIMATIONS */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-
-        /* BOUTONS ACTION (Bas de page) */
+        /* BOUTONS ACTION FIXES EN BAS */
         .action-btns { 
             position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); 
-            padding: 15px 24px 35px; display: flex; gap: 12px; 
-            border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 40; 
-            border-top: 1px solid #e2e8f0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); 
+            background: white; padding: 15px 20px 35px; 
+            display: flex; gap: 10px; border-top: 1px solid #eee; z-index: 1000;
         }
-        
+
         .btn-main { 
-            flex: 1; padding: 12px; border-radius: 18px; color: white; 
-            font-weight: 800; font-size: 11px; text-transform: uppercase; 
-            text-align: center; display: flex; justify-content: center; align-items: center; 
-            gap: 6px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-            transition: transform 0.1s; line-height: 1.2;
+            flex: 1; padding: 15px; border-radius: 15px; text-decoration: none;
+            color: white; font-weight: 900; font-size: 10px; text-transform: uppercase;
+            text-align: center; border: none; cursor: pointer;
         }
-        .btn-blue { background-color: #1d4379; }
-        .btn-green { background-color: #22c55e; } /* Vert demandé */
+        .btn-blue { background: #1d4379; }
+        .btn-green { background: #22c55e; }
+
+        /* MENU BURGER */
+        #mobile-menu {
+            position: fixed; inset: 0; background: white; z-index: 2000;
+            display: none; padding: 40px;
+        }
+        #mobile-menu.active { display: block; }
     </style>
 </head>
-<body class="antialiased text-slate-800">
+<body>
 
-    <header class="relative">
-        <div class="flex items-center z-10">
-            <button onclick="toggleMenu()" class="text-[#1d4379] p-1">
-                <i data-lucide="menu" class="w-8 h-8"></i>
-            </button>
-        </div>
+    <header>
+        <button onclick="toggleMenu()" style="font-size: 30px; background:none; border:none; color:#1d4379; cursor:pointer;">☰</button>
+        
+        <div class="logo-center">DjuntaCar</div>
 
-        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center cursor-pointer" onclick="window.location.reload()">
-            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-            <span class="hidden font-black text-[#1d4379] italic text-2xl tracking-tighter">DjuntaCar</span>
-        </div>
-
-        <div class="flex items-center gap-2 z-10">
-            <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-gray-50 text-[#1d4379] text-[10px] font-bold py-2 px-2 rounded-lg border-none outline-none cursor-pointer">
-                <option value="fr">FR</option>
-                <option value="pt">PT</option>
-                <option value="en">EN</option>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <select id="lang-selector" onchange="window.location.reload()" style="font-size:10px; font-weight:bold; border:none; background:#f1f5f9; padding:5px; border-radius:5px;">
+                <option>FR</option>
+                <option>PT</option>
             </select>
-            <button onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-200 text-gray-400 hover:bg-blue-50 hover:text-[#1d4379] transition-colors">
-                <i data-lucide="user" class="w-5 h-5"></i>
-            </button>
+            <div onclick="window.location.href='profile.html'" style="width:40px; height:40px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;">👤</div>
         </div>
     </header>
 
-    <div id="mobile-menu" class="hidden fixed inset-0 z-[100]">
-        <div onclick="toggleMenu()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        <div class="absolute top-0 left-0 bottom-0 w-[85%] bg-white p-6 shadow-2xl flex flex-col transition-transform">
-            <div class="flex justify-between items-center mb-10">
-                <span class="font-black text-[#1d4379] text-xl">MENU</span>
-                <button onclick="toggleMenu()" class="p-2 bg-gray-50 rounded-full"><i data-lucide="x" class="w-6 h-6 text-gray-500"></i></button>
-            </div>
-            <nav class="flex flex-col gap-4 text-lg font-bold text-[#1d4379]">
-                <a href="index.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="home" class="w-5 h-5"></i> <span data-key="nav_home">Accueil</span></a>
-                <a href="search-car.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="search" class="w-5 h-5"></i> <span data-key="nav_rent">Louer</span></a>
-                <a href="driver-application.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="briefcase" class="w-5 h-5"></i> <span data-key="nav_driver">Chauffeur</span></a>
-                <a href="profile.html" class="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-xl"><i data-lucide="user" class="w-5 h-5"></i> <span data-key="menu_profile">Profil</span></a>
-            </nav>
-        </div>
+    <div id="mobile-menu">
+        <button onclick="toggleMenu()" style="float:right; font-size:35px; border:none; background:none; color:#1d4379;">✕</button>
+        <nav style="display:flex; flex-direction:column; gap:25px; margin-top:80px; font-weight:900; color:#1d4379; font-size:24px;">
+            <a href="index.html" style="text-decoration:none; color:inherit;">ACCUEIL</a>
+            <a href="search-car.html" style="text-decoration:none; color:inherit;">LOUER</a>
+            <a href="driver-application.html" style="text-decoration:none; color:inherit;">CHAUFFEUR</a>
+            <a href="profile.html" style="text-decoration:none; color:inherit;">PROFIL</a>
+        </nav>
     </div>
 
     <main>
         <section class="hero-section">
-            <h1 class="text-white text-xl font-black uppercase italic px-4 leading-tight drop-shadow-md" data-key="hero_title">
+            <h1 style="font-size:20px; font-weight:900; text-transform:uppercase; font-style:italic;">
                 Louez une voiture au Cap-Vert<br>
-                <span class="text-sm font-bold normal-case block mt-2 opacity-90">Avec ou sans chauffeur</span>
+                <span style="font-size:14px; font-weight:700; font-style:normal; opacity:0.9;">Avec ou sans chauffeur</span>
             </h1>
-            
-            <div class="search-wrapper">
-                <div class="bg-white rounded-[24px] p-4 shadow-[0_15px_35px_rgba(29,67,121,0.2)] border border-[#f1f5f9]">
-                    
-                    <div class="flex items
+        </section>
+
+        <div style="padding: 50px 20px; text-align: center; color: #ccc; font-weight: bold;">
+            Le centre de la page défile ici...
+        </div>
+    </main>
+
+    <div class="action-btns">
+        <a href="add-car.html" class="btn-main btn-blue">Inscrire ma voiture</a>
+        <a href="driver-application.html" class="btn-main btn-green">Devenir chauffeur</a>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
