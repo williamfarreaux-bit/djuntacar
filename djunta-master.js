@@ -16,7 +16,14 @@ window.DJUNTA = {
 };
 
 if(window.supabase) {
-    window.DJUNTA.sb = window.supabase.createClient(CONFIG.url, CONFIG.key);
+    try {
+        window.DJUNTA.sb = window.supabase.createClient(CONFIG.url, CONFIG.key);
+        console.log("✅ Client Supabase initialisé avec succès");
+    } catch (error) {
+        console.error("❌ Erreur lors de l'initialisation du client Supabase:", error);
+    }
+} else {
+    console.error("❌ Bibliothèque Supabase non chargée. Vérifiez que le script CDN est bien inclus.");
 }
 
 class DjuntaHeader extends HTMLElement {
