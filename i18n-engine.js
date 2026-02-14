@@ -10,22 +10,43 @@ const I18n = {
 
     /**
      * Initialisation au chargement de la page
+     * Hiérarchie stricte: 1) localStorage, 2) Geo-IP, 3) Défaut FR
      */
-    init: function() {
-        // 1. Vérifier s'il y a une préférence sauvegardée
-        const savedLang = localStorage.getItem('djuntacar_lang');
+    init: async function() {
+        // 1. PRIORITÉ ABSOLUE: Vérifier localStorage
+        const savedLang = localStorage.getItem('djunta_lang');
         
         if (savedLang) {
-            this.currentLang = savedLang;
+            this.currentLang = savedLang.toLowerCase();
+            console.log(`DjuntaCar i18n: Langue récupérée depuis localStorage [${this.currentLang}]`);
         } else {
-            // 2. Sinon, détecter la langue du navigateur
-            const userLang = navigator.language || navigator.userLanguage; 
-            if (userLang.includes('pt')) this.currentLang = 'pt';
-            else if (userLang.includes('en')) this.currentLang = 'en';
-            else this.currentLang = 'fr'; // Défaut
+            // 2. Sinon, détecter par Geo-IP
+            try {
+                const res = await fetch('https://ipapi.co/json/').catch(() => null);
+                if (res && res.ok) {
+                    const data = await res.json();
+                    if (data.country_code === 'FR') {
+                        this.currentLang = 'fr';
+                    } else if (['PT', 'CV'].includes(data.country_code)) {
+                        this.currentLang = 'pt';
+                    } else {
+                        this.currentLang = 'en';
+                    }
+                    console.log(`DjuntaCar i18n: Langue détectée par IP [${this.currentLang}] (${data.country_code})`);
+                } else {
+                    // 3. Défaut si échec de détection
+                    this.currentLang = 'fr';
+                    console.log('DjuntaCar i18n: Détection IP échouée, défaut sur [fr]');
+                }
+            } catch (e) {
+                // 3. Défaut si erreur
+                this.currentLang = 'fr';
+                console.warn('DjuntaCar i18n: Erreur détection IP, défaut sur [fr]', e);
+            }
+            // Sauvegarder le choix détecté
+            localStorage.setItem('djunta_lang', this.currentLang);
         }
         
-        console.log(`DjuntaCar i18n: Langue définie sur [${this.currentLang}]`);
         this.apply();
     },
 
@@ -34,12 +55,10 @@ const I18n = {
      * @param {string} lang - 'fr', 'en', ou 'pt'
      */
     setLanguage: function(lang) {
-        this.currentLang = lang;
-        localStorage.setItem('djuntacar_lang', lang); // Sauvegarder le choix
+        this.currentLang = lang.toLowerCase();
+        localStorage.setItem('djunta_lang', this.currentLang); // Sauvegarder avec la clé correcte
+        console.log(`DjuntaCar i18n: Langue changée manuellement vers [${this.currentLang}]`);
         this.apply(); // Mettre à jour l'affichage
-        
-        // Optionnel : Recharger la page si nécessaire pour certains scripts
-        // location.reload(); 
     },
 
     /**
@@ -87,6 +106,6 @@ const I18n = {
 };
 
 // Lancer l'initialisation dès que le DOM est prêt
-document.addEventListener('DOMContentLoaded', () => {
-    I18n.init();
+document.addEventListener('DOMContentLoaded', async () => {
+    await I18n.init();
 });
