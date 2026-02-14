@@ -1,236 +1,200 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DjuntaCar - Finaliser la recherche</title>
+    <title>Pesquisar - DjuntaCar</title>
     
+    <meta name="theme-color" content="#1d4379">
+
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="djunta-master.js" defer></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 140px; overflow-x: hidden; }
-        
-        header {
-            position: fixed; top: 0; left: 0; right: 0; height: 75px;
-            background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        body { background-color: #fcfcfd; padding-bottom: 120px; margin: 0; }
+
+        /* HERO HEADER */
+        .search-header {
+            background-color: #1d4379;
+            padding: 20px 24px 60px 24px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            color: white;
+            text-align: center;
         }
 
-        .logo-center {
-            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        /* FORMULAIRE CONTAINER */
+        .form-container {
+            width: 90%;
+            max-width: 500px;
+            margin: -40px auto 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* INPUTS STYLISÉS */
+        .input-group { margin-bottom: 20px; }
+        .input-label {
+            display: block;
+            font-size: 10px; font-weight: 800; text-transform: uppercase;
+            color: #94a3b8; margin-bottom: 8px; letter-spacing: 0.5px;
+        }
+        .input-field {
+            width: 100%; height: 55px; border-radius: 16px;
+            background: #f8fafc; border: 1px solid #e2e8f0;
+            padding: 0 16px; font-size: 14px; font-weight: 700;
+            color: #1e293b; outline: none; transition: border-color 0.2s;
             display: flex; align-items: center;
         }
+        .input-field:focus-within { border-color: #1d4379; background: white; }
+        .input-icon { color: #1d4379; margin-right: 12px; }
 
-        /* RÉSUMÉ DU CHOIX (HERO) */
-        .selection-summary { 
-            background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
-            padding: 25px 20px 60px; 
-            text-align: center; color: white;
-            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
-        }
-
-        /* BOITE DE FILTRES */
-        .filter-container {
-            width: 92%; max-width: 500px;
-            margin: -40px auto 0 auto;
-            background: white; border-radius: 28px;
-            padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            border: 1px solid #f1f5f9; position: relative; z-index: 10;
-        }
-
-        .input-label {
-            display: block; font-size: 10px; font-weight: 800; text-transform: uppercase;
-            color: #94a3b8; margin-bottom: 8px; letter-spacing: 1px;
-        }
-
-        .date-input {
-            width: 100%; height: 50px; border-radius: 14px;
-            background: #f8fafc; border: 1px solid #e2e8f0;
-            padding: 0 12px; font-size: 13px; font-weight: 700;
-            color: #1d4379; outline: none; margin-bottom: 16px;
-        }
-
-        /* OPTION CHAUFFEUR (Toggle Switch) */
-        .driver-option {
-            display: flex; align-items: center; justify-content: space-between;
-            background: #f0fdf4; border: 1px solid #dcfce7;
-            padding: 16px; border-radius: 18px; margin-bottom: 20px;
-        }
-
-        .switch {
-            position: relative; display: inline-block; width: 44px; height: 24px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #cbd5e1; transition: .4s; border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
-            background-color: white; transition: .4s; border-radius: 50%;
-        }
-        input:checked + .slider { background-color: #22c55e; }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        /* CATEGORIES */
-        .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
-        .chip {
-            padding: 12px 4px; border-radius: 14px; background: #f8fafc;
-            border: 1px solid #e2e8f0; font-size: 10px; font-weight: 700;
-            color: #64748b; text-align: center; cursor: pointer; text-transform: uppercase;
-        }
-        .chip.active { background: #1d4379; color: white; border-color: #1d4379; }
-
+        /* BOUTON FIXE */
         .fixed-btn-container {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 1px solid #f1f5f9;
-            padding: 16px 24px 35px; z-index: 100;
+            padding: 16px 24px; padding-bottom: max(16px, env(safe-area-inset-bottom));
+            z-index: 100;
         }
-        .btn-confirm {
+        .btn-search {
             width: 100%; height: 60px; background: #1d4379; color: white;
-            border-radius: 20px; font-weight: 900; font-size: 13px;
-            text-transform: uppercase; border: none; cursor: pointer;
+            border-radius: 20px; font-weight: 900; font-size: 12px;
+            text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.3); transition: transform 0.1s;
+            border: none; cursor: pointer;
         }
-
-        #mobile-menu { position: fixed; inset: 0; background: white; z-index: 2000; display: none; padding: 40px; flex-direction: column; }
-        #mobile-menu.active { display: flex; }
+        .btn-search:active { transform: scale(0.96); }
     </style>
-
-    <script>
-        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            const island = params.get('island') || "Non spécifié";
-            const locationName = params.get('location') || "Lieu non choisi";
-            const address = params.get('address');
-
-            document.getElementById('display-island').innerText = island;
-            document.getElementById('display-location').innerText = locationName;
-            
-            if(address && address !== "undefined" && address !== "") {
-                document.getElementById('display-address').innerText = address;
-                document.getElementById('address-wrapper').style.display = "block";
-            }
-
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('start-date').value = now.toISOString().slice(0, 16);
-            const tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 2);
-            document.getElementById('end-date').value = tomorrow.toISOString().slice(0, 16);
-
-            const savedLang = localStorage.getItem('djunta_lang') || 'fr';
-            document.getElementById('lang-selector').value = savedLang;
-        });
-
-        function selectCategory(el) {
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function goToResults() {
-            const params = new URLSearchParams(window.location.search);
-            params.set('start', document.getElementById('start-date').value);
-            params.set('end', document.getElementById('end-date').value);
-            params.set('with_driver', document.getElementById('driver-toggle').checked);
-            
-            // Redirection vers la page de résultats (à créer)
-            window.location.href = `results.html?${params.toString()}`;
-        }
-    </script>
 </head>
-<body>
+<body class="antialiased">
 
-    <header>
-        <button onclick="toggleMenu()" style="font-size: 28px; background:none; border:none; color:#1d4379; cursor:pointer;">☰</button>
-        <div class="logo-center" onclick="window.location.href='index.html'">
-            <img src="./logo.png" alt="DjuntaCar" style="height: 40px;" onerror="this.outerHTML='<b style=\'color:#1d4379; font-style:italic; font-size:22px;\'>DjuntaCar</b>'">
-        </div>
-        <div class="flex items-center gap-2">
-            <select id="lang-selector" onchange="localStorage.setItem('djunta_lang', this.value); location.reload();" class="bg-slate-100 text-[#1d4379] text-[11px] font-bold py-2 px-1 rounded-lg border-none outline-none">
-                <option value="fr">FR</option><option value="pt">PT</option><option value="en">EN</option>
-            </select>
-            <div onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center cursor-pointer border border-slate-200">👤</div>
-        </div>
-    </header>
+    <djunta-header></djunta-header>
 
-    <div id="mobile-menu">
-        <nav class="flex flex-col gap-8 mt-16 font-black text-[#1d4379] text-2xl uppercase">
-            <a href="index.html">Accueil</a>
-            <a href="search-car.html">Recherche</a>
-            <a href="profile.html">Profil</a>
-            <button onclick="toggleMenu()" class="mt-10 text-sm text-slate-400">Fermer</button>
-        </nav>
+    <div class="search-header">
+        <h1 class="text-xl font-black uppercase tracking-tight">Planeie a sua<br>próxima viagem</h1>
+        <p class="text-xs font-medium text-blue-200 mt-2">Escolha as datas e viaje tranquilo.</p>
     </div>
 
-    <main>
-        <section class="selection-summary">
-            <h1 class="text-[10px] font-black uppercase opacity-60 mb-2 tracking-widest">Votre sélection</h1>
-            <div class="flex flex-col items-center gap-1">
-                <div class="text-2xl font-black italic uppercase tracking-tighter">
-                    <span id="display-island">...</span> 🏝️
-                </div>
-                <div class="text-sm font-bold opacity-90">
-                    📍 <span id="display-location">...</span>
-                </div>
-                <div id="address-wrapper" class="text-[10px] mt-1 italic opacity-70" style="display:none;">
-                    🏠 <span id="display-address"></span>
-                </div>
-            </div>
-            <button onclick="window.location.href='index.html'" class="mt-4 text-[9px] font-black uppercase underline opacity-50 tracking-widest">Modifier le lieu</button>
-        </section>
-
-        <div class="filter-container">
-            <label class="input-label">📅 Durée de location</label>
-            <div class="flex flex-col gap-1">
-                <div>
-                    <span class="text-[9px] font-bold text-slate-400 uppercase ml-1">Prise en charge</span>
-                    <input type="datetime-local" id="start-date" class="date-input">
-                </div>
-                <div>
-                    <span class="text-[9px] font-bold text-slate-400 uppercase ml-1">Restitution</span>
-                    <input type="datetime-local" id="end-date" class="date-input">
-                </div>
-            </div>
-
-            <div class="driver-option">
-                <div>
-                    <p class="text-xs font-black text-[#1d4379] uppercase">Besoin d'un chauffeur ?</p>
-                    <p class="text-[10px] text-green-600 font-bold">Service disponible sur cette île</p>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="driver-toggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <label class="input-label">🚗 Type de véhicule</label>
-            <div class="category-grid">
-                <div class="chip active" onclick="selectCategory(this)">Tous</div>
-                <div class="chip" onclick="selectCategory(this)">4x4 / SUV</div>
-                <div class="chip" onclick="selectCategory(this)">Citadine</div>
+    <div class="form-container">
+        
+        <div class="input-group">
+            <label class="input-label">Local de levantamento</label>
+            <div class="input-field relative">
+                <i data-lucide="map-pin" class="input-icon w-5 h-5"></i>
+                <select id="location" class="w-full bg-transparent outline-none appearance-none font-bold text-[#1d4379] border-none">
+                    <option value="Praia">Praia (Aeroporto)</option>
+                    <option value="Mindelo">Mindelo</option>
+                    <option value="Sal">Santa Maria (Sal)</option>
+                    <option value="BoaVista">Boa Vista</option>
+                </select>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 absolute right-4 pointer-events-none"></i>
             </div>
         </div>
 
-        <div class="px-5 pt-32 pb-10 max-w-lg mx-auto">
-            <h2 class="text-[#1d4379] font-black uppercase text-[10px] tracking-widest mb-6 opacity-30 text-center">Véhicules disponibles</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white rounded-2xl h-32 border border-slate-100 shadow-sm opacity-40"></div>
-                <div class="bg-white rounded-2xl h-32 border border-slate-100 shadow-sm opacity-40"></div>
+        <div class="input-group">
+            <label class="input-label">Data de levantamento</label>
+            <div class="input-field">
+                <i data-lucide="calendar" class="input-icon w-5 h-5"></i>
+                <input type="datetime-local" id="start-date" class="w-full bg-transparent outline-none font-bold text-gray-700 border-none">
             </div>
         </div>
-    </main>
 
-    <div class="fixed-btn-container max-w-lg mx-auto">
-        <button onclick="goToResults()" class="btn-confirm shadow-lg active:scale-95 transition-all">
-            Rechercher les véhicules
+        <div class="input-group">
+            <label class="input-label">Data de devolução</label>
+            <div class="input-field">
+                <i data-lucide="calendar-check" class="input-icon w-5 h-5"></i>
+                <input type="datetime-local" id="end-date" class="w-full bg-transparent outline-none font-bold text-gray-700 border-none">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Tipo de veículo</label>
+            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar" id="type-selector">
+                <button type="button" onclick="selectType(this, 'all')" class="type-chip active px-4 py-2 bg-[#1d4379] text-white rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-[#1d4379]">Todos</button>
+                <button type="button" onclick="selectType(this, '4x4')" class="type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200">4x4 / SUV</button>
+                <button type="button" onclick="selectType(this, 'citadine')" class="type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200">Citadino</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-btn-container">
+        <button onclick="performSearch()" class="btn-search">
+            Ver Veículos <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation dates (Aujourd'hui + Demain)
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('start-date').value = now.toISOString().slice(0, 16);
+
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 2); 
+            document.getElementById('end-date').value = tomorrow.toISOString().slice(0, 16);
+            
+            // Wait for Lucide
+            const checkLucide = setInterval(() => {
+                if(window.lucide) {
+                    lucide.createIcons();
+                    clearInterval(checkLucide);
+                }
+            }, 100);
+        });
+
+        let selectedCategory = 'all';
+
+        function selectType(btn, type) {
+            // Reset UI
+            document.querySelectorAll('.type-chip').forEach(c => {
+                c.className = 'type-chip px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-gray-200';
+            });
+            // Active UI
+            btn.className = 'type-chip px-4 py-2 bg-[#1d4379] text-white rounded-xl text-[10px] font-black uppercase whitespace-nowrap border border-[#1d4379]';
+            
+            selectedCategory = type;
+        }
+
+        function performSearch() {
+            const location = document.getElementById('location').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+
+            if (!startDate || !endDate) {
+                alert("Por favor selecione as datas.");
+                return;
+            }
+
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert("A data de devolução deve ser posterior à data de levantamento.");
+                return;
+            }
+
+            // Construction URL
+            const params = new URLSearchParams({
+                location: location,
+                start: startDate,
+                end: endDate,
+                category: selectedCategory
+            });
+
+            // Note: Redirection vers results.html (ou index.html si results.html n'existe pas)
+            window.location.href = `results.html?${params.toString()}`;
+        }
+    </script>
 </body>
 </html>
