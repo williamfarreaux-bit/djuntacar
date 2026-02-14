@@ -3,20 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Menu</title>
+    <title>Test i18n - DjuntaCar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="djunta-master.js" defer></script>
+    <script src="translations.js"></script>
+    <script src="i18n-engine.js"></script>
 </head>
 <body class="bg-gray-100">
     
     <djunta-header></djunta-header>
 
-    <div class="p-10 text-center">
-        <h1 class="text-2xl font-bold">Si vous voyez le menu au-dessus ☝️</h1>
-        <p>C'est que tout fonctionne !</p>
+    <div class="p-10 max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-[#1d4379]">🌍 Test d'Internationalisation (i18n)</h1>
+        
+        <div class="bg-white p-6 rounded-2xl shadow-md mb-6">
+            <h2 class="text-xl font-bold mb-4 text-[#1d4379]">État du système</h2>
+            <div class="space-y-2 text-sm">
+                <p><strong>Langue actuelle:</strong> <span id="current-lang" class="font-mono bg-blue-100 px-2 py-1 rounded">Chargement...</span></p>
+                <p><strong>localStorage 'djunta_lang':</strong> <span id="storage-lang" class="font-mono bg-gray-100 px-2 py-1 rounded">Chargement...</span></p>
+                <p><strong>État de connexion:</strong> <span id="auth-status" class="font-mono bg-gray-100 px-2 py-1 rounded">Chargement...</span></p>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-md mb-6">
+            <h2 class="text-xl font-bold mb-4 text-[#1d4379]">Exemples de traduction</h2>
+            <div class="space-y-3">
+                <p><strong>nav_home:</strong> <span data-i18n="nav_home" class="text-blue-600 font-bold">Accueil</span></p>
+                <p><strong>nav_rent:</strong> <span data-i18n="nav_rent" class="text-blue-600 font-bold">Louer un véhicule</span></p>
+                <p><strong>hero_title:</strong> <span data-i18n="hero_title" class="text-blue-600 font-bold">Louer une voiture</span></p>
+                <p><strong>login_btn:</strong> <span data-i18n="login_btn" class="text-blue-600 font-bold">Se connecter</span></p>
+                <p><strong>cta_be_driver:</strong> <span data-i18n="cta_be_driver" class="text-blue-600 font-bold">Devenir chauffeur</span></p>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-md">
+            <h2 class="text-xl font-bold mb-4 text-[#1d4379]">Tests manuels</h2>
+            <div class="space-y-3">
+                <button onclick="testChangeLanguage('fr')" class="w-full bg-blue-600 text-white py-3 px-4 rounded-xl font-bold hover:bg-blue-700">
+                    🇫🇷 Tester Français (FR)
+                </button>
+                <button onclick="testChangeLanguage('pt')" class="w-full bg-green-600 text-white py-3 px-4 rounded-xl font-bold hover:bg-green-700">
+                    🇵🇹 Tester Português (PT)
+                </button>
+                <button onclick="testChangeLanguage('en')" class="w-full bg-purple-600 text-white py-3 px-4 rounded-xl font-bold hover:bg-purple-700">
+                    🇬🇧 Tester English (EN)
+                </button>
+                <button onclick="clearLanguage()" class="w-full bg-red-600 text-white py-3 px-4 rounded-xl font-bold hover:bg-red-700">
+                    🗑️ Effacer le localStorage
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-6 p-4 bg-blue-50 rounded-xl">
+            <p class="text-sm text-gray-700">
+                <strong>✅ Header:</strong> Le sélecteur de langue en haut doit montrer la langue actuelle et permettre de changer.<br>
+                <strong>✅ Icône profil:</strong> Doit être <span class="text-blue-600 font-bold">bleue</span> (déconnecté) ou <span class="text-green-600 font-bold">verte</span> (connecté).<br>
+                <strong>✅ Traductions:</strong> Les textes ci-dessus doivent changer quand vous changez la langue.
+            </p>
+        </div>
     </div>
+
+    <script>
+        // Mise à jour de l'affichage
+        function updateDisplay() {
+            document.getElementById('current-lang').innerText = (I18n?.currentLang || 'N/A').toUpperCase();
+            document.getElementById('storage-lang').innerText = localStorage.getItem('djunta_lang') || '(vide)';
+            document.getElementById('auth-status').innerText = localStorage.getItem('djunta_auth') === 'true' ? '✅ Connecté' : '❌ Déconnecté';
+        }
+
+        function testChangeLanguage(lang) {
+            console.log(`Test: Changement de langue vers ${lang}`);
+            localStorage.setItem('djunta_lang', lang);
+            location.reload();
+        }
+
+        function clearLanguage() {
+            console.log('Test: Suppression du localStorage');
+            localStorage.removeItem('djunta_lang');
+            location.reload();
+        }
+
+        // Mise à jour initiale
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateDisplay, 500);
+        });
+    </script>
 
 </body>
 </html>
