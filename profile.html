@@ -6,24 +6,27 @@
     <title>Login - DjuntaCar</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
-        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        * { 
+            font-family: 'Montserrat', sans-serif !important; 
+            -webkit-tap-highlight-color: transparent; 
+            box-sizing: border-box;
+        }
         
         body { 
             background-color: #f8fafc; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            margin: 0;
-            padding-top: 75px; /* Espace pour le header fixe */
+            margin: 0; 
+            padding-top: 75px; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- MASTER HEADER V1.8.6 --- */
+        /* --- HEADER MONOLITHIQUE V1.8.7 --- */
         header {
             position: fixed; top: 0; left: 0; right: 0; height: 75px;
             background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
@@ -31,69 +34,76 @@
         }
 
         .burger-container { flex: 1; display: flex; align-items: center; }
-        .burger-btn { color: #1d4379; font-size: 32px; cursor: pointer; background: none; border: none; padding: 0; }
+        .burger-btn { color: #1d4379; font-size: 32px; cursor: pointer; background: none; border: none; }
 
         .logo-center {
             position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
             display: flex; align-items: center; z-index: 10; cursor: pointer;
         }
 
-        .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+        .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
 
         .lang-pill {
             background: #f1f5f9; border-radius: 12px; padding: 8px 12px;
             display: flex; align-items: center; gap: 6px; cursor: pointer;
         }
 
-        /* Icône Profil Dynamique */
+        /* Icône Profil (Bleu déconnecté / Vert connecté) */
         .profile-circle {
             width: 42px; height: 42px; border-radius: 50%;
-            background: #1d4379; /* Bleu par défaut (déconnecté) */
+            background: #1d4379; /* Bleu par défaut */
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; cursor: pointer; border: 2px solid white;
-            transition: background 0.3s ease;
+            border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
         }
-        .profile-circle.connected {
-            background: #22c55e; /* Vert (connecté) */
+        .profile-circle.is-connected {
+            background: #22c55e !important; /* Vert si connecté */
             box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
         }
 
         /* --- LOGIN CARD --- */
         .login-card { 
-            background: white; 
-            border-radius: 35px; 
-            padding: 40px 30px; 
-            width: 90%; 
-            max-width: 400px; 
-            margin: auto; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
-            border: 1px solid #f1f5f9; 
+            background: white; border-radius: 35px; padding: 40px 30px; 
+            width: 90%; max-width: 400px; margin: auto; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; 
         }
 
         .input-field { 
-            width: 100%; 
-            background-color: #f1f5f9; 
-            border: 2px solid transparent;
-            border-radius: 20px; 
-            padding: 18px; 
-            font-size: 14px;
-            font-weight: 700; 
-            color: #1d4379;
-            outline: none; 
-            margin-bottom: 15px; 
-            transition: 0.2s;
+            width: 100%; background-color: #f1f5f9; border: 2px solid transparent;
+            border-radius: 20px; padding: 18px; font-size: 14px;
+            font-weight: 700; color: #1d4379; outline: none; margin-bottom: 15px; 
         }
-
         .input-field:focus { border-color: #1d4379; background-color: white; }
 
         .btn-login { 
-            background: #1d4379; 
-            color: white; 
-            width: 100%; 
-            padding: 20px; 
-            border-radius: 22px; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            font-size: 12px; 
-            letter-spacing: 1px;
-            box-shadow: 0 10
+            background: #1d4379; color: white; width: 100%; padding: 20px; 
+            border-radius: 22px; font-weight: 900; text-transform: uppercase; 
+            font-size: 12px; border: none; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
+        }
+
+        /* --- MENU OVERLAY --- */
+        #mobile-menu { 
+            position: fixed; inset: 0; background: white; z-index: 4000; 
+            display: none; padding: 40px; flex-direction: column; 
+        }
+        #mobile-menu.active { display: flex; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="burger-container">
+            <button class="burger-btn" onclick="toggleMenu()">☰</button>
+        </div>
+        
+        <div class="logo-center" onclick="window.location.href='index.html'">
+            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto" onerror="this.outerHTML='<b class=\'text-[#1d4379] italic text-xl\'>DjuntaCar</b>'">
+        </div>
+        
+        <div class="header-right">
+            <div class="lang-pill">
+                <span class="text-[#1d4379] text-[12px] font-black">FR</span>
+                <span class="text-[#1d4379] text-[8px]">▼</span>
+            </div>
+            <div onclick="window.location.href='profile.html'" class
