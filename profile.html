@@ -1,15 +1,35 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Login - DjuntaCar</title>
+    <title>Perfil - DjuntaCar</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // --- 1. SÉCURITÉ : REDIRECTION SI NON CONNECTÉ ---
+        // On vérifie immédiatement. Si pas de session -> Login.
+        const isAuthenticated = localStorage.getItem('djunta_auth') === 'true';
+        if (!isAuthenticated) {
+            window.location.replace('login.html');
+        }
+
+        // --- 2. FONCTIONS DE NAVIGATION ---
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) menu.classList.toggle('active');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('djunta_auth');
+            localStorage.removeItem('djunta_user');
+            window.location.href = 'login.html';
+        }
+    </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
         
         * { 
             font-family: 'Montserrat', sans-serif !important; 
@@ -22,88 +42,54 @@
             margin: 0; 
             padding-top: 75px; 
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* --- HEADER MONOLITHIQUE V1.8.7 --- */
+        /* --- MASTER HEADER SOLIDE --- */
         header {
             position: fixed; top: 0; left: 0; right: 0; height: 75px;
             background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
             display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
         }
 
+        /* Gauche : Burger */
         .burger-container { flex: 1; display: flex; align-items: center; }
-        .burger-btn { color: #1d4379; font-size: 32px; cursor: pointer; background: none; border: none; }
+        .burger-btn { color: #1d4379; font-size: 30px; cursor: pointer; background: none; border: none; padding: 0; }
 
+        /* Centre : Logo (Lien Accueil) */
         .logo-center {
             position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
             display: flex; align-items: center; z-index: 10; cursor: pointer;
         }
 
+        /* Droite : Langue + Profil */
         .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
 
         .lang-pill {
-            background: #f1f5f9; border-radius: 12px; padding: 8px 12px;
-            display: flex; align-items: center; gap: 6px; cursor: pointer;
+            background: #f1f5f9; border-radius: 12px; padding: 6px 10px;
+            display: flex; align-items: center; gap: 4px; cursor: pointer;
         }
 
-        /* Icône Profil (Bleu déconnecté / Vert connecté) */
+        /* Cercle Profil (Vert car obligatoirement connecté ici) */
         .profile-circle {
             width: 42px; height: 42px; border-radius: 50%;
-            background: #1d4379; /* Bleu par défaut */
+            background: #22c55e; /* VERT CONNECTÉ */
             display: flex; align-items: center; justify-content: center;
-            border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 2px solid white; box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
             cursor: pointer;
         }
-        .profile-circle.is-connected {
-            background: #22c55e !important; /* Vert si connecté */
-            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+
+        /* --- UI CARDS --- */
+        .profile-hero {
+            background: linear-gradient(135deg, #1d4379 0%, #15325b 100%);
+            padding: 30px 20px 70px; text-align: center; color: white;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
         }
 
-        /* --- LOGIN CARD --- */
-        .login-card { 
-            background: white; border-radius: 35px; padding: 40px 30px; 
-            width: 90%; max-width: 400px; margin: auto; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; 
+        .profile-card {
+            background: white; width: 92%; max-width: 500px;
+            margin: -40px auto 20px; border-radius: 30px;
+            padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            border: 1px solid #f1f5f9; position: relative; z-index: 10;
         }
 
-        .input-field { 
-            width: 100%; background-color: #f1f5f9; border: 2px solid transparent;
-            border-radius: 20px; padding: 18px; font-size: 14px;
-            font-weight: 700; color: #1d4379; outline: none; margin-bottom: 15px; 
-        }
-        .input-field:focus { border-color: #1d4379; background-color: white; }
-
-        .btn-login { 
-            background: #1d4379; color: white; width: 100%; padding: 20px; 
-            border-radius: 22px; font-weight: 900; text-transform: uppercase; 
-            font-size: 12px; border: none; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
-        }
-
-        /* --- MENU OVERLAY --- */
-        #mobile-menu { 
-            position: fixed; inset: 0; background: white; z-index: 4000; 
-            display: none; padding: 40px; flex-direction: column; 
-        }
-        #mobile-menu.active { display: flex; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="burger-container">
-            <button class="burger-btn" onclick="toggleMenu()">☰</button>
-        </div>
-        
-        <div class="logo-center" onclick="window.location.href='index.html'">
-            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto" onerror="this.outerHTML='<b class=\'text-[#1d4379] italic text-xl\'>DjuntaCar</b>'">
-        </div>
-        
-        <div class="header-right">
-            <div class="lang-pill">
-                <span class="text-[#1d4379] text-[12px] font-black">FR</span>
-                <span class="text-[#1d4379] text-[8px]">▼</span>
-            </div>
-            <div onclick="window.location.href='profile.html'" class
+        .
