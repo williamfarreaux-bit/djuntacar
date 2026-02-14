@@ -166,7 +166,7 @@
 
     <script>
         const DJUNTA = { formatMoney: (amount) => new Intl.NumberFormat('pt-CV', { style: 'currency', currency: 'CVE', maximumFractionDigits: 0 }).format(amount).replace('CVE', '').trim() + ' CVE' };
-        const CONFIG = { url: "https://enuiuuuwnjzvpfvpklmjw.supabase.co", key: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-" };
+        const CONFIG = { url: "https://enuiuuwnjzvpfvpklmjw.supabase.co", key: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-" };
         if(window.supabase) { DJUNTA.sb = window.supabase.createClient(CONFIG.url, CONFIG.key); }
         
         function handleFile(input, side) {
