@@ -22,7 +22,10 @@ const I18n = {
         } else {
             // 2. Sinon, détecter par Geo-IP
             try {
-                const res = await fetch('https://ipapi.co/json/').catch(() => null);
+                const res = await fetch('https://ipapi.co/json/').catch((err) => {
+                    console.warn('DjuntaCar i18n: Erreur fetch Geo-IP:', err);
+                    return null;
+                });
                 if (res && res.ok) {
                     const data = await res.json();
                     if (data.country_code === 'FR') {
