@@ -5,148 +5,193 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Login - DjuntaCar</title>
     
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
-        * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
+        
+        * { 
+            font-family: 'Montserrat', sans-serif !important; 
+            -webkit-tap-highlight-color: transparent; 
+            box-sizing: border-box;
+        }
         
         body { 
             background-color: #f8fafc; 
-            min-height: 100vh; 
+            margin: 0; 
+            padding-top: 75px; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- MASTER HEADER V1.9.0 --- */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; height: 75px;
+            background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 16px;
+        }
+
+        .header-left { flex: 1; display: flex; align-items: center; }
+        .burger-btn { color: #1d4379; font-size: 32px; cursor: pointer; background: none; border: none; padding: 0; }
+
+        /* Logo au centre parfait */
+        .logo-center {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            display: flex; align-items: center; cursor: pointer;
+        }
+
+        .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+
+        /* SÉLECTEUR DE LANGUE (Design Pillule Grise) */
+        .lang-pill {
+            background: #f1f5f9; 
+            border-radius: 12px; 
+            padding: 8px 12px;
             display: flex; 
-            flex-direction: column; 
-            margin: 0;
-        }
-
-        .login-card { 
-            background: white; 
-            border-radius: 35px; 
-            padding: 40px 30px; 
-            width: 90%; 
-            max-width: 400px; 
-            margin: auto; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
-            border: 1px solid #f1f5f9; 
-        }
-
-        .input-field { 
-            width: 100%; 
-            background-color: #f1f5f9; 
-            border: 2px solid transparent;
-            border-radius: 20px; 
-            padding: 18px; 
-            font-size: 14px;
-            font-weight: 700; 
-            color: #1d4379;
-            outline: none; 
-            margin-bottom: 15px; 
-            transition: 0.2s;
-        }
-
-        .input-field:focus {
-            border-color: #1d4379;
-            background-color: white;
-        }
-
-        .btn-login { 
-            background: #1d4379; 
-            color: white; 
-            width: 100%; 
-            padding: 20px; 
-            border-radius: 22px; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            font-size: 12px; 
-            letter-spacing: 1px;
-            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
-            transition: all 0.2s;
-            border: none;
+            align-items: center; 
+            gap: 6px; 
             cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .lang-pill span { color: #1d4379; font-size: 12px; font-weight: 900; }
+        .lang-pill svg { color: #1d4379; width: 12px; height: 12px; stroke-width: 3px; }
+
+        /* ICÔNE PROFIL (Bleu par défaut / Vert si connecté) */
+        .profile-circle {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: #1d4379; /* BLEU PAR DÉFAUT */
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.3s ease;
+        }
+        .profile-circle.is-connected {
+            background: #22c55e !important; /* VERT SI CONNECTÉ */
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
         }
 
-        .btn-login:active {
-            transform: scale(0.95);
+        /* --- LOGIN CARD --- */
+        .login-card { 
+            background: white; border-radius: 35px; padding: 40px 30px; 
+            width: 90%; max-width: 400px; margin: auto; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; 
+        }
+        .input-field { 
+            width: 100%; background-color: #f1f5f9; border: 2px solid transparent;
+            border-radius: 20px; padding: 18px; font-size: 14px;
+            font-weight: 700; color: #1d4379; outline: none; margin-bottom: 15px; 
+        }
+        .input-field:focus { border-color: #1d4379; background-color: white; }
+        .btn-login { 
+            background: #1d4379; color: white; width: 100%; padding: 20px; 
+            border-radius: 22px; font-weight: 900; text-transform: uppercase; 
+            font-size: 12px; border: none; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(29, 67, 121, 0.2);
         }
 
-        .btn-login:disabled {
-            background: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
+        #mobile-menu { position: fixed; inset: 0; background: white; z-index: 4000; display: none; padding: 40px; flex-direction: column; }
+        #mobile-menu.active { display: flex; }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <djunta-header></djunta-header>
+    <header>
+        <div class="header-left">
+            <button class="burger-btn" onclick="toggleMenu()">☰</button>
+        </div>
+        
+        <div class="logo-center" onclick="window.location.href='index.html'">
+            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto" onerror="this.outerHTML='<b class=\'text-[#1d4379] italic text-xl\'>DjuntaCar</b>'">
+        </div>
+        
+        <div class="header-right">
+            <div class="lang-pill">
+                <span>FR</span>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+            <div onclick="window.location.href='profile.html'" class="profile-circle" id="user-indicator">
+                <span id="header-initials" class="text-white text-sm font-black uppercase">👤</span>
+            </div>
+        </div>
+    </header>
+
+    <div id="mobile-menu">
+        <div class="flex justify-between items-center mb-10">
+            <b class="text-[#1d4379] text-xl italic">DjuntaCar</b>
+            <button onclick="toggleMenu()" class="text-3xl">✕</button>
+        </div>
+        <nav class="flex flex-col gap-8 font-black text-[#1d4379] text-2xl uppercase">
+            <a href="index.html">Accueil</a>
+            <a href="search-car.html">Recherche</a>
+            <a href="profile.html">Mon Profil</a>
+        </nav>
+    </div>
 
     <main class="flex-grow flex items-center justify-center p-6">
         <div class="login-card">
             <div class="text-center mb-8">
-                <h1 class="text-2xl font-black text-[#1d4379] uppercase italic tracking-tighter" data-key="btn_login">Login</h1>
+                <h1 class="text-2xl font-black text-[#1d4379] uppercase italic tracking-tighter">Login</h1>
             </div>
 
             <form id="login-form">
                 <input type="email" id="email" class="input-field" placeholder="Email" required>
                 <input type="password" id="password" class="input-field" placeholder="Senha" required>
-                <button type="submit" id="submit-btn" class="btn-login" data-key="btn_login">ENTRAR</button>
+                <button type="submit" id="submit-btn" class="btn-login">ENTRAR</button>
             </form>
 
             <p class="mt-8 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                Novo? <a href="signup.html" class="text-[#1d4379] underline" data-key="btn_register">Criar conta</a>
+                Novo? <a href="signup.html" class="text-[#1d4379] underline">Criar conta</a>
             </p>
         </div>
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Attente du moteur
-            const checkEngine = setInterval(() => {
-                if(window.DJUNTA && DJUNTA.sb) {
-                    clearInterval(checkEngine);
-                    setupLogin();
-                }
-            }, 100);
-        });
+        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
 
-        function setupLogin() {
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. État visuel du profil
+            const indicator = document.getElementById('user-indicator');
+            const auth = localStorage.getItem('djunta_auth');
+            const user = JSON.parse(localStorage.getItem('djunta_user'));
+
+            if (auth === "true") {
+                indicator.classList.add('is-connected');
+                if (user && user.full_name) {
+                    const initials = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2);
+                    document.getElementById('header-initials').innerText = initials;
+                }
+            }
+
+            // 2. Logique Login
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
                 const btn = document.getElementById('submit-btn');
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                // UI Loading
-                const originalText = btn.innerText;
                 btn.innerText = "AGUARDE...";
                 btn.disabled = true;
 
                 try {
-                    // Utilisation du client Supabase centralisé
-                    const { error } = await DJUNTA.sb.auth.signInWithPassword({ email, password });
-
-                    if (error) {
-                        alert("Erro: " + error.message);
-                        btn.innerText = originalText;
-                        btn.disabled = false;
-                    } else {
-                        // Succès : Redirection
+                    if (window.DJUNTA && DJUNTA.sb) {
+                        const email = document.getElementById('email').value;
+                        const password = document.getElementById('password').value;
+                        const { data, error } = await DJUNTA.sb.auth.signInWithPassword({ email, password });
+                        
+                        if (error) throw error;
+                        
+                        localStorage.setItem('djunta_auth', 'true');
+                        localStorage.setItem('djunta_user', JSON.stringify(data.user));
                         window.location.href = 'profile.html';
+                    } else {
+                        throw new Error("Moteur non chargé");
                     }
                 } catch (err) {
-                    console.error(err);
-                    alert("Erro técnico.");
-                    btn.innerText = originalText;
+                    alert("Erro: " + err.message);
+                    btn.innerText = "ENTRAR";
                     btn.disabled = false;
                 }
             });
-        }
+        });
     </script>
 </body>
 </html>
