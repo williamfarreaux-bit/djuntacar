@@ -19,235 +19,64 @@
         body { 
             background-color: #f8fafc; 
             margin: 0; 
-            padding-top: 75px; /* Hauteur du Header */
-            padding-bottom: 160px; /* Espace pour les CTA fixes */
+            padding-top: 75px; 
+            padding-bottom: 160px; 
             overflow-x: hidden;
             width: 100%;
         }
 
-        /* --- HEADER MONOLITHIQUE V1.8 --- */
+        /* --- MASTER HEADER V1.9.4 --- */
         header {
             position: fixed; top: 0; left: 0; right: 0; height: 75px;
             background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 16px;
         }
+        .header-left { flex: 1; display: flex; align-items: center; }
+        .burger-btn { color: #1d4379; font-size: 32px; cursor: pointer; background: none; border: none; padding: 0; }
+
         .logo-center { 
             position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
-            display: flex; align-items: center; 
+            display: flex; align-items: center; cursor: pointer; z-index: 10;
         }
 
-        /* --- HERO SECTION CENTRÉE --- */
+        .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 10px; position: relative; }
+
+        /* Sélecteur de langue */
+        .lang-pill {
+            background: #f1f5f9; border-radius: 12px; padding: 8px 12px;
+            display: flex; align-items: center; gap: 6px; cursor: pointer;
+        }
+        .lang-pill span { color: #1d4379; font-size: 12px; font-weight: 900; }
+
+        #lang-dropdown {
+            position: absolute; top: 60px; right: 55px; background: white; 
+            border-radius: 15px; border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none; flex-direction: column; overflow: hidden; z-index: 2000;
+        }
+        #lang-dropdown.active { display: flex; }
+        .lang-opt { padding: 12px 20px; font-size: 11px; font-weight: 800; color: #1d4379; cursor: pointer; text-transform: uppercase; }
+        .lang-opt:hover { background: #f8fafc; }
+
+        /* Profil Icon Silhouette */
+        .profile-circle {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: #1d4379; display: flex; align-items: center; justify-content: center;
+            border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.3s ease;
+        }
+        .profile-circle.is-connected {
+            background: #22c55e !important;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+        }
+        .profile-circle svg { width: 20px; height: 20px; fill: white; }
+
+        /* --- HERO SECTION --- */
         .hero-section { 
             background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
             min-height: 280px; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 0 20px 100px; /* Padding bas pour laisser place au bloc recherche */
+            padding: 0 20px 100px; 
             text-align: center; color: white;
-            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
-            position: relative;
-        }
-
-        .search-container {
-            position: absolute; bottom: -85px; left: 50%; transform: translateX(-50%);
-            width: 92%; max-width: 500px; z-index: 1100;
-        }
-
-        /* --- BOUTONS CTA FIXES EN BAS --- */
-        .action-btns-fixed {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);
-            padding: 15px 20px 35px; 
-            display: flex; gap: 12px;
-            border-top: 1px solid #f1f5f9; z-index: 2000;
-        }
-        .btn-cta {
-            flex: 1; height: 55px; border-radius: 18px;
-            color: white; font-weight: 900; font-size: 11px;
-            text-transform: uppercase; display: flex; align-items: center; justify-content: center;
-            border: none; cursor: pointer; text-decoration: none;
-        }
-        .btn-blue { background: #1d4379; }
-        .btn-green { background: #22c55e; }
-
-        /* --- MENU OVERLAY --- */
-        #mobile-menu { 
-            position: fixed; inset: 0; background: white; z-index: 4000; 
-            display: none; padding: 40px; flex-direction: column; 
-        }
-        #mobile-menu.active { display: flex; }
-        
-        .error-text { color: #ef4444 !important; font-weight: 900 !important; }
-
-        /* Grille Feed */
-        .car-card {
-            background: white; border-radius: 24px; overflow: hidden;
-            border: 1px solid #f1f5f9; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-    </style>
-</head>
-<body class="antialiased">
-
-    <header>
-        <div class="flex-1">
-            <button onclick="toggleMenu()" class="text-[#1d4379] text-3xl focus:outline-none">☰</button>
-        </div>
-        
-        <div class="logo-center" onclick="window.location.reload()">
-            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto" onerror="this.outerHTML='<b class=\'text-[#1d4379] italic text-xl\'>DjuntaCar</b>'">
-        </div>
-        
-        <div class="flex-1 flex items-center justify-end gap-3">
-            <div class="bg-slate-50 border border-slate-100 rounded-lg px-2 py-1 flex items-center gap-1 cursor-pointer">
-                <span class="text-[#1d4379] text-[11px] font-black uppercase">FR</span>
-                <span class="text-[#1d4379] text-[8px]">▼</span>
-            </div>
-            <div onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border border-slate-100 overflow-hidden cursor-pointer">
-                <span class="text-xl">👤</span>
-            </div>
-        </div>
-    </header>
-
-    <div id="mobile-menu">
-        <div class="flex justify-between items-center mb-10">
-            <b class="text-[#1d4379] text-xl italic">DjuntaCar</b>
-            <button onclick="toggleMenu()" class="text-3xl focus:outline-none">✕</button>
-        </div>
-        <nav class="flex flex-col gap-8 font-black text-[#1d4379] text-2xl uppercase">
-            <a href="index.html" onclick="toggleMenu()">Accueil</a>
-            <a href="search-car.html">Louer un véhicule</a>
-            <a href="driver-application.html">Devenir chauffeur</a>
-            <a href="profile.html">Mon Profil</a>
-        </nav>
-    </div>
-
-    <main>
-        <section class="hero-section">
-            <div class="mt-[-20px]">
-                <h1 class="text-white text-xl font-black uppercase italic leading-tight drop-shadow-md">
-                    Louer une voiture au Cap-Vert<br>
-                    <span class="text-sm font-bold normal-case block mt-3 opacity-95">Avec ou sans chauffeur</span>
-                </h1>
-            </div>
-
-            <div class="search-container">
-                <div class="bg-white p-5 rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-50">
-                    <div class="flex items-center gap-3 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span>🏝️</span>
-                        <select id="search-island" onchange="updateLocations(this.value)" class="w-full bg-transparent text-sm font-bold outline-none cursor-pointer text-[#1d4379]">
-                            <option value="" disabled selected>Choisir l'île</option>
-                            <option value="Santiago">Santiago</option>
-                            <option value="São Vicente">São Vicente</option>
-                            <option value="Sal">Sal</option>
-                            <option value="Boa Vista">Boa Vista</option>
-                            <option value="Fogo">Fogo</option>
-                            <option value="Santo Antão">Santo Antão</option>
-                            <option value="São Nicolau">São Nicolau</option>
-                            <option value="Maio">Maio</option>
-                            <option value="Brava">Brava</option>
-                        </select>
-                    </div>
-
-                    <div class="flex items-center gap-3 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span>📍</span>
-                        <select id="search-location" onmousedown="handleLocationClick(event)" class="w-full bg-transparent text-sm font-bold text-slate-400 outline-none cursor-pointer">
-                            <option value="">Lieu de prise en charge</option>
-                        </select>
-                    </div>
-
-                    <button onclick="goToSearch()" class="w-full bg-[#1d4379] text-white rounded-xl py-4 font-black uppercase text-xs tracking-widest active:scale-95 transition-all shadow-lg">
-                        Rechercher
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <div class="px-4 pt-36 pb-10 max-w-lg mx-auto">
-            <h2 class="text-[#1d4379] font-black uppercase text-[10px] tracking-widest mb-6 opacity-30 text-center">Nos Catégories</h2>
-            <div id="cars-feed" class="grid grid-cols-2 gap-4">
-                </div>
-        </div>
-    </main>
-
-    <div class="action-btns-fixed max-w-lg mx-auto">
-        <a href="add-car.html" class="btn-cta btn-blue">Inscrire ma voiture</a>
-        <a href="driver-application.html" class="btn-cta btn-green">Devenir chauffeur</a>
-    </div>
-
-    <script>
-        const GEO_DATA = {
-            "Santiago": ["Aeroporto Nelson Mandela (RAI)", "Porto da Praia", "Praia Ville", "Assomada", "Tarrafal", "Cidade Velha"],
-            "São Vicente": ["Aeroporto Cesária Évora (VXE)", "Porto Grande (Mindelo)", "Marina de Mindelo", "Mindelo Ville"],
-            "Sal": ["Aeroporto Amílcar Cabral (SID)", "Porto da Palmeira", "Santa Maria", "Espargos"],
-            "Boa Vista": ["Aeroporto Aristides Pereira (BVC)", "Porto de Sal Rei", "Sal Rei Ville"],
-            "Fogo": ["Aeroporto São Filipe", "Porto Vale de Cavaleiros", "São Filipe Ville"],
-            "Santo Antão": ["Porto de Porto Novo", "Porto Novo Ville", "Ribeira Grande"],
-            "São Nicolau": ["Aeroporto Preguiça", "Porto do Tarrafal", "Ribeira Brava"],
-            "Maio": ["Aeroporto do Maio", "Porto Inglês", "Vila do Maio"],
-            "Brava": ["Porto da Furna", "Nova Sintra"]
-        };
-
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('active');
-        }
-
-        function handleLocationClick(event) {
-            const island = document.getElementById('search-island').value;
-            const locSelect = document.getElementById('search-location');
-            if (!island) {
-                event.preventDefault();
-                locSelect.innerHTML = '<option value="" class="error-text">SÉLECTIONNEZ D’ABORD UNE ÎLE</option>';
-                locSelect.classList.add('error-text');
-            }
-        }
-
-        function updateLocations(island) {
-            const locSelect = document.getElementById('search-location');
-            locSelect.disabled = false;
-            locSelect.classList.remove('error-text', 'text-slate-400');
-            locSelect.classList.add('text-[#1d4379]');
-            
-            let opts = '<option value="" disabled selected>Lieu de prise en charge</option>';
-            if(GEO_DATA[island]) {
-                GEO_DATA[island].forEach(l => {
-                    opts += `<option value="${l}">${l}</option>`;
-                });
-            }
-            locSelect.innerHTML = opts;
-        }
-
-        function goToSearch() {
-            const isl = document.getElementById('search-island').value;
-            const loc = document.getElementById('search-location').value;
-            if(isl && loc && !loc.includes("SÉLECTIONNEZ")) {
-                window.location.href = `search-car.html?island=${encodeURIComponent(isl)}&location=${encodeURIComponent(loc)}`;
-            } else {
-                handleLocationClick({preventDefault: () => {}});
-            }
-        }
-
-        // Remplissage du feed de démonstration
-        document.addEventListener('DOMContentLoaded', () => {
-            const feed = document.getElementById('cars-feed');
-            const demo = [
-                { b: 'Toyota', m: 'Hilux', p: '8.500', i: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=300' },
-                { b: 'Suzuki', m: 'Jimny', p: '6.500', i: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=300' },
-                { b: 'Renault', m: 'Kwid', p: '4.500', i: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=300' },
-                { b: 'Mitsubishi', m: 'L200', p: '9.000', i: 'https://images.unsplash.com/photo-1533591380310-037bc8c2d9b7?auto=format&fit=crop&w=300' }
-            ];
-            feed.innerHTML = demo.map(c => `
-                <div class="car-card">
-                    <img src="${c.i}" class="w-full h-32 object-cover">
-                    <div class="p-3">
-                        <h3 class="font-black text-[#1d4379] uppercase text-[10px] tracking-tighter">${c.b} ${c.m}</h3>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="font-black text-[#1d4379] text-xs">${c.p}</span>
-                            <span class="text-[7px] font-bold text-slate-400 uppercase">CVE/J</span>
-                        </div>
-                    </div>
-                </div>`).join('');
-        });
-    </script>
-</body>
-</html>
+            border-bottom-left-
