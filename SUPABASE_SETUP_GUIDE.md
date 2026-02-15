@@ -48,8 +48,8 @@ Since storage buckets cannot be created via SQL, you need to create them manuall
 - **File size limit**: 5MB
 - **Allowed types**: image/jpeg, image/png, image/webp
 
-#### c) signatures (Public)
-- **Access**: Public
+#### c) signatures (Private)
+- **Access**: Private
 - **Purpose**: Rental contract signatures
 - **File size limit**: 2MB
 - **Allowed types**: image/png, image/jpeg

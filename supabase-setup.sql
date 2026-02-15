@@ -402,7 +402,7 @@ WHERE email = 'william.farreaux@gmail.com';
 --       - Allowed MIME types: image/jpeg, image/png, image/webp
 --
 --    c) Bucket name: "signatures"
---       - Access: Public
+--       - Access: Private (not public)
 --       - Purpose: Store rental contract signatures
 --       - File size limit: 2MB recommended
 --       - Allowed MIME types: image/png, image/jpeg
@@ -424,8 +424,8 @@ WHERE email = 'william.farreaux@gmail.com';
 --    - Authenticated users can upload: bucket_id = 'vehicles' AND auth.role() = 'authenticated'
 --
 --    For "signatures" bucket:
---    - Public read access (already public)
---    - Authenticated users can upload: bucket_id = 'signatures' AND auth.role() = 'authenticated'
+--    - Booking participants can view: Complex policy based on booking relationship (similar to bookings table)
+--    - Booking participants can upload: bucket_id = 'signatures' AND auth.role() = 'authenticated'
 --
 --    For "inspections" bucket:
 --    - Booking participants can view: Complex policy based on booking relationship
