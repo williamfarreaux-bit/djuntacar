@@ -12,17 +12,24 @@ const I18n = {
      * Initialisation au chargement de la page
      */
     init: function() {
-        // 1. Vérifier s'il y a une préférence sauvegardée
-        const savedLang = localStorage.getItem('djuntacar_lang');
-        
-        if (savedLang) {
-            this.currentLang = savedLang;
+        // Sync with global state if available
+        if (window.DJUNTA && window.DJUNTA.currentLang) {
+            this.currentLang = window.DJUNTA.currentLang;
         } else {
-            // 2. Sinon, détecter la langue du navigateur
-            const userLang = navigator.language || navigator.userLanguage; 
-            if (userLang.includes('pt')) this.currentLang = 'pt';
-            else if (userLang.includes('en')) this.currentLang = 'en';
-            else this.currentLang = 'fr'; // Défaut
+            // 1. Vérifier s'il y a une préférence sauvegardée
+            const savedLang = localStorage.getItem('djuntacar_lang');
+            
+            if (savedLang) {
+                this.currentLang = savedLang;
+            } else {
+                // 2. Sinon, détecter la langue du navigateur
+                const userLang = navigator.language || navigator.userLanguage; 
+                if (userLang.includes('pt')) this.currentLang = 'pt';
+                else if (userLang.includes('en')) this.currentLang = 'en';
+                else this.currentLang = 'fr'; // Défaut
+                
+                localStorage.setItem('djuntacar_lang', this.currentLang);
+            }
         }
         
         console.log(`DjuntaCar i18n: Langue définie sur [${this.currentLang}]`);
@@ -36,6 +43,12 @@ const I18n = {
     setLanguage: function(lang) {
         this.currentLang = lang;
         localStorage.setItem('djuntacar_lang', lang); // Sauvegarder le choix
+        
+        // Sync with global state
+        if (window.DJUNTA) {
+            window.DJUNTA.currentLang = lang;
+        }
+        
         this.apply(); // Mettre à jour l'affichage
         
         // Optionnel : Recharger la page si nécessaire pour certains scripts

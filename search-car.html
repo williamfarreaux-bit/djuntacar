@@ -124,7 +124,7 @@
             tomorrow.setDate(tomorrow.getDate() + 2);
             document.getElementById('end-date').value = tomorrow.toISOString().slice(0, 16);
 
-            const savedLang = localStorage.getItem('djunta_lang') || 'fr';
+            const savedLang = localStorage.getItem('djuntacar_lang') || 'fr';
             document.getElementById('lang-selector').value = savedLang;
         });
 
@@ -152,7 +152,7 @@
             <img src="./logo.png" alt="DjuntaCar" style="height: 40px;" onerror="this.outerHTML='<b style=\'color:#1d4379; font-style:italic; font-size:22px;\'>DjuntaCar</b>'">
         </div>
         <div class="flex items-center gap-2">
-            <select id="lang-selector" onchange="localStorage.setItem('djunta_lang', this.value); location.reload();" class="bg-slate-100 text-[#1d4379] text-[11px] font-bold py-2 px-1 rounded-lg border-none outline-none">
+            <select id="lang-selector" onchange="localStorage.setItem('djuntacar_lang', this.value); location.reload();" class="bg-slate-100 text-[#1d4379] text-[11px] font-bold py-2 px-1 rounded-lg border-none outline-none">
                 <option value="fr">FR</option><option value="pt">PT</option><option value="en">EN</option>
             </select>
             <div onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center cursor-pointer border border-slate-200">👤</div>

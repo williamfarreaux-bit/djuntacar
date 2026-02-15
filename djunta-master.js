@@ -1,4 +1,4 @@
-// DJUNTA MASTER v2.1 (Debug Mode)
+// DJUNTA MASTER v3.0 - Unified Language & Auth Management
 console.log("♻️ Chargement Menu + Logo...");
 
 const CONFIG = {
@@ -6,23 +6,91 @@ const CONFIG = {
     key: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-"
 };
 
+// UI Color constants for consistent styling
+const UI_COLORS = {
+    AUTH_ICON_AUTHENTICATED: '#10b981',  // Green (matches Tailwind green-500)
+    AUTH_ICON_GUEST: '#94a3b8',          // Gray (matches Tailwind slate-400)
+    AUTH_BORDER_AUTHENTICATED: 'border-green-500',
+    AUTH_BORDER_GUEST: 'border-gray-200'
+};
+
+// Global DJUNTA namespace with unified state
 window.DJUNTA = {
     sb: null,
+    // currentLang will be initialized by initLanguage() call below (line 65)
+    // Consumers should either wait for DOMContentLoaded or check if currentLang is null
+    currentLang: null,
     formatMoney: (amount) => {
         return new Intl.NumberFormat('pt-CV', { 
             style: 'currency', currency: 'CVE', maximumFractionDigits: 0 
         }).format(amount).replace('CVE', '').trim() + ' CVE';
+    },
+    
+    // Unified language management
+    initLanguage: function() {
+        const LANG_KEY = 'djuntacar_lang';
+        let lang = localStorage.getItem(LANG_KEY);
+        
+        if (!lang) {
+            // Detect browser language
+            const userLang = navigator.language || navigator.userLanguage;
+            if (userLang.includes('pt')) lang = 'pt';
+            else if (userLang.includes('en')) lang = 'en';
+            else lang = 'fr';
+            
+            localStorage.setItem(LANG_KEY, lang);
+        }
+        
+        this.currentLang = lang;
+        console.log(`🌍 DjuntaCar Language: ${lang}`);
+        return lang;
+    },
+    
+    // Unified session check
+    checkAuth: async function() {
+        if (!this.sb) return false;
+        
+        try {
+            const { data: { session }, error } = await this.sb.auth.getSession();
+            if (error) throw error;
+            return !!session;
+        } catch (e) {
+            console.error("Auth check failed:", e);
+            return false;
+        }
     }
 };
 
+// Initialize Supabase client once
 if(window.supabase) {
     window.DJUNTA.sb = window.supabase.createClient(CONFIG.url, CONFIG.key);
+    // Make available globally for legacy code
+    window._supabase = window.DJUNTA.sb;
 }
+
+// Initialize language on load (sets currentLang from null to actual value)
+window.DJUNTA.initLanguage();
+
+// Global function for language switching (used by header)
+window.changeLanguage = function(lang) {
+    localStorage.setItem('djuntacar_lang', lang);
+    window.DJUNTA.currentLang = lang;
+    console.log(`🔄 Language changed to: ${lang}`);
+    location.reload();
+};
 
 class DjuntaHeader extends HTMLElement {
     constructor() { super(); }
 
-    connectedCallback() {
+    async connectedCallback() {
+        // Get current language from global state
+        const currentLang = window.DJUNTA?.currentLang || 'fr';
+        
+        // Check auth status
+        const isAuthenticated = await (window.DJUNTA?.checkAuth() || Promise.resolve(false));
+        const profileIconColor = isAuthenticated ? UI_COLORS.AUTH_ICON_AUTHENTICATED : UI_COLORS.AUTH_ICON_GUEST;
+        const profileBorderClass = isAuthenticated ? UI_COLORS.AUTH_BORDER_AUTHENTICATED : UI_COLORS.AUTH_BORDER_GUEST;
+        
         this.innerHTML = `
         <header class="fixed top-0 left-0 right-0 h-16 bg-white z-50 border-b border-gray-100 px-4 flex items-center justify-between font-sans shadow-sm">
             
@@ -32,20 +100,22 @@ class DjuntaHeader extends HTMLElement {
                 </button>
                 
                 <div class="hidden md:flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                    <img src="./logo.png" alt="DjuntaCar" style="height: 35px; width: auto; object-fit: contain; border: 1px dashed red;"> 
+                    <img src="./logo.png" alt="DjuntaCar" style="height: 35px; width: auto; object-fit: contain;"> 
                 </div>
             </div>
 
             <div class="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" onclick="window.location.href='index.html'">
-                <img src="./logo.png" alt="DjuntaCar" style="height: 30px; width: auto; object-fit: contain; border: 1px dashed red;">
+                <img src="./logo.png" alt="DjuntaCar" style="height: 30px; width: auto; object-fit: contain;">
             </div>
 
             <div class="flex items-center gap-3">
-                <select onchange="window.changeLanguage(this.value)" class="bg-gray-100 text-[#1d4379] text-[10px] font-bold py-1 px-2 rounded-lg hidden md:block">
-                    <option value="pt">PT</option><option value="fr">FR</option><option value="en">EN</option>
+                <select id="header-lang-selector" onchange="window.changeLanguage(this.value)" class="bg-gray-100 text-[#1d4379] text-[10px] font-bold py-1 px-2 rounded-lg hidden md:block">
+                    <option value="pt" ${currentLang === 'pt' ? 'selected' : ''}>PT</option>
+                    <option value="fr" ${currentLang === 'fr' ? 'selected' : ''}>FR</option>
+                    <option value="en" ${currentLang === 'en' ? 'selected' : ''}>EN</option>
                 </select>
-                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border-2 ${profileBorderClass}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${profileIconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </button>
             </div>
         </header>
