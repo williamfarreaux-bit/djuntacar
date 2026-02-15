@@ -134,7 +134,7 @@ CREATE TABLE signatures (
     booking_id UUID NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
     signer_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     signature_url TEXT NOT NULL,
-    signature_type TEXT CHECK (signature_type IN ('renter', 'owner')),
+    signature_type TEXT NOT NULL CHECK (signature_type IN ('renter', 'owner')),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -249,6 +249,7 @@ CREATE POLICY "Authenticated users can create bookings"
     WITH CHECK (auth.uid() = user_id);
 
 -- Only the renter can update their booking
+-- NOTE: Consider restricting which fields can be updated to prevent price manipulation
 CREATE POLICY "Renters can update their bookings"
     ON bookings FOR UPDATE
     USING (auth.uid() = user_id);
@@ -366,18 +367,19 @@ CREATE POLICY "Signers can insert own signature"
 -- STEP 6: SET ADMIN ROLE FOR william.farreaux@gmail.com
 -- ============================================
 
+-- IMPORTANT: This UPDATE will only work if the user has already signed up.
+-- If the user hasn't signed up yet, this will not produce an error but won't set the role either.
+-- After running this script, verify the admin role was set:
+--   SELECT id, email, role FROM profiles WHERE email = 'william.farreaux@gmail.com';
+
 -- Update the role to 'admin' for the specified user
 UPDATE profiles
 SET role = 'admin', updated_at = NOW()
 WHERE email = 'william.farreaux@gmail.com';
 
--- If the profile doesn't exist yet (user hasn't signed up), this will set it once they do
--- You can also create the profile manually if needed:
--- INSERT INTO profiles (id, email, role, created_at, updated_at)
--- SELECT id, email, 'admin', NOW(), NOW()
--- FROM auth.users
--- WHERE email = 'william.farreaux@gmail.com'
--- ON CONFLICT (id) DO UPDATE SET role = 'admin', updated_at = NOW();
+-- Alternative: If you want to ensure admin role is set even if user signs up later,
+-- you can manually create an admin user after they sign up with:
+-- UPDATE profiles SET role = 'admin', updated_at = NOW() WHERE email = 'william.farreaux@gmail.com';
 
 -- ============================================
 -- STEP 7: STORAGE BUCKET SETUP INSTRUCTIONS
