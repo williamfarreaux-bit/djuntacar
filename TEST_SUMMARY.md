@@ -41,7 +41,7 @@ A comprehensive, guided testing interface with:
 - ✅ Visual step indicators
 - ✅ Error handling and reporting
 
-**Access**: Open `http://localhost:8080/test-auth-flow.html` in a browser
+**Access**: Open `https://djuntacar.com/test-auth-flow.html` in a browser
 
 #### TESTING_INSTRUCTIONS.md
 Complete testing documentation including:
@@ -76,7 +76,7 @@ The automated test environment has the following restrictions:
 
 ### Step 1: Account Creation (Signup)
 **Your Action**:
-1. Open `test-auth-flow.html` or `signup.html` in a real browser
+1. Open `https://djuntacar.com/test-auth-flow.html` or `https://djuntacar.com/signup.html` in a real browser
 2. Fill in email: `william.farreaux@gmail.com`
 3. Fill in password: `TestPassword123!` (or your choice)
 4. Click "Créer le compte" / "🚀 Créer le compte"
@@ -102,7 +102,7 @@ const { data, error } = await DJUNTA.sb.auth.signUp({
 
 ### Step 2: Password Reset (Forgot Password)
 **Your Action**:
-1. After confirming email, proceed to Step 2 in test tool or open `forgot-password.html`
+1. After confirming email, proceed to Step 2 in test tool or open `https://djuntacar.com/forgot-password.html`
 2. Enter email: `william.farreaux@gmail.com`
 3. Click "Enviar Link" / "📧 Envoyer l'email de réinitialisation"
 4. **⏸️ STOP**: Check your email for password reset link
@@ -130,7 +130,7 @@ const { error } = await DJUNTA.sb.auth.resetPasswordForEmail(
 
 ### Step 3: Final Login
 **Your Action**:
-1. After resetting password, go to Step 3 in test tool or open `login.html`
+1. After resetting password, go to Step 3 in test tool or open `https://djuntacar.com/login.html`
 2. Enter email: `william.farreaux@gmail.com`
 3. Enter your NEW password from Step 2
 4. Click "ENTRAR" / "🔓 Se connecter"

@@ -11,7 +11,7 @@
 
 ### Étape Préliminaire: Ouvrir l'outil
 1. Ouvrez un navigateur web (Chrome, Firefox, Safari, etc.)
-2. Naviguez vers: `http://localhost:8080/test-auth-flow.html` (si serveur local) ou ouvrez le fichier directement
+2. Naviguez vers: `https://djuntacar.com/test-auth-flow.html`
 3. L'outil charge automatiquement le client Supabase
 
 ### ✅ ÉTAPE 1: Création de Compte (Signup)
@@ -134,21 +134,21 @@ if (!error) {
 Si vous préférez tester avec les vraies pages de l'application:
 
 ### ÉTAPE 1: Signup
-1. Ouvrez `http://localhost:8080/signup.html`
+1. Ouvrez `https://djuntacar.com/signup.html`
 2. Entrez l'email: `william.farreaux@gmail.com`
 3. Entrez le mot de passe: `TestPassword123!`
 4. Cliquez "Criar Conta"
 5. **⏸️ VÉRIFIEZ VOTRE EMAIL** et cliquez sur le lien de confirmation
 
 ### ÉTAPE 2: Password Reset
-1. Ouvrez `http://localhost:8080/forgot-password.html`
+1. Ouvrez `https://djuntacar.com/forgot-password.html`
 2. Entrez l'email: `william.farreaux@gmail.com`
 3. Cliquez "Enviar Link"
 4. **⏸️ VÉRIFIEZ VOTRE EMAIL** et cliquez sur le lien de reset
 5. Sur la page `reset-password-confirm.html`, définissez un nouveau mot de passe
 
 ### ÉTAPE 3: Login
-1. Ouvrez `http://localhost:8080/login.html`
+1. Ouvrez `https://djuntacar.com/login.html`
 2. Entrez l'email: `william.farreaux@gmail.com`
 3. Entrez votre nouveau mot de passe
 4. Cliquez "ENTRAR"
