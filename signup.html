@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="djunta-core.js" defer></script>
+    <script src="djunta-master.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
@@ -32,6 +32,15 @@
 
             <form id="signup-form" class="space-y-4">
                 
+                <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase mb-1 ml-2">Nome Completo</label>
+                    <div class="relative">
+                        <i data-lucide="user" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
+                        <input type="text" id="full_name" required placeholder="João Silva" 
+                            class="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-xl border border-gray-100 font-bold text-[#1d4379] outline-none focus:border-[#1d4379] transition-colors placeholder:text-gray-300 text-sm">
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-[10px] font-black text-gray-400 uppercase mb-1 ml-2">Email</label>
                     <div class="relative">
@@ -57,6 +66,20 @@
                 </button>
             </form>
 
+            <!-- Error Display Area -->
+            <div id="error-container" class="mt-4 hidden">
+                <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="text-xs font-bold text-red-700 uppercase">Erro ao criar conta</p>
+                            <p id="error-message" class="text-xs text-red-600 mt-1"></p>
+                            <p id="error-details" class="text-[10px] text-red-500 mt-1 opacity-75"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="mt-8 text-center">
                 <p class="text-[10px] font-bold text-gray-400 uppercase">Já tem uma conta?</p>
                 <a href="login.html" class="inline-block mt-2 text-xs font-black text-[#22c55e] uppercase tracking-wide hover:underline">
@@ -71,43 +94,156 @@
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('signup-form');
             const btn = document.getElementById('btn-submit');
+            const errorContainer = document.getElementById('error-container');
+            const errorMessage = document.getElementById('error-message');
+            const errorDetails = document.getElementById('error-details');
+
+            // Wait for DJUNTA to be initialized
+            const checkDjunta = setInterval(() => {
+                if (window.DJUNTA && DJUNTA.sb) {
+                    clearInterval(checkDjunta);
+                    console.log('✅ Supabase client initialized');
+                    if(window.lucide) lucide.createIcons();
+                }
+            }, 100);
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                // Effet de chargement
+                // Hide previous errors
+                errorContainer.classList.add('hidden');
+                
+                // Loading state
                 const originalText = btn.innerHTML;
-                btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i>`;
+                btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> <span class="ml-2">Criando conta...</span>`;
                 if(window.lucide) lucide.createIcons();
                 btn.disabled = true;
 
-                const email = document.getElementById('email').value;
+                // Get form values
+                const fullName = document.getElementById('full_name').value.trim();
+                const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
 
-                // UTILISATION DU MOTEUR CENTRAL (DJUNTA)
-                // Note: DJUNTA.sb est initialisé dans djunta-core.js
-                if (!DJUNTA || !DJUNTA.sb) {
-                    alert("Erreur système : Rechargez la page.");
-                    return;
-                }
+                // Split full name into first and last name
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
 
-                const { data, error } = await DJUNTA.sb.auth.signUp({
-                    email: email,
-                    password: password
-                });
+                try {
+                    // Check if DJUNTA is initialized
+                    if (!window.DJUNTA || !DJUNTA.sb) {
+                        throw new Error('Sistema não inicializado. Por favor, recarregue a página.');
+                    }
 
-                if (error) {
-                    alert("Erro: " + error.message);
+                    console.log('🔄 Starting signup process...');
+                    console.log('Email:', email);
+                    console.log('Full Name:', fullName);
+
+                    // Create a timeout promise (10 seconds)
+                    const timeoutPromise = new Promise((_, reject) => {
+                        setTimeout(() => reject(new Error('TIMEOUT')), 10000);
+                    });
+
+                    // Create the signup promise with proper metadata
+                    const signupPromise = DJUNTA.sb.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                full_name: fullName,
+                                first_name: firstName,
+                                last_name: lastName
+                            },
+                            emailRedirectTo: window.location.origin + '/login.html'
+                        }
+                    });
+
+                    // Race between signup and timeout
+                    const { data, error } = await Promise.race([
+                        signupPromise,
+                        timeoutPromise
+                    ]);
+
+                    if (error) {
+                        console.error('❌ Signup error:', error);
+                        throw error;
+                    }
+
+                    console.log('✅ Signup successful:', data);
+
+                    // Check if email confirmation is required
+                    if (data.user && !data.session) {
+                        // Email confirmation required
+                        showSuccess('Conta criada! Por favor, verifique seu email para confirmar.');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 3000);
+                    } else if (data.session) {
+                        // User is immediately logged in
+                        showSuccess('Conta criada com sucesso!');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                    }
+
+                } catch (error) {
+                    console.error('❌ Caught error:', error);
+                    
+                    // Reset button state
                     btn.innerHTML = originalText;
                     btn.disabled = false;
-                } else {
-                    // Succès
-                    alert("Conta criada com sucesso! Por favor, verifique o seu email.");
-                    window.location.href = 'login.html';
+                    if(window.lucide) lucide.createIcons();
+
+                    // Show error
+                    errorContainer.classList.remove('hidden');
+
+                    // Determine error type and show appropriate message
+                    if (error.message === 'TIMEOUT') {
+                        errorMessage.textContent = 'Tempo esgotado (> 10s)';
+                        errorDetails.textContent = 'Tipo: NETWORK | Verifique sua conexão com a internet e tente novamente.';
+                    } else if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
+                        errorMessage.textContent = 'Erro de conexão';
+                        errorDetails.textContent = 'Tipo: NETWORK | Não foi possível conectar ao servidor. Verifique sua internet.';
+                    } else if (error.message.includes('already registered') || error.message.includes('already exists')) {
+                        errorMessage.textContent = 'Email já cadastrado';
+                        errorDetails.textContent = 'Tipo: AUTH | Este email já está em uso. Tente fazer login ou use outro email.';
+                    } else if (error.message.includes('Password') || error.message.includes('password')) {
+                        errorMessage.textContent = 'Senha muito fraca';
+                        errorDetails.textContent = 'Tipo: AUTH | Use uma senha com pelo menos 6 caracteres.';
+                    } else if (error.message.includes('Invalid') || error.message.includes('invalid')) {
+                        errorMessage.textContent = 'Dados inválidos';
+                        errorDetails.textContent = 'Tipo: AUTH | Verifique se o email está correto.';
+                    } else if (error.message.includes('Database') || error.message.includes('database')) {
+                        errorMessage.textContent = 'Erro no banco de dados';
+                        errorDetails.textContent = 'Tipo: DATABASE | Problema ao criar o perfil. Contacte o suporte.';
+                    } else {
+                        errorMessage.textContent = error.message || 'Erro desconhecido';
+                        errorDetails.textContent = 'Tipo: UNKNOWN | ' + (error.hint || 'Tente novamente ou contacte o suporte.');
+                    }
+
+                    // Re-initialize icons
+                    if(window.lucide) lucide.createIcons();
                 }
             });
+
+            function showSuccess(message) {
+                errorContainer.classList.remove('hidden');
+                errorContainer.querySelector('.bg-red-50').className = 'bg-green-50 border border-green-200 rounded-lg p-3';
+                errorContainer.querySelector('.text-red-500').className = 'w-5 h-5 text-green-500 flex-shrink-0 mt-0.5';
+                errorContainer.querySelector('.text-red-700').className = 'text-xs font-bold text-green-700 uppercase';
+                errorContainer.querySelector('.text-red-600').className = 'text-xs text-green-600 mt-1';
+                errorMessage.textContent = message;
+                errorDetails.textContent = '';
+                
+                // Change icon to check-circle
+                const icon = errorContainer.querySelector('[data-lucide="alert-circle"]');
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'check-circle');
+                    if(window.lucide) lucide.createIcons();
+                }
+            }
             
-            // Initialisation icônes locales si chargement lent
+            // Initialize icons when page loads
             if(window.lucide) lucide.createIcons();
         });
     </script>

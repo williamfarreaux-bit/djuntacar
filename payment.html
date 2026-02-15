@@ -123,6 +123,7 @@
         let dailyPrice = 0;
         let totalPrice = 0;
         let startDateStr, endDateStr;
+        let selectedPaymentMethod = 'card'; // Default payment method
 
         document.addEventListener('DOMContentLoaded', () => {
             const checkEngine = setInterval(async () => {
@@ -178,6 +179,7 @@
         }
 
         function selectMethod(method) {
+            selectedPaymentMethod = method; // Store selected payment method
             document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`method-${method}`).classList.add('active');
         }
@@ -203,7 +205,9 @@
                 start_date: startDateStr,
                 end_date: endDateStr,
                 total_price: totalPrice,
-                status: 'confirmed'
+                status: 'confirmed',
+                payment_method: selectedPaymentMethod === 'card' ? 'Cartão' : 'Vinti4',
+                payment_status: 'paid'
             }]);
 
             if (!error) {

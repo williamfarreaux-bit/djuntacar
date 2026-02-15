@@ -8,6 +8,7 @@ const CONFIG = {
 
 window.DJUNTA = {
     sb: null,
+    currentUser: null,
     formatMoney: (amount) => {
         return new Intl.NumberFormat('pt-CV', { 
             style: 'currency', currency: 'CVE', maximumFractionDigits: 0 
@@ -18,6 +19,51 @@ window.DJUNTA = {
 if(window.supabase) {
     window.DJUNTA.sb = window.supabase.createClient(CONFIG.url, CONFIG.key);
 }
+
+// Fonction globale pour changer la langue depuis le header
+window.changeLanguage = function(lang) {
+    if (typeof I18n !== 'undefined' && I18n.setLanguage) {
+        I18n.setLanguage(lang);
+    } else {
+        // Fallback si I18n n'est pas chargé
+        localStorage.setItem('djunta_lang', lang);
+        location.reload();
+    }
+};
+
+// Check and display admin badge if user is admin
+document.addEventListener('DOMContentLoaded', async () => {
+    if (window.DJUNTA && DJUNTA.sb) {
+        try {
+            const { data: { user } } = await DJUNTA.sb.auth.getUser();
+            if (user) {
+                const { data: profile } = await DJUNTA.sb
+                    .from('profiles')
+                    .select('role, email, first_name')
+                    .eq('id', user.id)
+                    .single();
+                
+                if (profile) {
+                    DJUNTA.currentUser = profile;
+                    // Add admin badge to header if user is admin
+                    if (profile.role === 'admin') {
+                        const header = document.querySelector('djunta-header header, header');
+                        if (header) {
+                            const badge = document.createElement('div');
+                            badge.className = 'absolute top-2 right-2 bg-red-500 text-white text-[8px] font-black px-2 py-1 rounded-full uppercase z-50';
+                            badge.textContent = 'Admin';
+                            badge.style.pointerEvents = 'none';
+                            header.style.position = 'relative';
+                            header.appendChild(badge);
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Error checking user role:', err);
+        }
+    }
+});
 
 class DjuntaHeader extends HTMLElement {
     constructor() { super(); }
@@ -42,7 +88,7 @@ class DjuntaHeader extends HTMLElement {
 
             <div class="flex items-center gap-3">
                 <select onchange="window.changeLanguage(this.value)" class="bg-gray-100 text-[#1d4379] text-[10px] font-bold py-1 px-2 rounded-lg hidden md:block">
-                    <option value="pt">PT</option><option value="fr">FR</option><option value="en">EN</option>
+                    <option value="fr">FR</option><option value="pt">PT</option><option value="en">EN</option>
                 </select>
                 <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 text-gray-400">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
