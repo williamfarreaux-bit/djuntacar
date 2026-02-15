@@ -118,16 +118,22 @@
         async function loadBookingInfo(id) {
             const { data: booking, error } = await DJUNTA.sb
                 .from('bookings')
-                .select('*, vehicles(brand, model, image_url), profiles:vehicle_id(first_name)') // Note: relation à adapter selon votre schéma exact
-                // Fallback si la relation profiles n'est pas directe: on prend juste vehicle
+                .select('*, vehicles(brand, model, image_url, owner_id, profiles!vehicles_owner_id_fkey(first_name, last_name))')
                 .eq('id', id)
                 .single();
 
-            // Si relation complexe, on fait simple pour l'affichage
+            // Display booking information
             if (booking && booking.vehicles) {
                 document.getElementById('car-img').src = booking.vehicles.image_url;
                 document.getElementById('car-name').innerText = `${booking.vehicles.brand} ${booking.vehicles.model}`;
-                document.getElementById('owner-name').innerText = `Reserva #${booking.id.slice(0,6)}`;
+                
+                // Show owner name if available, otherwise just booking reference
+                if (booking.vehicles.profiles) {
+                    const ownerName = booking.vehicles.profiles.first_name || 'Proprietário';
+                    document.getElementById('owner-name').innerText = `Viagem com ${ownerName}`;
+                } else {
+                    document.getElementById('owner-name').innerText = `Reserva #${booking.id.slice(0,6)}`;
+                }
                 
                 document.getElementById('loading-state').classList.add('hidden');
                 document.getElementById('content-state').classList.remove('hidden');
