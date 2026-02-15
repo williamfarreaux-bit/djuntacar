@@ -9,7 +9,7 @@ const CONFIG = {
 // Global DJUNTA namespace with unified state
 window.DJUNTA = {
     sb: null,
-    currentLang: 'fr',
+    currentLang: null,  // Will be initialized by initLanguage()
     formatMoney: (amount) => {
         return new Intl.NumberFormat('pt-CV', { 
             style: 'currency', currency: 'CVE', maximumFractionDigits: 0 

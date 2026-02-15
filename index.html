@@ -252,7 +252,7 @@
             const locSelect = document.getElementById('search-location');
             locSelect.classList.remove('error-text', 'text-slate-400');
             locSelect.classList.add('text-[#1d4379]');
-            let opts = `<option value="" disabled selected>${dictionary[localStorage.getItem('djuntacar_lang')?.toUpperCase() || 'FR'].search_location}</option>`;
+            let opts = `<option value="" disabled selected>${dictionary[(window.DJUNTA?.currentLang || localStorage.getItem('djuntacar_lang'))?.toUpperCase() || 'FR'].search_location}</option>`;
             if(GEO_DATA[island]) GEO_DATA[island].forEach(l => { opts += `<option value="${l}">${l}</option>`; });
             locSelect.innerHTML = opts;
         }
