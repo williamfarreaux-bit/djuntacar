@@ -117,13 +117,13 @@
         </div>
         <div class="header-right">
             <div class="lang-pill" onclick="toggleLangMenu(event)">
-                <span id="current-lang-label">FR</span>
+                <span id="current-lang-label">fr</span>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d4379" stroke-width="4"><path d="M6 9l6 6 6-6"/></svg>
             </div>
             <div id="lang-dropdown">
-                <div class="lang-opt" onclick="updateLang('FR')">Français</div>
-                <div class="lang-opt" onclick="updateLang('PT')">Português</div>
-                <div class="lang-opt" onclick="updateLang('EN')">English</div>
+                <div class="lang-opt" onclick="updateLang('fr')">Français</div>
+                <div class="lang-opt" onclick="updateLang('pt')">Português</div>
+                <div class="lang-opt" onclick="updateLang('en')">English</div>
             </div>
             <div onclick="window.location.href='profile.html'" class="profile-circle" id="user-indicator">
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -193,9 +193,9 @@
     <script>
         // --- DICTIONNAIRE ---
         const dictionary = {
-            'FR': { nav_home: 'Accueil', nav_rent: 'Louer un véhicule', nav_driver: 'Devenir chauffeur', nav_profile: 'Mon Profil', hero_title: 'Louer une voiture au Cap-Vert', hero_subtitle: 'Avec ou sans chauffeur', search_island: "Choisir l'île", search_location: 'Lieu de prise en charge', search_btn: 'Rechercher', cat_title: 'Nos Catégories', cta_add: 'Inscrire ma voiture', cta_be_driver: 'Devenir chauffeur' },
-            'PT': { nav_home: 'Início', nav_rent: 'Alugar um veículo', nav_driver: 'Ser motorista', nav_profile: 'Meu Perfil', hero_title: 'Alugar um carro em Cabo Verde', hero_subtitle: 'Com ou sem motorista', search_island: "Escolher a ilha", search_location: 'Local de recolha', search_btn: 'Pesquisar', cat_title: 'Nossas Categorias', cta_add: 'Inscrever meu carro', cta_be_driver: 'Tornar-se motorista' },
-            'EN': { nav_home: 'Home', nav_rent: 'Rent a vehicle', nav_driver: 'Become a driver', nav_profile: 'My Profile', hero_title: 'Rent a car in Cape Verde', hero_subtitle: 'With or without driver', search_island: "Choose island", search_location: 'Pick-up location', search_btn: 'Search', cat_title: 'Our Categories', cta_add: 'Register my car', cta_be_driver: 'Become a driver' }
+            'fr': { nav_home: 'Accueil', nav_rent: 'Louer un véhicule', nav_driver: 'Devenir chauffeur', nav_profile: 'Mon Profil', hero_title: 'Louer une voiture au Cap-Vert', hero_subtitle: 'Avec ou sans chauffeur', search_island: "Choisir l'île", search_location: 'Lieu de prise en charge', search_btn: 'Rechercher', cat_title: 'Nos Catégories', cta_add: 'Inscrire ma voiture', cta_be_driver: 'Devenir chauffeur' },
+            'pt': { nav_home: 'Início', nav_rent: 'Alugar um veículo', nav_driver: 'Ser motorista', nav_profile: 'Meu Perfil', hero_title: 'Alugar um carro em Cabo Verde', hero_subtitle: 'Com ou sem motorista', search_island: "Escolher a ilha", search_location: 'Local de recolha', search_btn: 'Pesquisar', cat_title: 'Nossas Categorias', cta_add: 'Inscrever meu carro', cta_be_driver: 'Tornar-se motorista' },
+            'en': { nav_home: 'Home', nav_rent: 'Rent a vehicle', nav_driver: 'Become a driver', nav_profile: 'My Profile', hero_title: 'Rent a car in Cape Verde', hero_subtitle: 'With or without driver', search_island: "Choose island", search_location: 'Pick-up location', search_btn: 'Search', cat_title: 'Our Categories', cta_add: 'Register my car', cta_be_driver: 'Become a driver' }
         };
 
         const GEO_DATA = {
@@ -229,11 +229,11 @@
                     const res = await fetch('https://ipapi.co/json/').catch(() => null);
                     if (res) {
                         const data = await res.json();
-                        if (data.country_code === 'FR') lang = 'FR';
-                        else if (['PT', 'CV'].includes(data.country_code)) lang = 'PT';
-                        else lang = 'EN';
-                    } else { lang = 'EN'; }
-                } catch (e) { lang = 'EN'; }
+                        if (data.country_code === 'FR') lang = 'fr';
+                        else if (['PT', 'CV'].includes(data.country_code)) lang = 'pt';
+                        else lang = 'fr';
+                    } else { lang = 'fr'; }
+                } catch (e) { lang = 'fr'; }
                 localStorage.setItem('djunta_lang', lang);
             }
             updateLang(lang);
@@ -248,7 +248,7 @@
             const locSelect = document.getElementById('search-location');
             locSelect.classList.remove('error-text', 'text-slate-400');
             locSelect.classList.add('text-[#1d4379]');
-            let opts = `<option value="" disabled selected>${dictionary[localStorage.getItem('djunta_lang') || 'FR'].search_location}</option>`;
+            let opts = `<option value="" disabled selected>${dictionary[localStorage.getItem('djunta_lang') || 'fr'].search_location}</option>`;
             if(GEO_DATA[island]) GEO_DATA[island].forEach(l => { opts += `<option value="${l}">${l}</option>`; });
             locSelect.innerHTML = opts;
         }
