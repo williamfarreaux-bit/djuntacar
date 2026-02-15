@@ -19,6 +19,17 @@ if(window.supabase) {
     window.DJUNTA.sb = window.supabase.createClient(CONFIG.url, CONFIG.key);
 }
 
+// Fonction globale pour changer la langue depuis le header
+window.changeLanguage = function(lang) {
+    if (typeof I18n !== 'undefined' && I18n.setLanguage) {
+        I18n.setLanguage(lang);
+    } else {
+        // Fallback si I18n n'est pas chargé
+        localStorage.setItem('djunta_lang', lang);
+        location.reload();
+    }
+};
+
 class DjuntaHeader extends HTMLElement {
     constructor() { super(); }
 
