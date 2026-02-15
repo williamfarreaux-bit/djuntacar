@@ -6,10 +6,20 @@ const CONFIG = {
     key: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-"
 };
 
+// UI Color constants for consistent styling
+const UI_COLORS = {
+    AUTH_ICON_AUTHENTICATED: '#10b981',  // Green (matches Tailwind green-500)
+    AUTH_ICON_GUEST: '#94a3b8',          // Gray (matches Tailwind slate-400)
+    AUTH_BORDER_AUTHENTICATED: 'border-green-500',
+    AUTH_BORDER_GUEST: 'border-gray-200'
+};
+
 // Global DJUNTA namespace with unified state
 window.DJUNTA = {
     sb: null,
-    currentLang: null,  // Will be initialized by initLanguage()
+    // currentLang will be initialized by initLanguage() call below (line 65)
+    // Consumers should either wait for DOMContentLoaded or check if currentLang is null
+    currentLang: null,
     formatMoney: (amount) => {
         return new Intl.NumberFormat('pt-CV', { 
             style: 'currency', currency: 'CVE', maximumFractionDigits: 0 
@@ -58,7 +68,7 @@ if(window.supabase) {
     window._supabase = window.DJUNTA.sb;
 }
 
-// Initialize language on load
+// Initialize language on load (sets currentLang from null to actual value)
 window.DJUNTA.initLanguage();
 
 // Global function for language switching (used by header)
@@ -78,7 +88,8 @@ class DjuntaHeader extends HTMLElement {
         
         // Check auth status
         const isAuthenticated = await (window.DJUNTA?.checkAuth() || Promise.resolve(false));
-        const profileIconColor = isAuthenticated ? '#10b981' : '#94a3b8'; // Green if connected, gray if not
+        const profileIconColor = isAuthenticated ? UI_COLORS.AUTH_ICON_AUTHENTICATED : UI_COLORS.AUTH_ICON_GUEST;
+        const profileBorderClass = isAuthenticated ? UI_COLORS.AUTH_BORDER_AUTHENTICATED : UI_COLORS.AUTH_BORDER_GUEST;
         
         this.innerHTML = `
         <header class="fixed top-0 left-0 right-0 h-16 bg-white z-50 border-b border-gray-100 px-4 flex items-center justify-between font-sans shadow-sm">
@@ -103,7 +114,7 @@ class DjuntaHeader extends HTMLElement {
                     <option value="fr" ${currentLang === 'fr' ? 'selected' : ''}>FR</option>
                     <option value="en" ${currentLang === 'en' ? 'selected' : ''}>EN</option>
                 </select>
-                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border-2 ${isAuthenticated ? 'border-green-500' : 'border-gray-200'}">
+                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border-2 ${profileBorderClass}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${profileIconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </button>
             </div>

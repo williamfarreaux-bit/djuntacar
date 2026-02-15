@@ -211,18 +211,32 @@
         };
 
         // --- LINGUISTIQUE (NON-BLOQUANT) ---
-        function updateLang(lang) {
-            localStorage.setItem('djuntacar_lang', lang.toLowerCase());
+        
+        // Helper function to get current language for dictionary lookup
+        function getCurrentLanguageKey() {
+            const lang = window.DJUNTA?.currentLang || localStorage.getItem('djuntacar_lang') || 'fr';
+            return lang.toUpperCase();
+        }
+        
+        // Updates page language (accepts UPPERCASE for dictionary compatibility)
+        function updateLang(langUpperCase) {
+            const langLowerCase = langUpperCase.toLowerCase();
+            localStorage.setItem('djuntacar_lang', langLowerCase);
+            
             const label = document.getElementById('current-lang-label');
-            if(label) label.innerText = lang;
+            if(label) label.innerText = langUpperCase;
+            
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (dictionary[lang] && dictionary[lang][key]) el.innerText = dictionary[lang][key];
+                if (dictionary[langUpperCase] && dictionary[langUpperCase][key]) {
+                    el.innerText = dictionary[langUpperCase][key];
+                }
             });
+            
             document.getElementById('lang-dropdown').classList.remove('active');
             
-            // Sync with global state
-            if (window.DJUNTA) window.DJUNTA.currentLang = lang.toLowerCase();
+            // Sync with global state (stored in lowercase)
+            if (window.DJUNTA) window.DJUNTA.currentLang = langLowerCase;
         }
 
         async function initLanguage() {
@@ -252,7 +266,7 @@
             const locSelect = document.getElementById('search-location');
             locSelect.classList.remove('error-text', 'text-slate-400');
             locSelect.classList.add('text-[#1d4379]');
-            let opts = `<option value="" disabled selected>${dictionary[(window.DJUNTA?.currentLang || localStorage.getItem('djuntacar_lang'))?.toUpperCase() || 'FR'].search_location}</option>`;
+            let opts = `<option value="" disabled selected>${dictionary[getCurrentLanguageKey()].search_location}</option>`;
             if(GEO_DATA[island]) GEO_DATA[island].forEach(l => { opts += `<option value="${l}">${l}</option>`; });
             locSelect.innerHTML = opts;
         }
