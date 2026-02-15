@@ -140,8 +140,8 @@
                         return;
                     }
                     
-                    // Note: Due to CASCADE DELETE in the schema, deleting the profile
-                    // will automatically delete all related vehicles, bookings, etc.
+                    // Note: Deleting from profiles table will CASCADE delete all related data
+                    // (vehicles, bookings, favorites, etc.) due to ON DELETE CASCADE in schema
                     const { error: profileError } = await DJUNTA.sb
                         .from('profiles')
                         .delete()
@@ -153,14 +153,8 @@
                         return;
                     }
                     
-                    // Now delete the auth user
-                    const { error: authError } = await DJUNTA.sb.auth.admin.deleteUser(user.id);
-                    
-                    if (authError) {
-                        console.error('Error deleting auth user:', authError);
-                        alert('Erro ao apagar conta. Por favor, contacte o suporte.');
-                        return;
-                    }
+                    // Sign out the user (this clears the session)
+                    await DJUNTA.sb.auth.signOut();
                     
                     alert('Conta apagada com sucesso.');
                     window.location.href = 'index.html';

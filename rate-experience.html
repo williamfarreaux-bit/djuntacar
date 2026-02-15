@@ -118,7 +118,7 @@
         async function loadBookingInfo(id) {
             const { data: booking, error } = await DJUNTA.sb
                 .from('bookings')
-                .select('*, vehicles(brand, model, image_url, owner_id, profiles!vehicles_owner_id_fkey(first_name, last_name))')
+                .select('*, vehicles(brand, model, image_url, owner_id, owner:profiles(first_name, last_name))')
                 .eq('id', id)
                 .single();
 
@@ -128,8 +128,8 @@
                 document.getElementById('car-name').innerText = `${booking.vehicles.brand} ${booking.vehicles.model}`;
                 
                 // Show owner name if available, otherwise just booking reference
-                if (booking.vehicles.profiles) {
-                    const ownerName = booking.vehicles.profiles.first_name || 'Proprietário';
+                if (booking.vehicles.owner) {
+                    const ownerName = booking.vehicles.owner.first_name || 'Proprietário';
                     document.getElementById('owner-name').innerText = `Viagem com ${ownerName}`;
                 } else {
                     document.getElementById('owner-name').innerText = `Reserva #${booking.id.slice(0,6)}`;
