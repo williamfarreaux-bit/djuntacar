@@ -8,7 +8,7 @@ const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/style.css',
-    '/djunta-core.js',  // <--- Le nouveau cerveau
+    '/djunta-master.js',  // <--- Le cerveau principal
     '/manifest.json',
     '/logo.png',
     // Ajoutez ici vos autres pages si nécessaire
