@@ -1,0 +1,116 @@
+# =============================================================================
+# DJUNTACAR – NON-REGRESSION CI PIPELINE
+# =============================================================================
+# MANDATORY PROTOCOL FOR EVERY CODE MODIFICATION:
+#
+# 1. Impact Analysis: Checks which core modules are affected by changes.
+# 2. Implementation & Immediate Testing: Runs the full test suite after changes.
+# 3. Non-Regression Enforcement: Verifies Login, Sign-up, Navigation,
+#    config.js, auth-service, db-service, and i18n-engine still function.
+# 4. Validation Loop: The pipeline blocks merging if any test fails.
+#
+# Definition of Done: Code is only mergeable when ALL regression tests pass.
+# =============================================================================
+
+name: Non-Regression Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+jobs:
+  # ─────────────────────────────────────────────
+  # STEP 1: Impact Analysis
+  # ─────────────────────────────────────────────
+  impact-analysis:
+    name: 📋 Impact Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze changed files
+        run: |
+          echo "═══════════════════════════════════════════"
+          echo "  IMPACT ANALYSIS – Changed Files"
+          echo "═══════════════════════════════════════════"
+          
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD 2>/dev/null || echo "Unable to diff")
+          else
+            CHANGED=$(git diff --name-only HEAD~1 2>/dev/null || echo "Initial commit")
+          fi
+          
+          echo "$CHANGED"
+          echo ""
+          
+          # Check for critical file changes
+          echo "─── Critical Module Check ───"
+          
+          for file in "djunta-master.js" "db-service.js" "i18n-engine.js" "services/supabase.js" "login.html" "signup.html" "index.html" "sw.js"; do
+            if echo "$CHANGED" | grep -q "$file"; then
+              echo "⚠️  CRITICAL: $file was modified – full regression required"
+            fi
+          done
+          echo "═══════════════════════════════════════════"
+
+  # ─────────────────────────────────────────────
+  # STEP 2 & 3: Test Suite Execution
+  # ─────────────────────────────────────────────
+  non-regression-tests:
+    name: 🧪 Non-Regression Tests
+    runs-on: ubuntu-latest
+    needs: impact-analysis
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run full non-regression test suite
+        run: |
+          echo "═══════════════════════════════════════════"
+          echo "  NON-REGRESSION TEST SUITE"
+          echo "═══════════════════════════════════════════"
+          echo ""
+          echo "Testing: Config, Login, Sign-up, Navigation,"
+          echo "         DB-Service, i18n-Engine"
+          echo ""
+          npm test
+          echo ""
+          echo "═══════════════════════════════════════════"
+          echo "  ✅ ALL TESTS PASSED – GREEN STATE"
+          echo "═══════════════════════════════════════════"
+
+  # ─────────────────────────────────────────────
+  # STEP 4: Validation Gate
+  # ─────────────────────────────────────────────
+  validation-gate:
+    name: ✅ Validation Gate
+    runs-on: ubuntu-latest
+    needs: non-regression-tests
+    steps:
+      - name: Confirm green state
+        run: |
+          echo "═══════════════════════════════════════════"
+          echo "  VALIDATION GATE – PASSED"
+          echo "═══════════════════════════════════════════"
+          echo ""
+          echo "  All non-regression tests passed."
+          echo "  Code is safe to merge."
+          echo ""
+          echo "  Definition of Done: ✅ COMPLETE"
+          echo "═══════════════════════════════════════════"
