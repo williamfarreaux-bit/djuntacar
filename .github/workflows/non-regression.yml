@@ -20,6 +20,9 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  contents: read
+
 jobs:
   # ─────────────────────────────────────────────
   # STEP 1: Impact Analysis
