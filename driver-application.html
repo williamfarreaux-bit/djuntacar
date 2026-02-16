@@ -142,4 +142,72 @@
             // Pré-remplissage si profil existant
             const { data: profile } = await DJUNTA.sb.from('profiles').select('*').eq('id', user.id).single();
             if(profile) {
-                if(profile.
+                if(profile.full_name) document.getElementById('fullName').value = profile.full_name;
+                if(profile.phone) document.getElementById('phone').value = profile.phone;
+            }
+        }
+
+        function handleFileSelect(input, type) {
+            if (input.files && input.files[0]) {
+                files[type] = input.files[0];
+                const zone = document.getElementById('zone-' + type);
+                zone.classList.add('has-file');
+                document.getElementById('txt-' + type).classList.remove('hidden');
+            }
+        }
+
+        async function submitApplication() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const licenseNum = document.getElementById('licenseNum').value.trim();
+
+            if (!fullName || !phone || !licenseNum) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.innerHTML = 'Enviando...';
+
+            try {
+                const { data: { user } } = await DJUNTA.sb.auth.getUser();
+                if (!user) { window.location.href = 'login.html'; return; }
+
+                const uploadFile = async (file, path) => {
+                    if (!file) return null;
+                    const ext = file.name.split('.').pop();
+                    const filePath = `${path}/${user.id}_${Date.now()}.${ext}`;
+                    const { error } = await DJUNTA.sb.storage.from('documents').upload(filePath, file);
+                    if (error) throw error;
+                    return filePath;
+                };
+
+                const cniPath = await uploadFile(files.cni, 'cni');
+                const licensePath = await uploadFile(files.license, 'license');
+
+                const { error } = await DJUNTA.sb.from('driver_applications').insert({
+                    user_id: user.id,
+                    full_name: fullName,
+                    phone: '+238' + phone,
+                    license_number: licenseNum,
+                    cni_document: cniPath,
+                    license_document: licensePath,
+                    status: 'pending'
+                });
+
+                if (error) throw error;
+
+                alert('Candidatura enviada com sucesso!');
+                window.location.href = 'profile.html';
+
+            } catch (err) {
+                console.error('Erro ao enviar candidatura:', err);
+                alert('Erro ao enviar. Tente novamente.');
+                btn.disabled = false;
+                btn.innerHTML = 'Enviar Candidatura';
+            }
+        }
+    </script>
+</body>
+</html>

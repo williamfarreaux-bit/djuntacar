@@ -69,3 +69,10 @@ class DjuntaHeader extends HTMLElement {
     }
 }
 if (!customElements.get('djunta-header')) customElements.define('djunta-header', DjuntaHeader);
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (!document.querySelector('djunta-header')) {
+        const header = document.createElement('djunta-header');
+        document.body.prepend(header);
+    }
+});
