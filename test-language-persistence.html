@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Persistence Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .lang-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #1d4379;
+            color: white;
+        }
+        .lang-btn:hover {
+            background: #15325b;
+        }
+        .result {
+            padding: 10px;
+            margin: 10px 0;
+            background: #f0f0f0;
+            border-left: 4px solid #1d4379;
+        }
+        .success {
+            border-left-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        h1 { color: #1d4379; }
+        h2 { color: #333; font-size: 18px; }
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Language Persistence Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>Current State</h2>
+        <div id="current-state"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 1: Switch Language</h2>
+        <p>Click a button to switch language and save to localStorage:</p>
+        <button class="lang-btn" onclick="testSwitchLanguage('FR')">Français (FR)</button>
+        <button class="lang-btn" onclick="testSwitchLanguage('PT')">Português (PT)</button>
+        <button class="lang-btn" onclick="testSwitchLanguage('EN')">English (EN)</button>
+        <div id="test1-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Persistence Check</h2>
+        <p>Reload the page to verify language persists:</p>
+        <button class="lang-btn" onclick="location.reload()">🔄 Reload Page</button>
+        <div id="test2-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Clear Storage</h2>
+        <button class="lang-btn" onclick="clearStorage()">🗑️ Clear localStorage</button>
+        <div id="test3-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Translation Example</h2>
+        <p><strong>Label:</strong> <span id="current-lang-label">--</span></p>
+        <p><strong>Greeting:</strong> <span data-i18n="greeting">Hello</span></p>
+        <p><strong>Home:</strong> <span data-i18n="nav_home">Home</span></p>
+    </div>
+
+    <script>
+        // Mini dictionary for testing
+        const dictionary = {
+            'FR': { 
+                greeting: 'Bonjour',
+                nav_home: 'Accueil',
+                nav_rent: 'Louer un véhicule'
+            },
+            'PT': { 
+                greeting: 'Olá',
+                nav_home: 'Início',
+                nav_rent: 'Alugar um veículo'
+            },
+            'EN': { 
+                greeting: 'Hello',
+                nav_home: 'Home',
+                nav_rent: 'Rent a vehicle'
+            }
+        };
+
+        /**
+         * Modular function to switch language
+         * Handles both UI update and storage save
+         */
+        function switchLanguage(lang) {
+            if (!dictionary[lang]) {
+                console.error(`Invalid language: ${lang}`);
+                return false;
+            }
+
+            // 1. Save to localStorage immediately
+            localStorage.setItem('djunta_lang', lang);
+            
+            // 2. Update UI selector label
+            const label = document.getElementById('current-lang-label');
+            if(label) label.innerText = lang;
+            
+            // 3. Apply translations to all data-i18n elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dictionary[lang] && dictionary[lang][key]) {
+                    el.innerText = dictionary[lang][key];
+                }
+            });
+            
+            // 4. Update HTML lang attribute
+            document.documentElement.lang = lang.toLowerCase();
+            
+            console.log(`✅ Language switched to: ${lang}`);
+            return true;
+        }
+
+        /**
+         * Initialize language on page load
+         */
+        function initLanguage() {
+            // 1. Check localStorage first
+            let lang = localStorage.getItem('djunta_lang');
+            
+            // 2. Fallback to default if none exists
+            if (!lang) {
+                lang = 'FR';
+                console.log('No stored language, using default: FR');
+            } else {
+                console.log(`Found stored language: ${lang}`);
+            }
+            
+            // 3. Apply the language
+            switchLanguage(lang);
+            
+            return lang;
+        }
+
+        // Test functions
+        function testSwitchLanguage(lang) {
+            const result = document.getElementById('test1-result');
+            const success = switchLanguage(lang);
+            
+            if (success) {
+                const stored = localStorage.getItem('djunta_lang');
+                result.innerHTML = `
+                    <div class="result success">
+                        ✅ <strong>Success!</strong><br>
+                        Language switched to: <code>${lang}</code><br>
+                        Stored in localStorage: <code>${stored}</code><br>
+                        UI updated: Label shows "${document.getElementById('current-lang-label').innerText}"<br>
+                        Now reload the page to verify persistence.
+                    </div>
+                `;
+            } else {
+                result.innerHTML = `
+                    <div class="result error">
+                        ❌ <strong>Error!</strong> Failed to switch language.
+                    </div>
+                `;
+            }
+        }
+
+        function clearStorage() {
+            localStorage.removeItem('djunta_lang');
+            const result = document.getElementById('test3-result');
+            result.innerHTML = `
+                <div class="result success">
+                    ✅ localStorage cleared. Reload the page to see default language (FR).
+                </div>
+            `;
+        }
+
+        function updateCurrentState() {
+            const stored = localStorage.getItem('djunta_lang');
+            const htmlLang = document.documentElement.lang;
+            const labelText = document.getElementById('current-lang-label').innerText;
+            
+            document.getElementById('current-state').innerHTML = `
+                <div class="result">
+                    <strong>localStorage:</strong> <code>${stored || 'null (not set)'}</code><br>
+                    <strong>HTML lang attribute:</strong> <code>${htmlLang}</code><br>
+                    <strong>UI Label:</strong> <code>${labelText}</code>
+                </div>
+            `;
+
+            // Check persistence on reload
+            if (stored) {
+                const test2Result = document.getElementById('test2-result');
+                test2Result.innerHTML = `
+                    <div class="result success">
+                        ✅ <strong>Persistence verified!</strong><br>
+                        Language <code>${stored}</code> was loaded from localStorage on page load.
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initLanguage();
+            updateCurrentState();
+        });
+    </script>
+</body>
+</html>
