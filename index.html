@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DjuntaCar - Cabo Verde</title>
     
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="layout.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
@@ -19,59 +21,10 @@
         body { 
             background-color: #f8fafc; 
             margin: 0; 
-            padding-top: 75px; 
             padding-bottom: 160px; 
             overflow-x: hidden;
             width: 100%;
         }
-
-        /* --- MASTER HEADER V1.9.5 --- */
-        header {
-            position: fixed; top: 0; left: 0; right: 0; height: 75px;
-            background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px;
-        }
-
-        .header-left { flex: 1; display: flex; align-items: center; }
-        .burger-btn { color: #1d4379; font-size: 32px; cursor: pointer; background: none; border: none; padding: 0; }
-
-        .logo-center { 
-            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
-            display: flex; align-items: center; cursor: pointer; z-index: 10;
-        }
-
-        .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 10px; position: relative; }
-
-        /* Sélecteur de langue */
-        .lang-pill {
-            background: #f1f5f9; border-radius: 12px; padding: 8px 12px;
-            display: flex; align-items: center; gap: 6px; cursor: pointer;
-        }
-        .lang-pill span { color: #1d4379; font-size: 12px; font-weight: 900; }
-
-        #lang-dropdown {
-            position: absolute; top: 60px; right: 55px; background: white; 
-            border-radius: 15px; border: 1px solid #f1f5f9;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            display: none; flex-direction: column; overflow: hidden; z-index: 2000;
-        }
-        #lang-dropdown.active { display: flex; }
-        .lang-opt { padding: 12px 20px; font-size: 11px; font-weight: 800; color: #1d4379; cursor: pointer; text-transform: uppercase; }
-        .lang-opt:hover { background: #f8fafc; }
-
-        /* Profil Icon Silhouette (Bleu/Vert) */
-        .profile-circle {
-            width: 42px; height: 42px; border-radius: 50%;
-            background: #1d4379; display: flex; align-items: center; justify-content: center;
-            border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            cursor: pointer;
-        }
-        .profile-circle.is-connected {
-            background: #22c55e !important;
-            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
-        }
-        .profile-circle svg { width: 20px; height: 20px; fill: white; }
 
         /* --- HERO & SEARCH --- */
         .hero-section { 
@@ -99,8 +52,6 @@
         .btn-blue { background: #1d4379; }
         .btn-green { background: #22c55e; }
 
-        #mobile-menu { position: fixed; inset: 0; background: white; z-index: 4000; display: none; padding: 40px; flex-direction: column; }
-        #mobile-menu.active { display: flex; }
         .error-text { color: #ef4444 !important; font-weight: 900 !important; }
 
         .car-card { background: white; border-radius: 24px; overflow: hidden; border: 1px solid #f1f5f9; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
@@ -108,41 +59,7 @@
 </head>
 <body class="antialiased">
 
-    <header>
-        <div class="header-left">
-            <button onclick="toggleMenu()" class="burger-btn">☰</button>
-        </div>
-        <div class="logo-center" onclick="window.location.reload()">
-            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto" onerror="this.style.display='none'">
-        </div>
-        <div class="header-right">
-            <div class="lang-pill" onclick="toggleLangMenu(event)">
-                <span id="current-lang-label">FR</span>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d4379" stroke-width="4"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div id="lang-dropdown">
-                <div class="lang-opt" onclick="updateLang('FR')">Français</div>
-                <div class="lang-opt" onclick="updateLang('PT')">Português</div>
-                <div class="lang-opt" onclick="updateLang('EN')">English</div>
-            </div>
-            <div onclick="window.location.href='profile.html'" class="profile-circle" id="user-indicator">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            </div>
-        </div>
-    </header>
-
-    <div id="mobile-menu">
-        <div class="flex justify-between items-center mb-10">
-            <b class="text-[#1d4379] text-xl italic">DjuntaCar</b>
-            <button onclick="toggleMenu()" class="text-3xl focus:outline-none">✕</button>
-        </div>
-        <nav class="flex flex-col gap-8 font-black text-[#1d4379] text-2xl uppercase">
-            <a href="index.html" onclick="toggleMenu()" data-i18n="nav_home">Accueil</a>
-            <a href="search-car.html" data-i18n="nav_rent">Louer un véhicule</a>
-            <a href="driver-application.html" data-i18n="nav_driver">Devenir chauffeur</a>
-            <a href="profile.html" data-i18n="nav_profile">Mon Profil</a>
-        </nav>
-    </div>
+    <div id="header-slot"></div>
 
     <main>
         <section class="hero-section">
@@ -213,13 +130,14 @@
         // --- LINGUISTIQUE (NON-BLOQUANT) ---
         function updateLang(lang) {
             localStorage.setItem('djunta_lang', lang);
-            const label = document.getElementById('current-lang-label');
+            var label = document.querySelector('.dgh-lang-label');
             if(label) label.innerText = lang;
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dictionary[lang] && dictionary[lang][key]) el.innerText = dictionary[lang][key];
             });
-            document.getElementById('lang-dropdown').classList.remove('active');
+            var dd = document.getElementById('dgh-lang-dropdown');
+            if(dd) dd.classList.remove('active');
         }
 
         async function initLanguage() {
@@ -239,10 +157,7 @@
             updateLang(lang);
         }
 
-        // --- NAVIGATION & SEARCH ---
-        function toggleLangMenu(e) { e.stopPropagation(); document.getElementById('lang-dropdown').classList.toggle('active'); }
-        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
-        window.onclick = () => { if(document.getElementById('lang-dropdown')) document.getElementById('lang-dropdown').classList.remove('active'); };
+        // --- SEARCH ---
 
         function updateLocations(island) {
             const locSelect = document.getElementById('search-location');
@@ -273,7 +188,6 @@
         // --- INITIALISATION ---
         document.addEventListener('DOMContentLoaded', () => {
             initLanguage();
-            if (localStorage.getItem('djunta_auth') === "true") document.getElementById('user-indicator').classList.add('is-connected');
 
             // Feed
             const feed = document.getElementById('cars-feed');
