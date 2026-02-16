@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Login - DjuntaCar</title>
     
+    <link rel="stylesheet" href="style.css">
+    <script src="layout.js" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -20,50 +22,10 @@
         body { 
             background-color: #f8fafc; 
             margin: 0; 
-            padding-top: 75px; 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
-
-        /* --- MASTER HEADER V1.9.1 --- */
-        header {
-            position: fixed; top: 0; left: 0; right: 0; height: 75px;
-            background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 16px;
-        }
-
-        .header-left { flex: 1; display: flex; align-items: center; }
-        .burger-btn { color: #1d4379; font-size: 32px; cursor: pointer; background: none; border: none; padding: 0; }
-
-        .logo-center {
-            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-            display: flex; align-items: center; cursor: pointer;
-        }
-
-        .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
-
-        /* Sélecteur Langue */
-        .lang-pill {
-            background: #f1f5f9; border-radius: 12px; padding: 8px 12px;
-            display: flex; align-items: center; gap: 6px; cursor: pointer;
-        }
-        .lang-pill span { color: #1d4379; font-size: 12px; font-weight: 900; }
-
-        /* ICÔNE PROFIL (Silhouette SVG) */
-        .profile-circle {
-            width: 42px; height: 42px; border-radius: 50%;
-            background: #1d4379; /* BLEU DÉCONNECTÉ */
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            cursor: pointer; transition: background 0.3s ease;
-        }
-        .profile-circle.is-connected {
-            background: #22c55e !important; /* VERT CONNECTÉ */
-            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
-        }
-        .profile-circle svg { width: 20px; height: 20px; fill: white; }
 
         /* --- CARD LOGIN --- */
         .login-card { 
@@ -83,43 +45,11 @@
             font-size: 12px; border: none; cursor: pointer;
         }
 
-        #mobile-menu { position: fixed; inset: 0; background: white; z-index: 4000; display: none; padding: 40px; flex-direction: column; }
-        #mobile-menu.active { display: flex; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-left">
-            <button class="burger-btn" onclick="toggleMenu()">☰</button>
-        </div>
-        
-        <div class="logo-center" onclick="window.location.href='index.html'">
-            <img src="./logo.png" alt="DjuntaCar" class="h-10 w-auto" onerror="this.outerHTML='<b class=\'text-[#1d4379] italic text-xl\'>DjuntaCar</b>'">
-        </div>
-        
-        <div class="header-right">
-            <div class="lang-pill">
-                <span>FR</span>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d4379" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div onclick="window.location.href='profile.html'" class="profile-circle" id="user-indicator">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            </div>
-        </div>
-    </header>
-
-    <div id="mobile-menu">
-        <div class="flex justify-between items-center mb-10">
-            <b class="text-[#1d4379] text-xl italic">DjuntaCar</b>
-            <button onclick="toggleMenu()" class="text-3xl">✕</button>
-        </div>
-        <nav class="flex flex-col gap-8 font-black text-[#1d4379] text-2xl uppercase">
-            <a href="index.html">Accueil</a>
-            <a href="search-car.html">Recherche</a>
-            <a href="profile.html">Mon Profil</a>
-        </nav>
-    </div>
+    <div id="header-slot"></div>
 
     <main class="flex-grow flex items-center justify-center p-6">
         <div class="login-card">
@@ -140,14 +70,7 @@
     </main>
 
     <script>
-        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
-
         document.addEventListener('DOMContentLoaded', () => {
-            const indicator = document.getElementById('user-indicator');
-            if (localStorage.getItem('djunta_auth') === "true") {
-                indicator.classList.add('is-connected');
-            }
-
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('submit-btn');

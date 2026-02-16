@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mon Agenda Chauffeur - DjuntaCar</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="layout.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -20,11 +22,13 @@
 </head>
 <body class="p-6">
 
-    <header class="flex justify-between items-center mb-8">
+    <div id="header-slot"></div>
+
+    <div class="flex justify-between items-center mb-8">
         <a href="index.html"><i data-lucide="chevron-left" class="text-gray-400"></i></a>
         <h1 class="text-lg font-black text-[#1d4379] uppercase">Mon Agenda</h1>
         <div class="w-6"></div>
-    </header>
+    </div>
 
     <div class="bg-[#1d4379] p-6 rounded-[2.5rem] text-white mb-8 shadow-xl">
         <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Forfait Standard</p>

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Perfil - DjuntaCar</title>
     
+    <link rel="stylesheet" href="style.css">
+    <script src="layout.js" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -16,11 +18,6 @@
         }
 
         // --- 2. FONCTIONS DE NAVIGATION ---
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            if (menu) menu.classList.toggle('active');
-        }
-
         function handleLogout() {
             localStorage.removeItem('djunta_auth');
             localStorage.removeItem('djunta_user');
@@ -40,42 +37,7 @@
         body { 
             background-color: #f8fafc; 
             margin: 0; 
-            padding-top: 75px; 
             min-height: 100vh;
-        }
-
-        /* --- MASTER HEADER SOLIDE --- */
-        header {
-            position: fixed; top: 0; left: 0; right: 0; height: 75px;
-            background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
-        }
-
-        /* Gauche : Burger */
-        .burger-container { flex: 1; display: flex; align-items: center; }
-        .burger-btn { color: #1d4379; font-size: 30px; cursor: pointer; background: none; border: none; padding: 0; }
-
-        /* Centre : Logo (Lien Accueil) */
-        .logo-center {
-            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-            display: flex; align-items: center; z-index: 10; cursor: pointer;
-        }
-
-        /* Droite : Langue + Profil */
-        .header-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
-
-        .lang-pill {
-            background: #f1f5f9; border-radius: 12px; padding: 6px 10px;
-            display: flex; align-items: center; gap: 4px; cursor: pointer;
-        }
-
-        /* Cercle Profil (Vert car obligatoirement connecté ici) */
-        .profile-circle {
-            width: 42px; height: 42px; border-radius: 50%;
-            background: #22c55e; /* VERT CONNECTÉ */
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid white; box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
-            cursor: pointer;
         }
 
         /* --- UI CARDS --- */
