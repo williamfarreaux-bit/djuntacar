@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="djunta-core.js" defer></script>
+    <script src="djunta-master.js" defer></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap');
@@ -85,7 +85,7 @@
                 const password = document.getElementById('password').value;
 
                 // UTILISATION DU MOTEUR CENTRAL (DJUNTA)
-                // Note: DJUNTA.sb est initialisé dans djunta-core.js
+                // Note: DJUNTA.sb est initialisé dans djunta-master.js
                 if (!DJUNTA || !DJUNTA.sb) {
                     alert("Erreur système : Rechargez la page.");
                     return;

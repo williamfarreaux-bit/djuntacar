@@ -5,7 +5,12 @@ const DjuntaDB = {
 
     // Récupérer toutes les voitures
     async getCars() {
-        const { data, error } = await _supabase
+        if (!window.DJUNTA || !window.DJUNTA.sb) {
+            console.error("DjuntaDB: Client Supabase non initialisé");
+            return [];
+        }
+        
+        const { data, error } = await window.DJUNTA.sb
             .from('vehicles')
             .select('*')
             .eq('is_driver_included', false); 
@@ -16,8 +21,13 @@ const DjuntaDB = {
 
     // Récupérer UN véhicule (VERSION FIXÉE)
     async getById(id) {
+        if (!window.DJUNTA || !window.DJUNTA.sb) {
+            console.error("DjuntaDB: Client Supabase non initialisé");
+            return null;
+        }
+        
         // On ne demande PLUS les infos 'owner_id' pour éviter le bug
-        const { data, error } = await _supabase
+        const { data, error } = await window.DJUNTA.sb
             .from('vehicles')
             .select('*') 
             .eq('id', id)
