@@ -58,9 +58,9 @@ class DjuntaHeader extends HTMLElement {
                     <button onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg></button>
                 </div>
                 <nav class="flex flex-col gap-6 text-[#1d4379] font-bold text-lg">
-                    <a href="index.html" class="flex items-center gap-3">Início</a>
-                    <a href="search-car.html" class="flex items-center gap-3">Alugar</a>
-                    <a href="driver-application.html" class="flex items-center gap-3">Motorista</a>
+                    <a href="index.html" class="flex items-center gap-3" data-i18n="menu_home">Início</a>
+                    <a href="search-car.html" class="flex items-center gap-3" data-i18n="menu_rent">Alugar</a>
+                    <a href="driver-application.html" class="flex items-center gap-3" data-i18n="menu_driver">Motorista</a>
                 </nav>
             </div>
         </div>
@@ -69,3 +69,26 @@ class DjuntaHeader extends HTMLElement {
     }
 }
 if (!customElements.get('djunta-header')) customElements.define('djunta-header', DjuntaHeader);
+
+// --- Fonction globale pour le changement de langue depuis le header ---
+window.changeLanguage = function(lang) {
+    if (typeof I18n !== 'undefined') {
+        I18n.setLanguage(lang);
+    } else if (typeof translations !== 'undefined') {
+        const dict = translations[lang];
+        if (dict) {
+            localStorage.setItem('djuntacar_lang', lang);
+            document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = dict[key];
+                    } else {
+                        el.innerHTML = dict[key];
+                    }
+                }
+            });
+            document.documentElement.lang = lang;
+        }
+    }
+};

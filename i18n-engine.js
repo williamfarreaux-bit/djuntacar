@@ -58,10 +58,13 @@ const I18n = {
             return;
         }
 
+        // Dictionnaire de secours (français)
+        const fallback = translations['fr'] || {};
+
         // 1. Traduire les textes (attribut data-i18n)
         document.querySelectorAll('[data-i18n]').forEach(element => {
             const key = element.getAttribute('data-i18n');
-            const translation = dict[key];
+            const translation = dict[key] || fallback[key];
 
             if (translation) {
                 // Si c'est un input (placeholder)
