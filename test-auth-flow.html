@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test d'Authentification - DjuntaCar</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { font-family: Arial, sans-serif; box-sizing: border-box; }
+        body { background: #f8fafc; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { color: #1d4379; margin-bottom: 10px; }
+        .section { margin: 30px 0; padding: 20px; border: 2px solid #e5e7eb; border-radius: 8px; }
+        .section.active { border-color: #22c55e; background: #f0fdf4; }
+        .section.waiting { border-color: #fbbf24; background: #fffbeb; }
+        .section h2 { margin-top: 0; color: #1d4379; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; }
+        button { background: #1d4379; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin: 5px; }
+        button:hover { background: #152e54; }
+        button:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .status { padding: 12px; margin: 10px 0; border-radius: 6px; font-size: 13px; }
+        .status.success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .status.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .status.info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .status.warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .log { background: #f9fafb; padding: 10px; margin: 10px 0; border-left: 3px solid #6b7280; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; }
+        .step-indicator { display: inline-block; width: 30px; height: 30px; background: #cbd5e1; color: white; border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; margin-right: 10px; }
+        .step-indicator.active { background: #22c55e; }
+        .step-indicator.waiting { background: #fbbf24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test d'Authentification DjuntaCar</h1>
+        <p><strong>Email de test:</strong> william.farreaux@gmail.com</p>
+        <p><strong>Langue:</strong> Français</p>
+
+        <!-- ÉTAPE 1: CRÉATION DE COMPTE -->
+        <div class="section" id="step1">
+            <h2><span class="step-indicator active" id="step1-indicator">1</span>Étape 1: Création de Compte (Signup)</h2>
+            <p>Cette étape teste la création d'un nouveau compte avec Supabase.</p>
+            
+            <label>Email:</label>
+            <input type="email" id="signup-email" value="william.farreaux@gmail.com" />
+            
+            <label>Mot de passe:</label>
+            <input type="password" id="signup-password" value="TestPassword123!" />
+            
+            <button onclick="testSignup()">🚀 Créer le compte</button>
+            
+            <div id="signup-status"></div>
+            <div id="signup-log" class="log" style="display: none;"></div>
+        </div>
+
+        <!-- ÉTAPE 2: RÉINITIALISATION DU MOT DE PASSE -->
+        <div class="section" id="step2" style="opacity: 0.5;">
+            <h2><span class="step-indicator" id="step2-indicator">2</span>Étape 2: Réinitialisation du Mot de Passe</h2>
+            <p>Cette étape teste le flux "Mot de passe oublié".</p>
+            
+            <label>Email:</label>
+            <input type="email" id="reset-email" value="william.farreaux@gmail.com" />
+            
+            <button onclick="testPasswordReset()" id="reset-btn" disabled>📧 Envoyer l'email de réinitialisation</button>
+            
+            <div id="reset-status"></div>
+            <div id="reset-log" class="log" style="display: none;"></div>
+        </div>
+
+        <!-- ÉTAPE 3: LOGIN FINAL -->
+        <div class="section" id="step3" style="opacity: 0.5;">
+            <h2><span class="step-indicator" id="step3-indicator">3</span>Étape 3: Login Final</h2>
+            <p>Cette étape teste la connexion avec les nouveaux identifiants.</p>
+            
+            <label>Email:</label>
+            <input type="email" id="login-email" value="william.farreaux@gmail.com" />
+            
+            <label>Mot de passe:</label>
+            <input type="password" id="login-password" placeholder="Nouveau mot de passe après reset" />
+            
+            <button onclick="testLogin()" id="login-btn" disabled>🔓 Se connecter</button>
+            
+            <div id="login-status"></div>
+            <div id="login-log" class="log" style="display: none;"></div>
+            
+            <div id="session-info" style="display: none;">
+                <h3>Informations de session:</h3>
+                <div id="session-details" class="log"></div>
+            </div>
+        </div>
+
+        <!-- CONSOLE GLOBALE -->
+        <div class="section">
+            <h2>📊 Console de test</h2>
+            <button onclick="clearConsole()">🧹 Effacer la console</button>
+            <button onclick="checkLocalStorage()">💾 Vérifier localStorage</button>
+            <div id="global-console" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Supabase
+        const SUPABASE_URL = 'https://enuiuuwnjzvpfvpklmjw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-';
+        
+        let supabaseClient;
+        let globalLog = [];
+
+        // Initialiser Supabase
+        function initSupabase() {
+            if (typeof supabase === 'undefined') {
+                log('❌ ERREUR: Bibliothèque Supabase non chargée!', 'error');
+                return false;
+            }
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            log('✅ Client Supabase initialisé', 'success');
+            return true;
+        }
+
+        // Fonction de logging
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('fr-FR');
+            const logEntry = `[${timestamp}] ${message}`;
+            globalLog.push({ time: timestamp, message, type });
+            
+            const console = document.getElementById('global-console');
+            console.innerHTML += `<div style="color: ${type === 'error' ? '#dc2626' : type === 'success' ? '#16a34a' : '#4b5563'}">${logEntry}</div>`;
+            console.scrollTop = console.scrollHeight;
+            
+            console.log(`[DjuntaCar Test] ${message}`);
+        }
+
+        function showStatus(elementId, message, type) {
+            const status = document.getElementById(elementId);
+            status.className = `status ${type}`;
+            status.innerHTML = message;
+            status.style.display = 'block';
+        }
+
+        function clearConsole() {
+            document.getElementById('global-console').innerHTML = '';
+            globalLog = [];
+        }
+
+        function checkLocalStorage() {
+            log('🔍 Vérification du localStorage...', 'info');
+            const auth = localStorage.getItem('djunta_auth');
+            const user = localStorage.getItem('djunta_user');
+            
+            if (auth && user) {
+                log(`✅ Utilisateur connecté: ${auth}`, 'success');
+                log(`👤 Données utilisateur: ${user}`, 'info');
+            } else {
+                log('⚠️ Aucune session trouvée dans localStorage', 'warning');
+            }
+        }
+
+        // ÉTAPE 1: Signup
+        async function testSignup() {
+            log('🚀 ÉTAPE 1: Démarrage du test de création de compte...', 'info');
+            
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            log(`📧 Email: ${email}`, 'info');
+            log(`🔒 Mot de passe: ${'*'.repeat(password.length)}`, 'info');
+            
+            try {
+                showStatus('signup-status', '⏳ Envoi de la requête à Supabase...', 'info');
+                
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                log('✅ Compte créé avec succès!', 'success');
+                log(`📨 ID utilisateur: ${data.user?.id}`, 'info');
+                log(`📧 Email: ${data.user?.email}`, 'info');
+                log(`✉️ Confirmation requise: ${data.user?.email_confirmed_at ? 'Non' : 'Oui'}`, 'info');
+                
+                showStatus('signup-status', 
+                    '✅ <strong>Compte créé!</strong><br>' +
+                    '📧 <strong>VÉRIFIEZ VOTRE BOÎTE EMAIL</strong> (william.farreaux@gmail.com)<br>' +
+                    'Un email de confirmation a été envoyé par Supabase.<br>' +
+                    'Cliquez sur le lien dans l\'email avant de continuer.', 
+                    'success'
+                );
+                
+                // Activer l'étape 2
+                document.getElementById('step2').style.opacity = '1';
+                document.getElementById('step2-indicator').classList.add('waiting');
+                document.getElementById('reset-btn').disabled = false;
+                
+                log('⏸️ En attente de confirmation email par l\'utilisateur...', 'warning');
+                
+            } catch (error) {
+                log(`❌ ERREUR lors de la création: ${error.message}`, 'error');
+                showStatus('signup-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        // ÉTAPE 2: Password Reset
+        async function testPasswordReset() {
+            const userConfirmed = confirm('⚠️ Avez-vous cliqué sur le lien de confirmation dans votre email?');
+            if (!userConfirmed) {
+                alert('⏸️ Veuillez d\'abord confirmer votre email avant de continuer.');
+                return;
+            }
+            
+            log('📧 ÉTAPE 2: Démarrage du test de réinitialisation de mot de passe...', 'info');
+            
+            const email = document.getElementById('reset-email').value;
+            log(`📧 Email: ${email}`, 'info');
+            
+            try {
+                showStatus('reset-status', '⏳ Envoi de l\'email de réinitialisation...', 'info');
+                
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/reset-password-confirm.html',
+                });
+                
+                if (error) throw error;
+                
+                log('✅ Email de réinitialisation envoyé!', 'success');
+                
+                showStatus('reset-status', 
+                    '✅ <strong>Email envoyé!</strong><br>' +
+                    '📧 <strong>VÉRIFIEZ VOTRE BOÎTE EMAIL</strong> (william.farreaux@gmail.com)<br>' +
+                    'Cliquez sur le lien pour réinitialiser votre mot de passe.<br>' +
+                    'Ensuite, revenez ici pour tester le login.', 
+                    'success'
+                );
+                
+                // Activer l'étape 3
+                document.getElementById('step3').style.opacity = '1';
+                document.getElementById('step3-indicator').classList.add('waiting');
+                document.getElementById('login-btn').disabled = false;
+                
+                log('⏸️ En attente de réinitialisation du mot de passe...', 'warning');
+                
+            } catch (error) {
+                log(`❌ ERREUR lors de la réinitialisation: ${error.message}`, 'error');
+                showStatus('reset-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        // ÉTAPE 3: Login
+        async function testLogin() {
+            const userReset = confirm('⚠️ Avez-vous réinitialisé votre mot de passe via le lien email?');
+            if (!userReset) {
+                alert('⏸️ Veuillez d\'abord réinitialiser votre mot de passe avant de continuer.');
+                return;
+            }
+            
+            log('🔓 ÉTAPE 3: Démarrage du test de connexion...', 'info');
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!password) {
+                alert('⚠️ Veuillez entrer le nouveau mot de passe que vous avez défini.');
+                return;
+            }
+            
+            log(`📧 Email: ${email}`, 'info');
+            log(`🔒 Mot de passe: ${'*'.repeat(password.length)}`, 'info');
+            
+            try {
+                showStatus('login-status', '⏳ Connexion en cours...', 'info');
+                
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                log('✅ Connexion réussie!', 'success');
+                log(`👤 ID utilisateur: ${data.user?.id}`, 'info');
+                log(`📧 Email: ${data.user?.email}`, 'info');
+                log(`🔑 Token: ${data.session?.access_token ? 'Présent' : 'Absent'}`, 'info');
+                
+                // Sauvegarder dans localStorage
+                localStorage.setItem('djunta_auth', 'true');
+                localStorage.setItem('djunta_user', JSON.stringify(data.user));
+                log('💾 Session sauvegardée dans localStorage', 'success');
+                
+                showStatus('login-status', 
+                    '✅ <strong>Connexion réussie!</strong><br>' +
+                    'La session a été établie et sauvegardée dans localStorage.', 
+                    'success'
+                );
+                
+                // Afficher les détails de session
+                document.getElementById('session-info').style.display = 'block';
+                document.getElementById('session-details').innerHTML = 
+                    `<strong>User ID:</strong> ${data.user.id}<br>` +
+                    `<strong>Email:</strong> ${data.user.email}<br>` +
+                    `<strong>Email confirmé:</strong> ${data.user.email_confirmed_at ? 'Oui' : 'Non'}<br>` +
+                    `<strong>Créé le:</strong> ${new Date(data.user.created_at).toLocaleString('fr-FR')}<br>` +
+                    `<strong>Token présent:</strong> ${data.session?.access_token ? 'Oui' : 'Non'}<br>` +
+                    `<strong>localStorage['djunta_auth']:</strong> ${localStorage.getItem('djunta_auth')}`;
+                
+                document.getElementById('step3-indicator').classList.remove('waiting');
+                document.getElementById('step3-indicator').classList.add('active');
+                
+                log('🎉 TOUS LES TESTS SONT TERMINÉS AVEC SUCCÈS!', 'success');
+                
+            } catch (error) {
+                log(`❌ ERREUR lors de la connexion: ${error.message}`, 'error');
+                showStatus('login-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialiser au chargement
+        window.addEventListener('DOMContentLoaded', () => {
+            log('🏁 Initialisation du test d\'authentification...', 'info');
+            if (initSupabase()) {
+                log('✅ Prêt à commencer les tests!', 'success');
+            } else {
+                log('❌ Impossible de charger Supabase. Vérifiez votre connexion.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

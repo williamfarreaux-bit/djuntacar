@@ -142,6 +142,27 @@
     <script>
         function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
 
+        // Initialize DJUNTA if not already loaded
+        if (!window.DJUNTA) {
+            window.DJUNTA = {
+                sb: null,
+                formatMoney: (amount) => {
+                    return new Intl.NumberFormat('pt-CV', { 
+                        style: 'currency', currency: 'CVE', maximumFractionDigits: 0 
+                    }).format(amount).replace('CVE', '').trim() + ' CVE';
+                }
+            };
+        }
+
+        // Initialize Supabase client
+        if (window.supabase && !window.DJUNTA.sb) {
+            const CONFIG = {
+                url: "https://enuiuuwnjzvpfvpklmjw.supabase.co",
+                key: "sb_publishable_MDe_Df6NgeA-MmeP1pguPQ_tgF2k8s-"
+            };
+            window.DJUNTA.sb = window.supabase.createClient(CONFIG.url, CONFIG.key);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const indicator = document.getElementById('user-indicator');
             if (localStorage.getItem('djunta_auth') === "true") {
@@ -164,6 +185,8 @@
                         localStorage.setItem('djunta_auth', 'true');
                         localStorage.setItem('djunta_user', JSON.stringify(data.user));
                         window.location.href = 'profile.html';
+                    } else {
+                        throw new Error("Système non initialisé. Rechargez la page.");
                     }
                 } catch (err) {
                     alert("Erro: " + err.message);
