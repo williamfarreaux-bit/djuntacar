@@ -135,5 +135,36 @@
                 try {
                     const { data: { user } } = await DJUNTA.sb.auth.getUser();
                     
-                    // On supprime d'abord les données profile
-                    await DJUNTA.sb.from('profiles').delete().eq
+                    if (!user) {
+                        alert('Sessão expirada. Por favor, faça login novamente.');
+                        return;
+                    }
+                    
+                    // Note: Deleting from profiles table will CASCADE delete all related data
+                    // (vehicles, bookings, favorites, etc.) due to ON DELETE CASCADE in schema
+                    const { error: profileError } = await DJUNTA.sb
+                        .from('profiles')
+                        .delete()
+                        .eq('id', user.id);
+                    
+                    if (profileError) {
+                        console.error('Error deleting profile:', profileError);
+                        alert('Erro ao apagar dados do perfil.');
+                        return;
+                    }
+                    
+                    // Sign out the user (this clears the session)
+                    await DJUNTA.sb.auth.signOut();
+                    
+                    alert('Conta apagada com sucesso.');
+                    window.location.href = 'index.html';
+                    
+                } catch (err) {
+                    console.error('Error during account deletion:', err);
+                    alert('Ocorreu um erro. Tente novamente.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

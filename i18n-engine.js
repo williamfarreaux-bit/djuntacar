@@ -13,16 +13,13 @@ const I18n = {
      */
     init: function() {
         // 1. Vérifier s'il y a une préférence sauvegardée
-        const savedLang = localStorage.getItem('djuntacar_lang');
+        const savedLang = localStorage.getItem('djunta_lang');
         
         if (savedLang) {
             this.currentLang = savedLang;
         } else {
-            // 2. Sinon, détecter la langue du navigateur
-            const userLang = navigator.language || navigator.userLanguage; 
-            if (userLang.includes('pt')) this.currentLang = 'pt';
-            else if (userLang.includes('en')) this.currentLang = 'en';
-            else this.currentLang = 'fr'; // Défaut
+            // 2. "France First" - Défaut au français si pas de préférence
+            this.currentLang = 'fr'; // Défaut explicite: Français
         }
         
         console.log(`DjuntaCar i18n: Langue définie sur [${this.currentLang}]`);
@@ -35,7 +32,7 @@ const I18n = {
      */
     setLanguage: function(lang) {
         this.currentLang = lang;
-        localStorage.setItem('djuntacar_lang', lang); // Sauvegarder le choix
+        localStorage.setItem('djunta_lang', lang); // Sauvegarder le choix
         this.apply(); // Mettre à jour l'affichage
         
         // Optionnel : Recharger la page si nécessaire pour certains scripts

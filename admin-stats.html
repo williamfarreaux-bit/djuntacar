@@ -74,9 +74,27 @@
         async function loadAdminData() {
             // 1. Auth Check
             const { data: { user } } = await DJUNTA.sb.auth.getUser();
-            if (!user) { window.location.href = 'login.html'; return; }
+            if (!user) { 
+                alert('Acesso negado. Por favor, faça login.');
+                window.location.href = 'login.html'; 
+                return; 
+            }
 
-            // 2. Fetch Data (Bookings Confirmed/Completed)
+            // 2. Check Admin Role
+            const { data: profile, error: profileError } = await DJUNTA.sb
+                .from('profiles')
+                .select('role, email')
+                .eq('id', user.id)
+                .single();
+
+            if (profileError || profile.role !== 'admin') {
+                console.warn('User is not admin');
+                alert('Acesso restrito. Apenas administradores.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 3. Fetch Data (Bookings Confirmed/Completed)
             const { data: bookings, error } = await DJUNTA.sb
                 .from('bookings')
                 .select('*')
@@ -88,22 +106,22 @@
                 return;
             }
 
-            // 3. Calculs
-            const total = bookings.reduce((sum, b) => sum + b.total_price, 0);
+            // 4. Calculs
+            const total = bookings.reduce((sum, b) => sum + parseFloat(b.total_price || 0), 0);
             const margin = total * 0.15;
             const insurance = total * 0.10;
 
-            // 4. Affichage Global
+            // 5. Affichage Global
             document.getElementById('total-revenue').innerText = DJUNTA.formatMoney(total);
             document.getElementById('platform-margin').innerText = DJUNTA.formatMoney(margin);
             document.getElementById('insurance-fund').innerText = DJUNTA.formatMoney(insurance);
 
-            // 5. Liste Assurances
+            // 6. Liste Assurances
             const list = document.getElementById('insurance-list');
             list.innerHTML = '';
 
             bookings.forEach(b => {
-                const part = b.total_price * 0.10;
+                const part = parseFloat(b.total_price || 0) * 0.10;
                 const html = `
                 <div class="bg-white p-4 rounded-2xl border border-gray-50 flex justify-between items-center shadow-sm">
                     <div>
