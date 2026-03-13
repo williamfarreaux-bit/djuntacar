@@ -23,49 +23,84 @@ class DjuntaHeader extends HTMLElement {
     constructor() { super(); }
 
     connectedCallback() {
+        var isConnected = localStorage.getItem('djunta_auth') === 'true';
+        var lang = localStorage.getItem('djunta_lang') || 'PT';
+        var profileHref = isConnected ? 'profile.html' : 'login.html';
+
         this.innerHTML = `
-        <header class="fixed top-0 left-0 right-0 h-16 bg-white z-50 border-b border-gray-100 px-4 flex items-center justify-between font-sans shadow-sm">
-            
-            <div class="flex items-center gap-4">
-                <button onclick="document.getElementById('mobile-menu-overlay').classList.remove('hidden')" class="md:hidden text-[#1d4379]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        <header class="djunta-global-header">
+            <div class="dgh-left">
+                <button class="dgh-burger" aria-label="Menu" onclick="window.__djuntaToggleMenu()">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" x2="20" y1="6" y2="6"></line>
+                        <line x1="4" x2="20" y1="12" y2="12"></line>
+                        <line x1="4" x2="20" y1="18" y2="18"></line>
+                    </svg>
                 </button>
-                
-                <div class="hidden md:flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                    <img src="./logo.png" alt="DjuntaCar" style="height: 35px; width: auto; object-fit: contain; border: 1px dashed red;"> 
+            </div>
+            <div class="dgh-center" onclick="window.location.href='index.html'">
+                <img src="sigle.png" alt="" class="dgh-sigle" onerror="this.style.display='none'">
+                <img src="logo.png" alt="DjuntaCar" class="dgh-logo" onerror="this.style.display='none'">
+            </div>
+            <div class="dgh-right">
+                <div class="dgh-lang-pill" onclick="window.__djuntaToggleLang(event)">
+                    <span class="dgh-lang-label">${lang}</span>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#1d4379" stroke-width="4"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
-            </div>
-
-            <div class="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer" onclick="window.location.href='index.html'">
-                <img src="./logo.png" alt="DjuntaCar" style="height: 30px; width: auto; object-fit: contain; border: 1px dashed red;">
-            </div>
-
-            <div class="flex items-center gap-3">
-                <select onchange="window.changeLanguage(this.value)" class="bg-gray-100 text-[#1d4379] text-[10px] font-bold py-1 px-2 rounded-lg hidden md:block">
-                    <option value="pt">PT</option><option value="fr">FR</option><option value="en">EN</option>
-                </select>
-                <button onclick="window.location.href='profile.html'" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </button>
+                <div class="dgh-lang-dropdown" id="dgh-lang-dropdown">
+                    <div class="dgh-lang-opt" onclick="window.__djuntaSetLang('PT')">Português</div>
+                    <div class="dgh-lang-opt" onclick="window.__djuntaSetLang('FR')">Français</div>
+                    <div class="dgh-lang-opt" onclick="window.__djuntaSetLang('EN')">English</div>
+                </div>
+                <div class="dgh-profile${isConnected ? ' is-connected' : ''}" onclick="window.location.href='${profileHref}'">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
             </div>
         </header>
 
-        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-[100]">
-            <div onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-            <div class="absolute top-0 left-0 bottom-0 w-[80%] bg-white p-6 shadow-2xl flex flex-col">
-                <div class="flex justify-between items-center mb-8">
-                    <img src="./logo.png" style="height: 25px;">
-                    <button onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg></button>
-                </div>
-                <nav class="flex flex-col gap-6 text-[#1d4379] font-bold text-lg">
-                    <a href="index.html" class="flex items-center gap-3">Início</a>
-                    <a href="search-car.html" class="flex items-center gap-3">Alugar</a>
-                    <a href="driver-application.html" class="flex items-center gap-3">Motorista</a>
-                </nav>
+        <div id="dgh-mobile-menu" class="dgh-mobile-menu">
+            <div class="dgh-menu-header">
+                <img src="logo.png" alt="DjuntaCar" style="height:25px" onerror="this.style.display='none'">
+                <button onclick="window.__djuntaToggleMenu()" class="dgh-menu-close">&times;</button>
             </div>
+            <nav class="dgh-menu-nav">
+                <a href="index.html">Início</a>
+                <a href="search-car.html">Alugar</a>
+                <a href="search-driver.html">Motorista</a>
+                <a href="profile.html">Perfil</a>
+            </nav>
         </div>
-        <div style="height: 70px;"></div>
+        <div class="dgh-spacer"></div>
         `;
     }
+}
+
+// --- Global interaction helpers for the standardized header ---
+if (!window.__djuntaToggleMenu) {
+    window.__djuntaToggleMenu = function () {
+        var m = document.getElementById('dgh-mobile-menu');
+        if (m) m.classList.toggle('active');
+    };
+}
+if (!window.__djuntaToggleLang) {
+    window.__djuntaToggleLang = function (e) {
+        e.stopPropagation();
+        var dd = document.getElementById('dgh-lang-dropdown');
+        if (dd) dd.classList.toggle('active');
+    };
+}
+if (!window.__djuntaSetLang) {
+    window.__djuntaSetLang = function (lang) {
+        localStorage.setItem('djunta_lang', lang);
+        var label = document.querySelector('.dgh-lang-label');
+        if (label) label.textContent = lang;
+        var dd = document.getElementById('dgh-lang-dropdown');
+        if (dd) dd.classList.remove('active');
+        if (typeof window.changeLanguage === 'function') window.changeLanguage(lang);
+    };
+    document.addEventListener('click', function () {
+        var dd = document.getElementById('dgh-lang-dropdown');
+        if (dd) dd.classList.remove('active');
+    });
 }
 if (!customElements.get('djunta-header')) customElements.define('djunta-header', DjuntaHeader);

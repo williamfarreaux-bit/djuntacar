@@ -5,26 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DjuntaCar - Finaliser la recherche</title>
     
+    <link rel="stylesheet" href="style.css">
+    <script src="layout.js" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
         * { font-family: 'Montserrat', sans-serif !important; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: #f8fafc; margin: 0; padding-top: 75px; padding-bottom: 140px; overflow-x: hidden; }
+        body { background-color: #f8fafc; margin: 0; padding-bottom: 140px; overflow-x: hidden; }
         
-        header {
-            position: fixed; top: 0; left: 0; right: 0; height: 75px;
-            background: white; z-index: 1000; border-bottom: 1px solid #f1f5f9;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        }
-
-        .logo-center {
-            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-            display: flex; align-items: center;
-        }
-
         /* RÉSUMÉ DU CHOIX (HERO) */
         .selection-summary { 
             background: linear-gradient(135deg, #1d4379 0%, #15325b 100%); 
@@ -96,13 +86,9 @@
             text-transform: uppercase; border: none; cursor: pointer;
         }
 
-        #mobile-menu { position: fixed; inset: 0; background: white; z-index: 2000; display: none; padding: 40px; flex-direction: column; }
-        #mobile-menu.active { display: flex; }
     </style>
 
     <script>
-        function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
-
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const island = params.get('island') || "Non spécifié";
@@ -124,8 +110,6 @@
             tomorrow.setDate(tomorrow.getDate() + 2);
             document.getElementById('end-date').value = tomorrow.toISOString().slice(0, 16);
 
-            const savedLang = localStorage.getItem('djunta_lang') || 'fr';
-            document.getElementById('lang-selector').value = savedLang;
         });
 
         function selectCategory(el) {
@@ -146,27 +130,7 @@
 </head>
 <body>
 
-    <header>
-        <button onclick="toggleMenu()" style="font-size: 28px; background:none; border:none; color:#1d4379; cursor:pointer;">☰</button>
-        <div class="logo-center" onclick="window.location.href='index.html'">
-            <img src="./logo.png" alt="DjuntaCar" style="height: 40px;" onerror="this.outerHTML='<b style=\'color:#1d4379; font-style:italic; font-size:22px;\'>DjuntaCar</b>'">
-        </div>
-        <div class="flex items-center gap-2">
-            <select id="lang-selector" onchange="localStorage.setItem('djunta_lang', this.value); location.reload();" class="bg-slate-100 text-[#1d4379] text-[11px] font-bold py-2 px-1 rounded-lg border-none outline-none">
-                <option value="fr">FR</option><option value="pt">PT</option><option value="en">EN</option>
-            </select>
-            <div onclick="window.location.href='profile.html'" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center cursor-pointer border border-slate-200">👤</div>
-        </div>
-    </header>
-
-    <div id="mobile-menu">
-        <nav class="flex flex-col gap-8 mt-16 font-black text-[#1d4379] text-2xl uppercase">
-            <a href="index.html">Accueil</a>
-            <a href="search-car.html">Recherche</a>
-            <a href="profile.html">Profil</a>
-            <button onclick="toggleMenu()" class="mt-10 text-sm text-slate-400">Fermer</button>
-        </nav>
-    </div>
+    <div id="header-slot"></div>
 
     <main>
         <section class="selection-summary">
